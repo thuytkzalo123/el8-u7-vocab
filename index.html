@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Thi Tiếng Anh: Environment & Grammar</title>
+    <style>
+        :root {
+            --color-correct: Seagreen;
+            --color-wrong: Crimson;
+            --color-highlight-bg: Salmon;
+            --color-highlight-text: white;
+            --color-text: #333;
+            --bg-body: #f4f4f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-body);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .quiz-container {
+            background: white;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 25px;
+            position: relative;
+        }
+
+        /* --- Quiz Content Area --- */
+        #quiz-content {
+            display: block;
+        }
+
+        /* Header & Controls */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .btn-hint {
+            background-color: #FFB347; 
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn-hint:hover { filter: brightness(0.9); }
+        .btn-hint:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Question Section */
+        .question-box {
+            font-size: 1.25rem;
+            color: var(--color-text);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-weight: bold;
+        }
+
+        /* --- SỬA LỖI HIỂN THỊ KEYWORD TẠI ĐÂY --- */
+        .key {
+            /* Mặc định: Không màu, không viền, không padding */
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            border: none; 
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .key.active {
+            /* Khi kích hoạt: Mới hiện màu nền và chữ trắng */
+            background-color: var(--color-highlight-bg);
+            color: var(--color-highlight-text);
+            padding: 2px 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        /* ------------------------------------------- */
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-weight: normal; 
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: #aaa;
+            background-color: #f9f9f9;
+        }
+
+        /* States */
+        .option-btn.correct {
+            background-color: var(--color-correct) !important;
+            color: white !important;
+            border-color: var(--color-correct) !important;
+            font-weight: bold !important;
+        }
+
+        .option-btn.wrong {
+            background-color: var(--color-wrong) !important;
+            color: white !important;
+            border-color: var(--color-wrong) !important;
+        }
+        
+        .option-btn:disabled { cursor: default; }
+
+        /* Post-Answer Actions */
+        .action-area {
+            display: none;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn-explain { background-color: var(--color-correct); }
+        .btn-translate { background-color: var(--color-wrong); }
+
+        /* Content Boxes */
+        .content-box {
+            display: none;
+            background: #f8f9fa;
+            border-left: 5px solid #ccc;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 0 8px 8px 0;
+            animation: slideDown 0.3s ease;
+        }
+        .content-box.show { display: block; }
+        .box-explain { border-color: var(--color-correct); }
+        .box-translate { border-color: var(--color-wrong); }
+
+        .info-row { margin-bottom: 8px; font-size: 0.95rem; }
+        .info-label { font-weight: bold; display: inline-block; width: 100px; color: #444; }
+
+        /* Navigation */
+        .nav-controls { margin-top: 20px; text-align: right; }
+        .btn-next {
+            background-color: #333;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: none; 
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-next:hover { background-color: #555; }
+
+        /* --- Result Screen --- */
+        #result-screen {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 0.5s;
+        }
+        
+        .result-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .score-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px solid #eee;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .score-big {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--color-correct);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .score-detail { font-size: 1.2rem; color: #666; margin: 5px 0; }
+
+        .btn-restart {
+            background-color: var(--color-correct);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(46, 139, 87, 0.4);
+            transition: transform 0.2s;
+        }
+        .btn-restart:hover { transform: scale(1.05); }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .quiz-container { padding: 15px; }
+            .question-box { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-content">
+        <div class="quiz-header">
+            <span style="font-weight: bold; color: #666; font-size: 1.1rem;">Câu <span id="q-number" style="color: #000;">1</span>/<span id="total-q">45</span></span>
+            <button class="btn-hint" id="btn-hint" onclick="toggleHint()">💡 Gợi ý</button>
+        </div>
+
+        <div class="question-box" id="question-text"></div>
+        <div class="options-grid" id="options-area"></div>
+
+        <div class="action-area" id="action-area">
+            <button class="btn-action btn-explain" onclick="toggleExplanation()">📖 Giải thích</button>
+            <button class="btn-action btn-translate" onclick="toggleTranslate()">🇻🇳 Dịch nghĩa</button>
+        </div>
+
+        <div id="explanation-box" class="content-box box-explain"></div>
+        <div id="translation-box" class="content-box box-translate">
+            <div id="trans-content" style="font-style: italic; font-size: 1.1rem; color: #444;"></div>
+        </div>
+
+        <div class="nav-controls">
+            <button class="btn-next" id="btn-next" onclick="nextQuestion()">Câu tiếp theo ➜</button>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h2 class="result-title">🎉 Kết Quả Bài Thi</h2>
+        <div class="score-box">
+            <span class="score-big" id="final-score-10">0.0</span>
+            <p class="score-detail">Điểm (Thang 10)</p>
+            <div style="width: 50%; height: 2px; background: #eee; margin: 20px auto;"></div>
+            <p class="score-detail">Số câu đúng: <b id="final-correct-count" style="color: seagreen;">0</b> / <span id="final-total-count">45</span></p>
+        </div>
+        <button class="btn-restart" onclick="restartQuiz()">🔄 Làm lại bài thi</button>
+    </div>
+</div>
+
+<script>
+    // --- DỮ LIỆU CÂU HỎI (45 CÂU) ---
+    const quizData = [
+    {
+        id: 1,
+        question: 'We should ______ our <span class="key">carbon footprint</span> to protect the environment.',
+        options: ["A. pollute", "B. protect", "C. reduce", "D. endanger"],
+        correctIndex: 2,
+        translation: "Chúng ta nên giảm dấu chân carbon của mình để bảo vệ môi trường.",
+        explanation: { keyword: "carbon footprint", knowledge: "Từ vựng", topic: "Môi trường", feature: "Collocation: reduce footprint" }
+    },
+    {
+        id: 2,
+        question: 'You should <span class="key">turn off</span> devices that you are not using to ______ <span class="key">electricity</span>.',
+        options: ["A. save", "B. reuse", "C. release", "D. turn"],
+        correctIndex: 0,
+        translation: "Bạn nên tắt các thiết bị không sử dụng để tiết kiệm điện.",
+        explanation: { keyword: "turn off, electricity", knowledge: "Từ vựng", topic: "Tiết kiệm năng lượng", feature: "save electricity (tiết kiệm điện)" }
+    },
+    {
+        id: 3,
+        question: '"Carbon footprint" is the amount of <span class="key">carbon dioxide</span> that we ______ into the environment.',
+        options: ["A. stop", "B. plant", "C. recycle", "D. release"],
+        correctIndex: 3,
+        translation: " 'Dấu chân carbon' là lượng khí CO2 mà chúng ta thải ra môi trường.",
+        explanation: { keyword: "carbon dioxide, into", knowledge: "Từ vựng", topic: "Ô nhiễm không khí", feature: "release into (thải ra)" }
+    },
+    {
+        id: 4,
+        question: 'People <span class="key">shouldn\'t throw away</span> single-use products but ______ them.',
+        options: ["A. endanger", "B. recycle", "C. protect", "D. pollute"],
+        correctIndex: 1,
+        translation: "Mọi người không nên vứt bỏ các sản phẩm dùng một lần mà hãy tái chế chúng.",
+        explanation: { keyword: "shouldn't throw away", knowledge: "Từ vựng", topic: "Rác thải", feature: "recycle (tái chế)" }
+    },
+    {
+        id: 5,
+        question: 'They can ______ <span class="key">campfires</span> on the beach near the hotel.',
+        options: ["A. volunteer", "B. cut", "C. build", "D. litter"],
+        correctIndex: 2,
+        translation: "Họ có thể đốt lửa trại trên bãi biển gần khách sạn.",
+        explanation: { keyword: "campfires", knowledge: "Từ vựng", topic: "Hoạt động dã ngoại", feature: "build a campfire (đốt lửa trại)" }
+    },
+    {
+        id: 6,
+        question: 'The people in my village often ______ <span class="key">down trees</span> to build houses.',
+        options: ["A. cut", "B. pollute", "C. avoid", "D. release"],
+        correctIndex: 0,
+        translation: "Người dân trong làng tôi thường chặt cây để làm nhà.",
+        explanation: { keyword: "down trees", knowledge: "Cụm động từ", topic: "Môi trường", feature: "cut down (chặt hạ)" }
+    },
+    {
+        id: 7,
+        question: 'You shouldn\'t dump the rubbish into the <span class="key">river</span> to reduce ________ <span class="key">pollution</span>.',
+        options: ["A. air", "B. water", "C. carbon", "D. campfire"],
+        correctIndex: 1,
+        translation: "Bạn không nên đổ rác xuống sông để giảm thiểu ô nhiễm nước.",
+        explanation: { keyword: "river, rubbish", knowledge: "Từ vựng", topic: "Các loại ô nhiễm", feature: "river -> water pollution" }
+    },
+    {
+        id: 8,
+        question: 'Forests help release oxygen and <span class="key">absorb</span> __________________',
+        options: ["A. carbon dioxide", "B. global warming", "C. environmental protection", "D. water pollution"],
+        correctIndex: 0,
+        translation: "Rừng giúp thải ra oxy và hấp thụ khí carbon dioxide.",
+        explanation: { keyword: "absorb (hấp thụ)", knowledge: "Kiến thức chung", topic: "Sinh học/Môi trường", feature: "absorb CO2" }
+    },
+    {
+        id: 9,
+        question: 'We can take part in activities like <span class="key">picking</span> ______ and planting trees to protect nature.',
+        options: ["A. up", "B. about", "C. down", "D. to"],
+        correctIndex: 0,
+        translation: "Chúng ta có thể tham gia các hoạt động như nhặt rác và trồng cây để bảo vệ thiên nhiên.",
+        explanation: { keyword: "picking", knowledge: "Cụm động từ", topic: "Hoạt động tình nguyện", feature: "pick up litter (nhặt rác)" }
+    },
+    {
+        id: 10,
+        question: 'A number of cleaning products contain ______ <span class="key">chemicals</span>.',
+        options: ["A. safeful", "B. helpful", "C. harmful", "D. hopeful"],
+        correctIndex: 2,
+        translation: "Một số sản phẩm tẩy rửa có chứa các hóa chất độc hại.",
+        explanation: { keyword: "chemicals", knowledge: "Tính từ", topic: "Sức khỏe/Môi trường", feature: "harmful chemicals (hóa chất độc hại)" }
+    },
+    {
+        id: 11,
+        question: 'The gases from the <span class="key">exhausts of cars</span> have also increased ______ <span class="key">pollution</span> in most cities.',
+        options: ["A. land", "B. sand", "C. water", "D. air"],
+        correctIndex: 3,
+        translation: "Khí thải từ xe ô tô cũng làm gia tăng ô nhiễm không khí ở hầu hết các thành phố.",
+        explanation: { keyword: "exhausts of cars, gases", knowledge: "Từ vựng", topic: "Ô nhiễm", feature: "exhausts/gases -> air pollution" }
+    },
+    {
+        id: 12,
+        question: 'The <span class="key">death rate</span> would ______ if hygienic <span class="key">conditions were improved</span>.',
+        options: ["A. decrease", "B. increase", "C. be", "D. up"],
+        correctIndex: 0,
+        translation: "Tỷ lệ tử vong sẽ giảm nếu điều kiện vệ sinh được cải thiện.",
+        explanation: { keyword: "improved (tốt lên)", knowledge: "Logic/Từ vựng", topic: "Sức khỏe", feature: "improved hygiene -> death rate decreases" }
+    },
+    {
+        id: 13,
+        question: 'When <span class="key">radiation</span> goes into the land, air or water, it is called <span class="key">radioactive</span> ______.',
+        options: ["A. pollution", "B. polluted", "C. pollutants", "D. polluting"],
+        correctIndex: 0,
+        translation: "Khi phóng xạ đi vào đất, không khí hoặc nước, nó được gọi là ô nhiễm phóng xạ.",
+        explanation: { keyword: "called (được gọi là)", knowledge: "Cấu tạo từ", topic: "Danh từ ghép", feature: "radioactive pollution (Danh từ)" }
+    },
+    {
+        id: 14,
+        question: 'Too much use of <span class="key">electric lights</span> in cities may ______ <span class="key">light pollution</span>.',
+        options: ["A. go", "B. result", "C. cause", "D. lead"],
+        correctIndex: 2,
+        translation: "Sử dụng quá nhiều đèn điện ở các thành phố có thể gây ra ô nhiễm ánh sáng.",
+        explanation: { keyword: "light pollution", knowledge: "Ngữ pháp", topic: "Động từ nguyên nhân", feature: "cause + Noun (gây ra)" }
+    },
+    {
+        id: 15,
+        question: '______ pollution is the contamination of <span class="key">lakes, rivers, oceans, or groundwater</span>.',
+        options: ["A. Soil", "B. Air", "C. Noise", "D. Water"],
+        correctIndex: 3,
+        translation: "Ô nhiễm nước là sự nhiễm bẩn của hồ, sông, đại dương hoặc nước ngầm.",
+        explanation: { keyword: "lakes, rivers, oceans", knowledge: "Từ vựng", topic: "Định nghĩa", feature: "Water pollution" }
+    },
+    {
+        id: 16,
+        question: '<span class="key">Land pollution</span> happens when human activities ______ the <span class="key">Earth\'s surface</span>.',
+        options: ["A. cover", "B. destroy", "C. damages", "D. cause"],
+        correctIndex: 1,
+        translation: "Ô nhiễm đất xảy ra khi các hoạt động của con người phá hủy bề mặt Trái đất.",
+        explanation: { keyword: "Earth's surface", knowledge: "Từ vựng", topic: "Môi trường", feature: "destroy (phá huỷ)" }
+    },
+    {
+        id: 17,
+        question: 'The <span class="key">sight</span> of too many telephone poles, billboards... may cause ______ <span class="key">pollution</span>.',
+        options: ["A. visual", "B. vision", "C. visualize", "D. visible"],
+        correctIndex: 0,
+        translation: "Việc nhìn thấy quá nhiều cột điện thoại, biển quảng cáo... có thể gây ô nhiễm tầm nhìn (mỹ quan).",
+        explanation: { keyword: "sight, pollution", knowledge: "Cấu tạo từ", topic: "Tính từ", feature: "visual pollution (Adj + N)" }
+    },
+    {
+        id: 18,
+        question: 'People don\'t care much about the environment, so they <span class="key">keep</span> ______ it worse.',
+        options: ["A. made", "B. making", "C. to make", "D. make"],
+        correctIndex: 1,
+        translation: "Mọi người không quan tâm nhiều đến môi trường, vì vậy họ cứ làm cho nó tồi tệ hơn.",
+        explanation: { keyword: "keep", knowledge: "Ngữ pháp", topic: "Danh động từ", feature: "keep + V_ing (tiếp tục làm gì)" }
+    },
+    {
+        id: 19,
+        question: 'Land pollution is responsible for <span class="key">damage</span> done ______ natural habitat of animals.',
+        options: ["A. with", "B. for", "C. to", "D. of"],
+        correctIndex: 2,
+        translation: "Ô nhiễm đất chịu trách nhiệm cho những thiệt hại gây ra đối với môi trường sống tự nhiên của động vật.",
+        explanation: { keyword: "damage", knowledge: "Giới từ", topic: "Collocation", feature: "damage + TO + something" }
+    },
+    {
+        id: 20,
+        question: 'Americans <span class="key">throw</span> ______ 28.5 million tons of plastic in landfills every year.',
+        options: ["A. in", "B. at", "C. to", "D. away"],
+        correctIndex: 3,
+        translation: "Người Mỹ vứt bỏ 28,5 triệu tấn nhựa vào các bãi chôn lấp mỗi năm.",
+        explanation: { keyword: "throw", knowledge: "Cụm động từ", topic: "Rác thải", feature: "throw away (vứt đi)" }
+    },
+    {
+        id: 21,
+        question: 'Scientists have <span class="key">come up</span> ______ new ways of saving energy.',
+        options: ["A. with", "B. on", "C. to", "D. out"],
+        correctIndex: 0,
+        translation: "Các nhà khoa học đã nghĩ ra những cách mới để tiết kiệm năng lượng.",
+        explanation: { keyword: "come up", knowledge: "Cụm động từ", topic: "Sáng kiến", feature: "come up with (nảy ra ý tưởng)" }
+    },
+    {
+        id: 22,
+        question: 'Thousands of people were <span class="key">exposed</span> ______ radiation when the nuclear plant exploded.',
+        options: ["A. in", "B. at", "C. to", "D. away"],
+        correctIndex: 2,
+        translation: "Hàng ngàn người đã bị phơi nhiễm phóng xạ khi nhà máy hạt nhân phát nổ.",
+        explanation: { keyword: "exposed", knowledge: "Giới từ", topic: "Cấu trúc bị động", feature: "be exposed TO (tiếp xúc/phơi nhiễm với)" }
+    },
+    {
+        id: 23,
+        question: 'Waste water is <span class="key">dumped</span> ______ water bodies directly cause water pollution.',
+        options: ["A. on", "B. into", "C. out", "D. by"],
+        correctIndex: 1,
+        translation: "Nước thải được đổ trực tiếp vào các nguồn nước gây ô nhiễm nước.",
+        explanation: { keyword: "dumped (đổ)", knowledge: "Giới từ", topic: "Hành động", feature: "dump INTO (đổ vào trong)" }
+    },
+    {
+        id: 24,
+        question: '______ <span class="key">fumes</span> from these vehicles are serious air pollutants.',
+        options: ["A. Poisonously", "B. Poison", "C. Poisonous", "D. Poisons"],
+        correctIndex: 2,
+        translation: "Khí thải độc hại từ những chiếc xe này là chất gây ô nhiễm không khí nghiêm trọng.",
+        explanation: { keyword: "fumes (Noun)", knowledge: "Cấu tạo từ", topic: "Tính từ", feature: "Adj + Noun (Poisonous fumes)" }
+    },
+    {
+        id: 25,
+        question: 'Air pollution occurs when the atmosphere contains gases in ______ <span class="key">amounts</span>.',
+        options: ["A. unharmed", "B. harmless", "C. harm", "D. harmful"],
+        correctIndex: 3,
+        translation: "Ô nhiễm không khí xảy ra khi khí quyển chứa các loại khí với lượng có hại.",
+        explanation: { keyword: "amounts (Noun)", knowledge: "Ngữ cảnh/Từ loại", topic: "Tính từ", feature: "Harmful amounts (lượng có hại)" }
+    },
+    {
+        id: 26,
+        question: 'She <span class="key">suffered</span> ______ a serious disease because of drinking contaminated water.',
+        options: ["A. in", "B. at", "C. to", "D. from"],
+        correctIndex: 3,
+        translation: "Cô ấy mắc một căn bệnh nghiêm trọng do uống nước bị ô nhiễm.",
+        explanation: { keyword: "suffered", knowledge: "Giới từ", topic: "Sức khỏe", feature: "suffer FROM (chịu đựng/mắc phải)" }
+    },
+    {
+        id: 27,
+        question: 'We hope more people join our <span class="key">______ programme</span>.',
+        options: ["A. environment", "B. environmental", "C. environmentalist", "D. environmentally"],
+        correctIndex: 1,
+        translation: "Chúng tôi hy vọng sẽ có nhiều người tham gia chương trình môi trường của chúng tôi.",
+        explanation: { keyword: "programme (Noun)", knowledge: "Cấu tạo từ", topic: "Tính từ", feature: "Adj + Noun (Environmental programme)" }
+    },
+    {
+        id: 28,
+        question: 'Harmful gases are <span class="key">______</span> into the atmosphere during the burning of fossil fuels.',
+        options: ["A. releases", "B. released", "C. release", "D. releasing"],
+        correctIndex: 1,
+        translation: "Các khí độc hại được thải vào khí quyển trong quá trình đốt nhiên liệu hóa thạch.",
+        explanation: { keyword: "are (to be)", knowledge: "Ngữ pháp", topic: "Câu bị động", feature: "be + V(ed/bqt) (được thải ra)" }
+    },
+    {
+        id: 29,
+        question: 'The ______ <span class="key">of</span> air pollution are alarming.',
+        options: ["A. effective", "B. affect", "C. effect", "D. effects"],
+        correctIndex: 3,
+        translation: "Những ảnh hưởng của ô nhiễm không khí rất đáng báo động.",
+        explanation: { keyword: "The ... of, are (số nhiều)", knowledge: "Ngữ pháp", topic: "Danh từ", feature: "The effects (Danh từ số nhiều)" }
+    },
+    {
+        id: 30,
+        question: 'You should drive carefully <span class="key">______</span> the <span class="key">road is slippery</span>.',
+        options: ["A. because", "B. while", "C. although", "D. after"],
+        correctIndex: 0,
+        translation: "Bạn nên lái xe cẩn thận vì đường trơn.",
+        explanation: { keyword: "road is slippery", knowledge: "Liên từ", topic: "Mệnh đề nguyên nhân", feature: "Because + Clause (chỉ lý do)" }
+    },
+    {
+        id: 31,
+        question: 'I sleep with the window open <span class="key">______</span> it\'s really cold.',
+        options: ["A. if", "B. unless", "C. as", "D. before"],
+        correctIndex: 1,
+        translation: "Tôi ngủ mở cửa sổ trừ khi trời thực sự lạnh.",
+        explanation: { keyword: "sleep open, cold", knowledge: "Liên từ", topic: "Điều kiện", feature: "Unless = If not (Trừ khi)" }
+    },
+    {
+        id: 32,
+        question: 'We will clean up the beach <span class="key">______</span> it stops raining.',
+        options: ["A. while", "B. though", "C. since", "D. as soon as"],
+        correctIndex: 3,
+        translation: "Chúng tôi sẽ dọn dẹp bãi biển ngay khi trời tạnh mưa.",
+        explanation: { keyword: "will clean, stops", knowledge: "Liên từ", topic: "Mệnh đề thời gian", feature: "As soon as (Ngay khi)" }
+    },
+    {
+        id: 33,
+        question: 'Mary plays with the boy <span class="key">______</span> he is naughty.',
+        options: ["A. although", "B. until", "C. when", "D. because"],
+        correctIndex: 0,
+        translation: "Mary chơi với cậu bé mặc dù cậu ấy nghịch ngợm.",
+        explanation: { keyword: "plays, naughty", knowledge: "Liên từ", topic: "Mệnh đề nhượng bộ", feature: "Although (Mặc dù)" }
+    },
+    {
+        id: 34,
+        question: 'He won\'t get paid for time off <span class="key">______</span> he hasn\'t got a doctor\'s note.',
+        options: ["A. unless", "B. till", "C. because", "D. if"],
+        correctIndex: 2,
+        translation: "Anh ấy sẽ không được trả lương cho thời gian nghỉ vì anh ấy không có giấy của bác sĩ.",
+        explanation: { keyword: "won't get paid, hasn't got note", knowledge: "Liên từ", topic: "Nguyên nhân", feature: "Because (Bởi vì)" }
+    },
+    {
+        id: 35,
+        question: 'She went to the gym <span class="key">______</span> she had finished her work.',
+        options: ["A. after", "B. before", "C. unless", "D. while"],
+        correctIndex: 0,
+        translation: "Cô ấy đã đi đến phòng tập sau khi cô ấy hoàn thành công việc.",
+        explanation: { keyword: "had finished (QKHT)", knowledge: "Sự phối thì", topic: "Quá khứ hoàn thành", feature: "After + QKHT, QKĐ" }
+    },
+    {
+        id: 36,
+        question: 'Don\'t drink too much water <span class="key">______</span> you are having a meal.',
+        options: ["A. till", "B. until", "C. while", "D. even though"],
+        correctIndex: 2,
+        translation: "Đừng uống quá nhiều nước trong khi bạn đang ăn.",
+        explanation: { keyword: "having a meal", knowledge: "Liên từ", topic: "Thời gian", feature: "While + V_ing/Clause (Trong khi)" }
+    },
+    {
+        id: 37,
+        question: 'Don\'t forget to turn off the lights <span class="key">______</span> you go out.',
+        options: ["A. though", "B. because", "C. after", "D. before"],
+        correctIndex: 3,
+        translation: "Đừng quên tắt đèn trước khi bạn đi ra ngoài.",
+        explanation: { keyword: "turn off, go out", knowledge: "Liên từ", topic: "Trình tự thời gian", feature: "Before (Trước khi)" }
+    },
+    {
+        id: 38,
+        question: 'I don\'t know the <span class="key">reason</span> ______ you didn’t go to school.',
+        options: ["A. what", "B. whose", "C. why", "D. where"],
+        correctIndex: 2,
+        translation: "Tôi không biết lý do tại sao bạn không đi học.",
+        explanation: { keyword: "the reason", knowledge: "Ngữ pháp", topic: "Mệnh đề quan hệ", feature: "Reason + WHY" }
+    },
+    {
+        id: 39,
+        question: 'He was talking about the <span class="key">film</span> ______ he saw last night.',
+        options: ["A. that", "B. how", "C. who", "D. when"],
+        correctIndex: 0,
+        translation: "Anh ấy đang nói về bộ phim mà anh ấy đã xem tối qua.",
+        explanation: { keyword: "film (vật)", knowledge: "Ngữ pháp", topic: "Mệnh đề quan hệ", feature: "Vật + THAT/WHICH" }
+    },
+    {
+        id: 40,
+        question: '<span class="key">______</span> thermal pollution happens, the water temperature changes.',
+        options: ["A. Until", "B. When", "C. Before", "D. As soon as"],
+        correctIndex: 1,
+        translation: "Khi ô nhiễm nhiệt xảy ra, nhiệt độ nước thay đổi.",
+        explanation: { keyword: "happens, changes", knowledge: "Liên từ", topic: "Mệnh đề thời gian", feature: "When (Khi mà)" }
+    },
+    {
+        id: 41,
+        question: 'Noise pollution occurs <span class="key">______</span> there are too many loud sounds.',
+        options: ["A. while", "B. and", "C. because", "D. so"],
+        correctIndex: 2,
+        translation: "Ô nhiễm tiếng ồn xảy ra bởi vì có quá nhiều âm thanh lớn.",
+        explanation: { keyword: "occurs (xảy ra), loud sounds", knowledge: "Liên từ", topic: "Nguyên nhân", feature: "Because (Bởi vì)" }
+    },
+    {
+        id: 42,
+        question: 'The roads were slippery <span class="key">______</span> it started to rain.',
+        options: ["A. so", "B. as soon as", "C. when", "D. before"],
+        correctIndex: 2, // Or as soon as, but When is safer for generic context
+        translation: "Đường trơn khi trời bắt đầu mưa.",
+        explanation: { keyword: "slippery, rain", knowledge: "Liên từ", topic: "Thời gian", feature: "When (Khi)" }
+    },
+    {
+        id: 43,
+        question: 'Renewable <span class="key">______</span> of energy, such as solar and wind power, are crucial.',
+        options: ["A. sources", "B. pollutions", "C. consumption", "D. permission"],
+        correctIndex: 0,
+        translation: "Các nguồn năng lượng tái tạo, như điện mặt trời và gió, rất quan trọng.",
+        explanation: { keyword: "renewable", knowledge: "Collocation", topic: "Năng lượng", feature: "Renewable sources (Nguồn tái tạo)" }
+    },
+    {
+        id: 44,
+        question: 'We should be mindful of our <span class="key">carbon ______</span> and seek ways to reduce it.',
+        options: ["A. handprint", "B. printer", "C. fingerprint", "D. footprint"],
+        correctIndex: 3,
+        translation: "Chúng ta nên lưu ý về dấu chân carbon của mình và tìm cách giảm thiểu nó.",
+        explanation: { keyword: "carbon", knowledge: "Từ vựng", topic: "Môi trường", feature: "Carbon footprint (Dấu chân carbon)" }
+    },
+    {
+        id: 45,
+        question: 'The loss of habitat contributes to the <span class="key">______</span> of species.',
+        options: ["A. extinct", "B. exit", "C. extinction", "D. extincted"],
+        correctIndex: 2,
+        translation: "Việc mất môi trường sống góp phần vào sự tuyệt chủng của các loài.",
+        explanation: { keyword: "the ... of", knowledge: "Cấu tạo từ", topic: "Danh từ", feature: "The + Noun + of (Extinction)" }
+    }
+    ];
+
+    // State variables
+    let currentQIndex = 0;
+    let isAnswered = false;
+    let scoreCount = 0; 
+
+    // DOM Elements
+    const quizContentEl = document.getElementById('quiz-content');
+    const resultScreenEl = document.getElementById('result-screen');
+    const qNumberEl = document.getElementById('q-number');
+    const totalQEl = document.getElementById('total-q');
+    const questionTextEl = document.getElementById('question-text');
+    const optionsAreaEl = document.getElementById('options-area');
+    const actionAreaEl = document.getElementById('action-area');
+    const explainBoxEl = document.getElementById('explanation-box');
+    const transBoxEl = document.getElementById('translation-box');
+    const transContentEl = document.getElementById('trans-content');
+    const btnNextEl = document.getElementById('btn-next');
+    const btnHintEl = document.getElementById('btn-hint');
+
+    const finalScore10El = document.getElementById('final-score-10');
+    const finalCorrectCountEl = document.getElementById('final-correct-count');
+    const finalTotalCountEl = document.getElementById('final-total-count');
+
+    // Init
+    totalQEl.textContent = quizData.length;
+    loadQuestion();
+
+    function loadQuestion() {
+        isAnswered = false;
+        const data = quizData[currentQIndex];
+        
+        qNumberEl.textContent = currentQIndex + 1;
+        questionTextEl.innerHTML = data.question;
+        optionsAreaEl.innerHTML = '';
+        
+        actionAreaEl.style.display = 'none';
+        explainBoxEl.classList.remove('show');
+        transBoxEl.classList.remove('show');
+        btnNextEl.style.display = 'none';
+        btnHintEl.disabled = false;
+
+        data.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt;
+            btn.onclick = () => checkAnswer(index, btn);
+            optionsAreaEl.appendChild(btn);
+        });
+    }
+
+    function toggleHint() {
+        if(isAnswered) return;
+        const keys = document.querySelectorAll('.key');
+        keys.forEach(k => k.classList.add('active'));
+    }
+
+    function checkAnswer(selectedIndex, btnElement) {
+        if (isAnswered) return;
+        isAnswered = true;
+        btnHintEl.disabled = true;
+
+        const data = quizData[currentQIndex];
+        
+        const keys = document.querySelectorAll('.key');
+        keys.forEach(k => k.classList.add('active'));
+
+        const allBtns = document.querySelectorAll('.option-btn');
+        
+        if (selectedIndex === data.correctIndex) {
+            btnElement.classList.add('correct');
+            scoreCount++; 
+        } else {
+            btnElement.classList.add('wrong');
+            allBtns[data.correctIndex].classList.add('correct');
+        }
+
+        allBtns.forEach(b => b.disabled = true);
+
+        transContentEl.textContent = data.translation;
+        explainBoxEl.innerHTML = `
+            <div class="info-row"><span class="info-label">Keyword:</span> ${data.explanation.keyword}</div>
+            <div class="info-row"><span class="info-label">Kiến thức:</span> ${data.explanation.knowledge}</div>
+            <div class="info-row"><span class="info-label">Chủ đề:</span> ${data.explanation.topic}</div>
+            <div class="info-row"><span class="info-label">Đặc trưng:</span> <span style="color:#d63031; font-weight:bold;">${data.explanation.feature}</span></div>
+        `;
+
+        actionAreaEl.style.display = 'flex';
+        
+        btnNextEl.style.display = 'inline-block';
+        if (currentQIndex === quizData.length - 1) {
+            btnNextEl.textContent = "Xem kết quả ➜";
+            btnNextEl.onclick = showResult;
+        } else {
+            btnNextEl.textContent = "Câu tiếp theo ➜";
+            btnNextEl.onclick = nextQuestion;
+        }
+    }
+
+    function toggleExplanation() {
+        explainBoxEl.classList.toggle('show');
+        if(explainBoxEl.classList.contains('show')) transBoxEl.classList.remove('show');
+    }
+
+    function toggleTranslate() {
+        transBoxEl.classList.toggle('show');
+        if(transBoxEl.classList.contains('show')) explainBoxEl.classList.remove('show');
+    }
+
+    function nextQuestion() {
+        currentQIndex++;
+        loadQuestion();
+    }
+
+    function showResult() {
+        quizContentEl.style.display = 'none';
+        resultScreenEl.style.display = 'block';
+
+        const total = quizData.length;
+        const score10 = (scoreCount / total) * 10;
+        
+        finalCorrectCountEl.textContent = scoreCount;
+        finalTotalCountEl.textContent = total;
+        finalScore10El.textContent = score10 % 1 === 0 ? score10 : score10.toFixed(1);
+    }
+
+    function restartQuiz() {
+        currentQIndex = 0;
+        scoreCount = 0;
+        resultScreenEl.style.display = 'none';
+        quizContentEl.style.display = 'block';
+        loadQuestion();
+    }
+</script>
+
+</body>
+</html>
