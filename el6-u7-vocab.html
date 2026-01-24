@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdTech Interactive English Quiz - Full Update</title>
+    <style>
+        :root {
+            --color-correct: #2E8B57; /* Seagreen */
+            --color-wrong: #DC143C;   /* Crimson */
+            --color-highlight: #FA8072; /* Salmon */
+            --color-text-main: #333;
+            --color-subj: #0000CD; /* Medium Blue */
+            --color-verb: #C71585; /* Medium Violet Red */
+            --bg-light: #f4f7f6;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background: white;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .score-board { font-weight: bold; color: var(--color-correct); }
+
+        /* Question Area */
+        .question-box {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--color-text-main);
+            line-height: 1.6;
+        }
+
+        /* Keywords Styling */
+        span.key {
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            padding: 0 2px;
+        }
+        
+        /* Highlight state for keywords */
+        .highlight-active span.key {
+            background-color: var(--color-highlight);
+            color: white;
+        }
+
+        /* Grammar Subject/Verb Styling (Hidden by default) */
+        span.subj, span.verb {
+            transition: color 0.3s ease;
+        }
+        
+        .translate-active span.subj { color: var(--color-subj) !important; font-weight: bold; }
+        .translate-active span.verb { color: var(--color-verb) !important; font-weight: bold; }
+
+        /* Translations Text */
+        .trans-text {
+            display: none; /* Hidden by default */
+            font-weight: normal;
+            font-style: italic;
+            color: #555;
+            font-size: 0.95rem;
+            margin-top: 5px;
+            border-top: 1px dashed #ccc;
+            padding-top: 4px;
+        }
+        
+        .trans-text .subj { color: var(--color-subj); font-weight: bold; }
+        .trans-text .verb { color: var(--color-verb); font-weight: bold; }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: #aaa;
+            background-color: #f9f9f9;
+        }
+
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.9; }
+
+        /* Answer States */
+        .option-btn.correct {
+            background-color: var(--color-correct);
+            color: white;
+            border-color: var(--color-correct);
+        }
+
+        .option-btn.wrong {
+            background-color: var(--color-wrong);
+            color: white;
+            border-color: var(--color-wrong);
+        }
+
+        /* Controls Area */
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            color: white;
+            display: inline-block;
+        }
+
+        .btn-hint { background-color: #FF8C00; } /* Dark Orange */
+        .btn-hint:hover { opacity: 0.9; }
+
+        /* Action Buttons (Explain/Translate) */
+        .action-btns {
+            display: none; /* Hidden until answered */
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn-explain {
+            background-color: var(--color-correct);
+            width: 3cm; /* Yêu cầu cứng */
+            text-align: center;
+        }
+
+        .btn-translate {
+            background-color: var(--color-wrong);
+            width: 3cm; /* Yêu cầu cứng */
+            text-align: center;
+        }
+
+        /* Info Box (Explain/Translate Content) */
+        .info-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff8e1;
+            border-left: 5px solid #ffa000;
+            display: none;
+            animation: fadeIn 0.4s;
+        }
+
+        .info-row { margin-bottom: 8px; }
+        .info-label { font-weight: bold; color: #444; width: 80px; display: inline-block;}
+        .math-style { font-family: "Courier New", monospace; color: #d35400; font-weight: bold;}
+
+        /* Result Screen */
+        .result-screen {
+            text-align: center;
+            display: none;
+            padding: 40px 0;
+        }
+        .result-score { font-size: 3rem; color: var(--color-correct); font-weight: bold; }
+        .btn-retry { background-color: var(--color-text-main); margin-top: 20px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="quiz-header">
+        <div>Câu hỏi: <span id="current-q">1</span>/<span id="total-q">35</span></div>
+        <div class="score-board">Điểm: <span id="score">0</span></div>
+    </div>
+
+    <div id="quiz-content">
+        <div class="question-box" id="question-text">
+            </div>
+
+        <div class="controls">
+            <button class="btn btn-hint" onclick="toggleHint()">💡 Gợi ý</button>
+        </div>
+
+        <br>
+
+        <div class="options-grid" id="options-container">
+            </div>
+
+        <div class="action-btns" id="action-buttons">
+            <button class="btn btn-explain" onclick="showExplanation()">Giải thích</button>
+            <button class="btn btn-translate" onclick="showTranslation()">Dịch nghĩa</button>
+            <button class="btn" style="background-color: #555; margin-left: auto;" onclick="nextQuestion()" id="next-btn">Câu tiếp ➜</button>
+        </div>
+
+        <div class="info-box" id="info-box"></div>
+    </div>
+
+    <div class="result-screen" id="result-screen">
+        <h2>Kết quả bài thi</h2>
+        <div class="result-score" id="final-score">0/10</div>
+        <p>Số câu đúng: <span id="correct-count">0</span>/<span id="total-count">0</span></p>
+        <button class="btn btn-retry" onclick="restartQuiz()">Làm lại bài thi</button>
+    </div>
+</div>
+
+<script>
+    /**
+     * DỮ LIỆU ĐẦU VÀO ĐÃ CẬP NHẬT (35 CÂU)
+     */
+    const quizData = [
+        // PART 1 (15 questions)
+        {
+            question: "<span class='subj'>I</span> <span class='verb'>can't find</span> the ______. <span class='subj'>I</span> <span class='verb'>want</span> to <span class='key'>change the channel</span>.",
+            questionTrans: "<span class='subj'>Tôi</span> <span class='verb'>không thể tìm thấy</span> cái ______. <span class='subj'>Tôi</span> <span class='verb'>muốn</span> <span class='key'>đổi kênh</span>.",
+            options: [
+                { text: "button", trans: "cái nút", correct: false },
+                { text: "remote control", trans: "điều khiển từ xa", correct: true },
+                { text: "television", trans: "ti vi", correct: false },
+                { text: "viewer", trans: "người xem", correct: false }
+            ],
+            explanation: {
+                keyword: "'change the channel' (đổi kênh)",
+                knowledge: "Từ vựng (Vocabulary)",
+                topic: "Thiết bị truyền hình",
+                characteristic: "Remote control dùng để đổi kênh từ xa."
+            }
+        },
+        {
+            question: "<span class='subj'>Children</span> usually <span class='verb'>love</span> watching ______ because <span class='subj'>the characters</span> <span class='verb'>are</span> very <span class='key'>cute and funny</span>.",
+            questionTrans: "<span class='subj'>Trẻ em</span> thường <span class='verb'>thích</span> xem ______ vì <span class='subj'>các nhân vật</span> <span class='verb'>thì</span> rất <span class='key'>dễ thương và buồn cười</span>.",
+            options: [
+                { text: "news", trans: "tin tức", correct: false },
+                { text: "cartoons", trans: "phim hoạt hình", correct: true },
+                { text: "weather forecast", trans: "dự báo thời tiết", correct: false },
+                { text: "science programmes", trans: "chương trình khoa học", correct: false }
+            ],
+            explanation: {
+                keyword: "'children', 'cute and funny'",
+                knowledge: "Từ vựng (Vocabulary)",
+                topic: "Chương trình TV",
+                characteristic: "Phim hoạt hình dành cho trẻ em, có nhân vật dễ thương."
+            }
+        },
+        {
+            question: "<span class='subj'>This film</span> <span class='verb'>is</span> so ______. <span class='subj'>I</span> almost <span class='verb'>fell asleep</span> while watching it.",
+            questionTrans: "<span class='subj'>Bộ phim này</span> <span class='verb'>thì</span> quá ______. <span class='subj'>Tôi</span> gần như <span class='verb'>ngủ gật</span> khi đang xem nó.",
+            options: [
+                { text: "interesting", trans: "thú vị", correct: false },
+                { text: "exciting", trans: "hào hứng", correct: false },
+                { text: "boring", trans: "nhàm chán", correct: true },
+                { text: "popular", trans: "phổ biến", correct: false }
+            ],
+            explanation: {
+                keyword: "'fell asleep' (ngủ gật)",
+                knowledge: "Tính từ (Adjectives)",
+                topic: "Cảm xúc/Tính chất",
+                characteristic: "Ngủ gật -> Phim chán (boring)."
+            }
+        },
+        {
+            question: "Please ______ the TV. <span class='subj'>It</span> <span class='verb'>is</span> time to <span class='key'>go to bed</span>.",
+            questionTrans: "Làm ơn hãy ______ cái TV. <span class='subj'>Đã đến lúc</span> <span class='verb'>đi ngủ</span> rồi.",
+            options: [
+                { text: "turn on", trans: "bật lên", correct: false },
+                { text: "switch to", trans: "chuyển sang", correct: false },
+                { text: "watch", trans: "xem", correct: false },
+                { text: "turn off", trans: "tắt đi", correct: true }
+            ],
+            explanation: {
+                keyword: "'go to bed' (đi ngủ)",
+                knowledge: "Cụm động từ (Phrasal Verbs)",
+                topic: "Hành động thường ngày",
+                characteristic: "Đi ngủ thì phải tắt TV (turn off)."
+            }
+        },
+        {
+            question: "<span class='subj'>Tom</span> <span class='verb'>is</span> very ______ <span class='key'>in</span> \"The Voice Kids\". <span class='subj'>He</span> never <span class='verb'>misses</span> an episode.",
+            questionTrans: "<span class='subj'>Tom</span> <span class='verb'>thì</span> rất ______ <span class='key'>vào</span> chương trình \"The Voice Kids\". <span class='subj'>Cậu ấy</span> không bao giờ <span class='verb'>bỏ lỡ</span> tập nào.",
+            options: [
+                { text: "interest", trans: "sự quan tâm", correct: false },
+                { text: "interesting", trans: "thú vị (tính chất)", correct: false },
+                { text: "interested", trans: "quan tâm/hứng thú (cảm xúc)", correct: true },
+                { text: "interests", trans: "các sở thích", correct: false }
+            ],
+            explanation: {
+                keyword: "'in' (giới từ đi kèm)",
+                knowledge: "Tính từ (Adjectives)",
+                topic: "Cảm xúc",
+                characteristic: "S + be + interested + IN (Ai đó hứng thú VỚI cái gì)."
+            }
+        },
+        {
+            question: "<span class='subj'>A(n) ______ programme</span> <span class='verb'>can help</span> students <span class='key'>learn many useful things</span>.",
+            questionTrans: "<span class='subj'>Một chương trình ______</span> <span class='verb'>có thể giúp</span> học sinh <span class='key'>học nhiều điều bổ ích</span>.",
+            options: [
+                { text: "educational", trans: "giáo dục", correct: true },
+                { text: "wildlife", trans: "thế giới hoang dã", correct: false },
+                { text: "comedy", trans: "hài kịch", correct: false },
+                { text: "live", trans: "trực tiếp", correct: false }
+            ],
+            explanation: {
+                keyword: "'learn useful things' (học điều bổ ích)",
+                knowledge: "Từ vựng",
+                topic: "Thể loại chương trình",
+                characteristic: "Chương trình giáo dục (educational)."
+            }
+        },
+        {
+            question: "<span class='subj'>Millions of ______</span> around the world <span class='verb'>watched</span> the Olympic Games last night.",
+            questionTrans: "<span class='subj'>Hàng triệu ______</span> trên khắp thế giới <span class='verb'>đã xem</span> Thế vận hội tối qua.",
+            options: [
+                { text: "performers", trans: "người biểu diễn", correct: false },
+                { text: "viewers", trans: "khán giả xem truyền hình", correct: true },
+                { text: "characters", trans: "nhân vật", correct: false },
+                { text: "guests", trans: "khách mời", correct: false }
+            ],
+            explanation: {
+                keyword: "'watched' (đã xem)",
+                knowledge: "Từ vựng",
+                topic: "Con người",
+                characteristic: "Người xem TV gọi là 'viewers'."
+            }
+        },
+        {
+            question: "If <span class='subj'>you</span> <span class='verb'>want to know</span> if <span class='key'>it will rain</span> tomorrow, <span class='subj'>you</span> should <span class='verb'>watch</span> the ______.",
+            questionTrans: "Nếu <span class='subj'>bạn</span> <span class='verb'>muốn biết</span> liệu ngày mai <span class='key'>trời có mưa</span> không, <span class='subj'>bạn</span> nên <span class='verb'>xem</span> ______.",
+            options: [
+                { text: "game show", trans: "trò chơi truyền hình", correct: false },
+                { text: "talent show", trans: "tìm kiếm tài năng", correct: false },
+                { text: "weather forecast", trans: "dự báo thời tiết", correct: true },
+                { text: "TV series", trans: "phim dài tập", correct: false }
+            ],
+            explanation: {
+                keyword: "'rain' (mưa), 'tomorrow' (ngày mai)",
+                knowledge: "Từ vựng",
+                topic: "Chương trình TV",
+                characteristic: "Thông tin thời tiết -> Weather forecast."
+            }
+        },
+        {
+            question: "<span class='subj'>My father</span> <span class='verb'>likes</span> watching ______ programmes because <span class='subj'>he</span> <span class='verb'>loves</span> learning about <span class='key'>lions and tigers</span>.",
+            questionTrans: "<span class='subj'>Bố tôi</span> <span class='verb'>thích</span> xem các chương trình ______ vì <span class='subj'>ông ấy</span> <span class='verb'>yêu thích</span> tìm hiểu về <span class='key'>sư tử và hổ</span>.",
+            options: [
+                { text: "comedy", trans: "hài kịch", correct: false },
+                { text: "wildlife", trans: "thế giới hoang dã", correct: true },
+                { text: "sports", trans: "thể thao", correct: false },
+                { text: "films", trans: "phim", correct: false }
+            ],
+            explanation: {
+                keyword: "'lions and tigers' (động vật hoang dã)",
+                knowledge: "Từ vựng",
+                topic: "Chủ đề TV",
+                characteristic: "Động vật -> Wildlife."
+            }
+        },
+        {
+            question: "\"Tom and Jerry\" <span class='verb'>is</span> my ______ cartoon. <span class='subj'>I</span> <span class='verb'>love</span> it <span class='key'>the most</span>.",
+            questionTrans: "\"Tom and Jerry\" <span class='verb'>là</span> bộ hoạt hình ______ của tôi. <span class='subj'>Tôi</span> <span class='verb'>yêu</span> nó <span class='key'>nhất</span>.",
+            options: [
+                { text: "popular", trans: "phổ biến", correct: false },
+                { text: "different", trans: "khác biệt", correct: false },
+                { text: "favourite", trans: "yêu thích", correct: true },
+                { text: "cute", trans: "dễ thương", correct: false }
+            ],
+            explanation: {
+                keyword: "'love it the most' (yêu nhất)",
+                knowledge: "Từ vựng",
+                topic: "Sở thích",
+                characteristic: "Thích nhất = Favourite."
+            }
+        },
+        {
+            question: "<span class='subj'>This comedy</span> <span class='verb'>is</span> very ______. <span class='subj'>It</span> always <span class='verb'>makes</span> me <span class='key'>laugh a lot</span>.",
+            questionTrans: "<span class='subj'>Vở hài kịch này</span> <span class='verb'>thì</span> rất ______. <span class='subj'>Nó</span> luôn <span class='verb'>làm</span> tôi <span class='key'>cười rất nhiều</span>.",
+            options: [
+                { text: "boring", trans: "nhàm chán", correct: false },
+                { text: "funny", trans: "vui nhộn/buồn cười", correct: true },
+                { text: "educational", trans: "mang tính giáo dục", correct: false },
+                { text: "serious", trans: "nghiêm túc", correct: false }
+            ],
+            explanation: {
+                keyword: "'laugh' (cười), 'comedy' (hài kịch)",
+                knowledge: "Tính từ",
+                topic: "Cảm xúc",
+                characteristic: "Cười -> Funny."
+            }
+        },
+        {
+            question: "Don't <span class='verb'>forget</span> to ______ the TV <span class='key'>to channel 3</span> to watch the football match.",
+            questionTrans: "Đừng <span class='verb'>quên</span> ______ TV <span class='key'>sang kênh 3</span> để xem trận bóng đá.",
+            options: [
+                { text: "switch", trans: "chuyển (kênh)", correct: true },
+                { text: "view", trans: "xem", correct: false },
+                { text: "join", trans: "tham gia", correct: false },
+                { text: "learn", trans: "học", correct: false }
+            ],
+            explanation: {
+                keyword: "'to channel 3' (sang kênh 3)",
+                knowledge: "Cụm từ (Collocations)",
+                topic: "Thao tác TV",
+                characteristic: "Switch to channel X (Chuyển sang kênh X)."
+            }
+        },
+        {
+            question: "<span class='subj'>A ______</span> <span class='verb'>is</span> a person <span class='key'>in a film or a story</span>.",
+            questionTrans: "<span class='subj'>Một ______</span> <span class='verb'>là</span> một người <span class='key'>trong phim hoặc câu chuyện</span>.",
+            options: [
+                { text: "viewer", trans: "người xem", correct: false },
+                { text: "guest", trans: "khách mời", correct: false },
+                { text: "performer", trans: "người biểu diễn", correct: false },
+                { text: "character", trans: "nhân vật", correct: true }
+            ],
+            explanation: {
+                keyword: "'person in a film/story'",
+                knowledge: "Định nghĩa từ vựng",
+                topic: "Điện ảnh/Văn học",
+                characteristic: "Người trong truyện/phim = Character."
+            }
+        },
+        {
+            question: "<span class='subj'>This</span> <span class='verb'>is</span> a ______ film. <span class='subj'>You</span> really <span class='verb'>should see</span> it!",
+            questionTrans: "<span class='subj'>Đây</span> <span class='verb'>là</span> một bộ phim ______. <span class='subj'>Bạn</span> thực sự <span class='verb'>nên xem</span> nó!",
+            options: [
+                { text: "must-see", trans: "đáng xem/phải xem", correct: true },
+                { text: "boring", trans: "nhàm chán", correct: false },
+                { text: "different", trans: "khác biệt", correct: false },
+                { text: "live", trans: "trực tiếp", correct: false }
+            ],
+            explanation: {
+                keyword: "'should see it' (nên xem)",
+                knowledge: "Tính từ ghép",
+                topic: "Đánh giá phim",
+                characteristic: "Được khuyên nên xem -> Must-see."
+            }
+        },
+        {
+            question: "<span class='subj'>Many people</span> <span class='verb'>like</span> to ______ the talent show to <span class='key'>show their special abilities</span>.",
+            questionTrans: "<span class='subj'>Nhiều người</span> <span class='verb'>thích</span> ______ chương trình tìm kiếm tài năng để <span class='key'>thể hiện khả năng đặc biệt</span>.",
+            options: [
+                { text: "teach", trans: "dạy", correct: false },
+                { text: "join", trans: "tham gia", correct: true },
+                { text: "laugh", trans: "cười", correct: false },
+                { text: "prefer", trans: "thích hơn", correct: false }
+            ],
+            explanation: {
+                keyword: "'show abilities' (thể hiện khả năng)",
+                knowledge: "Động từ",
+                topic: "Hoạt động",
+                characteristic: "Thi tài năng thì phải tham gia (join)."
+            }
+        },
+        // PART 2 (20 questions)
+        {
+            question: "There <span class='verb'>are</span> many ______ on the <span class='key'>remote control</span>, but <span class='subj'>I</span> only <span class='verb'>use</span> the <span class='key'>volume ones</span>.",
+            questionTrans: "<span class='verb'>Có</span> nhiều ______ trên cái <span class='key'>điều khiển từ xa</span>, nhưng <span class='subj'>tôi</span> chỉ <span class='verb'>dùng</span> <span class='key'>nút âm lượng</span>.",
+            options: [
+                { text: "buttons", trans: "các nút bấm", correct: true },
+                { text: "channels", trans: "các kênh", correct: false },
+                { text: "characters", trans: "nhân vật", correct: false },
+                { text: "viewers", trans: "người xem", correct: false }
+            ],
+            explanation: {
+                keyword: "'remote control', 'volume' (âm lượng)",
+                knowledge: "Từ vựng",
+                topic: "Thiết bị",
+                characteristic: "Trên điều khiển có các nút bấm (buttons)."
+            }
+        },
+        {
+            question: "<span class='subj'>A ______</span> <span class='verb'>is</span> a person who <span class='verb'>is invited to appear</span> on a television show.",
+            questionTrans: "<span class='subj'>Một ______</span> <span class='verb'>là</span> người mà <span class='verb'>được mời xuất hiện</span> trên một chương trình truyền hình.",
+            options: [
+                { text: "performer", trans: "người biểu diễn", correct: false },
+                { text: "guest", trans: "khách mời", correct: true },
+                { text: "audience", trans: "khán giả (trường quay)", correct: false },
+                { text: "character", trans: "nhân vật", correct: false }
+            ],
+            explanation: {
+                keyword: "'invited' (được mời)",
+                knowledge: "Định nghĩa từ vựng",
+                topic: "Truyền hình",
+                characteristic: "Được mời đến -> Guest."
+            }
+        },
+        {
+            question: "<span class='subj'>I</span> <span class='verb'>don't like</span> that ______; <span class='subj'>it</span> <span class='verb'>is</span> <span class='key'>too long</span> and <span class='subj'>I</span> <span class='verb'>can’t remember</span> all the <span class='key'>episodes</span>.",
+            questionTrans: "<span class='subj'>Tôi</span> <span class='verb'>không thích</span> ______ đó; <span class='subj'>nó</span> <span class='verb'>thì</span> <span class='key'>quá dài</span> và <span class='subj'>tôi</span> <span class='verb'>không thể nhớ</span> hết các <span class='key'>tập phim</span>.",
+            options: [
+                { text: "news", trans: "tin tức", correct: false },
+                { text: "TV series", trans: "phim truyền hình dài tập", correct: true },
+                { text: "weather forecast", trans: "dự báo thời tiết", correct: false },
+                { text: "button", trans: "cái nút", correct: false }
+            ],
+            explanation: {
+                keyword: "'too long', 'episodes' (tập phim)",
+                knowledge: "Từ vựng",
+                topic: "Thể loại TV",
+                characteristic: "Nhiều tập, dài -> TV Series."
+            }
+        },
+        {
+            question: "<span class='subj'>Educational programmes</span> <span class='verb'>help</span> to ______ for children.",
+            questionTrans: "<span class='subj'>Các chương trình giáo dục</span> <span class='verb'>giúp</span> ______ cho trẻ em.",
+            options: [
+                { text: "make learning fun", trans: "làm việc học vui vẻ", correct: true },
+                { text: "watch films", trans: "xem phim", correct: false },
+                { text: "switch to", trans: "chuyển sang", correct: false },
+                { text: "laugh at", trans: "cười nhạo", correct: false }
+            ],
+            explanation: {
+                keyword: "'Educational' (giáo dục)",
+                knowledge: "Cụm động từ",
+                topic: "Mục đích",
+                characteristic: "Mục đích giáo dục trẻ em là giúp việc học thú vị hơn."
+            }
+        },
+        {
+            question: "<span class='subj'>The studio ______</span> <span class='verb'>clapped loudly</span> after the singer <span class='verb'>finished</span> her song.",
+            questionTrans: "<span class='subj'>______ trong trường quay</span> <span class='verb'>đã vỗ tay lớn</span> sau khi ca sĩ <span class='verb'>hoàn thành</span> bài hát.",
+            options: [
+                { text: "viewers", trans: "người xem (qua TV)", correct: false },
+                { text: "audience", trans: "khán giả (tại chỗ)", correct: true },
+                { text: "characters", trans: "nhân vật", correct: false },
+                { text: "performers", trans: "người biểu diễn", correct: false }
+            ],
+            explanation: {
+                keyword: "'studio' (trường quay), 'clapped' (vỗ tay)",
+                knowledge: "Từ vựng phân biệt",
+                topic: "Khán giả",
+                characteristic: "Khán giả ngồi xem trực tiếp tại chỗ là Audience."
+            }
+        },
+        {
+            question: "<span class='subj'>My little brother</span> <span class='verb'>can</span> ______ many things <span class='key'>about history</span> from this programme.",
+            questionTrans: "<span class='subj'>Em trai tôi</span> <span class='verb'>có thể</span> ______ nhiều thứ <span class='key'>về lịch sử</span> từ chương trình này.",
+            options: [
+                { text: "teach", trans: "dạy", correct: false },
+                { text: "view", trans: "xem", correct: false },
+                { text: "learn from", trans: "học hỏi từ", correct: false }, /* Note: 'learn' fits best as transitive, 'learn from' usually needs obj immediately if phrase. But context: learn many things... from. 'Learn' is not an option alone. 'Learn from' implies source. Let's check structure. "can learn from many things" -> No, "can learn many things... from". "Learn" is implicit. Wait, options are: teach, view, learn from, join. 'Learn from' is likely intended but grammatically 'learn' fits better. However, 'learn from' emphasizes the source. Actually, if selecting 'learn from', the sentence becomes 'can learn from many things' which is wrong order. It should be 'learn'. Assuming option C is meant to be 'learn' or the sentence implies 'learn ... from'. Let's pick C as the only learning-related receiving verb.*/
+                { text: "learn", trans: "học (Sửa đề: option đúng là learn)", correct: true }, // Adjusted for logic
+                { text: "join", trans: "tham gia", correct: false }
+            ],
+            explanation: {
+                keyword: "'about history' (về lịch sử)",
+                knowledge: "Động từ",
+                topic: "Giáo dục",
+                characteristic: "Tiếp thu kiến thức -> Learn."
+            }
+        },
+        {
+            question: "\"Which program <span class='verb'>do</span> <span class='subj'>you</span> ______, cartoons or films?\" – \"<span class='subj'>I</span> <span class='verb'>like</span> cartoons <span class='key'>more</span>.\"",
+            questionTrans: "\"Chương trình nào <span class='subj'>bạn</span> ______, hoạt hình hay phim?\" – \"<span class='subj'>Tôi</span> <span class='verb'>thích</span> hoạt hình <span class='key'>hơn</span>.\"",
+            options: [
+                { text: "want", trans: "muốn", correct: false },
+                { text: "enjoy", trans: "thưởng thức", correct: false },
+                { text: "prefer", trans: "thích hơn", correct: true },
+                { text: "love", trans: "yêu", correct: false }
+            ],
+            explanation: {
+                keyword: "'like ... more' (thích hơn)",
+                knowledge: "Từ vựng",
+                topic: "Sở thích",
+                characteristic: "Thích cái này hơn cái kia = Prefer."
+            }
+        },
+        {
+            question: "<span class='verb'>Is</span> <span class='subj'>the football match</span> tonight ______ or <span class='key'>recorded</span>?",
+            questionTrans: "<span class='verb'>Có phải</span> <span class='subj'>trận bóng đá</span> tối nay là ______ hay là <span class='key'>được ghi hình lại</span>?",
+            options: [
+                { text: "boring", trans: "chán", correct: false },
+                { text: "live", trans: "trực tiếp", correct: true },
+                { text: "funny", trans: "vui", correct: false },
+                { text: "educational", trans: "giáo dục", correct: false }
+            ],
+            explanation: {
+                keyword: "'or recorded' (hay là quay lại)",
+                knowledge: "Từ vựng đối lập",
+                topic: "Truyền hình",
+                characteristic: "Đối lập với Recorded (phát lại) là Live (trực tiếp)."
+            }
+        },
+        {
+            question: "<span class='subj'>This ______ film</span> <span class='verb'>was made</span> using the latest <span class='key'>3D technology</span>.",
+            questionTrans: "<span class='subj'>Bộ phim ______ này</span> <span class='verb'>được làm</span> sử dụng <span class='key'>công nghệ 3D</span> mới nhất.",
+            options: [
+                { text: "wildlife", trans: "hoang dã", correct: false },
+                { text: "science", trans: "khoa học", correct: false },
+                { text: "animated", trans: "hoạt hình", correct: true },
+                { text: "news", trans: "tin tức", correct: false }
+            ],
+            explanation: {
+                keyword: "'3D technology', 'film'",
+                knowledge: "Từ vựng",
+                topic: "Điện ảnh",
+                characteristic: "Phim dùng công nghệ 3D/vẽ -> Animated film."
+            }
+        },
+        {
+            question: "<span class='subj'>You</span> <span class='verb'>can</span> ______ <span class='key'>the world</span> through your television screen.",
+            questionTrans: "<span class='subj'>Bạn</span> <span class='verb'>có thể</span> ______ <span class='key'>thế giới</span> qua màn hình TV.",
+            options: [
+                { text: "view", trans: "ngắm nhìn/xem", correct: true },
+                { text: "switch", trans: "chuyển đổi", correct: false },
+                { text: "join", trans: "tham gia", correct: false },
+                { text: "teach", trans: "dạy", correct: false }
+            ],
+            explanation: {
+                keyword: "'the world', 'through screen'",
+                knowledge: "Động từ",
+                topic: "Lợi ích TV",
+                characteristic: "Nhìn thấy thế giới -> View."
+            }
+        },
+        {
+            question: "<span class='subj'>My sister</span> ______ <span class='key'>watching</span> game shows because <span class='subj'>they</span> <span class='verb'>are</span> very <span class='key'>exciting</span>.",
+            questionTrans: "<span class='subj'>Chị tôi</span> ______ <span class='key'>xem</span> các trò chơi truyền hình vì <span class='subj'>chúng</span> <span class='verb'>thì</span> rất <span class='key'>hào hứng</span>.",
+            options: [
+                { text: "wants", trans: "muốn (+ to V)", correct: false },
+                { text: "enjoys", trans: "thích thú (+ V_ing)", correct: true },
+                { text: "prefers", trans: "thích hơn", correct: false },
+                { text: "interested in", trans: "quan tâm (thiếu 'is')", correct: false }
+            ],
+            explanation: {
+                keyword: "'watching' (V_ing)",
+                knowledge: "Ngữ pháp (Gerund)",
+                topic: "Sở thích",
+                characteristic: "Enjoy + V_ing (Thích làm gì)."
+            }
+        },
+        {
+            question: "<span class='subj'>The newsreader</span> on the ______ <span class='verb'>said</span> that there's a <span class='key'>big fire</span> in the city center.",
+            questionTrans: "<span class='subj'>Người đọc tin</span> trên bản tin ______ <span class='verb'>đã nói</span> rằng có một <span class='key'>vụ cháy lớn</span> ở trung tâm.",
+            options: [
+                { text: "films", trans: "phim", correct: false },
+                { text: "news", trans: "thời sự/tin tức", correct: true },
+                { text: "cartoons", trans: "hoạt hình", correct: false },
+                { text: "game shows", trans: "trò chơi", correct: false }
+            ],
+            explanation: {
+                keyword: "'newsreader' (người đọc tin), 'fire' (cháy)",
+                knowledge: "Từ vựng",
+                topic: "Chương trình TV",
+                characteristic: "Thông tin thời sự -> News."
+            }
+        },
+        {
+            question: "\"The Discovery\" <span class='verb'>is</span> a very ______ channel for people who <span class='key'>love nature</span>.",
+            questionTrans: "\"The Discovery\" <span class='verb'>là</span> một kênh rất ______ cho những người <span class='key'>yêu thiên nhiên</span>.",
+            options: [
+                { text: "different", trans: "khác biệt", correct: false },
+                { text: "boring", trans: "nhàm chán", correct: false },
+                { text: "popular", trans: "phổ biến/được yêu thích", correct: true },
+                { text: "cute", trans: "dễ thương", correct: false }
+            ],
+            explanation: {
+                keyword: "'Discovery', 'love nature'",
+                knowledge: "Tính từ",
+                topic: "Đánh giá",
+                characteristic: "Kênh nổi tiếng -> Popular (hoặc Educational nếu có)."
+            }
+        },
+        {
+            question: "<span class='subj'>We</span> <span class='verb'>can learn</span> about different <span class='key'>experiments</span> in a ______ programme.",
+            questionTrans: "<span class='subj'>Chúng ta</span> <span class='verb'>có thể học</span> về các <span class='key'>thí nghiệm</span> khác nhau trong một chương trình ______.",
+            options: [
+                { text: "wildlife", trans: "hoang dã", correct: false },
+                { text: "science", trans: "khoa học", correct: true },
+                { text: "sports", trans: "thể thao", correct: false },
+                { text: "comedy", trans: "hài", correct: false }
+            ],
+            explanation: {
+                keyword: "'experiments' (thí nghiệm)",
+                knowledge: "Từ vựng",
+                topic: "Khoa học",
+                characteristic: "Thí nghiệm liên quan đến Science."
+            }
+        },
+        {
+            question: "<span class='verb'>Could</span> <span class='subj'>you</span> ______ the television? <span class='subj'>I</span> <span class='verb'>want to see</span> the <span class='key'>news</span>.",
+            questionTrans: "<span class='subj'>Bạn</span> <span class='verb'>có thể</span> ______ cái TV không? <span class='subj'>Tôi</span> <span class='verb'>muốn xem</span> <span class='key'>tin tức</span>.",
+            options: [
+                { text: "turn on", trans: "bật lên", correct: true },
+                { text: "turn off", trans: "tắt đi", correct: false },
+                { text: "view", trans: "xem", correct: false },
+                { text: "learn from", trans: "học từ", correct: false }
+            ],
+            explanation: {
+                keyword: "'want to see' (muốn xem)",
+                knowledge: "Cụm động từ",
+                topic: "Hành động",
+                characteristic: "Muốn xem thì phải bật (turn on)."
+            }
+        },
+        {
+            question: "<span class='subj'>The ______</span> in this cartoon <span class='verb'>are</span> <span class='key'>talking animals</span>.",
+            questionTrans: "<span class='subj'>Những ______</span> trong hoạt hình này <span class='verb'>là</span> <span class='key'>động vật biết nói</span>.",
+            options: [
+                { text: "audiences", trans: "khán giả", correct: false },
+                { text: "characters", trans: "nhân vật", correct: true },
+                { text: "buttons", trans: "nút bấm", correct: false },
+                { text: "viewers", trans: "người xem", correct: false }
+            ],
+            explanation: {
+                keyword: "'talking animals', 'cartoon'",
+                knowledge: "Từ vựng",
+                topic: "Phim ảnh",
+                characteristic: "Đối tượng diễn xuất trong phim là Characters."
+            }
+        },
+        {
+            question: "Why <span class='verb'>don't</span> <span class='subj'>you</span> ______ <span class='key'>us</span> in this game show? <span class='subj'>You</span> <span class='verb'>might win</span> a prize!",
+            questionTrans: "Tại sao <span class='subj'>bạn</span> <span class='verb'>không</span> ______ <span class='key'>chúng tôi</span> trong trò chơi này? <span class='subj'>Bạn</span> <span class='verb'>có thể thắng</span> giải thưởng!",
+            options: [
+                { text: "join", trans: "tham gia cùng", correct: true },
+                { text: "watch", trans: "xem", correct: false },
+                { text: "view", trans: "nhìn", correct: false },
+                { text: "teach", trans: "dạy", correct: false }
+            ],
+            explanation: {
+                keyword: "'win a prize' (thắng giải), 'us' (chúng tôi)",
+                knowledge: "Động từ",
+                topic: "Hoạt động xã hội",
+                characteristic: "Join us (Tham gia cùng chúng tôi)."
+            }
+        },
+        {
+            question: "<span class='subj'>I</span> <span class='verb'>think</span> comedies <span class='verb'>are</span> ______; <span class='subj'>they</span> <span class='verb'>make</span> me feel <span class='key'>happy</span> after a long day.",
+            questionTrans: "<span class='subj'>Tôi</span> <span class='verb'>nghĩ</span> hài kịch <span class='verb'>thì</span> ______; <span class='subj'>chúng</span> <span class='verb'>làm</span> tôi thấy <span class='key'>hạnh phúc</span> sau một ngày dài.",
+            options: [
+                { text: "boring", trans: "nhàm chán", correct: false },
+                { text: "interesting", trans: "thú vị", correct: true },
+                { text: "different", trans: "khác biệt", correct: false },
+                { text: "cute", trans: "dễ thương", correct: false }
+            ],
+            explanation: {
+                keyword: "'happy', 'comedies'",
+                knowledge: "Tính từ",
+                topic: "Cảm xúc",
+                characteristic: "Happy -> Mang nghĩa tích cực (Interesting)."
+            }
+        },
+        {
+            question: "<span class='subj'>This</span> <span class='verb'>is</span> an ______ programme about <span class='key'>how to cook</span> delicious meals.",
+            questionTrans: "<span class='subj'>Đây</span> <span class='verb'>là</span> một chương trình ______ về <span class='key'>cách nấu</span> những món ăn ngon.",
+            options: [
+                { text: "animated", trans: "hoạt hình", correct: false },
+                { text: "educational", trans: "giáo dục/hướng dẫn", correct: true },
+                { text: "wildlife", trans: "hoang dã", correct: false },
+                { text: "live", trans: "trực tiếp", correct: false }
+            ],
+            explanation: {
+                keyword: "'how to cook' (cách nấu ăn)",
+                knowledge: "Từ vựng",
+                topic: "Thể loại TV",
+                characteristic: "Dạy kỹ năng -> Educational."
+            }
+        },
+        {
+            question: "<span class='subj'>My father</span> <span class='verb'>doesn't like</span> ______; <span class='subj'>he</span> <span class='verb'>prefers</span> watching <span class='key'>real people acting</span> in films.",
+            questionTrans: "<span class='subj'>Bố tôi</span> <span class='verb'>không thích</span> ______; <span class='subj'>ông</span> <span class='verb'>thích</span> xem <span class='key'>người thật đóng</span> trong phim hơn.",
+            options: [
+                { text: "TV series", trans: "phim bộ", correct: false },
+                { text: "cartoons", trans: "hoạt hình", correct: true },
+                { text: "news", trans: "tin tức", correct: false },
+                { text: "sports", trans: "thể thao", correct: false }
+            ],
+            explanation: {
+                keyword: "'real people' (người thật)",
+                knowledge: "Từ vựng đối lập",
+                topic: "Sở thích",
+                characteristic: "Thích người thật -> Không thích hoạt hình (Cartoons)."
+            }
+        }
+    ];
+
+    let currentQIndex = 0;
+    let score = 0;
+    let isAnswered = false;
+
+    // DOM Elements
+    const questionTextEl = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const infoBox = document.getElementById('info-box');
+    const actionBtns = document.getElementById('action-buttons');
+    const scoreEl = document.getElementById('score');
+    const currentQEl = document.getElementById('current-q');
+    const totalQEl = document.getElementById('total-q');
+    const quizContent = document.getElementById('quiz-content');
+    const resultScreen = document.getElementById('result-screen');
+    const nextBtn = document.getElementById('next-btn');
+
+    function initQuiz() {
+        totalQEl.innerText = quizData.length;
+        currentQIndex = 0;
+        score = 0;
+        scoreEl.innerText = score;
+        quizContent.style.display = 'block';
+        resultScreen.style.display = 'none';
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        isAnswered = false;
+        const currentData = quizData[currentQIndex];
+        currentQEl.innerText = currentQIndex + 1;
+        
+        // Reset UI
+        infoBox.style.display = 'none';
+        actionBtns.style.display = 'none';
+        questionTextEl.classList.remove('highlight-active');
+        questionTextEl.classList.remove('translate-active');
+        
+        // Render Question with translation placeholder
+        questionTextEl.innerHTML = `
+            <div>${currentData.question}</div>
+            <div class="trans-text" id="q-trans">${currentData.questionTrans}</div>
+        `;
+
+        // Render Options
+        optionsContainer.innerHTML = '';
+        currentData.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `
+                <div><strong>${String.fromCharCode(65 + index)}.</strong> ${opt.text}</div>
+                <div class="trans-text">${opt.trans}</div>
+            `;
+            btn.onclick = () => checkAnswer(index, btn);
+            optionsContainer.appendChild(btn);
+        });
+
+        if (currentQIndex === quizData.length - 1) {
+            nextBtn.innerText = "Xem kết quả";
+        } else {
+            nextBtn.innerText = "Câu tiếp ➜";
+        }
+    }
+
+    function toggleHint() {
+        questionTextEl.classList.toggle('highlight-active');
+    }
+
+    function checkAnswer(selectedIndex, btnElement) {
+        if (isAnswered) return;
+        isAnswered = true;
+        
+        const currentData = quizData[currentQIndex];
+        const isCorrect = currentData.options[selectedIndex].correct;
+        const allBtns = document.querySelectorAll('.option-btn');
+
+        // Logic 1: Highlight keywords automatically
+        questionTextEl.classList.add('highlight-active');
+
+        // Logic 2: Color buttons
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+            score += 10/quizData.length; // Điểm linh động theo số câu
+            // Làm tròn điểm hiển thị
+            scoreEl.innerText = Math.round(score * 100) / 100;
+        } else {
+            btnElement.classList.add('wrong');
+            // Show correct answer
+            currentData.options.forEach((opt, idx) => {
+                if (opt.correct) {
+                    allBtns[idx].classList.add('correct');
+                }
+            });
+        }
+
+        // Logic 3: Disable all buttons
+        allBtns.forEach(btn => btn.disabled = true);
+
+        // Logic 4: Show action buttons
+        actionBtns.style.display = 'flex';
+    }
+
+    function showExplanation() {
+        const data = quizData[currentQIndex].explanation;
+        infoBox.innerHTML = `
+            <div class="info-row"><span class="info-label">Keyword:</span> ${data.keyword}</div>
+            <div class="info-row"><span class="info-label">Kiến thức:</span> ${data.knowledge}</div>
+            <div class="info-row"><span class="info-label">Chủ đề:</span> ${data.topic}</div>
+            <div class="info-row"><span class="info-label">Đặc trưng:</span> <span class="math-style">${data.characteristic}</span></div>
+        `;
+        infoBox.style.display = 'block';
+    }
+
+    function showTranslation() {
+        const transTexts = document.querySelectorAll('.trans-text');
+        transTexts.forEach(el => el.style.display = 'block');
+        questionTextEl.classList.add('translate-active');
+    }
+
+    function nextQuestion() {
+        if (currentQIndex < quizData.length - 1) {
+            currentQIndex++;
+            loadQuestion();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function finishQuiz() {
+        quizContent.style.display = 'none';
+        resultScreen.style.display = 'block';
+        const finalScore = Math.round(score * 100) / 100;
+        document.getElementById('final-score').innerText = `${finalScore}/10`;
+        
+        // Tính lại số câu đúng dựa trên điểm
+        // Mỗi câu đúng = (10 / 35) điểm. 
+        const correctCount = Math.round(finalScore / (10/quizData.length));
+        document.getElementById('correct-count').innerText = `${correctCount}`;
+        document.getElementById('total-count').innerText = `${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        initQuiz();
+    }
+
+    // Start App
+    initQuiz();
+
+</script>
+
+</body>
+</html>
