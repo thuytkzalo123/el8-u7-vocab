@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Tập Trắc Nghiệm: Online Shopping (Bản mẫu)</title>
+    <style>
+        :root {
+            --c-correct: #2E8B57; /* Seagreen */
+            --c-wrong: #DC143C;   /* Crimson */
+            /* --- THAY ĐỔI MÀU Ở ĐÂY --- */
+            --c-highlight: #FFD700; /* Gold (Đã đổi từ Salmon) */
+            /* ------------------------- */
+            --c-subject: #0000CD; /* MediumBlue */
+            --c-verb: #C71585;    /* MediumVioletRed */
+            --c-text: #333;
+            --c-bg: #f4f7f6;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            background-color: var(--c-bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            color: var(--c-text);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #555;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        /* Question Area */
+        .question-box {
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: bold;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .question-trans {
+            font-size: 1.05rem;
+            color: #444;
+            margin-bottom: 15px;
+            display: none; /* Hidden by default */
+            border-left: 4px solid var(--c-wrong);
+            padding: 8px 12px;
+            background: #fff5f5;
+            border-radius: 0 4px 4px 0;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Keywords Styling */
+        .key {
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            padding: 0 2px;
+        }
+        
+        /* Highlight state logic for Keyword */
+        .question-box.show-hint .key,
+        .question-box.answered .key {
+            background-color: var(--c-highlight);
+            /* Đổi màu chữ thành đen khi nền vàng để dễ đọc hơn */
+            color: #000; 
+        }
+
+        /* Grammar Analysis Styling (S/V) - Default is HIDDEN (black) */
+        .subj, .verb { 
+            color: inherit; 
+            transition: color 0.3s ease;
+        }
+
+        /* Grammar Analysis Styling (S/V) - ACTIVE (Only when translation is ON) */
+        .question-box.show-grammar .subj { color: var(--c-subject); }
+        .question-box.show-grammar .verb { color: var(--c-verb); }
+
+        /* Hint Button */
+        .hint-btn {
+            background: #ffaa00;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .hint-btn:hover { background: #e69900; }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .option-btn:not(:disabled):hover {
+            border-color: #bbb;
+            background: #fafafa;
+            transform: translateY(-1px);
+        }
+
+        .option-content {
+            display: block;
+            font-weight: 500;
+        }
+
+        .option-trans {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 6px;
+            display: none; /* Hidden by default */
+            font-style: italic;
+            border-top: 1px dashed #ccc;
+            padding-top: 4px;
+        }
+
+        /* States */
+        .option-btn.correct {
+            background-color: var(--c-correct);
+            border-color: var(--c-correct);
+            color: white;
+        }
+        .option-btn.correct .option-trans { color: #eee; border-top-color: rgba(255,255,255,0.3); }
+        
+        .option-btn.wrong {
+            background-color: var(--c-wrong);
+            border-color: var(--c-wrong);
+            color: white;
+        }
+        .option-btn.wrong .option-trans { color: #eee; border-top-color: rgba(255,255,255,0.3); }
+
+        .option-btn:disabled {
+            cursor: default;
+            opacity: 1;
+        }
+        
+        .option-btn:disabled:not(.correct):not(.wrong) {
+            opacity: 0.6;
+            background: #f0f0f0;
+        }
+
+        /* Action Buttons Area */
+        .action-area {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .action-area.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .action-btn {
+            width: 120px;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn-explain { background-color: var(--c-correct); }
+        .btn-explain:hover { background-color: #247046; }
+
+        .btn-translate { background-color: var(--c-wrong); }
+        .btn-translate:hover { background-color: #b01030; }
+
+        /* Explanation Box */
+        .explanation-box {
+            margin-top: 20px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 15px;
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explain-row {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .explain-label {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-right: 5px;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            text-align: center;
+            display: none;
+            padding: 40px 0;
+        }
+        .score-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--c-correct);
+            margin: 20px 0;
+        }
+        .retry-btn {
+            background: var(--c-subject);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .retry-btn:hover { background-color: #0000a0; }
+
+        /* Navigation Button */
+        .nav-btn-container {
+            text-align: center;
+            margin-top: 20px;
+            height: 40px; 
+        }
+        #next-btn {
+            padding: 10px 30px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none;
+        }
+        #next-btn:hover { background: #000; }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .action-area { flex-direction: row; }
+            .container { padding: 15px; }
+            .question-text { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-ui">
+        <div class="header">
+            <span id="progress-text">Câu 1/1</span>
+            <span id="score-text">Điểm: 0</span>
+        </div>
+
+        <div class="question-box" id="question-box">
+            <div class="question-text" id="q-text"></div>
+            <div class="question-trans" id="q-trans"></div>
+        </div>
+
+        <button class="hint-btn" onclick="toggleHint()">💡 Gợi ý</button>
+
+        <div class="options-grid" id="options-container"></div>
+
+        <div class="action-area" id="action-area">
+            <button class="action-btn btn-explain" onclick="showExplanation()">Giải thích</button>
+            <button class="action-btn btn-translate" onclick="toggleTranslation()">Dịch nghĩa</button>
+        </div>
+
+        <div class="explanation-box" id="explanation-box"></div>
+
+        <div class="nav-btn-container">
+             <button id="next-btn" onclick="nextQuestion()">Câu tiếp theo ➜</button>
+        </div>
+    </div>
+
+    <div class="result-screen" id="result-screen">
+        <h2>Kết quả bài thi</h2>
+        <div class="score-display" id="final-score">0/10</div>
+        <p id="final-stats">Bạn đã trả lời đúng 0/1 câu</p>
+        <button class="retry-btn" onclick="restartQuiz()">Làm lại bài thi</button>
+    </div>
+</div>
+
+<script>
+    /**
+     * DỮ LIỆU CÂU HỎI (ĐÃ RÚT GỌN CÒN 1 CÂU)
+     */
+    const quizData = [
+    // --- PHẦN 1: Online Shopping (15 câu) ---
+    {
+        question: `<span class="subj key">Online shopping</span> <span class="verb">is buying</span> a product or service over the __________.`,
+        translation: `<span class="subj key">Mua sắm trực tuyến</span> <span class="verb">là việc mua</span> một sản phẩm hoặc dịch vụ qua <span class="key">internet</span>.`,
+        options: [
+            { text: "supermarket", trans: "siêu thị", isCorrect: false },
+            { text: "internet", trans: "mạng internet", isCorrect: true },
+            { text: "shopping centre", trans: "trung tâm mua sắm", isCorrect: false },
+            { text: "open-air market", trans: "chợ trời", isCorrect: false }
+        ],
+        explanation: { keyword: "'Online shopping'", knowledge: "Từ vựng", topic: "Định nghĩa", features: "Online (trực tuyến) đồng nghĩa với việc sử dụng Internet." }
+    },
+    {
+        question: `To shop online, <span class="subj">you</span> <span class="verb key">visit</span> a seller’s website and __________ the product you want.`,
+        translation: `Để mua sắm trực tuyến, <span class="subj">bạn</span> <span class="verb key">truy cập</span> trang web của người bán và <span class="verb">chọn</span> sản phẩm bạn muốn.`,
+        options: [
+            { text: "bargain", trans: "mặc cả", isCorrect: false },
+            { text: "select", trans: "lựa chọn", isCorrect: true },
+            { text: "display", trans: "trưng bày", isCorrect: false },
+            { text: "spend", trans: "tiêu xài", isCorrect: false }
+        ],
+        explanation: { keyword: "'visit a seller’s website'", knowledge: "Từ vựng", topic: "Quy trình mua hàng", features: "Trên website, hành động tìm và lấy sản phẩm gọi là 'select' (chọn)." }
+    },
+    {
+        question: `<span class="subj">Online shopping</span> <span class="verb">is</span> very __________ because <span class="subj">you</span> <span class="verb">can buy</span> things <span class="key">anytime and anywhere</span>.`,
+        translation: `<span class="subj">Mua sắm trực tuyến</span> <span class="verb">thì</span> rất <span class="key">tiện lợi</span> vì <span class="subj">bạn</span> <span class="verb">có thể mua</span> đồ mọi lúc mọi nơi.`,
+        options: [
+            { text: "offline", trans: "trực tiếp (ngoại tuyến)", isCorrect: false },
+            { text: "rare", trans: "hiếm", isCorrect: false },
+            { text: "convenient", trans: "tiện lợi", isCorrect: true },
+            { text: "home-grown", trans: "cây nhà lá vườn", isCorrect: false }
+        ],
+        explanation: { keyword: "'anytime and anywhere'", knowledge: "Từ vựng", topic: "Lợi ích mua sắm", features: "Khả năng mua mọi lúc mọi nơi là định nghĩa của sự tiện lợi (convenient)." }
+    },
+    {
+        question: `With __________, <span class="subj">people</span> <span class="verb">can shop</span> <span class="key">from home</span> without travelling.`,
+        translation: `Với <span class="key">kết nối internet</span>, <span class="subj">mọi người</span> <span class="verb">có thể mua sắm</span> từ nhà mà không cần đi lại.`,
+        options: [
+            { text: "browsing", trans: "lướt xem", isCorrect: false },
+            { text: "internet access", trans: "kết nối internet", isCorrect: true },
+            { text: "fixed price", trans: "giá cố định", isCorrect: false },
+            { text: "price tag", trans: "mác giá", isCorrect: false }
+        ],
+        explanation: { keyword: "'from home'", knowledge: "Từ vựng", topic: "Điều kiện mua sắm", features: "Để shop from home (mua tại nhà), điều kiện tiên quyết là phải có internet access." }
+    },
+    {
+        question: `One disadvantage of online shopping <span class="verb">is</span> that <span class="subj">products</span> <span class="verb">are</span> __________ what you <span class="key">expect</span>.`,
+        translation: `Một bất lợi của mua sắm trực tuyến <span class="verb">là</span> <span class="subj">sản phẩm</span> <span class="verb">thì</span> <span class="key">đôi khi [khác]</span> những gì bạn mong đợi.`,
+        options: [
+            { text: "always", trans: "luôn luôn", isCorrect: false },
+            { text: "usually", trans: "thường xuyên", isCorrect: false },
+            { text: "sometimes", trans: "thỉnh thoảng/đôi khi", isCorrect: true },
+            { text: "never", trans: "không bao giờ", isCorrect: false }
+        ],
+        explanation: { keyword: "'disadvantage', 'expect'", knowledge: "Trạng từ tần suất", topic: "Rủi ro mua sắm", features: "Việc hàng không giống ảnh là rủi ro xảy ra 'thỉnh thoảng' (sometimes)." }
+    },
+    {
+        question: `If <span class="subj">you</span> <span class="verb">are not</span> happy with a product, <span class="subj">you</span> <span class="verb key">can return</span> it, but <span class="subj">you</span> <span class="verb">may have to</span> __________.`,
+        translation: `Nếu <span class="subj">bạn</span> <span class="verb">không</span> hài lòng với sản phẩm, <span class="subj">bạn</span> <span class="verb key">có thể trả</span> nó, nhưng <span class="subj">bạn</span> <span class="verb">có thể phải</span> <span class="key">trả phí vận chuyển</span>.`,
+        options: [
+            { text: "bargain", trans: "mặc cả", isCorrect: false },
+            { text: "pay for shipping", trans: "trả phí vận chuyển", isCorrect: true },
+            { text: "browse more", trans: "xem thêm", isCorrect: false },
+            { text: "lower the price", trans: "hạ giá", isCorrect: false }
+        ],
+        explanation: { keyword: "'return'", knowledge: "Kiến thức thực tế", topic: "Chính sách đổi trả", features: "Khi trả hàng (return), người mua thường chịu phí ship (pay for shipping)." }
+    },
+    {
+        question: `<span class="subj">Online shopping</span> <span class="verb key">saves</span> time and money because <span class="subj">people</span> <span class="verb">don’t need</span> to __________.`,
+        translation: `<span class="subj">Mua sắm trực tuyến</span> <span class="verb key">tiết kiệm</span> thời gian và tiền bạc vì <span class="subj">mọi người</span> <span class="verb">không cần</span> phải <span class="key">tốn thời gian đi lại</span>.`,
+        options: [
+            { text: "shop online", trans: "mua sắm trực tuyến", isCorrect: false },
+            { text: "spend time travelling", trans: "tốn thời gian đi lại", isCorrect: true },
+            { text: "browse products", trans: "xem sản phẩm", isCorrect: false },
+            { text: "pay online", trans: "thanh toán trực tuyến", isCorrect: false }
+        ],
+        explanation: { keyword: "'saves time'", knowledge: "Cụm từ (Collocation)", topic: "Lợi ích", features: "Tiết kiệm thời gian đối lập với việc phải di chuyển (spend time travelling)." }
+    },
+    {
+        question: `Because there <span class="verb">are</span> <span class="key">many products</span> to choose from, some <span class="subj">people</span> <span class="verb">become</span> a __________.`,
+        translation: `Bởi vì <span class="verb">có</span> quá nhiều sản phẩm để chọn, một số <span class="subj">người</span> <span class="verb">trở thành</span> <span class="key">người nghiện mua sắm</span>.`,
+        options: [
+            { text: "customer", trans: "khách hàng", isCorrect: false },
+            { text: "shopaholic", trans: "người nghiện mua sắm", isCorrect: true },
+            { text: "seller", trans: "người bán", isCorrect: false },
+            { text: "manager", trans: "quản lý", isCorrect: false }
+        ],
+        explanation: { keyword: "'many products', 'choose from'", knowledge: "Từ vựng", topic: "Thói quen mua sắm", features: "Việc không kiềm chế trước nhiều sản phẩm dẫn đến nghiện mua sắm (shopaholic)." }
+    },
+    {
+        question: `A <span class="subj key">shopaholic</span> <span class="verb">may buy</span> things <span class="subj">they</span> <span class="verb">don’t</span> really __________.`,
+        translation: `Một <span class="subj key">người nghiện mua sắm</span> <span class="verb">có thể mua</span> những thứ <span class="subj">họ</span> <span class="verb">không</span> thực sự <span class="key">cần</span>.`,
+        options: [
+            { text: "need", trans: "cần", isCorrect: true },
+            { text: "display", trans: "trưng bày", isCorrect: false },
+            { text: "offer", trans: "cung cấp", isCorrect: false },
+            { text: "fix", trans: "sửa chữa", isCorrect: false }
+        ],
+        explanation: { keyword: "'shopaholic'", knowledge: "Định nghĩa", topic: "Shopaholic", features: "Đặc điểm của nghiện mua sắm là mua những thứ không cần thiết (don't need)." }
+    },
+    {
+        question: `When shopping online, <span class="subj">customers</span> often __________ <span class="key">many products</span> before deciding to buy.`,
+        translation: `Khi mua sắm trực tuyến, <span class="subj">khách hàng</span> thường <span class="verb">lướt xem</span> nhiều sản phẩm trước khi quyết định mua.`,
+        options: [
+            { text: "display", trans: "trưng bày", isCorrect: false },
+            { text: "browse", trans: "lướt xem/duyệt", isCorrect: true },
+            { text: "avoid", trans: "tránh", isCorrect: false },
+            { text: "return", trans: "trả lại", isCorrect: false }
+        ],
+        explanation: { keyword: "'many products', 'before deciding'", knowledge: "Từ vựng", topic: "Hành vi mua sắm", features: "Hành động xem qua nhiều hàng hóa trên mạng gọi là 'browse'." }
+    },
+    {
+        question: `<span class="subj">Products</span> in online shops <span class="verb">are usually shown</span> with a __________.`,
+        translation: `<span class="subj">Sản phẩm</span> trong các shop online <span class="verb">thường được hiển thị</span> cùng với một <span class="key">mác giá</span>.`,
+        options: [
+            { text: "costume", trans: "trang phục", isCorrect: false },
+            { text: "price tag", trans: "mác giá/giá tiền", isCorrect: true },
+            { text: "fixed place", trans: "địa điểm cố định", isCorrect: false },
+            { text: "shelf", trans: "cái kệ", isCorrect: false }
+        ],
+        explanation: { keyword: "'shown with'", knowledge: "Từ vựng", topic: "Hiển thị sản phẩm", features: "Sản phẩm luôn đi kèm giá tiền (price tag)." }
+    },
+    {
+        question: `Unlike offline shopping, <span class="subj">online shopping</span> <span class="verb">does not allow</span> customers to __________ products.`,
+        translation: `Khác với mua sắm trực tiếp, <span class="subj">mua sắm trực tuyến</span> <span class="verb">không cho phép</span> khách hàng <span class="verb">chạm vào</span> sản phẩm.`,
+        options: [
+            { text: "order", trans: "đặt hàng", isCorrect: false },
+            { text: "touch", trans: "chạm vào", isCorrect: true },
+            { text: "pay for", trans: "trả tiền", isCorrect: false },
+            { text: "return", trans: "trả lại", isCorrect: false }
+        ],
+        explanation: { keyword: "'online shopping', 'does not allow'", knowledge: "So sánh", topic: "Hạn chế online", features: "Hạn chế lớn nhất của online là không được sờ/thử (touch) sản phẩm." }
+    },
+    {
+        question: `<span class="subj">People</span> __________ <span class="verb">shop</span> online because it <span class="verb">is</span> <span class="key">easy and fast</span>.`,
+        translation: `<span class="subj">Mọi người</span> <span class="key">thường</span> <span class="verb">mua sắm</span> trực tuyến vì nó <span class="verb">thì</span> dễ và nhanh.`,
+        options: [
+            { text: "rarely", trans: "hiếm khi", isCorrect: false },
+            { text: "never", trans: "không bao giờ", isCorrect: false },
+            { text: "often", trans: "thường", isCorrect: true },
+            { text: "hardly", trans: "hầu như không", isCorrect: false }
+        ],
+        explanation: { keyword: "'easy and fast'", knowledge: "Trạng từ tần suất", topic: "Xu hướng", features: "Vì dễ và nhanh nên hành động này xảy ra thường xuyên (often)." }
+    },
+    {
+        question: `When <span class="subj">items</span> <span class="verb">are</span> __________, <span class="subj">customers</span> <span class="verb">can buy</span> them at a <span class="key">lower price</span>.`,
+        translation: `Khi <span class="subj">các món hàng</span> <span class="key">đang giảm giá</span>, <span class="subj">khách hàng</span> <span class="verb">có thể mua</span> chúng với giá thấp hơn.`,
+        options: [
+            { text: "home-made", trans: "làm tại nhà", isCorrect: false },
+            { text: "on sale", trans: "đang giảm giá", isCorrect: true },
+            { text: "offline", trans: "ngoại tuyến", isCorrect: false },
+            { text: "fixed", trans: "cố định", isCorrect: false }
+        ],
+        explanation: { keyword: "'lower price'", knowledge: "Cụm từ (Idiom)", topic: "Khuyến mãi", features: "Trạng thái bán giá thấp hơn bình thường gọi là 'on sale'." }
+    },
+    {
+        question: `<span class="subj">Online shops</span> usually <span class="verb">offer</span> a __________ of products for customers to <span class="key">choose from</span>.`,
+        translation: `<span class="subj">Các cửa hàng trực tuyến</span> thường <span class="verb">cung cấp</span> một <span class="key">phạm vi rộng/đa dạng</span> các sản phẩm cho khách chọn.`,
+        options: [
+            { text: "lower price", trans: "giá thấp hơn", isCorrect: false },
+            { text: "wide range", trans: "phạm vi rộng/đa dạng", isCorrect: true },
+            { text: "minority group", trans: "nhóm thiểu số", isCorrect: false },
+            { text: "farmers’ market", trans: "chợ nông sản", isCorrect: false }
+        ],
+        explanation: { keyword: "'choose from'", knowledge: "Cụm danh từ", topic: "Sự đa dạng", features: "Cụm từ 'a wide range of' nghĩa là rất nhiều loại/đa dạng để lựa chọn." }
+    },
+
+    // --- PHẦN 2: Shopping Centres (12 câu) ---
+    {
+        question: `<span class="subj">Shopping centres</span> usually __________ a lot of <span class="key">customers</span> at weekends.`,
+        translation: `<span class="subj">Các trung tâm mua sắm</span> thường <span class="verb">thu hút</span> rất nhiều khách hàng vào cuối tuần.`,
+        options: [
+            { text: "buy", trans: "mua", isCorrect: false },
+            { text: "attract", trans: "thu hút", isCorrect: true },
+            { text: "display", trans: "trưng bày", isCorrect: false },
+            { text: "spend", trans: "tiêu xài", isCorrect: false }
+        ],
+        explanation: { keyword: "'customers', 'shopping centres'", knowledge: "Từ vựng", topic: "Hoạt động kinh doanh", features: "Trung tâm mua sắm 'thu hút' (attract) người đến." }
+    },
+    {
+        question: `<span class="subj">Customers</span> <span class="verb">like</span> shopping centres because <span class="subj">they</span> <span class="verb">offer</span> a __________ of products.`,
+        translation: `<span class="subj">Khách hàng</span> <span class="verb">thích</span> trung tâm mua sắm vì <span class="subj">chúng</span> <span class="verb">cung cấp</span> sự <span class="key">đa dạng</span> sản phẩm.`,
+        options: [
+            { text: "fixed price", trans: "giá cố định", isCorrect: false },
+            { text: "lower price", trans: "giá thấp hơn", isCorrect: false },
+            { text: "wide range", trans: "phạm vi rộng/đa dạng", isCorrect: true },
+            { text: "price tag", trans: "mác giá", isCorrect: false }
+        ],
+        explanation: { keyword: "'offer', 'products'", knowledge: "Cụm từ", topic: "Lợi ích", features: "'A wide range of' là cụm từ cố định chỉ sự đa dạng." }
+    },
+    {
+        question: `<span class="subj">People</span> often <span class="verb">feel</span> more __________ when <span class="subj">they</span> <span class="verb">can</span> <span class="key">touch products</span> before buying.`,
+        translation: `<span class="subj">Mọi người</span> thường <span class="verb">cảm thấy</span> <span class="key">thoải mái/an tâm</span> hơn khi <span class="subj">họ</span> <span class="verb">có thể chạm vào</span> sản phẩm trước khi mua.`,
+        options: [
+            { text: "convenient", trans: "tiện lợi", isCorrect: false },
+            { text: "comfortable", trans: "thoải mái/an tâm", isCorrect: true },
+            { text: "special", trans: "đặc biệt", isCorrect: false },
+            { text: "excited", trans: "hào hứng", isCorrect: false }
+        ],
+        explanation: { keyword: "'touch products'", knowledge: "Tính từ chỉ cảm xúc", topic: "Tâm lý khách hàng", features: "Được sờ tận tay tạo cảm giác an tâm/thoải mái (comfortable)." }
+    },
+    {
+        question: `Many <span class="subj">shopping centres</span> <span class="verb">offer</span> free __________ such as <span class="key">live music and performances</span>.`,
+        translation: `Nhiều <span class="subj">trung tâm mua sắm</span> <span class="verb">cung cấp</span> <span class="key">sự giải trí</span> miễn phí như nhạc sống và biểu diễn.`,
+        options: [
+            { text: "exercise", trans: "tập thể dục", isCorrect: false },
+            { text: "decorations", trans: "trang trí", isCorrect: false },
+            { text: "entertainment", trans: "giải trí", isCorrect: true },
+            { text: "internet access", trans: "kết nối internet", isCorrect: false }
+        ],
+        explanation: { keyword: "'live music', 'performances'", knowledge: "Từ vựng", topic: "Dịch vụ đi kèm", features: "Nhạc và biểu diễn thuộc nhóm giải trí (entertainment)." }
+    },
+    {
+        question: `Some <span class="subj">people</span> <span class="verb">go</span> to shopping centres just to __________ <span class="key">with friends</span>.`,
+        translation: `Một số <span class="subj">người</span> <span class="verb">đến</span> trung tâm mua sắm chỉ để <span class="verb">đi chơi/tụ tập</span> với bạn bè.`,
+        options: [
+            { text: "bargain", trans: "mặc cả", isCorrect: false },
+            { text: "hang out", trans: "đi chơi/tụ tập", isCorrect: true },
+            { text: "spend money", trans: "tiêu tiền", isCorrect: false },
+            { text: "shop online", trans: "mua sắm online", isCorrect: false }
+        ],
+        explanation: { keyword: "'with friends'", knowledge: "Cụm động từ (Phrasal Verb)", topic: "Hoạt động xã hội", features: "'Hang out' là cụm từ thông dụng nghĩa là đi chơi, tụ tập bạn bè." }
+    },
+    {
+        question: `During <span class="key">holidays</span>, <span class="subj">shopping centres</span> <span class="verb">are</span> full of __________ and excitement.`,
+        translation: `Vào các dịp lễ, <span class="subj">trung tâm mua sắm</span> <span class="verb">tràn ngập</span> <span class="key">đồ trang trí</span> và sự náo nhiệt.`,
+        options: [
+            { text: "costumes", trans: "trang phục", isCorrect: false },
+            { text: "decorations", trans: "đồ trang trí", isCorrect: true },
+            { text: "shelves", trans: "kệ hàng", isCorrect: false },
+            { text: "products", trans: "sản phẩm", isCorrect: false }
+        ],
+        explanation: { keyword: "'holidays'", knowledge: "Từ vựng", topic: "Không khí lễ hội", features: "Dịp lễ thường có trang trí (decorations)." }
+    },
+    {
+        question: `<span class="subj">People</span> <span class="verb">can</span> <span class="key">walk</span> in clean and well-lit areas to get some __________.`,
+        translation: `<span class="subj">Mọi người</span> <span class="verb">có thể đi bộ</span> trong những khu vực sạch sẽ và đủ ánh sáng để <span class="key">tập thể dục/vận động</span>.`,
+        options: [
+            { text: "exercise", trans: "bài tập/vận động", isCorrect: true },
+            { text: "sale", trans: "giảm giá", isCorrect: false },
+            { text: "browsing", trans: "xem hàng", isCorrect: false },
+            { text: "shopping", trans: "mua sắm", isCorrect: false }
+        ],
+        explanation: { keyword: "'walk'", knowledge: "Collocation", topic: "Lợi ích sức khỏe", features: "'Get some exercise' là cụm từ chỉ việc vận động thân thể." }
+    },
+    {
+        question: `<span class="subj">Shopping centres</span> <span class="verb">are</span> very __________ because <span class="subj">they</span> <span class="verb">have</span> <span class="key">air conditioning and heating</span>.`,
+        translation: `<span class="subj">Trung tâm mua sắm</span> <span class="verb">thì</span> rất <span class="key">tiện nghi/thoải mái</span> vì <span class="subj">chúng</span> <span class="verb">có</span> điều hòa và sưởi.`,
+        options: [
+            { text: "rare", trans: "hiếm", isCorrect: false },
+            { text: "offline", trans: "ngoại tuyến", isCorrect: false },
+            { text: "convenient", trans: "tiện lợi/tiện nghi", isCorrect: true },
+            { text: "home-grown", trans: "nhà trồng", isCorrect: false }
+        ],
+        explanation: { keyword: "'air conditioning', 'heating'", knowledge: "Tính từ", topic: "Cơ sở vật chất", features: "Có điều hòa tạo sự tiện nghi (convenient/comfortable)." }
+    },
+    {
+        question: `When <span class="subj">items</span> <span class="verb">are</span> __________, <span class="subj">they</span> <span class="verb">are sold</span> at a <span class="key">lower price</span> than usual.`,
+        translation: `Khi <span class="subj">các món hàng</span> <span class="key">đang giảm giá</span>, <span class="subj">chúng</span> <span class="verb">được bán</span> với giá thấp hơn bình thường.`,
+        options: [
+            { text: "displayed", trans: "được trưng bày", isCorrect: false },
+            { text: "fixed", trans: "cố định", isCorrect: false },
+            { text: "on sale", trans: "đang giảm giá", isCorrect: true },
+            { text: "home-made", trans: "làm tại nhà", isCorrect: false }
+        ],
+        explanation: { keyword: "'lower price'", knowledge: "Cụm từ", topic: "Khuyến mãi", features: "On sale = Giảm giá." }
+    },
+    {
+        question: `Some <span class="subj">people</span> <span class="verb">visit</span> shopping centres to <span class="key">avoid the heat or cold</span> __________.`,
+        translation: `Một số <span class="subj">người</span> <span class="verb">ghé</span> trung tâm mua sắm để tránh cái nóng hoặc lạnh <span class="key">bên ngoài</span>.`,
+        options: [
+            { text: "inside", trans: "bên trong", isCorrect: false },
+            { text: "online", trans: "trực tuyến", isCorrect: false },
+            { text: "outside", trans: "bên ngoài", isCorrect: true },
+            { text: "usually", trans: "thường xuyên", isCorrect: false }
+        ],
+        explanation: { keyword: "'avoid the heat or cold'", knowledge: "Trạng từ chỉ nơi chốn", topic: "Lý do đi mall", features: "Tránh thời tiết khắc nghiệt ở bên ngoài (outside)." }
+    },
+    {
+        question: `In <span class="subj">supermarkets</span>, <span class="subj">products</span> <span class="verb">are usually</span> __________ <span class="key">on shelves</span> with price tags.`,
+        translation: `Trong <span class="subj">siêu thị</span>, <span class="subj">sản phẩm</span> <span class="verb">thường được</span> <span class="key">trưng bày</span> trên kệ với mác giá.`,
+        options: [
+            { text: "bargained", trans: "mặc cả", isCorrect: false },
+            { text: "displayed", trans: "trưng bày", isCorrect: true },
+            { text: "avoided", trans: "tránh", isCorrect: false },
+            { text: "spent", trans: "tiêu", isCorrect: false }
+        ],
+        explanation: { keyword: "'on shelves'", knowledge: "Từ vựng", topic: "Cách bày trí", features: "Hàng hóa đặt trên kệ là hành động trưng bày (display)." }
+    },
+    {
+        question: `Unlike farmers’ markets, most <span class="subj">shopping centres</span> <span class="verb">have</span> __________ prices.`,
+        translation: `Khác với chợ nông sản, hầu hết <span class="subj">trung tâm mua sắm</span> <span class="verb">có</span> giá <span class="key">cố định</span>.`,
+        options: [
+            { text: "lower", trans: "thấp hơn", isCorrect: false },
+            { text: "fixed", trans: "cố định", isCorrect: true },
+            { text: "rare", trans: "hiếm", isCorrect: false },
+            { text: "online", trans: "trực tuyến", isCorrect: false }
+        ],
+        explanation: { keyword: "'Unlike farmers’ markets'", knowledge: "Từ vựng/Văn hóa", topic: "Giá cả", features: "Chợ thì mặc cả, còn trung tâm thương mại thì giá cố định (fixed prices)." }
+    },
+
+    // --- PHẦN 3: Tổng hợp (10 câu) ---
+    {
+        question: `Many <span class="subj">people</span> <span class="verb">prefer</span> <span class="key">online shopping</span> because <span class="subj">they</span> <span class="verb">can</span> __________ at home.`,
+        translation: `Nhiều <span class="subj">người</span> <span class="verb">thích</span> mua sắm online hơn vì <span class="subj">họ</span> <span class="verb">có thể</span> <span class="key">mua sắm</span> tại nhà.`,
+        options: [
+            { text: "bargain", trans: "mặc cả", isCorrect: false },
+            { text: "spend time", trans: "tiêu thời gian", isCorrect: false },
+            { text: "shop", trans: "mua sắm", isCorrect: true },
+            { text: "display", trans: "trưng bày", isCorrect: false }
+        ],
+        explanation: { keyword: "'online shopping'", knowledge: "Động từ", topic: "Hành động", features: "Động từ chính tương ứng với danh từ shopping là 'shop'." }
+    },
+    {
+        question: `In an <span class="key">online shop</span>, <span class="subj">customers</span> <span class="verb">cannot</span> __________ the products before buying.`,
+        translation: `Trong cửa hàng online, <span class="subj">khách hàng</span> <span class="verb">không thể</span> <span class="verb">chạm vào</span> sản phẩm trước khi mua.`,
+        options: [
+            { text: "return", trans: "trả lại", isCorrect: false },
+            { text: "touch", trans: "chạm vào", isCorrect: true },
+            { text: "order", trans: "đặt hàng", isCorrect: false },
+            { text: "pay for", trans: "trả tiền", isCorrect: false }
+        ],
+        explanation: { keyword: "'online shop', 'cannot'", knowledge: "Từ vựng", topic: "Hạn chế online", features: "Không thể sờ/chạm (touch) là đặc điểm chính." }
+    },
+    {
+        question: `<span class="subj">Shopping centres</span> and supermarkets <span class="verb">are</span> examples of __________ shops.`,
+        translation: `<span class="subj">Trung tâm mua sắm</span> và siêu thị <span class="verb">là</span> ví dụ của các cửa hàng <span class="key">trực tiếp/truyền thống</span>.`,
+        options: [
+            { text: "online", trans: "trực tuyến", isCorrect: false },
+            { text: "offline", trans: "trực tiếp (ngoại tuyến)", isCorrect: true },
+            { text: "discount", trans: "giảm giá", isCorrect: false },
+            { text: "speciality", trans: "chuyên doanh", isCorrect: false }
+        ],
+        explanation: { keyword: "'Shopping centres', 'supermarkets'", knowledge: "Phân loại", topic: "Loại hình mua sắm", features: "Đối lập với online là offline (cửa hàng vật lý)." }
+    },
+    {
+        question: `<span class="subj">People</span> often <span class="verb">compare</span> prices and read reviews when __________ <span class="key">online</span>.`,
+        translation: `<span class="subj">Mọi người</span> thường <span class="verb">so sánh</span> giá và đọc đánh giá khi <span class="key">mua sắm</span> trực tuyến.`,
+        options: [
+            { text: "shopping", trans: "mua sắm", isCorrect: true },
+            { text: "spending", trans: "tiêu xài", isCorrect: false },
+            { text: "displaying", trans: "trưng bày", isCorrect: false },
+            { text: "fixing", trans: "sửa chữa", isCorrect: false }
+        ],
+        explanation: { keyword: "'online'", knowledge: "Ngữ pháp (V-ing)", topic: "Hành động", features: "When shopping = When they shop." }
+    },
+    {
+        question: `Some <span class="subj">customers</span> <span class="verb">like</span> <span class="key">discount shops</span> because <span class="subj">they</span> <span class="verb">sell</span> products at a __________.`,
+        translation: `<span class="subj">Một số khách</span> <span class="verb">thích</span> cửa hàng giảm giá vì <span class="subj">chúng</span> <span class="verb">bán</span> sản phẩm ở mức <span class="key">giá thấp hơn</span>.`,
+        options: [
+            { text: "fixed price", trans: "giá cố định", isCorrect: false },
+            { text: "wide range", trans: "phạm vi rộng", isCorrect: false },
+            { text: "lower price", trans: "giá thấp hơn", isCorrect: true },
+            { text: "price tag", trans: "mác giá", isCorrect: false }
+        ],
+        explanation: { keyword: "'discount shops'", knowledge: "Logic", topic: "Giá cả", features: "Discount shop thì đặc trưng là giá rẻ hơn (lower price)." }
+    },
+    {
+        question: `When shopping online, <span class="subj">people</span> <span class="verb">may</span> __________ <span class="key">too much money</span> without noticing.`,
+        translation: `Khi mua sắm online, <span class="subj">mọi người</span> <span class="verb">có thể</span> <span class="verb">tiêu</span> quá nhiều tiền mà không để ý.`,
+        options: [
+            { text: "spend", trans: "tiêu", isCorrect: true },
+            { text: "save", trans: "tiết kiệm", isCorrect: false },
+            { text: "avoid", trans: "tránh", isCorrect: false },
+            { text: "return", trans: "trả lại", isCorrect: false }
+        ],
+        explanation: { keyword: "'too much money'", knowledge: "Collocation", topic: "Tài chính", features: "Đi với tiền (money) là động từ spend (tiêu)." }
+    },
+    {
+        question: `In <span class="subj">supermarkets</span>, <span class="subj">products</span> <span class="verb">are usually</span> __________ <span class="key">on shelves</span>.`,
+        translation: `Trong <span class="subj">siêu thị</span>, <span class="subj">sản phẩm</span> <span class="verb">thường được</span> <span class="key">trưng bày</span> trên kệ.`,
+        options: [
+            { text: "bargained", trans: "mặc cả", isCorrect: false },
+            { text: "displayed", trans: "trưng bày", isCorrect: true },
+            { text: "avoided", trans: "tránh", isCorrect: false },
+            { text: "ordered", trans: "đặt hàng", isCorrect: false }
+        ],
+        explanation: { keyword: "'on shelves'", knowledge: "Từ vựng", topic: "Trưng bày", features: "Lặp lại kiến thức: Đặt lên kệ là 'display'." }
+    },
+    {
+        question: `<span class="subj">Online shopping</span> <span class="verb">is not</span> <span class="key">always safe</span> because <span class="subj">customers</span> __________ <span class="verb">know</span> the seller well.`,
+        translation: `<span class="subj">Mua sắm online</span> <span class="verb">không phải</span> lúc nào cũng an toàn vì <span class="subj">khách hàng</span> <span class="key">hiếm khi</span> <span class="verb">biết</span> rõ người bán.`,
+        options: [
+            { text: "always", trans: "luôn luôn", isCorrect: false },
+            { text: "usually", trans: "thường xuyên", isCorrect: false },
+            { text: "sometimes", trans: "thỉnh thoảng", isCorrect: false },
+            { text: "rarely", trans: "hiếm khi", isCorrect: true }
+        ],
+        explanation: { keyword: "'not always safe'", knowledge: "Trạng từ tần suất", topic: "Rủi ro", features: "Vì không gặp mặt nên 'hiếm khi' (rarely) biết rõ người bán." }
+    },
+    {
+        question: `<span class="subj">People</span> who <span class="verb">buy</span> things they don’t need and <span class="key">can’t stop shopping</span> <span class="verb">are called</span> __________.`,
+        translation: `<span class="subj">Những người</span> <span class="verb">mua</span> những thứ không cần và không thể ngừng mua sắm <span class="verb">được gọi là</span> <span class="key">người nghiện mua sắm</span>.`,
+        options: [
+            { text: "customers", trans: "khách hàng", isCorrect: false },
+            { text: "shopaholics", trans: "người nghiện mua sắm", isCorrect: true },
+            { text: "sellers", trans: "người bán", isCorrect: false },
+            { text: "shoppers", trans: "người mua sắm", isCorrect: false }
+        ],
+        explanation: { keyword: "'can’t stop shopping'", knowledge: "Định nghĩa", topic: "Shopaholic", features: "Không thể ngừng mua = Nghiện (Shopaholic)." }
+    },
+    {
+        question: `With <span class="key">internet access</span>, <span class="subj">people</span> <span class="verb">can shop</span> __________, even <span class="key">late at night</span>.`,
+        translation: `Với <span class="key">kết nối internet</span>, <span class="subj">mọi người</span> <span class="verb">có thể mua sắm</span> <span class="key">bất cứ lúc nào</span>, thậm chí đêm muộn.`,
+        options: [
+            { text: "rarely", trans: "hiếm khi", isCorrect: false },
+            { text: "never", trans: "không bao giờ", isCorrect: false },
+            { text: "anytime", trans: "bất cứ lúc nào", isCorrect: true },
+            { text: "offline", trans: "ngoại tuyến", isCorrect: false }
+        ],
+        explanation: { keyword: "'late at night'", knowledge: "Từ vựng", topic: "Sự tiện lợi", features: "Late at night gợi ý về thời gian -> Anytime." }
+    }
+    ];
+
+    // --- LOGIC XỬ LÝ ỨNG DỤNG (GIỮ NGUYÊN) ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let isAnswered = false;
+
+    // DOM Elements
+    const uiBox = document.getElementById('quiz-ui');
+    const resultScreen = document.getElementById('result-screen');
+    const qTextBox = document.getElementById('q-text');
+    const qTransBox = document.getElementById('q-trans');
+    const optionsContainer = document.getElementById('options-container');
+    const actionArea = document.getElementById('action-area');
+    const explainBox = document.getElementById('explanation-box');
+    const progressText = document.getElementById('progress-text');
+    const scoreText = document.getElementById('score-text');
+    const questionBox = document.getElementById('question-box');
+    const nextBtn = document.getElementById('next-btn');
+
+    function initQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        isAnswered = false;
+        uiBox.style.display = 'block';
+        resultScreen.style.display = 'none';
+        updateScoreDisplay();
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const data = quizData[currentQuestionIndex];
+        
+        // Reset UI States
+        isAnswered = false;
+        questionBox.className = "question-box"; // Remove hint/answered classes
+        actionArea.classList.remove('visible');
+        explainBox.style.display = 'none';
+        qTransBox.style.display = 'none';
+        qTransBox.innerHTML = data.translation;
+        nextBtn.style.display = 'none';
+
+        // Render Question Text
+        qTextBox.innerHTML = `Câu ${currentQuestionIndex + 1}: ${data.question}`;
+        progressText.innerText = `Câu ${currentQuestionIndex + 1}/${quizData.length}`;
+
+        // Render Options
+        optionsContainer.innerHTML = '';
+        data.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.onclick = () => checkAnswer(index, btn);
+            
+            btn.innerHTML = `
+                <span class="option-content"><strong>${String.fromCharCode(65 + index)}.</strong> ${opt.text}</span>
+                <div class="option-trans">${opt.trans}</div>
+            `;
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function toggleHint() {
+        questionBox.classList.add('show-hint');
+    }
+
+    function checkAnswer(selectedIndex, btnElement) {
+        if (isAnswered) return;
+        isAnswered = true;
+
+        const data = quizData[currentQuestionIndex];
+        const isCorrect = data.options[selectedIndex].isCorrect;
+
+        // Auto highlight keywords
+        questionBox.classList.add('answered');
+
+        // Disable all buttons
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach((b, idx) => {
+            b.disabled = true;
+            if (data.options[idx].isCorrect) {
+                b.classList.add('correct');
+            }
+        });
+
+        // Handle user selection
+        if (isCorrect) {
+            score++;
+            updateScoreDisplay();
+        } else {
+            btnElement.classList.add('wrong');
+        }
+
+        // Show Actions
+        actionArea.classList.add('visible');
+
+        // Update Next Button Text
+        if (currentQuestionIndex < quizData.length - 1) {
+            nextBtn.innerText = "Câu tiếp theo ➜";
+        } else {
+            nextBtn.innerText = "Xem kết quả";
+        }
+        nextBtn.style.display = "inline-block";
+    }
+
+    function showExplanation() {
+        const data = quizData[currentQuestionIndex].explanation;
+        explainBox.innerHTML = `
+            <div class="explain-row"><span class="explain-label">Keyword:</span> ${data.keyword}</div>
+            <div class="explain-row"><span class="explain-label">Kiến thức:</span> ${data.knowledge}</div>
+            <div class="explain-row"><span class="explain-label">Chủ đề:</span> ${data.topic}</div>
+            <div class="explain-row"><span class="explain-label">Đặc trưng:</span> ${data.features}</div>
+        `;
+        explainBox.style.display = 'block';
+    }
+
+    function toggleTranslation() {
+        const isHidden = qTransBox.style.display === 'none';
+        
+        // 1. Toggle hiển thị hộp dịch
+        qTransBox.style.display = isHidden ? 'block' : 'none';
+
+        // 2. Toggle class đặc biệt để kích hoạt màu S/V
+        if (isHidden) {
+            questionBox.classList.add('show-grammar');
+        } else {
+            questionBox.classList.remove('show-grammar');
+        }
+
+        // 3. Toggle hiển thị dịch từng đáp án
+        const optTransElements = document.querySelectorAll('.option-trans');
+        optTransElements.forEach(el => {
+            el.style.display = isHidden ? 'block' : 'none';
+        });
+    }
+
+    function updateScoreDisplay() {
+        // Tránh chia cho 0 nếu danh sách rỗng (dù trường hợp này có 1 câu)
+        const total = quizData.length || 1; 
+        const scoreOn10 = ((score / total) * 10).toFixed(1);
+        const displayScore = scoreOn10.endsWith('.0') ? scoreOn10.slice(0, -2) : scoreOn10;
+        scoreText.innerText = `Điểm: ${displayScore}`;
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < quizData.length - 1) {
+            currentQuestionIndex++;
+            renderQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        uiBox.style.display = 'none';
+        resultScreen.style.display = 'block';
+        
+        const total = quizData.length || 1;
+        const scoreOn10 = ((score / total) * 10).toFixed(1);
+        const finalDisplayScore = scoreOn10.endsWith('.0') ? scoreOn10.slice(0, -2) : scoreOn10;
+
+        document.getElementById('final-score').innerText = `${finalDisplayScore}/10`;
+        document.getElementById('final-stats').innerText = `Bạn đã trả lời đúng ${score}/${total} câu`;
+    }
+
+    function restartQuiz() {
+        initQuiz();
+    }
+
+    // Start App
+    initQuiz();
+
+</script>
+
+</body>
+</html>
