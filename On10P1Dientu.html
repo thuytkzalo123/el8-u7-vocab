@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Tập Trắc Nghiệm: Online Shopping (Bản mẫu)</title>
+    <style>
+        :root {
+            --c-correct: #2E8B57; /* Seagreen */
+            --c-wrong: #DC143C;   /* Crimson */
+            /* --- THAY ĐỔI MÀU Ở ĐÂY --- */
+            --c-highlight: #FFD700; /* Gold (Đã đổi từ Salmon) */
+            /* ------------------------- */
+            --c-subject: #0000CD; /* MediumBlue */
+            --c-verb: #C71585;    /* MediumVioletRed */
+            --c-text: #333;
+            --c-bg: #f4f7f6;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            background-color: var(--c-bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            color: var(--c-text);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #555;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        /* Question Area */
+        .question-box {
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: bold;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .question-trans {
+            font-size: 1.05rem;
+            color: #444;
+            margin-bottom: 15px;
+            display: none; /* Hidden by default */
+            border-left: 4px solid var(--c-wrong);
+            padding: 8px 12px;
+            background: #fff5f5;
+            border-radius: 0 4px 4px 0;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Keywords Styling */
+        .key {
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            padding: 0 2px;
+        }
+        
+        /* Highlight state logic for Keyword */
+        .question-box.show-hint .key,
+        .question-box.answered .key {
+            background-color: var(--c-highlight);
+            /* Đổi màu chữ thành đen khi nền vàng để dễ đọc hơn */
+            color: #000; 
+        }
+
+        /* Grammar Analysis Styling (S/V) - Default is HIDDEN (black) */
+        .subj, .verb { 
+            color: inherit; 
+            transition: color 0.3s ease;
+        }
+
+        /* Grammar Analysis Styling (S/V) - ACTIVE (Only when translation is ON) */
+        .question-box.show-grammar .subj { color: var(--c-subject); }
+        .question-box.show-grammar .verb { color: var(--c-verb); }
+
+        /* Hint Button */
+        .hint-btn {
+            background: #ffaa00;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .hint-btn:hover { background: #e69900; }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .option-btn:not(:disabled):hover {
+            border-color: #bbb;
+            background: #fafafa;
+            transform: translateY(-1px);
+        }
+
+        .option-content {
+            display: block;
+            font-weight: 500;
+        }
+
+        .option-trans {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 6px;
+            display: none; /* Hidden by default */
+            font-style: italic;
+            border-top: 1px dashed #ccc;
+            padding-top: 4px;
+        }
+
+        /* States */
+        .option-btn.correct {
+            background-color: var(--c-correct);
+            border-color: var(--c-correct);
+            color: white;
+        }
+        .option-btn.correct .option-trans { color: #eee; border-top-color: rgba(255,255,255,0.3); }
+        
+        .option-btn.wrong {
+            background-color: var(--c-wrong);
+            border-color: var(--c-wrong);
+            color: white;
+        }
+        .option-btn.wrong .option-trans { color: #eee; border-top-color: rgba(255,255,255,0.3); }
+
+        .option-btn:disabled {
+            cursor: default;
+            opacity: 1;
+        }
+        
+        .option-btn:disabled:not(.correct):not(.wrong) {
+            opacity: 0.6;
+            background: #f0f0f0;
+        }
+
+        /* Action Buttons Area */
+        .action-area {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .action-area.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .action-btn {
+            width: 120px;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn-explain { background-color: var(--c-correct); }
+        .btn-explain:hover { background-color: #247046; }
+
+        .btn-translate { background-color: var(--c-wrong); }
+        .btn-translate:hover { background-color: #b01030; }
+
+        /* Explanation Box */
+        .explanation-box {
+            margin-top: 20px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 15px;
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explain-row {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .explain-label {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-right: 5px;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            text-align: center;
+            display: none;
+            padding: 40px 0;
+        }
+        .score-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--c-correct);
+            margin: 20px 0;
+        }
+        .retry-btn {
+            background: var(--c-subject);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .retry-btn:hover { background-color: #0000a0; }
+
+        /* Navigation Button */
+        .nav-btn-container {
+            text-align: center;
+            margin-top: 20px;
+            height: 40px; 
+        }
+        #next-btn {
+            padding: 10px 30px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none;
+        }
+        #next-btn:hover { background: #000; }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .action-area { flex-direction: row; }
+            .container { padding: 15px; }
+            .question-text { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-ui">
+        <div class="header">
+            <span id="progress-text">Câu 1/1</span>
+            <span id="score-text">Điểm: 0</span>
+        </div>
+
+        <div class="question-box" id="question-box">
+            <div class="question-text" id="q-text"></div>
+            <div class="question-trans" id="q-trans"></div>
+        </div>
+
+        <button class="hint-btn" onclick="toggleHint()">💡 Gợi ý</button>
+
+        <div class="options-grid" id="options-container"></div>
+
+        <div class="action-area" id="action-area">
+            <button class="action-btn btn-explain" onclick="showExplanation()">Giải thích</button>
+            <button class="action-btn btn-translate" onclick="toggleTranslation()">Dịch nghĩa</button>
+        </div>
+
+        <div class="explanation-box" id="explanation-box"></div>
+
+        <div class="nav-btn-container">
+             <button id="next-btn" onclick="nextQuestion()">Câu tiếp theo ➜</button>
+        </div>
+    </div>
+
+    <div class="result-screen" id="result-screen">
+        <h2>Kết quả bài thi</h2>
+        <div class="score-display" id="final-score">0/10</div>
+        <p id="final-stats">Bạn đã trả lời đúng 0/1 câu</p>
+        <button class="retry-btn" onclick="restartQuiz()">Làm lại bài thi</button>
+    </div>
+</div>
+
+<script>
+    /**
+     * DỮ LIỆU CÂU HỎI (ĐÃ RÚT GỌN CÒN 1 CÂU)
+     */
+    const quizData = [
+            {
+        question: `<span class="key">______</span> <span class="subj">you</span> <span class="verb">cut down</span> on your smoking, <span class="key">the healthier</span> <span class="subj">you</span> <span class="verb">get</span>.`,
+        translation: `<span class="key">Bạn càng</span> <span class="verb">giảm</span> hút thuốc, <span class="subj">bạn</span> càng <span class="key">khỏe mạnh hơn</span>.`,
+        options: [
+            { text: "The more", trans: "Càng nhiều", isCorrect: true },
+            { text: "The most", trans: "Nhiều nhất", isCorrect: false },
+            { text: "The much", trans: "Nhiều", isCorrect: false },
+            { text: "More", trans: "Hơn", isCorrect: false }
+        ],
+        explanation: { keyword: "'the healthier'", knowledge: "Ngữ pháp", topic: "So sánh kép (Double Comparative)", features: "Cấu trúc: The + comparative (more/adj-er) ..., the + comparative..." }
+    },
+    // QUESTION 2
+    {
+        question: `<span class="subj">They</span> <span class="verb">wonder</span> <span class="key">______ to wear</span> for the formal event next week.`,
+        translation: `<span class="subj">Họ</span> <span class="verb">tự hỏi</span> <span class="key">mặc gì</span> cho sự kiện trang trọng tuần tới.`,
+        options: [
+            { text: "why", trans: "tại sao", isCorrect: false },
+            { text: "where", trans: "ở đâu", isCorrect: false },
+            { text: "when", trans: "khi nào", isCorrect: false },
+            { text: "what", trans: "cái gì", isCorrect: true }
+        ],
+        explanation: { keyword: "'wear'", knowledge: "Ngữ pháp", topic: "Cấu trúc Wh-word + to V", features: "Động từ 'wear' (mặc) cần tân ngữ chỉ vật -> dùng 'what'." }
+    },
+    // QUESTION 3
+    {
+        question: `If <span class="subj">they</span> <span class="verb key">start</span> saving money from now, <span class="subj">they</span> ______ <span class="verb">afford</span> to go to Ha Long Bay holiday.`,
+        translation: `Nếu <span class="subj">họ</span> <span class="key">bắt đầu</span> tiết kiệm tiền từ bây giờ, <span class="subj">họ</span> <span class="key">có thể</span> <span class="verb">chi trả</span> cho kỳ nghỉ Hạ Long.`,
+        options: [
+            { text: "should", trans: "nên", isCorrect: false },
+            { text: "could", trans: "có thể (quá khứ)", isCorrect: false },
+            { text: "can", trans: "có thể (hiện tại/tương lai)", isCorrect: true },
+            { text: "would", trans: "sẽ (quá khứ)", isCorrect: false }
+        ],
+        explanation: { keyword: "'start' (Present)", knowledge: "Ngữ pháp", topic: "Câu điều kiện loại 1", features: "Vế If hiện tại đơn -> Vế chính dùng Will/Can + V nguyên thể." }
+    },
+    // QUESTION 4
+    {
+        question: `<span class="subj">He</span> ______ on his assignment <span class="key">while</span> <span class="subj">his classmates</span> <span class="verb key">were discussing</span> their plans.`,
+        translation: `<span class="subj">Anh ấy</span> <span class="key">đang làm</span> bài tập <span class="key">trong khi</span> <span class="subj">bạn cùng lớp</span> <span class="key">đang thảo luận</span> kế hoạch.`,
+        options: [
+            { text: "was working", trans: "đang làm việc", isCorrect: true },
+            { text: "worked", trans: "đã làm việc", isCorrect: false },
+            { text: "works", trans: "làm việc (hiện tại)", isCorrect: false },
+            { text: "had worked", trans: "đã làm xong (QKHT)", isCorrect: false }
+        ],
+        explanation: { keyword: "'while', 'were discussing'", knowledge: "Ngữ pháp", topic: "Thì Quá khứ tiếp diễn", features: "Hai hành động xảy ra song song trong quá khứ -> dùng Past Continuous." }
+    },
+    // QUESTION 5
+    {
+        question: `<span class="subj">I</span> <span class="verb">plan</span> to ______ <span class="subj key">my dream</span> of becoming a doctor.`,
+        translation: `<span class="subj">Tôi</span> <span class="verb">dự định</span> <span class="key">theo đuổi ước mơ</span> trở thành bác sĩ.`,
+        options: [
+            { text: "provide", trans: "cung cấp", isCorrect: false },
+            { text: "avoid", trans: "tránh", isCorrect: false },
+            { text: "pursue", trans: "theo đuổi", isCorrect: true },
+            { text: "support", trans: "ủng hộ", isCorrect: false }
+        ],
+        explanation: { keyword: "'my dream'", knowledge: "Từ vựng (Collocation)", topic: "Định hướng nghề nghiệp", features: "Cụm từ cố định: 'pursue a dream' (theo đuổi ước mơ)." }
+    },
+    // QUESTION 6
+    {
+        question: `A <span class="subj">traditional family</span> with <span class="key">three or four ______</span> living under one roof still <span class="verb">remains</span>.`,
+        translation: `Một <span class="subj">gia đình truyền thống</span> với <span class="key">ba hoặc bốn thế hệ</span> sống chung một mái nhà vẫn <span class="verb">tồn tại</span>.`,
+        options: [
+            { text: "generations", trans: "thế hệ", isCorrect: true },
+            { text: "anniversaries", trans: "lễ kỷ niệm", isCorrect: false },
+            { text: "performances", trans: "màn trình diễn", isCorrect: false },
+            { text: "customs", trans: "phong tục", isCorrect: false }
+        ],
+        explanation: { keyword: "'family', 'three or four'", knowledge: "Từ vựng", topic: "Chủ đề Gia đình", features: "Gia đình nhiều người sống chung gọi là gia đình đa thế hệ (generations)." }
+    },
+    // QUESTION 7
+    {
+        question: `<span class="subj">The team</span> <span class="verb">worked</span> ______ to <span class="verb key">achieve their goal</span>.`,
+        translation: `<span class="subj">Đội</span> đã <span class="verb">làm việc</span> <span class="key">một cách tuyệt vời</span> để <span class="verb">đạt mục tiêu</span>.`,
+        options: [
+            { text: "admiringly", trans: "một cách ngưỡng mộ", isCorrect: false },
+            { text: "wonderfully", trans: "tuyệt vời/hiệu quả", isCorrect: true },
+            { text: "riskily", trans: "mạo hiểm", isCorrect: false },
+            { text: "manageably", trans: "có thể quản lý", isCorrect: false }
+        ],
+        explanation: { keyword: "'achieve their goal'", knowledge: "Từ vựng", topic: "Trạng từ chỉ cách thức", features: "Để đạt mục tiêu (tích cực) cần làm việc hiệu quả/tuyệt vời (wonderfully)." }
+    },
+    // QUESTION 8
+    {
+        question: `<span class="subj key">The old man</span>, ______ <span class="verb">has lived</span> in this village all his life, <span class="verb">is</span> a craftsman.`,
+        translation: `<span class="subj key">Ông lão</span>, <span class="key">người mà</span> <span class="verb">đã sống</span> ở làng này cả đời, <span class="verb">là</span> một nghệ nhân.`,
+        options: [
+            { text: "who", trans: "người mà (làm chủ ngữ)", isCorrect: true },
+            { text: "that", trans: "rằng/người mà (không dùng sau dấu phẩy)", isCorrect: false },
+            { text: "which", trans: "cái mà", isCorrect: false },
+            { text: "whom", trans: "người mà (làm tân ngữ)", isCorrect: false }
+        ],
+        explanation: { keyword: "'The old man', comma (,)", knowledge: "Ngữ pháp", topic: "Mệnh đề quan hệ", features: "Danh từ chỉ người + làm chủ ngữ + sau dấu phẩy -> Dùng 'who'." }
+    },
+    // QUESTION 9
+    {
+        question: `<span class="subj">My parents</span> ______ in this city <span class="key">for twenty years</span>.`,
+        translation: `<span class="subj">Bố mẹ tôi</span> <span class="key">đã sống</span> ở thành phố này <span class="key">được 20 năm</span>.`,
+        options: [
+            { text: "lived", trans: "đã sống (QKĐ)", isCorrect: false },
+            { text: "are living", trans: "đang sống", isCorrect: false },
+            { text: "live", trans: "sống (HTĐ)", isCorrect: false },
+            { text: "have lived", trans: "đã và đang sống (HTHT)", isCorrect: true }
+        ],
+        explanation: { keyword: "'for twenty years'", knowledge: "Ngữ pháp", topic: "Thì Hiện tại hoàn thành", features: "'For' + khoảng thời gian -> Dùng Present Perfect." }
+    },
+    // QUESTION 10
+    {
+        question: `It is <span class="key">necessary</span> ______ plastic bags to <span class="verb">protect</span> the environment.`,
+        translation: `Thật <span class="key">cần thiết</span> <span class="key">để giảm</span> túi nhựa nhằm bảo vệ môi trường.`,
+        options: [
+            { text: "reduce", trans: "giảm", isCorrect: false },
+            { text: "that we reduce", trans: "rằng chúng ta giảm", isCorrect: false },
+            { text: "to reduce", trans: "để giảm", isCorrect: true },
+            { text: "reducing", trans: "việc giảm", isCorrect: false }
+        ],
+        explanation: { keyword: "'It is necessary'", knowledge: "Ngữ pháp", topic: "Cấu trúc It is + Adj + to V", features: "Sau tính từ thường dùng 'to V' (Thật là... để làm gì)." }
+    },
+    // QUESTION 11
+    {
+        question: `<span class="key">The more</span> <span class="subj">you</span> <span class="verb">practice</span>, ______ <span class="subj">you</span> <span class="verb">become</span>.`,
+        translation: `<span class="key">Bạn càng</span> <span class="verb">luyện tập</span> nhiều, <span class="subj">bạn</span> <span class="key">càng trở nên giỏi hơn</span>.`,
+        options: [
+            { text: "the better", trans: "càng tốt hơn", isCorrect: true },
+            { text: "good", trans: "tốt", isCorrect: false },
+            { text: "the good", trans: "cái tốt", isCorrect: false },
+            { text: "better", trans: "tốt hơn", isCorrect: false }
+        ],
+        explanation: { keyword: "'The more'", knowledge: "Ngữ pháp", topic: "So sánh kép (Double Comparative)", features: "Vế đầu 'The more' -> Vế sau phải là 'The + so sánh hơn' (The better)." }
+    },
+    // QUESTION 12
+    {
+        question: `<span class="subj">We</span> <span class="verb">were</span> all <span class="key">surprised</span> ______ his sudden arrival.`,
+        translation: `<span class="subj">Chúng tôi</span> đều <span class="key">ngạc nhiên với</span> sự đến bất ngờ của anh ấy.`,
+        options: [
+            { text: "at", trans: "tại/với", isCorrect: true },
+            { text: "for", trans: "cho", isCorrect: false },
+            { text: "by", trans: "bởi", isCorrect: false },
+            { text: "with", trans: "với", isCorrect: false }
+        ],
+        explanation: { keyword: "'surprised'", knowledge: "Từ vựng", topic: "Giới từ đi kèm tính từ", features: "Surprised at: Ngạc nhiên về điều gì." }
+    },
+    // QUESTION 13
+    {
+        question: `<span class="key">The ______</span> <span class="subj">you</span> <span class="verb">are</span>, <span class="key">the ______</span> <span class="subj">you</span> <span class="verb">will be able</span> to enjoy life!`,
+        translation: `<span class="subj">Bạn</span> <span class="key">càng khỏe mạnh</span>, <span class="subj">bạn</span> <span class="key">càng tận hưởng</span> cuộc sống tốt hơn!`,
+        options: [
+            { text: "healthy/better", trans: "khỏe/tốt hơn", isCorrect: false },
+            { text: "healthier/best", trans: "khỏe hơn/tốt nhất", isCorrect: false },
+            { text: "more healthy/better", trans: "khỏe hơn/tốt hơn (sai dạng)", isCorrect: false },
+            { text: "healthier/better", trans: "khỏe hơn/tốt hơn", isCorrect: true }
+        ],
+        explanation: { keyword: "'The... the...'", knowledge: "Ngữ pháp", topic: "So sánh kép (Double Comparative)", features: "Cả hai chỗ trống đều cần tính từ so sánh hơn (Comparative)." }
+    },
+    // QUESTION 14
+    {
+        question: `<span class="subj">I</span> <span class="verb">wondered</span> <span class="key">where ______</span> my pre-paid train ticket.`,
+        translation: `<span class="subj">Tôi</span> <span class="verb">tự hỏi</span> <span class="key">lấy</span> vé tàu trả trước <span class="key">ở đâu</span>.`,
+        options: [
+            { text: "get", trans: "lấy", isCorrect: false },
+            { text: "to get", trans: "để lấy", isCorrect: true },
+            { text: "getting", trans: "đang lấy", isCorrect: false },
+            { text: "to getting", trans: "đến việc lấy", isCorrect: false }
+        ],
+        explanation: { keyword: "'where'", knowledge: "Ngữ pháp", topic: "Cấu trúc Wh-word + to V", features: "Sau từ để hỏi (where, what, how...) dùng động từ nguyên thể có to." }
+    },
+    // QUESTION 15
+    {
+        question: `If <span class="subj">you</span> ______ a <span class="subj">healthy lifestyle</span>, <span class="subj">you</span> <span class="key">can reduce</span> the risk of illnesses.`,
+        translation: `Nếu <span class="subj">bạn</span> <span class="key">tuân theo</span> lối sống lành mạnh, <span class="subj">bạn</span> <span class="key">có thể giảm</span> nguy cơ bệnh tật.`,
+        options: [
+            { text: "follows", trans: "tuân theo (chia số ít)", isCorrect: false },
+            { text: "followed", trans: "đã tuân theo", isCorrect: false },
+            { text: "following", trans: "đang tuân theo", isCorrect: false },
+            { text: "follow", trans: "tuân theo (nguyên thể)", isCorrect: true }
+        ],
+        explanation: { keyword: "'can reduce' (Main clause)", knowledge: "Ngữ pháp", topic: "Câu điều kiện loại 1", features: "Vế chính dùng Can -> Vế If dùng Hiện tại đơn (You follow)." }
+    },
+    // QUESTION 16
+    {
+        question: `The <span class="subj">public ______</span> includes <span class="key">parks, schools, and hospitals</span>.`,
+        translation: `<span class="key">Các tiện ích</span> công cộng bao gồm <span class="key">công viên, trường học và bệnh viện</span>.`,
+        options: [
+            { text: "transportation", trans: "giao thông", isCorrect: false },
+            { text: "construction", trans: "xây dựng", isCorrect: false },
+            { text: "amenities", trans: "tiện ích/cơ sở vật chất", isCorrect: true },
+            { text: "congestion", trans: "tắc nghẽn", isCorrect: false }
+        ],
+        explanation: { keyword: "'parks, schools, hospitals'", knowledge: "Từ vựng", topic: "Chủ đề Đô thị", features: "Các địa điểm phục vụ đời sống dân cư được gọi chung là amenities." }
+    },
+    // QUESTION 17
+    {
+        question: `<span class="subj">They</span> <span class="verb">will arrive</span> ______ <span class="key">the airport</span> at 3 PM.`,
+        translation: `<span class="subj">Họ</span> <span class="verb">sẽ đến</span> <span class="key">sân bay</span> lúc 3 giờ chiều.`,
+        options: [
+            { text: "In", trans: "trong (dùng cho thành phố/nước)", isCorrect: false },
+            { text: "on", trans: "trên", isCorrect: false },
+            { text: "at", trans: "tại (địa điểm cụ thể)", isCorrect: true },
+            { text: "by", trans: "bởi/trước", isCorrect: false }
+        ],
+        explanation: { keyword: "'the airport'", knowledge: "Ngữ pháp", topic: "Giới từ chỉ địa điểm", features: "Arrive at: Đến một địa điểm nhỏ, cụ thể (sân bay, nhà ga)." }
+    },
+    // QUESTION 18
+    {
+        question: `<span class="subj">The teacher</span> ______ <span class="subj key">son</span> <span class="verb">speaks</span> English fluently <span class="verb">taught</span> us.`,
+        translation: `<span class="subj">Người giáo viên</span> <span class="key">có con trai</span> nói tiếng Anh lưu loát đã dạy chúng tôi.`,
+        options: [
+            { text: "whose", trans: "người mà có (sở hữu)", isCorrect: true },
+            { text: "which", trans: "cái mà", isCorrect: false },
+            { text: "that", trans: "người mà", isCorrect: false },
+            { text: "who", trans: "người mà", isCorrect: false }
+        ],
+        explanation: { keyword: "'teacher' (N1) + 'son' (N2)", knowledge: "Ngữ pháp", topic: "Mệnh đề quan hệ (Sở hữu)", features: "Chỉ mối quan hệ sở hữu (con trai của giáo viên) -> dùng Whose." }
+    },
+    // QUESTION 19
+    {
+        question: `<span class="subj">Nam</span> <span class="verb key">told me</span> that <span class="subj">he</span> ______ to the zoo <span class="key">the next day</span>.`,
+        translation: `<span class="subj">Nam</span> <span class="key">bảo tôi</span> rằng <span class="subj">cậu ấy</span> <span class="key">sẽ đi</span> sở thú vào <span class="key">ngày hôm sau</span>.`,
+        options: [
+            { text: "was going", trans: "sẽ đi (tương lai trong QK)", isCorrect: true },
+            { text: "has gone", trans: "đã đi", isCorrect: false },
+            { text: "went", trans: "đã đi", isCorrect: false },
+            { text: "goes", trans: "đi (hiện tại)", isCorrect: false }
+        ],
+        explanation: { keyword: "'told me', 'the next day'", knowledge: "Ngữ pháp", topic: "Câu tường thuật (Reported Speech)", features: "'The next day' là chuyển từ 'tomorrow'. Tương lai gần (is going) lùi thì thành 'was going'." }
+    },
+    // QUESTION 20
+    {
+        question: `The <span class="subj">road</span> is <span class="key">not wide</span>, so ______ often <span class="verb">happens</span> at <span class="key">rush hour</span>.`,
+        translation: `<span class="subj">Đường</span> <span class="key">không rộng</span>, nên <span class="key">tắc đường</span> thường xảy ra giờ cao điểm.`,
+        options: [
+            { text: "traffic light", trans: "đèn giao thông", isCorrect: false },
+            { text: "traffic flow", trans: "lưu lượng giao thông", isCorrect: false },
+            { text: "traffic congestion", trans: "ùn tắc giao thông", isCorrect: true },
+            { text: "traffic safety", trans: "an toàn giao thông", isCorrect: false }
+        ],
+        explanation: { keyword: "'not wide', 'rush hour'", knowledge: "Từ vựng", topic: "Chủ đề Giao thông", features: "Đường hẹp + giờ cao điểm = Tắc nghẽn (Congestion)." }
+    },
+
+    // --- QUESTION 21-39 ---
+
+    // QUESTION 21
+    {
+        question: `<span class="key">Yesterday</span>, <span class="subj">I</span> ______ <span class="key">a stomach ache</span> after eating too much candy.`,
+        translation: `<span class="key">Hôm qua</span>, <span class="subj">tôi</span> <span class="key">bị đau bụng</span> sau khi ăn quá nhiều kẹo.`,
+        options: [
+            { text: "cut down on", trans: "cắt giảm", isCorrect: false },
+            { text: "carried out", trans: "tiến hành", isCorrect: false },
+            { text: "hung out", trans: "đi chơi", isCorrect: false },
+            { text: "came down with", trans: "đổ bệnh/mắc bệnh", isCorrect: true }
+        ],
+        explanation: { keyword: "'stomach ache'", knowledge: "Từ vựng", topic: "Cụm động từ (Phrasal Verb)", features: "'Come down with' nghĩa là bắt đầu bị ốm/mắc một bệnh gì đó." }
+    },
+    // QUESTION 22
+    {
+        question: `<span class="key">While</span> <span class="subj">I</span> ______ a classic movie, <span class="subj">it</span> <span class="verb key">transported</span> me back to the past.`,
+        translation: `<span class="key">Trong khi</span> <span class="subj">tôi</span> <span class="key">đang xem</span> một bộ phim cổ điển, <span class="subj">nó</span> <span class="key">đưa</span> tôi trở về quá khứ.`,
+        options: [
+            { text: "have watched", trans: "đã xem (HTHT)", isCorrect: false },
+            { text: "am watching", trans: "đang xem (HTTD)", isCorrect: false },
+            { text: "was watching", trans: "đang xem (QKTD)", isCorrect: true },
+            { text: "watch", trans: "xem (HTĐ)", isCorrect: false }
+        ],
+        explanation: { keyword: "'While', 'transported' (Past)", knowledge: "Ngữ pháp", topic: "Thì Quá khứ tiếp diễn", features: "Hành động đang diễn ra (xem phim) thì hành động khác xen vào (đưa về quá khứ)." }
+    },
+    // QUESTION 23
+    {
+        question: `<span class="subj">I</span> <span class="verb">don't have</span> a laptop. <span class="subj">I</span> <span class="verb">wish</span> <span class="subj">I</span> ______ it.`,
+        translation: `<span class="subj">Tôi</span> <span class="verb">không có</span> laptop. <span class="subj">Tôi</span> <span class="verb">ước</span> <span class="subj">tôi</span> <span class="key">có</span> nó.`,
+        options: [
+            { text: "have", trans: "có (hiện tại)", isCorrect: false },
+            { text: "had", trans: "có (quá khứ giả định)", isCorrect: true },
+            { text: "had had", trans: "đã có (QKHT)", isCorrect: false },
+            { text: "would have", trans: "sẽ có", isCorrect: false }
+        ],
+        explanation: { keyword: "'don't have' (Present)", knowledge: "Ngữ pháp", topic: "Câu ước (Wish) ở hiện tại", features: "Ước trái ngược với hiện tại -> Lùi về thì Quá khứ đơn (Past Simple)." }
+    },
+    // QUESTION 24
+    {
+        question: `<span class="subj">He</span> <span class="verb">is</span> famous. <span class="key">______</span>, <span class="subj">he</span> <span class="verb">is</span> always <span class="key">simple and modest</span>.`,
+        translation: `<span class="subj">Anh ấy</span> nổi tiếng. <span class="key">Tuy nhiên</span>, <span class="subj">anh ấy</span> luôn <span class="key">giản dị và khiêm tốn</span>.`,
+        options: [
+            { text: "Therefore", trans: "Vì vậy", isCorrect: false },
+            { text: "But", trans: "Nhưng (không đứng đầu câu có phẩy)", isCorrect: false },
+            { text: "However", trans: "Tuy nhiên", isCorrect: true },
+            { text: "so", trans: "nên", isCorrect: false }
+        ],
+        explanation: { keyword: "Contrast meaning", knowledge: "Ngữ pháp", topic: "Liên từ (Connectors)", features: "Diễn tả sự tương phản và đứng đầu câu ngăn cách bởi dấu phẩy -> However." }
+    },
+    // QUESTION 25
+    {
+        question: `This <span class="subj">smartphone</span> is very ______ and <span class="key">easy to carry around</span>.`,
+        translation: `<span class="subj">Chiếc smartphone</span> này rất <span class="key">di động/tiện mang theo</span> và dễ dàng mang đi khắp nơi.`,
+        options: [
+            { text: "harmful", trans: "có hại", isCorrect: false },
+            { text: "flexible", trans: "linh hoạt", isCorrect: false },
+            { text: "portable", trans: "có thể mang theo/di động", isCorrect: true },
+            { text: "durable", trans: "bền", isCorrect: false }
+        ],
+        explanation: { keyword: "'easy to carry around'", knowledge: "Từ vựng", topic: "Chủ đề Công nghệ", features: "Dễ dàng mang đi = Portable." }
+    },
+    // QUESTION 26
+    {
+        question: `<span class="subj">The doctor</span> <span class="verb key">recommended</span> ______ the medication as prescribed.`,
+        translation: `<span class="subj">Bác sĩ</span> <span class="key">khuyên</span> <span class="key">uống</span> thuốc đúng đơn.`,
+        options: [
+            { text: "taking", trans: "việc uống (V-ing)", isCorrect: true },
+            { text: "to take", trans: "để uống", isCorrect: false },
+            { text: "take", trans: "uống", isCorrect: false },
+            { text: "takes", trans: "uống (chia s/es)", isCorrect: false }
+        ],
+        explanation: { keyword: "'recommended'", knowledge: "Ngữ pháp", topic: "Danh động từ (Gerunds)", features: "Recommend + V-ing (Khuyên làm gì)." }
+    },
+    // QUESTION 27
+    {
+        question: `<span class="subj">The film</span> <span class="key">about ______</span> <span class="subj">they</span> <span class="verb">are talking</span> is fantastic.`,
+        translation: `<span class="subj">Bộ phim</span> <span class="key">mà về nó</span> <span class="subj">họ</span> <span class="verb">đang nói</span> thì rất tuyệt.`,
+        options: [
+            { text: "who", trans: "ai", isCorrect: false },
+            { text: "which", trans: "cái mà", isCorrect: true },
+            { text: "whom", trans: "người mà", isCorrect: false },
+            { text: "that", trans: "cái mà (không dùng sau giới từ)", isCorrect: false }
+        ],
+        explanation: { keyword: "'about' + Relative Pronoun", knowledge: "Ngữ pháp", topic: "Mệnh đề quan hệ + Giới từ", features: "Giới từ + Which (dùng cho vật). Không dùng 'that' sau giới từ." }
+    },
+    // QUESTION 28
+    {
+        question: `<span class="subj">Many students</span> <span class="verb">use</span> ______ <span class="subj">textbooks</span> <span class="key">instead of carrying heavy books</span>.`,
+        translation: `<span class="subj">Nhiều học sinh</span> <span class="verb">dùng</span> <span class="subj">sách giáo khoa</span> <span class="key">kỹ thuật số</span> thay vì mang sách nặng.`,
+        options: [
+            { text: "virtual", trans: "ảo", isCorrect: false },
+            { text: "social media", trans: "mạng xã hội", isCorrect: false },
+            { text: "wireless", trans: "không dây", isCorrect: false },
+            { text: "digital", trans: "kỹ thuật số", isCorrect: true }
+        ],
+        explanation: { keyword: "'instead of... heavy books'", knowledge: "Từ vựng", topic: "Chủ đề Giáo dục/Công nghệ", features: "Đối lập với sách giấy nặng là sách kỹ thuật số (digital textbooks)." }
+    },
+    // QUESTION 29
+    {
+        question: `<span class="subj">Shakespeare</span>, <span class="key">______ works</span> <span class="verb">are</span> widely read, <span class="verb">is</span> a great writer.`,
+        translation: `<span class="subj">Shakespeare</span>, <span class="key">người mà các tác phẩm</span> vẫn được đọc rộng rãi, <span class="verb">là</span> nhà văn vĩ đại.`,
+        options: [
+            { text: "whom", trans: "người mà", isCorrect: false },
+            { text: "whose", trans: "của người mà (sở hữu)", isCorrect: true },
+            { text: "who", trans: "người mà", isCorrect: false },
+            { text: "which", trans: "cái mà", isCorrect: false }
+        ],
+        explanation: { keyword: "'Shakespeare' (N1) + 'works' (N2)", knowledge: "Ngữ pháp", topic: "Mệnh đề quan hệ (Sở hữu)", features: "Chỉ mối quan hệ sở hữu (tác phẩm CỦA ông ấy) -> Whose." }
+    },
+    // QUESTION 30
+    {
+        question: `<span class="subj">The doctor</span> <span class="verb key">advised that</span> <span class="subj">he</span> ______ his diet.`,
+        translation: `<span class="subj">Bác sĩ</span> <span class="key">khuyên rằng</span> <span class="subj">anh ấy</span> <span class="key">nên thay đổi</span> chế độ ăn.`,
+        options: [
+            { text: "must change", trans: "phải thay đổi", isCorrect: false },
+            { text: "would change", trans: "sẽ thay đổi", isCorrect: false },
+            { text: "will change", trans: "sẽ thay đổi", isCorrect: false },
+            { text: "should change", trans: "nên thay đổi", isCorrect: true }
+        ],
+        explanation: { keyword: "'advised that'", knowledge: "Ngữ pháp", topic: "Cấu trúc giả định (Subjunctive)", features: "Advise that + S + (should) + V nguyên thể." }
+    },
+    // QUESTION 31
+    {
+        question: `<span class="subj">John</span> <span class="verb key">suggested</span> ______ at six.`,
+        translation: `<span class="subj">John</span> <span class="key">gợi ý</span> <span class="key">gặp mặt</span> lúc 6 giờ.`,
+        options: [
+            { text: "to meet", trans: "để gặp", isCorrect: false },
+            { text: "meeting", trans: "gặp gỡ (V-ing)", isCorrect: true },
+            { text: "met", trans: "đã gặp", isCorrect: false },
+            { text: "will meet", trans: "sẽ gặp", isCorrect: false }
+        ],
+        explanation: { keyword: "'suggested'", knowledge: "Ngữ pháp", topic: "Danh động từ (Gerunds)", features: "Suggest + V-ing (Gợi ý làm gì cùng nhau)." }
+    },
+    // QUESTION 32
+    {
+        question: `<span class="subj">The Amazon rainforest</span>, <span class="key">______</span> <span class="verb">is</span> home to many species, <span class="verb">is</span> in South America.`,
+        translation: `<span class="subj">Rừng mưa Amazon</span>, <span class="key">cái mà</span> <span class="verb">là</span> nhà của nhiều loài, <span class="verb">nằm</span> ở Nam Mỹ.`,
+        options: [
+            { text: "that", trans: "cái mà (không dùng sau dấu phẩy)", isCorrect: false },
+            { text: "which", trans: "cái mà", isCorrect: true },
+            { text: "who", trans: "người mà", isCorrect: false },
+            { text: "whom", trans: "người mà", isCorrect: false }
+        ],
+        explanation: { keyword: "Comma (,)", knowledge: "Ngữ pháp", topic: "Mệnh đề quan hệ không xác định", features: "Dùng 'which' cho vật trong mệnh đề quan hệ có dấu phẩy (non-defining)." }
+    },
+    // QUESTION 33
+    {
+        question: `Today <span class="key">______</span> <span class="verb">allow</span> us to <span class="verb">create</span> <span class="key">three-dimensional objects</span>.`,
+        translation: `Ngày nay <span class="key">máy in 3D</span> <span class="verb">cho phép</span> chúng ta <span class="verb">tạo ra</span> <span class="key">các vật thể 3 chiều</span>.`,
+        options: [
+            { text: "3D printers", trans: "máy in 3D", isCorrect: true },
+            { text: "photocopiers", trans: "máy photocopy", isCorrect: false },
+            { text: "camcorders", trans: "máy quay phim", isCorrect: false },
+            { text: "smartwatch", trans: "đồng hồ thông minh", isCorrect: false }
+        ],
+        explanation: { keyword: "'create three-dimensional objects'", knowledge: "Từ vựng", topic: "Chủ đề Công nghệ", features: "Thiết bị tạo vật thể 3 chiều là máy in 3D." }
+    },
+    // QUESTION 34
+    {
+        question: `<span class="subj">Mercury</span> <span class="verb">is</span> the <span class="key">______ planet</span> in our Solar System.`,
+        translation: `<span class="subj">Sao Thủy</span> <span class="verb">là</span> <span class="key">hành tinh nhỏ nhất</span> trong Hệ Mặt trời.`,
+        options: [
+            { text: "largest", trans: "lớn nhất", isCorrect: false },
+            { text: "second largest", trans: "lớn thứ hai", isCorrect: false },
+            { text: "smallest", trans: "nhỏ nhất", isCorrect: true },
+            { text: "farthest", trans: "xa nhất", isCorrect: false }
+        ],
+        explanation: { keyword: "'Mercury' (Sao Thủy)", knowledge: "Kiến thức chung", topic: "Thiên văn học", features: "Sao Thủy là hành tinh nhỏ nhất trong hệ mặt trời." }
+    },
+    // QUESTION 35
+    {
+        question: `There <span class="verb">are</span> eight <span class="key">______</span> in our <span class="subj">Solar System</span>.`,
+        translation: `<span class="verb">Có</span> tám <span class="key">hành tinh</span> trong <span class="subj">Hệ Mặt trời</span> của chúng ta.`,
+        options: [
+            { text: "moons", trans: "mặt trăng", isCorrect: false },
+            { text: "stars", trans: "ngôi sao", isCorrect: false },
+            { text: "galaxies", trans: "thiên hà", isCorrect: false },
+            { text: "planets", trans: "hành tinh", isCorrect: true }
+        ],
+        explanation: { keyword: "'eight', 'Solar System'", knowledge: "Kiến thức chung", topic: "Thiên văn học", features: "Hệ mặt trời có 8 hành tinh." }
+    },
+    // QUESTION 36
+    {
+        question: `<span class="subj">Mountains, valleys, and plains</span> are examples of different <span class="key">______</span> on Earth.`,
+        translation: `<span class="subj">Núi, thung lũng và đồng bằng</span> là ví dụ của các <span class="key">địa hình</span> khác nhau trên Trái đất.`,
+        options: [
+            { text: "climates", trans: "khí hậu", isCorrect: false },
+            { text: "ecosystems", trans: "hệ sinh thái", isCorrect: false },
+            { text: "landforms", trans: "địa hình", isCorrect: true },
+            { text: "species", trans: "loài", isCorrect: false }
+        ],
+        explanation: { keyword: "'Mountains, valleys...'", knowledge: "Từ vựng", topic: "Chủ đề Địa lý", features: "Các dạng hình thể của đất gọi chung là landforms (địa hình)." }
+    },
+    // QUESTION 37
+    {
+        question: `Inside the <span class="key">ancient ______</span>, we <span class="verb">discovered</span> <span class="key">secret passages</span>.`,
+        translation: `Bên trong <span class="key">lâu đài cổ</span>, chúng tôi <span class="verb">khám phá</span> ra các <span class="key">lối đi bí mật</span>.`,
+        options: [
+            { text: "office", trans: "văn phòng", isCorrect: false },
+            { text: "room", trans: "căn phòng", isCorrect: false },
+            { text: "castle", trans: "lâu đài", isCorrect: true },
+            { text: "flat", trans: "căn hộ", isCorrect: false }
+        ],
+        explanation: { keyword: "'ancient', 'secret passages'", knowledge: "Từ vựng", topic: "Chủ đề Lịch sử/Kiến trúc", features: "Lâu đài (castle) thường gắn liền với sự cổ kính và các lối đi bí mật." }
+    },
+    // QUESTION 38
+    {
+        question: `<span class="subj">The ancient warriors</span> <span class="verb">stood</span> bravely to <span class="key">______ their lands</span>.`,
+        translation: `<span class="subj">Các chiến binh cổ đại</span> <span class="verb">đứng lên</span> dũng cảm để <span class="key">bảo vệ vùng đất</span> của họ.`,
+        options: [
+            { text: "recognize", trans: "nhận ra", isCorrect: false },
+            { text: "contribute", trans: "đóng góp", isCorrect: false },
+            { text: "occupy", trans: "chiếm đóng", isCorrect: false },
+            { text: "protect", trans: "bảo vệ", isCorrect: true }
+        ],
+        explanation: { keyword: "'warriors', 'bravely'", knowledge: "Từ vựng", topic: "Chủ đề Lịch sử", features: "Nhiệm vụ của chiến binh là bảo vệ (protect) đất nước." }
+    },
+    // QUESTION 39
+    {
+        question: `Through programs, <span class="subj">schools</span> <span class="key">______ the importance</span> of remembering the past.`,
+        translation: `Thông qua các chương trình, <span class="subj">trường học</span> <span class="key">thúc đẩy/đề cao tầm quan trọng</span> của việc nhớ về quá khứ.`,
+        options: [
+            { text: "promote", trans: "thúc đẩy/quảng bá", isCorrect: true },
+            { text: "observe", trans: "quan sát", isCorrect: false },
+            { text: "contribute", trans: "đóng góp", isCorrect: false },
+            { text: "discover", trans: "khám phá", isCorrect: false }
+        ],
+        explanation: { keyword: "'the importance'", knowledge: "Từ vựng (Collocation)", topic: "Chủ đề Giáo dục", features: "Promote the importance: Đề cao/thúc đẩy tầm quan trọng." }
+    },
+// QUESTION 40: Từ vựng (Collocation)
+    {
+        question: `<span class="key">______ local customs</span> and traditions <span class="verb">helps</span> in <span class="key">fostering cultural pride</span>.`,
+        translation: `<span class="key">Việc tuân theo phong tục</span> và truyền thống địa phương <span class="verb">giúp</span> <span class="key">nuôi dưỡng niềm tự hào văn hóa</span>.`,
+        options: [
+            { text: "Disregarding", trans: "Ngó lơ/Không tôn trọng", isCorrect: false },
+            { text: "Observing", trans: "Tuân theo/Quan sát", isCorrect: true },
+            { text: "Ignoring", trans: "Phớt lờ", isCorrect: false },
+            { text: "Destroying", trans: "Phá hủy", isCorrect: false }
+        ],
+        explanation: { keyword: "'fostering... cultural pride'", knowledge: "Từ vựng", topic: "Chủ đề Văn hóa", features: "Để 'nuôi dưỡng niềm tự hào' (tích cực) thì cần phải 'tuân theo/tôn trọng' (Observing)." }
+    },
+    // QUESTION 41: Past Continuous (Song song)
+    {
+        question: `<span class="subj">She</span> ______ in the kitchen <span class="key">while</span> <span class="subj">her family</span> <span class="verb key">was preparing</span> the dinner.`,
+        translation: `<span class="subj">Cô ấy</span> <span class="key">đang nấu ăn</span> trong bếp <span class="key">trong khi</span> <span class="subj">gia đình</span> <span class="key">đang chuẩn bị</span> bữa tối.`,
+        options: [
+            { text: "was cooking", trans: "đang nấu (QKTD)", isCorrect: true },
+            { text: "cooked", trans: "đã nấu", isCorrect: false },
+            { text: "cooks", trans: "nấu (HTĐ)", isCorrect: false },
+            { text: "had cooked", trans: "đã nấu xong (QKHT)", isCorrect: false }
+        ],
+        explanation: { keyword: "'while' + 'was preparing'", knowledge: "Ngữ pháp", topic: "Thì Quá khứ tiếp diễn", features: "Hai hành động xảy ra song song cùng lúc trong quá khứ." }
+    },
+    // QUESTION 42: Câu giả định (If only)
+    {
+        question: `<span class="key">If only</span> <span class="subj">she</span> ______ to the meeting <span class="key">yesterday</span>.`,
+        translation: `<span class="key">Giá mà</span> <span class="subj">cô ấy</span> <span class="key">đã đi</span> đến cuộc họp <span class="key">hôm qua</span>.`,
+        options: [
+            { text: "had gone", trans: "đã đi (QKHT)", isCorrect: true },
+            { text: "went", trans: "đi (QKĐ)", isCorrect: false },
+            { text: "goes", trans: "đi (HTĐ)", isCorrect: false },
+            { text: "will go", trans: "sẽ đi", isCorrect: false }
+        ],
+        explanation: { keyword: "'If only' + 'yesterday'", knowledge: "Ngữ pháp", topic: "Câu giả định (Subjunctive)", features: "Ước muốn trái ngược với quá khứ (yesterday) -> Dùng Past Perfect (had V3)." }
+    },
+    // QUESTION 43: Câu ước (Wish)
+    {
+        question: `<span class="subj">She</span> <span class="verb key">wishes</span> <span class="subj">she</span> ______ a <span class="key">bigger house</span>.`,
+        translation: `<span class="subj">Cô ấy</span> <span class="key">ước</span> <span class="subj">cô ấy</span> <span class="key">có</span> một ngôi nhà lớn hơn.`,
+        options: [
+            { text: "Has", trans: "có (hiện tại)", isCorrect: false },
+            { text: "will have", trans: "sẽ có", isCorrect: false },
+            { text: "can have", trans: "có thể có", isCorrect: false },
+            { text: "had", trans: "có (quá khứ)", isCorrect: true }
+        ],
+        explanation: { keyword: "'wishes' (Present context)", knowledge: "Ngữ pháp", topic: "Câu ước (Wish)", features: "Ước một điều không có thật ở hiện tại (muốn nhà to hơn) -> Lùi về Quá khứ đơn." }
+    },
+    // QUESTION 44: Giao tiếp xã hội
+    {
+        question: `Daisy: "<span class="key">Would you like</span> to drink some more tea?" - Linda: "______"`,
+        translation: `Daisy: "<span class="key">Bạn có muốn</span> uống thêm chút trà không?" - Linda: "<span class="key">Vâng, làm ơn</span>."`,
+        options: [
+            { text: "You are totally right", trans: "Bạn hoàn toàn đúng", isCorrect: false },
+            { text: "Yes, please", trans: "Vâng, làm ơn/cho mình xin", isCorrect: true },
+            { text: "Yes, I like you", trans: "Vâng, mình thích bạn", isCorrect: false },
+            { text: "No, I don't like", trans: "Không, tôi không thích (thiếu lịch sự)", isCorrect: false }
+        ],
+        explanation: { keyword: "'Would you like...'", knowledge: "Giao tiếp", topic: "Lời mời (Offer)", features: "Đáp lại lời mời lịch sự: Yes, please (đồng ý) hoặc No, thanks (từ chối)." }
+    },
+    // QUESTION 45: Từ loại (Adverb)
+    {
+        question: `To most people, <span class="verb key">living</span> ______ <span class="verb">means</span> health is functioning well.`,
+        translation: `Với hầu hết mọi người, <span class="key">việc sống</span> <span class="key">một cách lành mạnh</span> nghĩa là sức khỏe hoạt động tốt.`,
+        options: [
+            { text: "Healthy", trans: "lành mạnh (tính từ)", isCorrect: false },
+            { text: "unhealthy", trans: "không lành mạnh", isCorrect: false },
+            { text: "health", trans: "sức khỏe (danh từ)", isCorrect: false },
+            { text: "healthily", trans: "một cách lành mạnh (trạng từ)", isCorrect: true }
+        ],
+        explanation: { keyword: "'living' (Verb/Gerund)", knowledge: "Ngữ pháp", topic: "Từ loại (Word Form)", features: "Đứng sau động từ 'live/living' cần một Trạng từ (Adverb) để bổ nghĩa." }
+    },
+    // QUESTION 46: Cấu trúc Advise
+    {
+        question: `<span class="subj">The counsellor</span> <span class="verb key">advises</span> <span class="subj">the students</span> ______ their study and play time.`,
+        translation: `<span class="subj">Người tư vấn</span> <span class="key">khuyên</span> <span class="subj">học sinh</span> <span class="key">cân bằng</span> việc học và chơi.`,
+        options: [
+            { text: "balance", trans: "cân bằng", isCorrect: false },
+            { text: "to balance", trans: "để cân bằng", isCorrect: true },
+            { text: "balancing", trans: "việc cân bằng", isCorrect: false },
+            { text: "balanced", trans: "đã cân bằng", isCorrect: false }
+        ],
+        explanation: { keyword: "'advises' + Object", knowledge: "Ngữ pháp", topic: "Cấu trúc To-Infinitive", features: "Cấu trúc: Advise + Somebody + TO Verb (Khuyên ai làm gì)." }
+    },
+    // QUESTION 47: Từ vựng (Collocation)
+    {
+        question: `<span class="subj">Students</span> <span class="verb">have to</span> ______ <span class="subj">their time</span> by <span class="key">planning schedule</span>.`,
+        translation: `<span class="subj">Học sinh</span> <span class="verb">phải</span> <span class="key">quản lý</span> thời gian bằng cách <span class="key">lên lịch trình</span>.`,
+        options: [
+            { text: "waste", trans: "lãng phí", isCorrect: false },
+            { text: "waste", trans: "lãng phí (lặp)", isCorrect: false },
+            { text: "manage", trans: "quản lý", isCorrect: true },
+            { text: "bring", trans: "mang", isCorrect: false }
+        ],
+        explanation: { keyword: "'time', 'planning schedule'", knowledge: "Từ vựng", topic: "Chủ đề Giáo dục", features: "Lên kế hoạch (planning) là hành động của việc Quản lý thời gian (Manage time)." }
+    },
+    // QUESTION 48: Câu điều kiện loại 1
+    {
+        question: `If <span class="subj">you</span> ______ <span class="key">time for relaxation</span>, <span class="subj">you</span> <span class="key">will avoid</span> feeling overwhelmed.`,
+        translation: `Nếu <span class="subj">bạn</span> <span class="key">dành</span> thời gian thư giãn, <span class="subj">bạn</span> <span class="key">sẽ tránh</span> bị quá tải.`,
+        options: [
+            { text: "Will make", trans: "sẽ dành/tạo ra", isCorrect: false },
+            { text: "make", trans: "dành/tạo ra (HTĐ)", isCorrect: true },
+            { text: "should make", trans: "nên dành", isCorrect: false },
+            { text: "must make", trans: "phải dành", isCorrect: false }
+        ],
+        explanation: { keyword: "'will avoid' (Main clause)", knowledge: "Ngữ pháp", topic: "Câu điều kiện loại 1", features: "Vế chính dùng Tương lai đơn (will) -> Vế If dùng Hiện tại đơn (Present Simple)." }
+    },
+    // QUESTION 49: Từ vựng (Giáo dục)
+    {
+        question: `<span class="subj">They</span> <span class="verb">have established</span> active <span class="key">______</span> with many <span class="key">games and toys</span>.`,
+        translation: `<span class="subj">Họ</span> <span class="verb">đã thiết lập</span> các <span class="key">không gian học tập</span> năng động với nhiều <span class="key">trò chơi và đồ chơi</span>.`,
+        options: [
+            { text: "learning spaces", trans: "không gian học tập", isCorrect: true },
+            { text: "learning locations", trans: "địa điểm học", isCorrect: false },
+            { text: "education spaces", trans: "không gian giáo dục", isCorrect: false },
+            { text: "education authorities", trans: "cơ quan giáo dục", isCorrect: false }
+        ],
+        explanation: { keyword: "'active', 'games and toys'", knowledge: "Từ vựng", topic: "Chủ đề Giáo dục", features: "Cụm từ phổ biến trong giáo dục hiện đại: Active learning spaces (Không gian học tập chủ động)." }
+    },
+    // QUESTION 50: Trật tự tính từ (OPSACOMP)
+    {
+        question: `During the winter <span class="subj">I</span> <span class="verb">like</span> having ______ house.`,
+        translation: `Vào mùa đông, <span class="subj">tôi</span> <span class="verb">thích</span> có một ngôi nhà <span class="key">nhỏ xinh bằng gỗ màu đỏ</span>.`,
+        options: [
+            { text: "a pretty small red wooden", trans: "xinh(Op)-nhỏ(S)-đỏ(C)-gỗ(M)", isCorrect: true },
+            { text: "a wooden pretty small red", trans: "sai trật tự", isCorrect: false },
+            { text: "a small pretty red wooden", trans: "sai trật tự (S-Op...)", isCorrect: false },
+            { text: "a red wooden pretty small", trans: "sai trật tự", isCorrect: false }
+        ],
+        explanation: { keyword: "Adjective Order", knowledge: "Ngữ pháp", topic: "Trật tự tính từ (OPSACOMP)", features: "Opinion(pretty) -> Size(small) -> Color(red) -> Material(wooden)." }
+    }
+    ];
+
+    // --- LOGIC XỬ LÝ ỨNG DỤNG (GIỮ NGUYÊN) ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let isAnswered = false;
+
+    // DOM Elements
+    const uiBox = document.getElementById('quiz-ui');
+    const resultScreen = document.getElementById('result-screen');
+    const qTextBox = document.getElementById('q-text');
+    const qTransBox = document.getElementById('q-trans');
+    const optionsContainer = document.getElementById('options-container');
+    const actionArea = document.getElementById('action-area');
+    const explainBox = document.getElementById('explanation-box');
+    const progressText = document.getElementById('progress-text');
+    const scoreText = document.getElementById('score-text');
+    const questionBox = document.getElementById('question-box');
+    const nextBtn = document.getElementById('next-btn');
+
+    function initQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        isAnswered = false;
+        uiBox.style.display = 'block';
+        resultScreen.style.display = 'none';
+        updateScoreDisplay();
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const data = quizData[currentQuestionIndex];
+        
+        // Reset UI States
+        isAnswered = false;
+        questionBox.className = "question-box"; // Remove hint/answered classes
+        actionArea.classList.remove('visible');
+        explainBox.style.display = 'none';
+        qTransBox.style.display = 'none';
+        qTransBox.innerHTML = data.translation;
+        nextBtn.style.display = 'none';
+
+        // Render Question Text
+        qTextBox.innerHTML = `Câu ${currentQuestionIndex + 1}: ${data.question}`;
+        progressText.innerText = `Câu ${currentQuestionIndex + 1}/${quizData.length}`;
+
+        // Render Options
+        optionsContainer.innerHTML = '';
+        data.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.onclick = () => checkAnswer(index, btn);
+            
+            btn.innerHTML = `
+                <span class="option-content"><strong>${String.fromCharCode(65 + index)}.</strong> ${opt.text}</span>
+                <div class="option-trans">${opt.trans}</div>
+            `;
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function toggleHint() {
+        questionBox.classList.add('show-hint');
+    }
+
+    function checkAnswer(selectedIndex, btnElement) {
+        if (isAnswered) return;
+        isAnswered = true;
+
+        const data = quizData[currentQuestionIndex];
+        const isCorrect = data.options[selectedIndex].isCorrect;
+
+        // Auto highlight keywords
+        questionBox.classList.add('answered');
+
+        // Disable all buttons
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach((b, idx) => {
+            b.disabled = true;
+            if (data.options[idx].isCorrect) {
+                b.classList.add('correct');
+            }
+        });
+
+        // Handle user selection
+        if (isCorrect) {
+            score++;
+            updateScoreDisplay();
+        } else {
+            btnElement.classList.add('wrong');
+        }
+
+        // Show Actions
+        actionArea.classList.add('visible');
+
+        // Update Next Button Text
+        if (currentQuestionIndex < quizData.length - 1) {
+            nextBtn.innerText = "Câu tiếp theo ➜";
+        } else {
+            nextBtn.innerText = "Xem kết quả";
+        }
+        nextBtn.style.display = "inline-block";
+    }
+
+    function showExplanation() {
+        const data = quizData[currentQuestionIndex].explanation;
+        explainBox.innerHTML = `
+            <div class="explain-row"><span class="explain-label">Keyword:</span> ${data.keyword}</div>
+            <div class="explain-row"><span class="explain-label">Kiến thức:</span> ${data.knowledge}</div>
+            <div class="explain-row"><span class="explain-label">Chủ đề:</span> ${data.topic}</div>
+            <div class="explain-row"><span class="explain-label">Đặc trưng:</span> ${data.features}</div>
+        `;
+        explainBox.style.display = 'block';
+    }
+
+    function toggleTranslation() {
+        const isHidden = qTransBox.style.display === 'none';
+        
+        // 1. Toggle hiển thị hộp dịch
+        qTransBox.style.display = isHidden ? 'block' : 'none';
+
+        // 2. Toggle class đặc biệt để kích hoạt màu S/V
+        if (isHidden) {
+            questionBox.classList.add('show-grammar');
+        } else {
+            questionBox.classList.remove('show-grammar');
+        }
+
+        // 3. Toggle hiển thị dịch từng đáp án
+        const optTransElements = document.querySelectorAll('.option-trans');
+        optTransElements.forEach(el => {
+            el.style.display = isHidden ? 'block' : 'none';
+        });
+    }
+
+    function updateScoreDisplay() {
+        // Tránh chia cho 0 nếu danh sách rỗng (dù trường hợp này có 1 câu)
+        const total = quizData.length || 1; 
+        const scoreOn10 = ((score / total) * 10).toFixed(1);
+        const displayScore = scoreOn10.endsWith('.0') ? scoreOn10.slice(0, -2) : scoreOn10;
+        scoreText.innerText = `Điểm: ${displayScore}`;
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < quizData.length - 1) {
+            currentQuestionIndex++;
+            renderQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        uiBox.style.display = 'none';
+        resultScreen.style.display = 'block';
+        
+        const total = quizData.length || 1;
+        const scoreOn10 = ((score / total) * 10).toFixed(1);
+        const finalDisplayScore = scoreOn10.endsWith('.0') ? scoreOn10.slice(0, -2) : scoreOn10;
+
+        document.getElementById('final-score').innerText = `${finalDisplayScore}/10`;
+        document.getElementById('final-stats').innerText = `Bạn đã trả lời đúng ${score}/${total} câu`;
+    }
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+    function restartQuiz() {
+        initQuiz();
+    }
+
+    // Start App
+    initQuiz();
+
+
+</script>
+
+</body>
+</html>
