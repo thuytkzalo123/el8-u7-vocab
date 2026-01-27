@@ -3,7 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamified Cloze Test System - 3 Levels</title>
+    <title>Reading Part 1 - 3 Levels</title>
+   <script>
+        function checkPassword() {
+            var password = prompt("Vui lòng nhập mật khẩu để truy cập nội dung:");
+            if (password !== "9999") { // Thay "123456" bằng mật khẩu của bạn
+                alert("Mật khẩu sai! Trang sẽ tự động đóng.");
+                window.location.href = "about:blank"; // Chuyển hướng đi nơi khác
+            }
+        }
+        checkPassword(); // Chạy hàm kiểm tra ngay khi load trang
+    </script>
+</head>
+<body>
+    <h1>Chào mừng bạn đến với Thư Viện!</h1>
+    <p>Nội dung này đã được bảo vệ.</p>
+</body>
+</html>
     <style>
         /* --- 1. SETUP BIẾN MÀU & CẤU HÌNH CHUNG --- */
         :root {
@@ -587,4 +603,5 @@
         };
     </script>
 </body>
+
 </html>
