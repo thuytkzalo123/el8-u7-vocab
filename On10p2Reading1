@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamified Cloze Test System - New Data</title>
+    <style>
+        /* --- 1. SETUP BIẾN MÀU & CẤU HÌNH CHUNG --- */
+        :root {
+            --primary-color: #007bff;       /* Xanh dương */
+            --success-color: #28a745;       /* Xanh lá */
+            --error-color: #dc3545;         /* Đỏ */
+            --highlight-color: #ffd700;     /* Vàng Gold - Dùng cho Hint 2 */
+            --bg-color: #f4f6f9;
+            --text-color: #333;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; padding: 20px; background-color: var(--bg-color); color: var(--text-color); }
+
+        /* --- PASSWORD OVERLAY --- */
+        #password-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white;
+        }
+        #password-input { padding: 10px; font-size: 1.2rem; border-radius: 5px; border: none; margin-bottom: 10px; }
+        #password-btn { padding: 10px 20px; font-size: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; }
+        
+        /* --- 2. LAYOUT FLEXBOX (2 CỘT) --- */
+        .container {
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            opacity: 0; transition: opacity 1s; 
+        }
+        .container.visible { opacity: 1; }
+
+        /* --- CỘT TRÁI: ĐOẠN VĂN --- */
+        .text-panel {
+            flex: 0 0 750px; max-width: 100%;
+            background: var(--white); padding: 30px; border-radius: 8px;
+            box-shadow: var(--shadow); font-size: 1.1rem; line-height: 1.8;
+            height: fit-content;
+        }
+
+        /* --- CỘT PHẢI: BẢNG CÂU HỎI (STICKY) --- */
+        .question-panel {
+            flex: 0 0 450px; max-width: 100%;
+            background: var(--white); padding: 20px; border-radius: 8px;
+            box-shadow: var(--shadow);
+            position: sticky; top: 20px;
+            height: fit-content; max-height: 95vh; overflow-y: auto;
+        }
+
+        @media (max-width: 1250px) {
+            .container { flex-direction: column; align-items: center; }
+            .text-panel, .question-panel { flex: 1; width: 100%; max-width: 800px; }
+            .question-panel { position: static; height: auto; }
+        }
+
+        /* --- ELEMENTS --- */
+        .gap {
+            display: inline-block; min-width: 50px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color); font-weight: bold;
+            text-align: center; cursor: pointer; padding: 0 5px;
+            transition: all 0.3s;
+        }
+        .gap:hover, .gap.active { background-color: #eef7ff; border-radius: 4px; }
+        .gap.correct { color: var(--success-color); border-bottom-color: var(--success-color); }
+        .gap.wrong { color: var(--error-color); border-bottom-color: var(--error-color); text-decoration: line-through; }
+
+        .signal-word { transition: background-color 0.5s ease; border-radius: 3px; padding: 0 2px; }
+        .signal-word.highlighted { background-color: var(--highlight-color); font-weight: bold; color: black; }
+
+        /* HEADER SCORE */
+        .header-score {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee;
+        }
+        .score-display { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
+
+        /* OPTIONS GRID */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .option-btn {
+            padding: 12px; border: 1px solid #ddd; background: white;
+            border-radius: 6px; cursor: pointer; font-size: 1rem;
+            transition: all 0.2s; text-align: left;
+        }
+        .option-btn:hover:not(:disabled) { background-color: #f0f0f0; }
+        
+        /* TRẠNG THÁI ĐÁP ÁN (CHỮ TRẮNG) */
+        .option-btn.correct-select { 
+            background-color: var(--success-color) !important; 
+            color: white !important; 
+            border-color: var(--success-color) !important;
+            font-weight: bold;
+        }
+        .option-btn.wrong-select { 
+            background-color: var(--error-color) !important; 
+            color: white !important; 
+            border-color: var(--error-color) !important;
+            font-weight: bold;
+        }
+        .option-btn.reveal-correct { 
+            border: 2px solid var(--success-color); 
+            color: var(--success-color); 
+            font-weight: bold;
+            position: relative;
+        }
+        .option-btn.reveal-correct::after {
+            content: "✓"; position: absolute; right: 10px; font-weight: bold;
+        }
+        .option-btn:disabled { cursor: default; opacity: 0.9; }
+
+        /* HINTS */
+        .hints-container { display: flex; flex-direction: column; gap: 8px; }
+        .hint-btn {
+            width: 100%; text-align: left; padding: 10px;
+            background: #f8f9fa; border: 1px solid #eee; border-radius: 5px;
+            cursor: pointer; font-weight: 600; color: #555;
+            display: flex; justify-content: space-between;
+        }
+        .hint-btn:hover:not(:disabled) { background: #e2e6ea; }
+        .hint-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #eee; }
+        
+        .hint-cost { font-size: 0.8em; color: var(--error-color); }
+        .hint-content {
+            padding: 10px; background: #fff; display: none;
+            border: 1px solid #eee; border-top: none;
+            font-size: 0.95rem; color: #444; line-height: 1.5;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        /* NEXT BUTTON */
+        .nav-btn {
+            margin-top: 20px; width: 100%; padding: 15px;
+            background: var(--primary-color); color: white;
+            border: none; border-radius: 5px; font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; display: none; 
+        }
+        .nav-btn:hover { background: #0056b3; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="password-overlay">
+        <h2>🔒 Yêu cầu Mật khẩu</h2>
+        <p>Nhập mật khẩu để truy cập 3 bài Cloze Test (Gợi ý: 1234)</p>
+        <input type="password" id="password-input" placeholder="Nhập mật khẩu...">
+        <button id="password-btn" onclick="app.checkPassword()">Vào làm bài</button>
+        <p id="pass-error" style="color: #ff6b6b; display: none; margin-top: 10px;">Mật khẩu sai!</p>
+    </div>
+
+    <div class="container" id="main-container">
+        <div class="text-panel">
+            <h2 id="ex-title">Loading...</h2>
+            <div id="ex-content"></div>
+        </div>
+
+        <div class="question-panel">
+            <div class="header-score">
+                <span>Cloze Test Series</span>
+                <span class="score-display">
+                    Score: <span id="current-score">0</span> / <span id="max-score">0</span>
+                </span>
+            </div>
+
+            <div id="game-area">
+                <div style="text-align: center; color: #888; padding: 20px;">
+                    Hãy chọn một ô trống bên trái để bắt đầu.
+                </div>
+            </div>
+
+            <button id="next-ex-btn" class="nav-btn" onclick="app.nextExercise()">
+                Chuyển sang bài tiếp theo ➡
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STORE (3 ĐỀ MỚI - ĐÃ CẬP NHẬT) ---
+        const exercises = [
+            {
+                id: 1,
+                title: "Exercise 1: Discover the iPhone 17!",
+                content: `
+                    <h3 style="margin-top:0">Discover the iPhone 17!</h3>
+                    <p>
+                        It 
+                        <span id="gap-1-17" class="gap" onclick="app.selectQuestion(1, 17)">(20) ______</span> 
+                        <span id="sig-1-17-1" class="signal-word">a bright screen</span>, 
+                        a fast A17 chip, and a better camera. Enjoy longer battery life and 5G speed. Perfect for photos, games, and 
+                        <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(21) ______</span> 
+                        <span id="sig-1-18-2" class="signal-word">in touch</span>. 
+                        Get the iPhone 17 now and enjoy 
+                        <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(22) ______</span> 
+                        <span id="sig-1-19-2" class="signal-word">latest technology</span>!
+                    </p>
+                `,
+                questions: [
+                    {
+                        id: 17,
+                        options: [{id: "A", text: "have"}, {id: "B", text: "has"}, {id: "C", text: "had"}, {id: "D", text: "having"}],
+                        correct: "B",
+                        signalElementIds: ["sig-1-17-1"], // "a bright screen" (Object), Subject "It" (implied context)
+                        hints: [
+                            "Hint 1 (Enemy): Các dạng của động từ 'Have'. Bài tập về NGỮ PHÁP (Chia động từ).",
+                            "Hint 2 (Signal): Chủ ngữ là 'It' (số ít) ở đầu câu.",
+                            "Hint 3 (Logic): Chủ ngữ số ít ở thì hiện tại đơn (quảng cáo tính năng)",
+                            "Hint 4 (Trans):<br>A. có (số nhiều)<br>B. có (số ít) + a bright screen<br>C. đã có<br>D. đang có"
+                        ]
+                    },
+                    {
+                        id: 18,
+                        options: [{id: "A", text: "staying"}, {id: "B", text: "having"}, {id: "C", text: "getting"}, {id: "D", text: "making"}],
+                        correct: "A",
+                        signalElementIds: ["sig-1-18-2"], // "in touch"
+                        hints: [
+                            "Hint 1 (Enemy): 4 Động từ V-ing khác nhau. Bài tập COLLOCATION (Cụm từ cố định).",
+                            "Hint 2 (Signal): Cụm từ phía sau là '... in touch'.",
+                            "Hint 3 (Logic): Cụm từ cố định đi với 'in touch' giữ liên lạc",
+                            "Hint 4 (Trans):<br>A. [giữ] + liên lạc<br>B. [có] + liên lạc<br>C. [lấy] + liên lạc<br>D. [làm] + liên lạc"
+                        ]
+                    },
+                    {
+                        id: 19,
+                        options: [{id: "A", text: "a"}, {id: "B", text: "an"}, {id: "C", text: "the"}, {id: "D", text: "Ø (no article)"}],
+                        correct: "C",
+                        signalElementIds: ["sig-1-19-2"], // "latest technology"
+                        hints: [
+                            "Hint 1 (Enemy): Các Mạo từ. Bài tập NGỮ PHÁP.",
+                            "Hint 2 (Signal): Tính từ 'latest' (mới nhất) là dạng so sánh nhất.",
+                            "Hint 3 (Logic): Trước tính từ so sánh nhất (superlative) cần dùng mạo từ gì.",
+                            "Hint 4 (Trans):<br>A. một + công nghệ mới nhất<br>B. một + công nghệ mới nhất<br>C. [xác định/duy nhất] + công nghệ mới nhất<br>D. rỗng"
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Exercise 2: The Story of the Eiffel Tower",
+                content: `
+                    <h3 style="margin-top:0">ADVERTISEMENT: THE STORY OF THE EIFFEL TOWER</h3>
+                    <p>
+                        We're excited to tell you about the Eiffel Tower in Paris! A long time ago, in the late 1800s, Paris was getting ready for a big event. 
+                        During this time, builders were creating 
+                        <span id="gap-2-17" class="gap" onclick="app.selectQuestion(2, 17)">(17) ______</span> 
+                        <span id="sig-2-17-2" class="signal-word">Eiffel Tower</span>, 
+                        which would become a famous monument.
+                    </p>
+                    <p>
+                        The building started in 1887, and the workers were busy working 
+                        <span id="gap-2-18" class="gap" onclick="app.selectQuestion(2, 18)">(18) ______</span> 
+                        <span id="sig-2-18-2" class="signal-word">the metal parts</span> 
+                        and shaping the tower. While they 
+                        <span id="gap-2-19" class="gap" onclick="app.selectQuestion(2, 19)">(19) ______</span> 
+                        <span id="sig-2-19-2" class="signal-word">on the tower</span>, 
+                        many people in Paris were waiting for it to be finish.By 1889, the Eiffel Tower was done and it became a symbol of Paris. Visitors from all over came to see it and were amazed by its design. Today, it remains one of the most well-known landmarks in the world!
+                    </p>
+                `,
+                questions: [
+                    {
+                        id: 17,
+                        options: [{id: "A", text: "the"}, {id: "B", text: "a"}, {id: "C", text: "an"}, {id: "D", text: "X"}],
+                        correct: "A",
+                        signalElementIds: ["sig-2-17-2"], // "Eiffel Tower"
+                        hints: [
+                            "Hint 1 (Enemy): Mạo từ. Bài tập NGỮ PHÁP.",
+                            "Hint 2 (Signal): Tên riêng 'Eiffel Tower' (Công trình kiến trúc).",
+                            "Hint 3 (Logic): Với tên các công trình, tháp, tượng đài, ta thường dùng gì.",
+                            "Hint 4 (Trans):<br>A. [xác định] + tháp Eiffel<br>B. một + tháp Eiffel<br>C. một + tháp Eiffel<br>D. rỗng"
+                        ]
+                    },
+                    {
+                        id: 18,
+                        options: [{id: "A", text: "at"}, {id: "B", text: "on"}, {id: "C", text: "with"}, {id: "D", text: "in"}],
+                        correct: "B",
+                        signalElementIds: ["sig-2-18-2"], // "the metal parts"
+                        hints: [
+                            "Hint 1 (Enemy): Giới từ. Bài tập CẤU TRÚC/PHRASAL VERB.",
+                            "Hint 2 (Signal): Động từ 'working' + túc từ 'metal parts' (bộ phận kim loại).",
+                            "Hint 3 (Logic): Cụm 'Work on something' xử lý, chế tạo hoặc sửa chữa. 'Work with' + công cụ hoặc người.",
+                            "Hint 4 (Trans):<br>A. làm việc tại<br>B. làm việc trên/xử lý (các bộ phận kim loại)<br>C. làm việc với<br>D. làm việc trong"
+                        ]
+                    },
+                    {
+                        id: 19,
+                        options: [{id: "A", text: "built"}, {id: "B", text: "were building"}, {id: "C", text: "builds"}, {id: "D", text: "are building"}],
+                        correct: "B",
+                        signalElementIds: ["sig-2-19-2"], // "While" at start of sentence (logic)
+                        hints: [
+                            "Hint 1 (Enemy): Các thì của động từ. Bài tập NGỮ PHÁP.",
+                            "Hint 2 (Signal): Liên từ 'While' (Trong khi) ở quá khứ (1887).",
+                            "Hint 3 (Logic): 'While' + hành động dài (Was/Were + V-ing).",
+                            "Hint 4 (Trans):<br>A. đã xây (Qk đơn)<br>B. đang xây (Qk tiếp diễn)<br>C. xây (Hiện tại đơn)<br>D. đang xây (Hiện tại tiếp diễn)"
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Exercise 3: Career Choices Announcement",
+                content: `
+                    <h3 style="margin-top:0">Career Choices Announcement</h3>
+                    <p>
+                        Choosing the right career is very important for your future. A good career gives you 
+                        <span id="gap-3-17" class="gap" onclick="app.selectQuestion(3, 17)">(17) ______</span> 
+                        <span id="sig-3-17-2" class="signal-word">opportunities</span> 
+                        to grow and learn. It also helps you feel successful.
+                    </p>
+                    <p>
+                        When selecting 
+                        <span id="gap-3-18" class="gap" onclick="app.selectQuestion(3, 18)">(18) ______</span> 
+                        <span id="sig-3-18-2" class="signal-word">job</span>, 
+                        think about what you enjoy and what skills you have. Some people like jobs where they can work with others , while some prefer working alone. There are many careers to choose from, such as doctor, teacher, or engineer. Each job is different and requires special skills. 
+                    </p>
+                    <p>
+                        You should choose a career 
+                        <span id="gap-3-19" class="gap" onclick="app.selectQuestion(3, 19)">(19) ______</span> 
+                        <span id="sig-3-19-2" class="signal-word">fits</span> 
+                        your interests and goals. Sometimes, people change careers because they want to try something new or develop new skills.
+                    </p>
+                `,
+                questions: [
+                    {
+                        id: 17,
+                        options: [{id: "A", text: "many"}, {id: "B", text: "few"}, {id: "C", text: "little"}, {id: "D", text: "much"}],
+                        correct: "A",
+                        signalElementIds: ["sig-3-17-2"], // "opportunities"
+                        hints: [
+                            "Hint 1 (Enemy): Lượng từ (Quantifiers). Bài tập NGỮ PHÁP.",
+                            "Hint 2 (Signal): Danh từ 'opportunities' (tận cùng là 's') đứng sau.",
+                            "Hint 3 (Logic): Lượng từ nào đi với Ns, mang nghĩa tích cực.",
+                            "Hint 4 (Trans):<br>A. nhiều + cơ hội<br>B. rất ít + cơ hội<br>C. ít + cơ hội<br>D. nhiều + cơ hội (dùng cho không đếm được)"
+                        ]
+                    },
+                    {
+                        id: 18,
+                        options: [{id: "A", text: "a"}, {id: "B", text: "an"}, {id: "C", text: "the"}, {id: "D", text: "Ø (no article)"}],
+                        correct: "A",
+                        signalElementIds: ["sig-3-18-2"], // "job"
+                        hints: [
+                            "Hint 1 (Enemy): Mạo từ. Bài tập NGỮ PHÁP.",
+                            "Hint 2 (Signal): Danh từ 'job' (số ít, đếm được, bắt đầu bằng phụ âm 'j').",
+                            "Hint 3 (Logic): Loại đáp án nào, Nghề nghiệp dùng gì? ",
+                            "Hint 4 (Trans):<br>A. một + công việc<br>B. một + công việc (sai âm)<br>C. công việc ấy (xác định)<br>D. rỗng"
+                        ]
+                    },
+                    {
+                        id: 19,
+                        options: [{id: "A", text: "who"}, {id: "B", text: "that"}, {id: "C", text: "what"}, {id: "D", text: "where"}],
+                        correct: "B",
+                        signalElementIds: ["sig-3-19-2"], // "fits" (Verb), antecedent "career" (Thing)
+                        hints: [
+                            "Hint 1 (Enemy): Đại từ quan hệ. Bài tập CẤU TRÚC CÂU.",
+                            "Hint 2 (Signal): Phía sau là 'fits', phía trước là 'career'.",
+                            "Hint 3 (Logic): Theo sau là động từ, trước là Danh từ chỉ vật. Loại đáp án nào.",
+                            "Hint 4 (Trans):<br>A. người mà + phù hợp<br>B. cái mà + phù hợp<br>C. cái gì + phù hợp<br>D. nơi mà + phù hợp"
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // --- CONTROLLER (LOGIC APP) ---
+        const app = {
+            state: {
+                currentExIndex: 0,
+                currentScore: 0,
+                maxScore: 0, 
+                questionsMap: {}, 
+            },
+
+            // 1. PASSWORD CHECK
+            checkPassword: function() {
+                const pass = document.getElementById('password-input').value;
+                if (pass === "1234") {
+                    document.getElementById('password-overlay').style.display = 'none';
+                    document.getElementById('main-container').classList.add('visible');
+                    this.initExercise(0);
+                } else {
+                    document.getElementById('pass-error').style.display = 'block';
+                }
+            },
+
+            // 2. KHỞI TẠO BÀI TẬP
+            initExercise: function(index) {
+                if (index >= exercises.length) {
+                    alert("Chúc mừng! Bạn đã hoàn thành tất cả bài tập.");
+                    return;
+                }
+
+                this.state.currentExIndex = index;
+                const exData = exercises[index];
+
+                // Cập nhật giao diện Text
+                document.getElementById('ex-title').innerText = exData.title;
+                document.getElementById('ex-content').innerHTML = exData.content;
+                document.getElementById('game-area').innerHTML = '<div style="text-align:center; color:#888; padding:20px;">Chọn một ô trống (ví dụ: 17, 18) trong văn bản để bắt đầu.</div>';
+                
+                // Nút Next
+                const btn = document.getElementById('next-ex-btn');
+                btn.style.display = 'none';
+
+                // Reset map câu hỏi cho bài mới
+                exData.questions.forEach(q => {
+                    const uniqueKey = `${index}-${q.id}`;
+                    // Reset nếu chưa làm, hoặc giữ nguyên state nếu muốn lưu progress
+                    // Ở đây ta reset points nhưng cộng dồn maxScore
+                    if(!this.state.questionsMap[uniqueKey]) {
+                        this.state.questionsMap[uniqueKey] = {
+                            answered: false,
+                            points: 5,
+                            hintsOpened: [false, false, false, false],
+                            userAnswer: null
+                        };
+                        this.state.maxScore += 5;
+                    }
+                });
+                
+                this.updateScoreDisplay();
+            },
+
+            // 3. CHỌN CÂU HỎI
+            selectQuestion: function(exId, qId) {
+                // exId ở đây là ID trong HTML (1,2,3) -> cần chuyển thành index (0,1,2)
+                const realExIndex = exId - 1; 
+                
+                // Highlight gap
+                document.querySelectorAll('.gap').forEach(el => el.classList.remove('active'));
+                const activeGap = document.getElementById(`gap-${exId}-${qId}`);
+                if(activeGap) activeGap.classList.add('active');
+
+                this.renderGamePanel(realExIndex, qId);
+            },
+
+            // 4. RENDER BẢNG CÂU HỎI
+            renderGamePanel: function(exIndex, qId) {
+                const exData = exercises[exIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+                const uniqueKey = `${exIndex}-${qId}`;
+                const qState = this.state.questionsMap[uniqueKey];
+                const panel = document.getElementById('game-area');
+
+                if (!qData) return;
+
+                // Xử lý logic Hint 2 (Highlight lại nếu đã mở)
+                document.querySelectorAll('.signal-word').forEach(el => el.classList.remove('highlighted'));
+                if (qState.hintsOpened[1]) { 
+                    qData.signalElementIds.forEach(id => {
+                         const el = document.getElementById(id);
+                         if(el) el.classList.add('highlighted');
+                    });
+                }
+
+                let html = `
+                    <div class="current-q-info">
+                        <div style="font-weight:bold; margin-bottom:5px;">Question ${qId}</div>
+                        <div style="font-size:0.9rem; color:#666;">
+                            Điểm: <b style="color:${qState.answered ? (qState.points > 0 ? 'var(--success-color)' : 'var(--error-color)') : 'var(--primary-color)'}">
+                                ${qState.answered ? (qState.points > 0 ? '+' + qState.points : '0') : qState.points}
+                            </b>
+                        </div>
+                    </div>
+
+                    <div class="options-grid">
+                        ${qData.options.map(opt => {
+                            let btnClass = 'option-btn';
+                            let disabled = '';
+                            if (qState.answered) {
+                                disabled = 'disabled';
+                                if (opt.id === qData.correct) btnClass += ' reveal-correct';
+                                if (opt.id === qState.userAnswer) {
+                                    btnClass += (opt.id === qData.correct) ? ' correct-select' : ' wrong-select';
+                                }
+                            }
+                            return `<button class="${btnClass}" ${disabled} onclick="app.submitAnswer(${exIndex}, ${qId}, '${opt.id}')">${opt.id}. ${opt.text}</button>`;
+                        }).join('')}
+                    </div>
+
+                    <div class="hints-container">
+                        <div style="font-size:0.9rem; font-weight:bold; margin-bottom:5px; color:#555;">Gợi ý (Mở theo thứ tự):</div>
+                        ${qData.hints.map((hintText, index) => {
+                            const isOpened = qState.hintsOpened[index];
+                            const isLocked = index > 0 && !qState.hintsOpened[index - 1];
+                            const disabledAttr = (qState.answered || isLocked) && !isOpened ? 'disabled' : '';
+
+                            return `
+                                <div class="hint-item">
+                                    <button class="hint-btn" ${disabledAttr} onclick="app.openHint(${exIndex}, ${qId}, ${index})">
+                                        <span>${isOpened ? '📖 Hint ' + (index+1) : (isLocked ? '🔒 Locked' : '🔐 Mở Hint ' + (index+1))}</span>
+                                        <span class="hint-cost">${isOpened || qState.answered ? '' : '-1 Point'}</span>
+                                    </button>
+                                    <div class="hint-content ${isOpened ? 'show' : ''}">${hintText}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                panel.innerHTML = html;
+            },
+
+            // 5. XỬ LÝ HINT
+            openHint: function(exIndex, qId, hintIndex) {
+                const uniqueKey = `${exIndex}-${qId}`;
+                const qState = this.state.questionsMap[uniqueKey];
+                
+                if (hintIndex > 0 && !qState.hintsOpened[hintIndex - 1]) {
+                    alert("Bạn phải mở gợi ý trước đó trước!");
+                    return;
+                }
+                
+                if (!qState.answered && !qState.hintsOpened[hintIndex]) {
+                    if (qState.points > 0) qState.points -= 1;
+                    qState.hintsOpened[hintIndex] = true;
+                    this.renderGamePanel(exIndex, qId);
+                }
+            },
+
+            // 6. XỬ LÝ TRẢ LỜI
+            submitAnswer: function(exIndex, qId, selectedOptId) {
+                const uniqueKey = `${exIndex}-${qId}`;
+                const qState = this.state.questionsMap[uniqueKey];
+                const exData = exercises[exIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+
+                if (qState.answered) return;
+
+                qState.userAnswer = selectedOptId;
+                qState.answered = true;
+
+                // ID gap trong HTML: gap-{exIndex+1}-{qId}
+                const gapEl = document.getElementById(`gap-${exIndex + 1}-${qId}`);
+                const correctText = qData.options.find(o => o.id === qData.correct).text;
+
+                if (selectedOptId === qData.correct) {
+                    this.state.currentScore += qState.points;
+                    gapEl.classList.add('correct');
+                    gapEl.classList.remove('wrong');
+                    gapEl.innerText = correctText;
+                } else {
+                    qState.points = 0;
+                    gapEl.classList.add('wrong');
+                    gapEl.innerText = correctText;
+                }
+
+                this.updateScoreDisplay();
+                this.renderGamePanel(exIndex, qId);
+                this.checkExerciseCompletion(exIndex);
+            },
+
+            // 7. KIỂM TRA HOÀN THÀNH BÀI
+            checkExerciseCompletion: function(exIndex) {
+                const exData = exercises[exIndex];
+                const allAnswered = exData.questions.every(q => {
+                    const key = `${exIndex}-${q.id}`;
+                    return this.state.questionsMap[key] && this.state.questionsMap[key].answered;
+                });
+                
+                if (allAnswered) {
+                    const btn = document.getElementById('next-ex-btn');
+                    if (exIndex < exercises.length - 1) {
+                        btn.style.display = 'block';
+                        btn.innerText = "Chuyển sang bài tiếp theo ➡";
+                    } else {
+                        btn.style.display = 'block';
+                        btn.innerText = "HOÀN THÀNH TẤT CẢ";
+                        btn.onclick = () => alert("Bạn đã hoàn thành 3 bài Cloze Test! Tổng điểm: " + this.state.currentScore + "/" + this.state.maxScore);
+                    }
+                }
+            },
+
+            nextExercise: function() {
+                this.initExercise(this.state.currentExIndex + 1);
+            },
+
+            updateScoreDisplay: function() {
+                document.getElementById('current-score').innerText = this.state.currentScore;
+                document.getElementById('max-score').innerText = this.state.maxScore;
+            }
+        };
+    </script>
+</body>
+</html>
