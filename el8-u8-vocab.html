@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bài tập Trắc nghiệm Tiếng Anh - Shopping</title>
     <style>
         :root {
@@ -23,21 +23,47 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            overflow: hidden; /* Ngăn cuộn body, chỉ cuộn nội dung con */
         }
 
-        /* Header & Progress */
+        /* === HEADER === */
         .header {
             background: white;
-            padding: 15px 30px;
+            padding: 10px 20px;
             border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            position: relative;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none; /* Ẩn trên Desktop */
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .progress-container {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background-color: #eee;
             border-radius: 4px;
             margin-top: 10px;
@@ -51,19 +77,20 @@
             transition: width 0.4s ease;
         }
 
-        /* Layout */
+        /* === MAIN LAYOUT === */
         .main-container {
             display: flex;
+            flex: 1;
             padding: 20px;
             gap: 25px;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             width: 100%;
             box-sizing: border-box;
-            height: calc(100vh - 80px);
+            overflow: hidden; /* Để scroll hoạt động độc lập */
         }
 
-        /* Sidebar */
+        /* === SIDEBAR === */
         .sidebar {
             width: 280px;
             background: white;
@@ -72,13 +99,22 @@
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            height: fit-content;
-            max-height: 95%;
-            position: sticky;
-            top: 0;
+            height: calc(100% - 40px); /* Full height minus padding */
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
 
-        /* Stats Box trong Sidebar */
+        /* Overlay cho Mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
         .stats-box {
             background-color: #f8f9fa;
             padding: 15px;
@@ -100,7 +136,6 @@
             color: var(--dark-blue);
         }
 
-        /* Navigation Grid */
         .nav-container {
             flex: 1;
             overflow-y: auto;
@@ -121,28 +156,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 0.85em;
-            transition: 0.2s;
+            font-size: 0.9em;
             background: #fff;
         }
 
-        .q-num:hover { background-color: #f1f3f4; }
-        .q-num.done { background-color: #eee; color: #555; }
-        
-        .q-num.done-correct {
-            background-color: #e6f4ea; 
-            border-color: var(--correct-green);
-            color: var(--correct-green);
-            font-weight: bold;
-        }
-        .q-num.done-wrong {
-            background-color: #fce8e6;
-            border-color: var(--wrong-red);
-            color: var(--wrong-red);
-            font-weight: bold;
-        }
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
 
-        /* Nút Nộp Bài */
         .btn-submit {
             width: 100%;
             padding: 12px;
@@ -153,19 +173,15 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 1em;
-            transition: 0.2s;
-        }
-        
-        .btn-submit:hover {
-            background-color: #1558b0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Quiz area */
+        /* === QUIZ AREA === */
         .quiz-area {
             flex: 1;
             overflow-y: auto;
-            padding-right: 10px;
+            padding-right: 5px; /* Scrollbar space */
+            padding-bottom: 20px;
         }
 
         .question-card {
@@ -173,7 +189,7 @@
             padding: 25px;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
@@ -182,30 +198,26 @@
         .question-text {
             font-size: 1.1em;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             line-height: 1.5;
             color: #202124;
         }
 
-        /* Nút Gợi ý */
+        /* Buttons */
         .btn-hint-toggle {
             align-self: flex-start;
             background-color: white;
             border: 1px solid #ffb74d;
             color: #f57f17;
-            padding: 5px 12px;
-            border-radius: 15px;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 0.85em;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 5px;
-            margin-bottom: 10px;
-            transition: 0.2s;
-            font-weight: 500;
+            margin-bottom: 15px;
         }
-
-        .btn-hint-toggle:hover { background-color: #fff8e1; }
 
         .hint-content {
             display: none;
@@ -217,53 +229,34 @@
             font-size: 0.95em;
             color: #e65100;
         }
-        
         .hint-content.show { display: block; animation: fadeIn 0.3s; }
 
-        /* Styles cho đáp án */
         .options-list {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr; /* Desktop: 2 columns */
             gap: 12px;
         }
 
         .option-btn {
-            padding: 12px 15px;
+            padding: 14px 16px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             background: white;
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s;
             font-size: 1em;
             display: flex;
             flex-direction: column;
-            position: relative;
+            line-height: 1.4;
+            transition: background-color 0.2s;
         }
 
-        .option-btn:hover:not(.disabled) {
-            background-color: #f8f9fa;
-            border-color: #bdc1c6;
-        }
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
 
-        .option-btn.disabled {
-            cursor: default;
-            opacity: 0.8;
-        }
-
-        .option-btn.correct {
-            background-color: #e6f4ea;
-            border-color: var(--correct-green);
-            color: var(--correct-green);
-        }
-
-        .option-btn.wrong {
-            background-color: #fce8e6;
-            border-color: var(--wrong-red);
-            color: var(--wrong-red);
-        }
-
-        /* Nút Dịch nghĩa */
+        /* Translate Button */
         .btn-trans-toggle {
             margin-top: 20px;
             align-self: flex-start;
@@ -271,44 +264,30 @@
             border: none;
             padding: 8px 16px;
             border-radius: 20px;
-            cursor: pointer;
             font-size: 0.9em;
             color: #555;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: 0.3s;
             font-weight: 500;
         }
-
-        .btn-trans-toggle:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: #eee;
-            color: #999;
-        }
-        
-        .btn-trans-toggle:hover:not(:disabled) {
-            background: #e8eaed;
-            color: #1a73e8;
-        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
 
         .trans-text {
             display: none;
             color: var(--trans-color);
             font-style: italic;
-            font-size: 0.9em;
-            margin-top: 6px;
+            font-size: 0.95em;
+            margin-top: 5px;
             font-weight: normal;
             border-top: 1px dashed #eee;
             padding-top: 4px;
         }
-        
         .trans-text.show { display: block; animation: fadeIn 0.3s; }
 
         .explanation-box {
             margin-top: 15px;
-            padding: 12px;
+            padding: 15px;
             border-radius: 6px;
             background-color: #fffde7;
             border-left: 4px solid #fbc02d;
@@ -316,75 +295,105 @@
             font-size: 0.95em;
         }
 
-        /* === Modal Bảng Tổng Kết === */
+        /* === MODAL === */
         .modal-overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
             justify-content: center;
             align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
-
         .modal-content {
             background: white;
             padding: 30px;
-            border-radius: 15px;
-            width: 400px;
-            max-width: 90%;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: zoomIn 0.3s;
         }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
 
-        .modal-score {
-            font-size: 3em;
-            font-weight: bold;
-            color: var(--dark-blue);
-            margin: 10px 0;
+        /* === RESPONSIVE (MOBILE) === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; } /* Hiện nút Menu */
+            
+            .main-container {
+                padding: 10px; /* Giảm padding */
+                display: block; /* Bỏ flex để xử lý thủ công */
+                position: relative;
+            }
+
+            /* Sidebar biến thành Drawer */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 280px;
+                height: 100%;
+                margin: 0;
+                border-radius: 0;
+                border: none;
+                border-right: 1px solid #eee;
+                transform: translateX(-100%); /* Ẩn sang trái */
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0); /* Trượt ra */
+            }
+
+            .sidebar-overlay.active { display: block; }
+
+            .quiz-area {
+                padding: 0;
+                height: 100%;
+                overflow-y: visible; /* Để body cuộn */
+            }
+
+            .question-card {
+                padding: 15px; /* Padding nhỏ hơn trên mobile */
+                margin-bottom: 15px;
+            }
+
+            .options-list {
+                grid-template-columns: 1fr; /* 1 cột trên mobile */
+            }
+            
+            .header-title { font-size: 1em; }
         }
 
-        .modal-details {
-            margin: 20px 0;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-        }
-
-        .modal-btn {
-            padding: 10px 25px;
-            background: var(--dark-blue);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2 style="margin:0; font-size: 1.2em; color: #202124;">Lớp 8 - Topic: Shopping</h2>
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Lớp 8 - Topic: Shopping</h2>
+        </div>
         <div class="progress-container">
             <div id="progress-bar"></div>
         </div>
     </div>
 
     <div class="main-container">
-        <div class="sidebar">
-            <h3 style="margin-top:0; color:#444">Thống kê</h3>
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.2em; color:#888;" class="mobile-only">✕</span>
+            </div>
             
             <div class="stats-box">
                 <div class="stat-item">
@@ -398,7 +407,7 @@
             </div>
 
             <div class="nav-container">
-                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <h4 style="margin:0 0 10px 0;">Câu hỏi</h4>
                 <div class="question-grid" id="q-nav"></div>
             </div>
 
@@ -410,8 +419,8 @@
 
     <div class="modal-overlay" id="result-modal">
         <div class="modal-content">
-            <h2 style="color: #444; margin-top:0">Bảng Tổng Kết</h2>
-            <div>Điểm số của bạn:</div>
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
             <div class="modal-score" id="final-score">0.0</div>
             
             <div class="modal-details">
@@ -419,7 +428,7 @@
                 <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
             </div>
             
-            <button class="modal-btn" onclick="closeModal()">Đóng & Xem lại</button>
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
         </div>
     </div>
 
@@ -519,9 +528,19 @@
                 qNum.innerText = index + 1;
                 qNum.onclick = () => {
                     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Nếu đang ở mobile thì đóng menu sau khi chọn câu
+                    if(window.innerWidth <= 768) toggleSidebar();
                 };
                 nav.appendChild(qNum);
             });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
         }
 
         function toggleHint(index) {
@@ -550,9 +569,7 @@
         }
 
         function updateStats() {
-            // Cập nhật số câu đúng
             document.getElementById('stat-correct').innerText = correctCount;
-            // Cập nhật điểm (thang 10, làm tròn 1 số thập phân)
             const score = (correctCount / totalCount * 10).toFixed(1);
             document.getElementById('stat-score').innerText = score;
         }
@@ -567,14 +584,11 @@
             const transBtn = document.getElementById(`btn-trans-${qIndex}`);
             const navNum = document.getElementById(`nav-${qIndex}`);
 
-            // Mở khóa dịch nghĩa
             if (transBtn.hasAttribute('disabled')) {
                 transBtn.removeAttribute('disabled');
                 transBtn.innerHTML = '🌐 Dịch nghĩa';
-                transBtn.title = "Xem bản dịch tiếng Việt";
             }
 
-            // Xử lý đúng sai
             if (optIndex === correctIndex) {
                 btn.classList.add('correct');
                 navNum.classList.add('done-correct');
@@ -582,35 +596,28 @@
             } else {
                 btn.classList.add('wrong');
                 navNum.classList.add('done-wrong');
-                // Hiện đáp án đúng
                 buttons[correctIndex].classList.add('correct');
             }
 
-            // Cập nhật thống kê
             updateStats();
-
-            // Khóa các nút
             buttons.forEach(b => b.classList.add('disabled'));
 
-            // Progress bar
             const percent = (answeredSet.size / quizData.length) * 100;
             document.getElementById('progress-bar').style.width = percent + '%';
 
-            // Hiện giải thích
             expBox.innerHTML = `<strong>Giải thích:</strong> ${quizData[qIndex].exp}`;
             expBox.style.display = 'block';
         }
 
         function submitQuiz() {
-            // Kiểm tra xem đã làm hết chưa
+            if (window.innerWidth <= 768) toggleSidebar(); // Đóng menu nếu đang mở
+            
             if (answeredSet.size < totalCount) {
                 const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
                 if (!confirmSubmit) return;
             }
 
             const score = (correctCount / totalCount * 10).toFixed(1);
-            
-            // Xếp loại
             let rank = "";
             if(score >= 9) rank = "Xuất sắc (Excellent)";
             else if(score >= 8) rank = "Giỏi (Good)";
@@ -618,12 +625,9 @@
             else if(score >= 5) rank = "Trung bình (Average)";
             else rank = "Cần cố gắng thêm (Poor)";
 
-            // Điền dữ liệu vào Modal
             document.getElementById('final-score').innerText = score;
             document.getElementById('final-correct').innerText = correctCount;
             document.getElementById('final-rank').innerText = rank;
-
-            // Hiện Modal
             document.getElementById('result-modal').style.display = 'flex';
         }
 
