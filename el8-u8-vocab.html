@@ -3,863 +3,635 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luyện Thi Tiếng Anh: Shopping & Frequency</title>
+    <title>Bài tập Trắc nghiệm Tiếng Anh - Shopping</title>
     <style>
         :root {
-            --color-correct: Seagreen;
-            --color-wrong: Crimson;
-            --color-highlight-bg: Salmon;
-            --color-highlight-text: white;
-            --color-text: #333;
-            --bg-body: #f0f2f5;
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-body);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
-            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
 
-        .quiz-container {
+        /* Header & Progress */
+        .header {
             background: white;
-            width: 100%;
-            max-width: 800px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden;
-            padding: 30px;
-            position: relative;
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        /* Header & Controls */
-        .quiz-header {
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* Layout */
+        .main-container {
+            display: flex;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            height: calc(100vh - 80px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            max-height: 95%;
+            position: sticky;
+            top: 0;
+        }
+
+        /* Stats Box trong Sidebar */
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 15px;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
         }
-
-        .quiz-info {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .btn-hint {
-            background-color: #FFB347; 
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
+        
+        .stat-value {
             font-weight: bold;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .btn-hint:hover { filter: brightness(0.95); transform: translateY(-1px); }
-        .btn-hint:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        /* Question Section */
-        .question-box {
-            font-size: 1.3rem;
-            color: var(--color-text);
-            margin-bottom: 30px;
-            line-height: 1.6;
-            font-weight: 700;
+            color: var(--dark-blue);
         }
 
-        /* Keyword Highlighting Logic */
-        .key {
-            background-color: transparent;
-            color: inherit;
-            padding: 0;
-            border-radius: 4px;
-            transition: all 0.4s ease;
-        }
-        
-        .key.active {
-            background-color: var(--color-highlight-bg);
-            color: var(--color-highlight-text);
-            padding: 2px 6px;
-            box-shadow: 0 2px 5px rgba(250, 128, 114, 0.4);
-        }
-
-        /* Options Grid */
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .option-btn {
-            background: #fff;
-            border: 2px solid #e0e0e0;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
-            font-weight: 500; 
-            color: #444;
-            position: relative;
-        }
-
-        .option-btn:hover:not(:disabled) {
-            border-color: #bbb;
-            background-color: #f8f9fa;
-        }
-
-        /* States */
-        .option-btn.correct {
-            background-color: var(--color-correct) !important;
-            color: white !important;
-            border-color: var(--color-correct) !important;
-            font-weight: 700 !important;
-        }
-
-        .option-btn.wrong {
-            background-color: var(--color-wrong) !important;
-            color: white !important;
-            border-color: var(--color-wrong) !important;
-        }
-        
-        .option-btn:disabled { cursor: default; }
-
-        /* Post-Answer Actions */
-        .action-area {
-            display: none;
-            gap: 15px;
+        /* Navigation Grid */
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
             margin-bottom: 20px;
         }
 
-        .btn-action {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            font-size: 1rem;
-            transition: transform 0.2s;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: 0.2s;
+            background: #fff;
         }
-        .btn-action:hover { transform: translateY(-2px); }
 
-        .btn-explain { background-color: var(--color-correct); box-shadow: 0 4px 10px rgba(46, 139, 87, 0.3); }
-        .btn-translate { background-color: var(--color-wrong); box-shadow: 0 4px 10px rgba(220, 20, 60, 0.3); }
-
-        /* Content Boxes */
-        .content-box {
-            display: none;
-            background: #f8f9fa;
-            border-left: 5px solid #ccc;
-            padding: 20px;
-            margin-top: 15px;
-            border-radius: 0 10px 10px 0;
-            animation: slideIn 0.4s ease;
+        .q-num:hover { background-color: #f1f3f4; }
+        .q-num.done { background-color: #eee; color: #555; }
+        
+        .q-num.done-correct {
+            background-color: #e6f4ea; 
+            border-color: var(--correct-green);
+            color: var(--correct-green);
+            font-weight: bold;
         }
-        .content-box.show { display: block; }
-        .box-explain { border-color: var(--color-correct); background-color: #f0fff4; }
-        .box-translate { border-color: var(--color-wrong); background-color: #fff5f5; }
+        .q-num.done-wrong {
+            background-color: #fce8e6;
+            border-color: var(--wrong-red);
+            color: var(--wrong-red);
+            font-weight: bold;
+        }
 
-        .info-row { margin-bottom: 10px; font-size: 1rem; line-height: 1.5; }
-        .info-label { font-weight: 800; display: inline-block; width: 110px; color: #333; }
-
-        /* Navigation */
-        .nav-controls { margin-top: 30px; text-align: right; }
-        .btn-next {
-            background-color: #333;
+        /* Nút Nộp Bài */
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
             color: white;
-            padding: 12px 30px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            display: none; 
-            font-size: 1.1rem;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .btn-next:hover { background-color: #555; transform: translateY(-2px); }
-
-        /* Result Screen */
-        #result-screen {
-            display: none;
-            text-align: center;
-            padding: 40px 20px;
-            animation: fadeIn 0.5s;
+            font-weight: bold;
+            font-size: 1em;
+            transition: 0.2s;
         }
         
-        .result-title { font-size: 2rem; color: #333; margin-bottom: 30px; }
-        .score-circle {
-            width: 150px; height: 150px;
-            background: var(--color-correct);
-            border-radius: 50%;
+        .btn-submit:hover {
+            background-color: #1558b0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Quiz area */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        /* Nút Gợi ý */
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-hint-toggle:hover { background-color: #fff8e1; }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        /* Styles cho đáp án */
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background-color: #f8f9fa;
+            border-color: #bdc1c6;
+        }
+
+        .option-btn.disabled {
+            cursor: default;
+            opacity: 0.8;
+        }
+
+        .option-btn.correct {
+            background-color: #e6f4ea;
+            border-color: var(--correct-green);
+            color: var(--correct-green);
+        }
+
+        .option-btn.wrong {
+            background-color: #fce8e6;
+            border-color: var(--wrong-red);
+            color: var(--wrong-red);
+        }
+
+        /* Nút Dịch nghĩa */
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-trans-toggle:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #eee;
+            color: #999;
+        }
+        
+        .btn-trans-toggle:hover:not(:disabled) {
+            background: #e8eaed;
+            color: #1a73e8;
+        }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.9em;
+            margin-top: 6px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === Modal Bảng Tổng Kết === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            margin: 0 auto 30px;
-            color: white;
-            font-size: 3.5rem;
-            font-weight: bold;
-            box-shadow: 0 10px 20px rgba(46, 139, 87, 0.4);
         }
-        .score-detail { font-size: 1.3rem; color: #555; margin: 10px 0; }
-        .btn-restart {
-            background-color: var(--color-correct);
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: zoomIn 0.3s;
+        }
+
+        .modal-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--dark-blue);
+            margin: 10px 0;
+        }
+
+        .modal-details {
+            margin: 20px 0;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .modal-btn {
+            padding: 10px 25px;
+            background: var(--dark-blue);
             color: white;
-            padding: 15px 40px;
             border: none;
-            border-radius: 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
+            border-radius: 5px;
             cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.2s;
+            font-size: 1.1em;
         }
-        .btn-restart:hover { transform: scale(1.05); }
 
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        @media (max-width: 600px) {
-            .options-grid { grid-template-columns: 1fr; }
-            .quiz-container { padding: 20px; }
-            .question-box { font-size: 1.1rem; }
-            .action-area { flex-direction: column; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-<div class="quiz-container">
-    <div id="quiz-content">
-        <div class="quiz-header">
-            <div class="quiz-info">Câu <span id="q-number" style="color: black;">1</span>/<span id="total-q">55</span></div>
-            <button class="btn-hint" id="btn-hint" onclick="toggleHint()"><span>💡</span> Gợi ý</button>
-        </div>
-
-        <div class="question-box" id="question-text"></div>
-        <div class="options-grid" id="options-area"></div>
-
-        <div class="action-area" id="action-area">
-            <button class="btn-action btn-explain" onclick="toggleExplanation()">📖 Giải thích</button>
-            <button class="btn-action btn-translate" onclick="toggleTranslate()">🇻🇳 Dịch nghĩa</button>
-        </div>
-
-        <div id="explanation-box" class="content-box box-explain"></div>
-        <div id="translation-box" class="content-box box-translate">
-            <div id="trans-content" style="font-style: italic; font-size: 1.1rem; color: #444;"></div>
-        </div>
-
-        <div class="nav-controls">
-            <button class="btn-next" id="btn-next" onclick="nextQuestion()">Câu tiếp theo ➜</button>
+    <div class="header">
+        <h2 style="margin:0; font-size: 1.2em; color: #202124;">Lớp 8 - Topic: Shopping</h2>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
         </div>
     </div>
 
-    <div id="result-screen">
-        <h2 class="result-title">🎉 Kết Quả Bài Thi</h2>
-        <div class="score-circle" id="final-score-10">0.0</div>
-        <p class="score-detail">Điểm trên thang 10</p>
-        <div style="width: 60px; height: 4px; background: #eee; margin: 20px auto;"></div>
-        <p class="score-detail">Số câu đúng: <b id="final-correct-count" style="color: seagreen;">0</b> / <span id="final-total-count">55</span></p>
-        <button class="btn-restart" onclick="restartQuiz()">🔄 Làm lại bài thi</button>
+    <div class="main-container">
+        <div class="sidebar">
+            <h3 style="margin-top:0; color:#444">Thống kê</h3>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">37</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
     </div>
-</div>
 
-<script>
-    // --- DỮ LIỆU 55 CÂU HỎI MỚI ---
-    const quizData = [
-    {
-        id: 1,
-        question: 'Some people go to the _______ for <span class="key">entertainment</span>.',
-        options: ["A. shopping centres", "B. fixed price", "C. shopping list", "D. convenience store"],
-        correctIndex: 0,
-        translation: "Một số người đến các trung tâm mua sắm để giải trí.",
-        explanation: { keyword: "entertainment (giải trí)", knowledge: "Từ vựng", topic: "Địa điểm mua sắm", feature: "Shopping centre (Trung tâm thương mại lớn, có giải trí)" }
-    },
-    {
-        id: 2,
-        question: 'The shop owner <span class="key">treats</span> his _______ with a lot of respects.',
-        options: ["A. item", "B. market", "C. fair", "D. customers"],
-        correctIndex: 3,
-        translation: "Chủ cửa hàng đối xử với khách hàng của mình với sự tôn trọng lớn.",
-        explanation: { keyword: "treats (đối xử), shop owner", knowledge: "Từ vựng", topic: "Kinh doanh", feature: "Customers (Khách hàng)" }
-    },
-    {
-        id: 3,
-        question: 'She <span class="key">spends too much</span> time and money shopping. She is a _______.',
-        options: ["A. shopaholic", "B. dollar store", "C. overshopping", "D. price tag"],
-        correctIndex: 0,
-        translation: "Cô ấy dành quá nhiều thời gian và tiền bạc để mua sắm. Cô ấy là một người nghiện mua sắm.",
-        explanation: { keyword: "too much time/money", knowledge: "Từ vựng", topic: "Con người", feature: "Shopaholic (Người nghiện mua sắm)" }
-    },
-    {
-        id: 4,
-        question: 'These sports clothes are _______. They are <span class="key">50% off</span>.',
-        options: ["A. try on clothes", "B. hang out", "C. on sale", "D. online shop"],
-        correctIndex: 2,
-        translation: "Những bộ quần áo thể thao này đang giảm giá. Chúng được giảm 50%.",
-        explanation: { keyword: "50% off (giảm 50%)", knowledge: "Cụm từ", topic: "Mua sắm", feature: "On sale (Đang giảm giá)" }
-    },
-    {
-        id: 5,
-        question: 'He thinks that there\'s <span class="key">nothing worth buying</span> at a _______.',
-        options: ["A. convenience", "B. dollar store", "C. goods", "D. customer"],
-        correctIndex: 1,
-        translation: "Anh ấy nghĩ rằng không có gì đáng mua ở cửa hàng đồng giá (cửa hàng 1 đô).",
-        explanation: { keyword: "nothing worth buying", knowledge: "Từ vựng", topic: "Loại cửa hàng", feature: "Dollar store (Cửa hàng giá rẻ/đồng giá)" }
-    },
-    {
-        id: 6,
-        question: 'There are a lot of _______ fruit and vegetables at a <span class="key">farmer\'s market</span>.',
-        options: ["A. home-made", "B. outdoor", "C. home-grown", "D. offline"],
-        correctIndex: 2,
-        translation: "Có rất nhiều trái cây và rau củ nhà trồng tại chợ nông sản.",
-        explanation: { keyword: "fruit and vegetables, farmer", knowledge: "Từ vựng", topic: "Sản phẩm", feature: "Home-grown (Cây nhà lá vườn/Nhà trồng)" }
-    },
-    {
-        id: 7,
-        question: '<span class="key">How much</span> is it? I can’t find the _______.',
-        options: ["A. during sales", "B. online shop", "C. discount shop", "D. price tag"],
-        correctIndex: 3,
-        translation: "Cái này giá bao nhiêu? Tôi không tìm thấy mác giá.",
-        explanation: { keyword: "How much (Hỏi giá)", knowledge: "Từ vựng", topic: "Mua sắm", feature: "Price tag (Mác giá)" }
-    },
-    {
-        id: 8,
-        question: 'The shop sells <span class="key">only fresh local</span> _______.',
-        options: ["A. produce", "B. access", "C. bargain", "D. sale"],
-        correctIndex: 0,
-        translation: "Cửa hàng chỉ bán nông sản tươi sống của địa phương.",
-        explanation: { keyword: "fresh local (tươi, địa phương)", knowledge: "Từ vựng", topic: "Nông nghiệp", feature: "Produce (Nông sản)" }
-    },
-    {
-        id: 9,
-        question: 'The _______ <span class="key">chain</span> announced that it was cutting the cost of all its fresh and frozen meat.',
-        options: ["A. item", "B. shopper", "C. supermarket", "D. fair"],
-        correctIndex: 2,
-        translation: "Chuỗi siêu thị thông báo rằng họ đang cắt giảm chi phí cho tất cả các loại thịt tươi và đông lạnh.",
-        explanation: { keyword: "chain (chuỗi), meat", knowledge: "Từ vựng", topic: "Kinh doanh", feature: "Supermarket chain (Chuỗi siêu thị)" }
-    },
-    {
-        id: 10,
-        question: 'The children were <span class="key">dressed</span> in Halloween _______.',
-        options: ["A. costumes", "B. farmers", "C. markets", "D. prices"],
-        correctIndex: 0,
-        translation: "Những đứa trẻ mặc trang phục Halloween.",
-        explanation: { keyword: "dressed, Halloween", knowledge: "Từ vựng", topic: "Lễ hội", feature: "Costumes (Trang phục hóa trang)" }
-    },
-    {
-        id: 11,
-        question: 'The <span class="key">price</span> of the painting was kept secret by the _______.',
-        options: ["A. customer", "B. doctor", "C. seller", "D. teacher"],
-        correctIndex: 2,
-        translation: "Giá của bức tranh đã được người bán giữ bí mật.",
-        explanation: { keyword: "kept secret (giữ bí mật)", knowledge: "Từ vựng", topic: "Giao dịch", feature: "Seller (Người bán)" }
-    },
-    {
-        id: 12,
-        question: 'All our fruit comes from the <span class="key">farmers’</span> _______.',
-        options: ["A. clothes", "B. buyer", "C. dollar store", "D. market"],
-        correctIndex: 3,
-        translation: "Tất cả trái cây của chúng tôi đều đến từ chợ nông sản.",
-        explanation: { keyword: "farmers'", knowledge: "Collocation", topic: "Địa điểm", feature: "Farmers' market (Chợ nông sản)" }
-    },
-    {
-        id: 13,
-        question: 'Most <span class="key">_______ stores</span> are located on busy street corners or at gas stations.',
-        options: ["A. goods", "B. difference", "C. convenience", "D. range"],
-        correctIndex: 2,
-        translation: "Hầu hết các cửa hàng tiện lợi đều nằm ở các góc phố sầm uất hoặc tại các trạm xăng.",
-        explanation: { keyword: "gas stations, busy street", knowledge: "Từ ghép", topic: "Cửa hàng", feature: "Convenience store (Cửa hàng tiện lợi)" }
-    },
-    {
-        id: 14,
-        question: 'She used to be an absolute _______ until she had a baby.',
-        options: ["A. supermarket", "B. bargain", "C. buyer", "D. shopaholic"],
-        correctIndex: 3,
-        translation: "Cô ấy từng là một người nghiện mua sắm thực thụ cho đến khi có em bé.",
-        explanation: { keyword: "absolute (thực thụ)", knowledge: "Từ vựng", topic: "Tính cách", feature: "Shopaholic (Người nghiện mua sắm)" }
-    },
-    {
-        id: 15,
-        question: 'A _______ shop is a shop that sells <span class="key">unusual or special</span> products.',
-        options: ["A. speciality", "B. costumer", "C. price tag", "D. market"],
-        correctIndex: 0,
-        translation: "Cửa hàng chuyên doanh là cửa hàng bán các sản phẩm đặc biệt hoặc độc lạ.",
-        explanation: { keyword: "special products", knowledge: "Từ vựng", topic: "Loại cửa hàng", feature: "Speciality shop (Cửa hàng chuyên doanh)" }
-    },
-    {
-        id: 16,
-        question: 'They sell a <span class="key">wide _______</span> of skin-care products.',
-        options: ["A. price", "B. convenience", "C. sale", "D. range"],
-        correctIndex: 3,
-        translation: "Họ bán đa dạng các sản phẩm chăm sóc da.",
-        explanation: { keyword: "wide ... of", knowledge: "Collocation", topic: "Số lượng", feature: "Wide range of (Đa dạng/Nhiều loại)" }
-    },
-    {
-        id: 17,
-        question: 'Click on this <span class="key">link</span> to visit our _______ bookstore.',
-        options: ["A. large", "B. offline", "C. online", "D. narrow"],
-        correctIndex: 2,
-        translation: "Nhấp vào liên kết này để ghé thăm hiệu sách trực tuyến của chúng tôi.",
-        explanation: { keyword: "Click, link", knowledge: "Từ vựng", topic: "Công nghệ", feature: "Online bookstore" }
-    },
-    {
-        id: 18,
-        question: 'We had lunch at a(n) _______ café in the <span class="key">city square</span>.',
-        options: ["A. open-air", "B. farmers’ market", "C. price tag", "D. dollar store"],
-        correctIndex: 0,
-        translation: "Chúng tôi đã ăn trưa tại một quán cà phê ngoài trời ở quảng trường thành phố.",
-        explanation: { keyword: "café, city square", knowledge: "Từ vựng", topic: "Địa điểm", feature: "Open-air (Ngoài trời/Lộ thiên)" }
-    },
-    {
-        id: 19,
-        question: 'The family sells their _______ vegetables at the local market.',
-        options: ["A. home-grown", "B. outdoor", "C. home-made", "D. offline"],
-        correctIndex: 0,
-        translation: "Gia đình bán rau trồng tại nhà của họ ở chợ địa phương.",
-        explanation: { keyword: "vegetables (rau)", knowledge: "Từ vựng", topic: "Sản phẩm", feature: "Home-grown (Nhà trồng - dùng cho cây cối)" }
-    },
-    {
-        id: 20,
-        question: 'A bike is a very _______ way of getting around.',
-        options: ["A. popular", "B. convenient", "C. attractive", "D. online"],
-        correctIndex: 1,
-        translation: "Xe đạp là một phương tiện đi lại rất thuận tiện.",
-        explanation: { keyword: "getting around", knowledge: "Từ vựng", topic: "Tính chất", feature: "Convenient (Tiện lợi/Thuận tiện)" }
-    },
-    {
-        id: 21,
-        question: 'Farmers’ markets are a traditional way of selling home-grown fruits and _______ products.',
-        options: ["A. home-grown", "B. homeless", "C. home-made", "D. homesick"],
-        correctIndex: 2,
-        translation: "Chợ nông sản là cách truyền thống để bán trái cây nhà trồng và các sản phẩm tự làm.",
-        explanation: { keyword: "products (sản phẩm chế biến)", knowledge: "Từ vựng", topic: "Sản phẩm", feature: "Home-made (Nhà làm - bánh, mứt...)" }
-    },
-    {
-        id: 22,
-        question: 'These _______ <span class="key">prices</span> give farmers a good life.',
-        options: ["A. wandered", "B. discounted", "C. fixed", "D. attracted"],
-        correctIndex: 2,
-        translation: "Mức giá cố định này giúp nông dân có cuộc sống tốt.",
-        explanation: { keyword: "prices", knowledge: "Collocation", topic: "Kinh tế", feature: "Fixed prices (Giá cố định/Niêm yết)" }
-    },
-    {
-        id: 23,
-        question: 'Drivers should park in a(n) _______ area to <span class="key">prevent theft</span> at night.',
-        options: ["A. well-lit", "B. home-grown", "C. convenient", "D. online"],
-        correctIndex: 0,
-        translation: "Tài xế nên đỗ xe ở khu vực có đủ ánh sáng để phòng trộm vào ban đêm.",
-        explanation: { keyword: "prevent theft, at night", knowledge: "Từ vựng", topic: "An ninh", feature: "Well-lit (Được chiếu sáng tốt)" }
-    },
-    {
-        id: 24,
-        question: 'All the parks in our city are open _______.',
-        options: ["A. year-round", "B. home-grown", "C. decisive", "D. home-made"],
-        correctIndex: 0,
-        translation: "Tất cả các công viên trong thành phố của chúng tôi đều mở cửa quanh năm.",
-        explanation: { keyword: "open (thời gian)", knowledge: "Trạng từ", topic: "Thời gian", feature: "Year-round (Quanh năm)" }
-    },
-    {
-        id: 25,
-        question: 'The store has changed its image in an effort to <span class="key">win back</span> _______ customers.',
-        options: ["A. strict", "B. happy", "C. humble", "D. unhappy"],
-        correctIndex: 3,
-        translation: "Cửa hàng đã thay đổi hình ảnh để giành lại những khách hàng không hài lòng.",
-        explanation: { keyword: "win back (giành lại)", knowledge: "Ngữ cảnh", topic: "Kinh doanh", feature: "Unhappy customers (Khách hàng không hài lòng)" }
-    },
-    {
-        id: 26,
-        question: 'They are offering a(n) _______ <span class="key">gift</span> with each product we buy.',
-        options: ["A. expensive", "B. cheap", "C. unhappy", "D. free"],
-        correctIndex: 3,
-        translation: "Họ đang tặng một món quà miễn phí với mỗi sản phẩm chúng tôi mua.",
-        explanation: { keyword: "gift (quà), offering", knowledge: "Từ vựng", topic: "Khuyến mãi", feature: "Free gift (Quà tặng miễn phí)" }
-    },
-    {
-        id: 27,
-        question: 'I prefer to <span class="key">do my</span> ____________ at shopping malls.',
-        options: ["A. shopper", "B. shops", "C. shopping", "D. shop"],
-        correctIndex: 2,
-        translation: "Tôi thích đi mua sắm tại các trung tâm thương mại.",
-        explanation: { keyword: "do my...", knowledge: "Collocation", topic: "Cụm từ cố định", feature: "Do (my) shopping (Đi mua sắm)" }
-    },
-    {
-        id: 28,
-        question: 'In our group, most people spend most of their money ____________ clothes.',
-        options: ["A. of", "B. at", "C. in", "D. on"],
-        correctIndex: 3,
-        translation: "Trong nhóm của chúng tôi, hầu hết mọi người dành phần lớn tiền của họ vào quần áo.",
-        explanation: { keyword: "spend money", knowledge: "Giới từ", topic: "Cấu trúc câu", feature: "Spend money ON something" }
-    },
-    {
-        id: 29,
-        question: 'She should call the shipping company to <span class="key">complain</span> ____________ the problem.',
-        options: ["A. to", "B. about", "C. on", "D. with"],
-        correctIndex: 1,
-        translation: "Cô ấy nên gọi cho công ty vận chuyển để phàn nàn về vấn đề này.",
-        explanation: { keyword: "complain", knowledge: "Giới từ", topic: "Cấu trúc câu", feature: "Complain ABOUT something" }
-    },
-    {
-        id: 30,
-        question: 'What do you like about shopping at a ____________ <span class="key">store</span>?',
-        options: ["A. inconvenient", "B. convenience", "C. convenient", "D. conveniently"],
-        correctIndex: 1,
-        translation: "Bạn thích điều gì khi mua sắm tại một cửa hàng tiện lợi?",
-        explanation: { keyword: "store", knowledge: "Danh từ ghép", topic: "Loại cửa hàng", feature: "Convenience store (Danh từ ghép)" }
-    },
-    {
-        id: 31,
-        question: 'Some people go to shopping centres to ____________ the <span class="key">heat or cold</span> outside.',
-        options: ["A. keep", "B. stop", "C. get", "D. avoid"],
-        correctIndex: 3,
-        translation: "Một số người đến trung tâm mua sắm để tránh cái nóng hoặc lạnh bên ngoài.",
-        explanation: { keyword: "heat or cold", knowledge: "Động từ", topic: "Mục đích", feature: "Avoid (Tránh)" }
-    },
-    {
-        id: 32,
-        question: 'Do you like ____________ <span class="key">products</span>?',
-        options: ["A. home-growing", "B. home-grew", "C. home-grown", "D. home-grow"],
-        correctIndex: 2,
-        translation: "Bạn có thích các sản phẩm nhà trồng không?",
-        explanation: { keyword: "products", knowledge: "Tính từ", topic: "Sản phẩm", feature: "Home-grown (Tính từ ghép: được trồng tại nhà)" }
-    },
-    {
-        id: 33,
-        question: 'The weather ____________ shopping at an open-air market.',
-        options: ["A. effect", "B. effect", "C. affects", "D. affect"],
-        correctIndex: 2,
-        translation: "Thời tiết ảnh hưởng đến việc mua sắm tại chợ ngoài trời.",
-        explanation: { keyword: "The weather (Số ít)", knowledge: "Ngữ pháp", topic: "Động từ", feature: "Affects (Động từ chia số ít)" }
-    },
-    {
-        id: 34,
-        question: 'Let\'s go to ____________ <span class="key">shops</span> to buy something as presents.',
-        options: ["A. specialise", "B. speciality", "C. special", "D. specially"],
-        correctIndex: 1,
-        translation: "Hãy đến các cửa hàng chuyên doanh để mua quà tặng.",
-        explanation: { keyword: "shops", knowledge: "Danh từ ghép", topic: "Loại cửa hàng", feature: "Speciality shops (Cửa hàng đặc sản/chuyên doanh)" }
-    },
-    {
-        id: 35,
-        question: 'We can find many products ____________ <span class="key">lower prices</span> in a discount shop.',
-        options: ["A. at", "B. by", "C. with", "D. on"],
-        correctIndex: 0,
-        translation: "Chúng ta có thể tìm thấy nhiều sản phẩm với giá thấp hơn tại cửa hàng giảm giá.",
-        explanation: { keyword: "prices", knowledge: "Giới từ", topic: "Giá cả", feature: "AT a price (Ở mức giá...)" }
-    },
-    {
-        id: 36,
-        question: 'I don\'t like this store. The staff are rude and the ____________ <span class="key">service</span> is really bad, too.',
-        options: ["A. costume", "B. customer", "C. customers", "D. custom"],
-        correctIndex: 1,
-        translation: "Tôi không thích cửa hàng này. Nhân viên thô lỗ và dịch vụ khách hàng cũng rất tệ.",
-        explanation: { keyword: "service", knowledge: "Danh từ ghép", topic: "Kinh doanh", feature: "Customer service (Dịch vụ khách hàng)" }
-    },
-    {
-        id: 37,
-        question: 'He wants to ____________ <span class="key">about</span> the package he has just got.',
-        options: ["A. complained", "B. complaining", "C. complain", "D. complains"],
-        correctIndex: 2,
-        translation: "Anh ấy muốn phàn nàn về gói hàng anh ấy vừa nhận được.",
-        explanation: { keyword: "wants to, about", knowledge: "Ngữ pháp", topic: "Động từ", feature: "Want to + V_inf (Complain)" }
-    },
-    {
-        id: 38,
-        question: 'Never buy things you don\'t need just because they are on ____________.',
-        options: ["A. sale", "B. sell", "C. selling", "D. sold"],
-        correctIndex: 0,
-        translation: "Đừng bao giờ mua những thứ bạn không cần chỉ vì chúng đang giảm giá.",
-        explanation: { keyword: "on ...", knowledge: "Cụm từ", topic: "Mua sắm", feature: "On sale (Đang giảm giá)" }
-    },
-    {
-        id: 39,
-        question: 'Can you wave over a <span class="key">sales</span> ____________? I have a question about this jacket.',
-        options: ["A. assistant", "B. assistance", "C. assist", "D. assisting"],
-        correctIndex: 0,
-        translation: "Bạn có thể gọi một nhân viên bán hàng lại đây không? Tôi có câu hỏi về chiếc áo khoác này.",
-        explanation: { keyword: "sales ...", knowledge: "Danh từ ghép", topic: "Nghề nghiệp", feature: "Sales assistant (Nhân viên bán hàng)" }
-    },
-    {
-        id: 40,
-        question: '____________ <span class="key">online</span> is more convenient than other kinds of shopping.',
-        options: ["A. Shops", "B. Shopper", "C. Shopping", "D. Shop"],
-        correctIndex: 2,
-        translation: "Mua sắm trực tuyến thuận tiện hơn các hình thức mua sắm khác.",
-        explanation: { keyword: "online, is (động từ)", knowledge: "Ngữ pháp", topic: "Danh động từ", feature: "Shopping (Làm chủ ngữ)" }
-    },
-    {
-        id: 41,
-        question: 'He lives next door but I ___________ him.',
-        options: ["A. rarely see", "B. sees rarely", "C. see rarely", "D. rarely sees"],
-        correctIndex: 0,
-        translation: "Anh ấy sống ngay bên cạnh nhưng tôi hiếm khi gặp anh ấy.",
-        explanation: { keyword: "I (chủ ngữ)", knowledge: "Ngữ pháp", topic: "Trạng từ tần suất", feature: "S + Adverb + Verb (rarely see)" }
-    },
-    {
-        id: 42,
-        question: 'She ___________ <span class="key">at home</span> on Sunday.',
-        options: ["A. are always", "B. always are", "C. always is", "D. is always"],
-        correctIndex: 3,
-        translation: "Cô ấy luôn ở nhà vào Chủ nhật.",
-        explanation: { keyword: "She, at home", knowledge: "Ngữ pháp", topic: "Trạng từ tần suất", feature: "To be + Adverb (is always)" }
-    },
-    {
-        id: 43,
-        question: 'My father ___________ in the morning.',
-        options: ["A. hardly ever jog", "B. hardly ever jogs", "C. jogs hardly ever", "D. hardly jogs ever"],
-        correctIndex: 1,
-        translation: "Bố tôi hiếm khi đi bộ thể dục vào buổi sáng.",
-        explanation: { keyword: "My father (số ít)", knowledge: "Ngữ pháp", topic: "Hiện tại đơn", feature: "Adverb + V(s/es) -> hardly ever jogs" }
-    },
-    {
-        id: 44,
-        question: 'They ___________ volleyball with Phong and Quan.',
-        options: ["A. play never", "B. plays never", "C. never plays", "D. never play"],
-        correctIndex: 3,
-        translation: "Họ không bao giờ chơi bóng chuyền với Phong và Quân.",
-        explanation: { keyword: "They (số nhiều)", knowledge: "Ngữ pháp", topic: "Hiện tại đơn", feature: "Adverb + V(inf) -> never play" }
-    },
-    {
-        id: 45,
-        question: 'We ___________ to the supermarket because it’s very far.',
-        options: ["A. don’t go often", "B. often don’t go", "C. don’t often go", "D. doesn’t often go"],
-        correctIndex: 2,
-        translation: "Chúng tôi không thường xuyên đi siêu thị vì nó rất xa.",
-        explanation: { keyword: "We, don't", knowledge: "Ngữ pháp", topic: "Câu phủ định", feature: "Don't + Adverb + Verb (don't often go)" }
-    },
-    {
-        id: 46,
-        question: 'Mai ___________ to the cinema with her classmates.',
-        options: ["A. occasionally go", "B. occasionally goes", "C. goes occasionally", "D. go occasionally"],
-        correctIndex: 1,
-        translation: "Mai thỉnh thoảng đi xem phim với các bạn cùng lớp.",
-        explanation: { keyword: "Mai (số ít)", knowledge: "Ngữ pháp", topic: "Hiện tại đơn", feature: "Adverb + V(es) -> occasionally goes" }
-    },
-    {
-        id: 47,
-        question: '___________ your health at the hospital?',
-        options: ["A. Do you check frequently", "B. Do frequently you check", "C. Do you frequently check", "D. Do frequently check you"],
-        correctIndex: 2,
-        translation: "Bạn có thường xuyên kiểm tra sức khỏe tại bệnh viện không?",
-        explanation: { keyword: "Question (?)", knowledge: "Ngữ pháp", topic: "Câu nghi vấn", feature: "Do/Does + S + Adverb + V? (Do you frequently check)" }
-    },
-    {
-        id: 48,
-        question: 'These brands ___________ <span class="key">on sale</span>, just once or twice a year.',
-        options: ["A. are seldom", "B. is seldom", "C. seldom is", "D. seldom are"],
-        correctIndex: 0,
-        translation: "Các thương hiệu này hiếm khi giảm giá, chỉ một hoặc hai lần một năm.",
-        explanation: { keyword: "brands (số nhiều)", knowledge: "Ngữ pháp", topic: "To be", feature: "To be + Adverb (are seldom)" }
-    },
-    {
-        id: 49,
-        question: 'My mother ___________ at the supermarket.',
-        options: ["A. shops often", "B. often shops", "C. often shop", "D. shop often"],
-        correctIndex: 1,
-        translation: "Mẹ tôi thường mua sắm tại siêu thị.",
-        explanation: { keyword: "My mother (số ít)", knowledge: "Ngữ pháp", topic: "Hiện tại đơn", feature: "Adverb + V(s) -> often shops" }
-    },
-    {
-        id: 50,
-        question: '___________ happy when he talks to his friend?',
-        options: ["A. Is always he", "B. Is he always", "C. Always is he", "D. He always is"],
-        correctIndex: 1,
-        translation: "Anh ấy có luôn vui vẻ khi nói chuyện với bạn mình không?",
-        explanation: { keyword: "happy (tính từ)", knowledge: "Ngữ pháp", topic: "Câu hỏi với To be", feature: "Be + S + Adverb + Adj? (Is he always)" }
-    },
-    {
-        id: 51,
-        question: 'We can ____________ bargain at a supermarket.',
-        options: ["A. always", "B. never", "C. sometimes", "D. rarely"],
-        correctIndex: 1,
-        translation: "Chúng ta không bao giờ có thể mặc cả ở siêu thị.",
-        explanation: { keyword: "supermarket, bargain", knowledge: "Kiến thức chung", topic: "Mua sắm", feature: "Never (Vì siêu thị bán giá niêm yết)" }
-    },
-    {
-        id: 52,
-        question: 'My grandmother ____________ goes to the market. She goes there <span class="key">every day</span>.',
-        options: ["A. always", "B. never", "C. often", "D. sometimes"],
-        correctIndex: 0,
-        translation: "Bà tôi luôn đi chợ mua thức ăn. Bà đến đó mỗi ngày.",
-        explanation: { keyword: "every day", knowledge: "Ngữ pháp", topic: "Mức độ tần suất", feature: "Every day = Always (Luôn luôn)" }
-    },
-    {
-        id: 53,
-        question: '____________ your son be 14 years old <span class="key">next week</span>?',
-        options: ["A. Will", "B. Are", "C. Does", "D. Can"],
-        correctIndex: 0,
-        translation: "Con trai bạn sẽ tròn 14 tuổi vào tuần tới phải không?",
-        explanation: { keyword: "next week, be", knowledge: "Ngữ pháp", topic: "Tương lai đơn", feature: "Will + V_inf (Sẽ)" }
-    },
-    {
-        id: 54,
-        question: 'How ____________ do you buy things online?',
-        options: ["A. much", "B. always", "C. often", "D. far"],
-        correctIndex: 2,
-        translation: "Bạn có thường xuyên mua đồ trực tuyến không?",
-        explanation: { keyword: "How ...", knowledge: "Collocation", topic: "Câu hỏi tần suất", feature: "How often (Hỏi mức độ thường xuyên)" }
-    },
-    {
-        id: 55,
-        question: 'That shop in the corner <span class="key">never</span> ____________ on Sunday.',
-        options: ["A. opening", "B. will open", "C. open", "D. opens"],
-        correctIndex: 3,
-        translation: "Cửa hàng ở góc phố đó không bao giờ mở cửa vào Chủ nhật.",
-        explanation: { keyword: "That shop (số ít)", knowledge: "Ngữ pháp", topic: "Hiện tại đơn", feature: "Never + V(s/es) -> opens" }
-    }
-    ];
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Bảng Tổng Kết</h2>
+            <div>Điểm số của bạn:</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">37</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Đóng & Xem lại</button>
+        </div>
+    </div>
 
-    // State variables
-    let currentQIndex = 0;
-    let isAnswered = false;
-    let scoreCount = 0; 
+    <script>
+        const quizData = [
+            // PART 1
+            { q: "Online shopping is buying a product or service over the __________.", qVi: "Mua sắm trực tuyến là mua sản phẩm hoặc dịch vụ qua __________.", key: ["Online shopping", "over the"], opts: ["supermarket", "internet", "shopping centre", "open-air market"], optsVi: ["siêu thị", "internet", "trung tâm mua sắm", "chợ trời"], correct: 1, exp: "Định nghĩa của Online Shopping là mua hàng qua <b>Internet</b>." },
+            { q: "To shop online, you visit a seller’s website and __________ the product you want.", qVi: "Để mua sắm trực tuyến, bạn truy cập trang web của người bán và __________ sản phẩm bạn muốn.", key: ["visit website", "product you want"], opts: ["bargain", "select", "display", "spend"], optsVi: ["mặc cả", "lựa chọn", "trưng bày", "chi tiêu"], correct: 1, exp: "Hành động chọn hàng trên website là <b>select</b>." },
+            { q: "Online shopping is very __________ because you can buy things anytime and anywhere.", qVi: "Mua sắm trực tuyến rất __________ vì bạn có thể mua đồ mọi lúc, mọi nơi.", key: ["anytime", "anywhere"], opts: ["offline", "rare", "convenient", "home-grown"], optsVi: ["ngoại tuyến", "hiếm", "tiện lợi", "cây nhà lá vườn"], correct: 2, exp: "Mua được mọi lúc mọi nơi là đặc điểm của sự tiện lợi (<b>convenient</b>)." },
+            { q: "With __________, people can shop from home without travelling.", qVi: "Với __________, mọi người có thể mua sắm tại nhà mà không cần đi lại.", key: ["shop from home", "without travelling"], opts: ["browsing", "internet access", "fixed price", "price tag"], optsVi: ["duyệt web", "kết nối internet", "giá cố định", "nhãn giá"], correct: 1, exp: "Cần có <b>internet access</b> để mua sắm tại nhà." },
+            { q: "One disadvantage of online shopping is that products are __________ what you expect.", qVi: "Một bất lợi của mua sắm trực tuyến là sản phẩm __________ như bạn mong đợi.", key: ["disadvantage", "what you expect"], opts: ["always", "usually", "sometimes", "never"], optsVi: ["luôn luôn", "thường xuyên", "đôi khi không giống", "không bao giờ"], correct: 2, exp: "Sản phẩm thực tế <b>sometimes</b> (đôi khi) khác với mong đợi." },
+            { q: "If you are not happy with a product, you can return it, but you may have to __________.", qVi: "Nếu bạn không hài lòng với sản phẩm, bạn có thể trả lại, nhưng bạn có thể phải __________.", key: ["return it", "have to"], opts: ["bargain", "pay for shipping", "browse more", "lower the price"], optsVi: ["mặc cả", "trả phí vận chuyển", "xem thêm", "hạ giá"], correct: 1, exp: "Khi hoàn trả hàng online, người mua thường phải <b>pay for shipping</b> (trả tiền ship)." },
+            { q: "Online shopping saves time and money because people don’t need to __________.", qVi: "Mua sắm trực tuyến tiết kiệm thời gian và tiền bạc vì mọi người không cần phải __________.", key: ["saves time", "don’t need to"], opts: ["shop online", "spend time travelling", "browse products", "pay online"], optsVi: ["mua online", "tốn thời gian đi lại", "xem hàng", "trả tiền online"], correct: 1, exp: "Tiết kiệm thời gian vì không phải <b>spend time travelling</b> (tốn thời gian đi lại)." },
+            { q: "Because there are many products to choose from, some people become a __________.", qVi: "Vì có quá nhiều sản phẩm để lựa chọn, một số người trở thành __________.", key: ["many products", "choose from"], opts: ["customer", "shopaholic", "seller", "manager"], optsVi: ["khách hàng", "người nghiện mua sắm", "người bán", "quản lý"], correct: 1, exp: "Sự đa dạng sản phẩm dễ khiến người ta mua quá nhiều và trở thành <b>shopaholic</b>." },
+            { q: "A shopaholic may buy things they don’t really __________.", qVi: "Một người nghiện mua sắm có thể mua những thứ họ không thực sự __________.", key: ["shopaholic", "don’t really"], opts: ["need", "display", "offer", "fix"], optsVi: ["cần", "trưng bày", "cung cấp", "sửa chữa"], correct: 0, exp: "Người nghiện mua sắm thường mua những thứ họ không <b>need</b> (cần)." },
+            { q: "When shopping online, customers often __________ many products before deciding to buy.", qVi: "Khi mua sắm trực tuyến, khách hàng thường __________ nhiều sản phẩm trước khi quyết định mua.", key: ["before deciding", "many products"], opts: ["display", "browse", "avoid", "return"], optsVi: ["trưng bày", "xem lướt/duyệt", "tránh", "trả lại"], correct: 1, exp: "Hành động xem lướt qua các sản phẩm trên mạng gọi là <b>browse</b>." },
+            { q: "Products in online shops are usually shown with a __________.", qVi: "Sản phẩm trong các cửa hàng trực tuyến thường được hiển thị cùng với __________.", key: ["shown with", "online shops"], opts: ["costume", "price tag", "fixed place", "shelf"], optsVi: ["trang phục", "nhãn giá", "địa điểm cố định", "kệ"], correct: 1, exp: "Sản phẩm thường đi kèm hình ảnh và <b>price tag</b> (giá tiền)." },
+            { q: "Unlike offline shopping, online shopping does not allow customers to __________ products.", qVi: "Không giống mua sắm trực tiếp, mua sắm trực tuyến không cho phép khách hàng __________ sản phẩm.", key: ["Unlike offline", "does not allow"], opts: ["order", "touch", "pay for", "return"], optsVi: ["đặt hàng", "chạm vào", "trả tiền", "trả lại"], correct: 1, exp: "Hạn chế của online là không thể <b>touch</b> (sờ/chạm) vào sản phẩm." },
+            { q: "People __________ shop online because it is easy and fast.", qVi: "Mọi người __________ mua sắm trực tuyến vì nó dễ dàng và nhanh chóng.", key: ["easy and fast", "shop online"], opts: ["rarely", "never", "often", "hardly"], optsVi: ["hiếm khi", "không bao giờ", "thường xuyên", "hầu như không"], correct: 2, exp: "Vì tiện lợi nên mọi người <b>often</b> (thường xuyên) mua sắm online." },
+            { q: "When items are __________, customers can buy them at a lower price.", qVi: "Khi các món hàng __________, khách hàng có thể mua chúng với giá thấp hơn.", key: ["lower price", "items are"], opts: ["home-made", "on sale", "offline", "fixed"], optsVi: ["tự làm", "đang giảm giá", "ngoại tuyến", "cố định"], correct: 1, exp: "Giá thấp hơn (lower price) nghĩa là hàng đang <b>on sale</b> (giảm giá)." },
+            { q: "Online shops usually offer a __________ of products for customers to choose from.", qVi: "Các cửa hàng trực tuyến thường cung cấp __________ sản phẩm để khách hàng lựa chọn.", key: ["choose from", "products"], opts: ["lower price", "wide range", "minority group", "farmers’ market"], optsVi: ["giá thấp hơn", "sự đa dạng/phạm vi rộng", "nhóm thiểu số", "chợ nông sản"], correct: 1, exp: "Cụm từ <b>wide range of products</b> nghĩa là sự đa dạng sản phẩm." },
+            // PART 2
+            { q: "Shopping centres usually __________ a lot of customers at weekends.", qVi: "Các trung tâm mua sắm thường __________ rất nhiều khách hàng vào cuối tuần.", key: ["Shopping centres", "customers"], opts: ["buy", "attract", "display", "spend"], optsVi: ["mua", "thu hút", "trưng bày", "chi tiêu"], correct: 1, exp: "Trung tâm mua sắm <b>attract</b> (thu hút) khách hàng." },
+            { q: "Customers like shopping centres because they offer a __________ of products.", qVi: "Khách hàng thích trung tâm mua sắm vì chúng cung cấp __________ sản phẩm.", key: ["offer a", "products"], opts: ["fixed price", "lower price", "wide range", "price tag"], optsVi: ["giá cố định", "giá thấp", "sự đa dạng", "nhãn giá"], correct: 2, exp: "Tương tự câu trên, <b>wide range</b> (sự đa dạng chủng loại)." },
+            { q: "People often feel more __________ when they can touch products before buying.", qVi: "Mọi người thường cảm thấy __________ hơn khi họ có thể chạm vào sản phẩm trước khi mua.", key: ["feel more", "touch products"], opts: ["convenient", "comfortable", "special", "excited"], optsVi: ["tiện lợi", "thoải mái/an tâm", "đặc biệt", "hào hứng"], correct: 1, exp: "Được sờ tận tay giúp người mua cảm thấy <b>comfortable</b> (thoải mái/yên tâm) hơn." },
+            { q: "Many shopping centres offer free __________ such as live music and performances.", qVi: "Nhiều trung tâm mua sắm cung cấp __________ miễn phí như nhạc sống và biểu diễn.", key: ["music", "performances"], opts: ["exercise", "decorations", "entertainment", "internet access"], optsVi: ["tập thể dục", "trang trí", "giải trí", "kết nối internet"], correct: 2, exp: "Nhạc và biểu diễn thuộc về <b>entertainment</b> (giải trí)." },
+            { q: "Some people go to shopping centres just to __________ with friends.", qVi: "Một số người đến trung tâm mua sắm chỉ để __________ với bạn bè.", key: ["with friends", "go to"], opts: ["bargain", "hang out", "spend money", "shop online"], optsVi: ["mặc cả", "đi chơi/tụ tập", "tiêu tiền", "mua online"], correct: 1, exp: "Cụm từ <b>hang out with friends</b> nghĩa là đi chơi/tụ tập bạn bè." },
+            { q: "During holidays, shopping centres are full of __________ and excitement.", qVi: "Trong các ngày lễ, trung tâm mua sắm tràn ngập __________ và sự náo nhiệt.", key: ["holidays", "full of"], opts: ["costumes", "decorations", "shelves", "products"], optsVi: ["trang phục", "đồ trang trí", "kệ hàng", "sản phẩm"], correct: 1, exp: "Ngày lễ thì thường có nhiều <b>decorations</b> (đồ trang trí)." },
+            { q: "People can walk in clean and well-lit areas to get some __________.", qVi: "Mọi người có thể đi bộ trong những khu vực sạch sẽ và đủ ánh sáng để __________.", key: ["walk", "get some"], opts: ["exercise", "sale", "browsing", "shopping"], optsVi: ["tập thể dục/vận động", "giảm giá", "xem hàng", "mua sắm"], correct: 0, exp: "Đi bộ (walk) là một hình thức <b>exercise</b> (vận động)." },
+            { q: "Shopping centres are very __________ because they have air conditioning and heating.", qVi: "Trung tâm mua sắm rất __________ vì chúng có điều hòa và máy sưởi.", key: ["air conditioning", "heating"], opts: ["rare", "offline", "convenient", "home-grown"], optsVi: ["hiếm", "ngoại tuyến", "tiện lợi/thoải mái", "cây nhà lá vườn"], correct: 2, exp: "Có điều hòa nhiệt độ tạo sự <b>convenient</b> (tiện nghi/tiện lợi) cho khách hàng." },
+            { q: "When items are __________, they are sold at a lower price than usual.", qVi: "Khi các mặt hàng __________, chúng được bán với giá thấp hơn bình thường.", key: ["lower price", "than usual"], opts: ["displayed", "fixed", "on sale", "home-made"], optsVi: ["được trưng bày", "cố định", "đang giảm giá", "tự làm"], correct: 2, exp: "Giá thấp hơn bình thường là <b>on sale</b>." },
+            { q: "Some people visit shopping centres to avoid the heat or cold __________.", qVi: "Một số người đến trung tâm mua sắm để tránh cái nóng hoặc lạnh ở __________.", key: ["avoid heat/cold", "visit shopping centres"], opts: ["inside", "online", "outside", "usually"], optsVi: ["bên trong", "trực tuyến", "bên ngoài", "thường xuyên"], correct: 2, exp: "Vào trung tâm để tránh thời tiết khắc nghiệt <b>outside</b> (bên ngoài)." },
+            { q: "In supermarkets, products are usually __________ on shelves with price tags.", qVi: "Trong siêu thị, sản phẩm thường được __________ trên kệ với nhãn giá.", key: ["on shelves", "products"], opts: ["bargained", "displayed", "avoided", "spent"], optsVi: ["mặc cả", "trưng bày", "tránh", "chi tiêu"], correct: 1, exp: "Hàng hóa đặt trên kệ nghĩa là được <b>displayed</b> (trưng bày)." },
+            { q: "Unlike farmers’ markets, most shopping centres have __________ prices.", qVi: "Không giống chợ nông sản, hầu hết các trung tâm mua sắm có giá __________.", key: ["Unlike farmers’ markets", "prices"], opts: ["lower", "fixed", "rare", "online"], optsVi: ["thấp hơn", "cố định", "hiếm", "trực tuyến"], correct: 1, exp: "Ở chợ thì mặc cả, còn trung tâm thương mại thì <b>fixed prices</b> (giá niêm yết/cố định)." },
+            // PART 3
+            { q: "Many people prefer online shopping because they can __________ at home.", qVi: "Nhiều người thích mua sắm trực tuyến vì họ có thể __________ tại nhà.", key: ["prefer online", "at home"], opts: ["bargain", "spend time", "shop", "display"], optsVi: ["mặc cả", "dành thời gian", "mua sắm", "trưng bày"], correct: 2, exp: "Họ có thể <b>shop</b> (mua sắm) ngay tại nhà." },
+            { q: "In an online shop, customers cannot __________ the products before buying.", qVi: "Trong cửa hàng trực tuyến, khách hàng không thể __________ sản phẩm trước khi mua.", key: ["cannot", "before buying"], opts: ["return", "touch", "order", "pay for"], optsVi: ["trả lại", "chạm vào", "đặt hàng", "trả tiền"], correct: 1, exp: "Không thể <b>touch</b> (chạm) vào sản phẩm online." },
+            { q: "Shopping centres and supermarkets are examples of __________ shops.", qVi: "Trung tâm mua sắm và siêu thị là những ví dụ về cửa hàng __________.", key: ["Shopping centres", "examples of"], opts: ["online", "offline", "discount", "speciality"], optsVi: ["trực tuyến", "trực tiếp/truyền thống", "giảm giá", "chuyên dụng"], correct: 1, exp: "Đây là các địa điểm mua bán vật lý (<b>offline</b>)." },
+            { q: "People often compare prices and read reviews when __________ online.", qVi: "Mọi người thường so sánh giá và đọc đánh giá khi __________ trực tuyến.", key: ["compare prices", "online"], opts: ["shopping", "spending", "displaying", "fixing"], optsVi: ["mua sắm", "chi tiêu", "trưng bày", "sửa chữa"], correct: 0, exp: "Hành động này diễn ra khi <b>shopping</b> online." },
+            { q: "Some customers like discount shops because they sell products at a __________.", qVi: "Một số khách hàng thích cửa hàng giảm giá vì họ bán sản phẩm với __________.", key: ["discount shops", "sell at"], opts: ["fixed price", "wide range", "lower price", "price tag"], optsVi: ["giá cố định", "phạm vi rộng", "giá thấp hơn", "nhãn giá"], correct: 2, exp: "Cửa hàng giảm giá (discount shops) thì bán với <b>lower price</b>." },
+            { q: "When shopping online, people may __________ too much money without noticing.", qVi: "Khi mua sắm trực tuyến, mọi người có thể __________ quá nhiều tiền mà không để ý.", key: ["too much money", "without noticing"], opts: ["spend", "save", "avoid", "return"], optsVi: ["tiêu", "tiết kiệm", "tránh", "trả lại"], correct: 0, exp: "Dễ bị <b>spend</b> (tiêu) quá nhiều tiền." },
+            { q: "In supermarkets, products are usually __________ on shelves.", qVi: "Trong siêu thị, sản phẩm thường được __________ trên kệ.", key: ["supermarkets", "on shelves"], opts: ["bargained", "displayed", "avoided", "ordered"], optsVi: ["mặc cả", "trưng bày", "tránh", "đặt hàng"], correct: 1, exp: "Sản phẩm được <b>displayed</b> (trưng bày) trên kệ." },
+            { q: "Online shopping is not always safe because customers __________ know the seller well.", qVi: "Mua sắm trực tuyến không phải lúc nào cũng an toàn vì khách hàng __________ biết rõ người bán.", key: ["not always safe", "know seller"], opts: ["always", "usually", "sometimes", "rarely"], optsVi: ["luôn luôn", "thường xuyên", "đôi khi", "hiếm khi"], correct: 3, exp: "Vì mua qua mạng nên khách hàng <b>rarely</b> (hiếm khi) biết rõ người bán." },
+            { q: "People who buy things they don’t need and can’t stop shopping are called __________.", qVi: "Những người mua những thứ họ không cần và không thể ngừng mua sắm được gọi là __________.", key: ["can’t stop shopping", "called"], opts: ["customers", "shopaholics", "sellers", "shoppers"], optsVi: ["khách hàng", "người nghiện mua sắm", "người bán", "người mua"], correct: 1, exp: "Không ngừng mua sắm là dấu hiệu của <b>shopaholics</b>." },
+            { q: "With internet access, people can shop __________, even late at night.", qVi: "Với kết nối internet, mọi người có thể mua sắm __________, ngay cả vào đêm muộn.", key: ["late at night", "can shop"], opts: ["rarely", "never", "anytime", "offline"], optsVi: ["hiếm khi", "không bao giờ", "bất cứ lúc nào", "ngoại tuyến"], correct: 2, exp: "Mua được cả đêm muộn nghĩa là mua được <b>anytime</b> (bất cứ lúc nào)." }
+        ];
 
-    // DOM Elements
-    const quizContentEl = document.getElementById('quiz-content');
-    const resultScreenEl = document.getElementById('result-screen');
-    const qNumberEl = document.getElementById('q-number');
-    const totalQEl = document.getElementById('total-q');
-    const questionTextEl = document.getElementById('question-text');
-    const optionsAreaEl = document.getElementById('options-area');
-    const actionAreaEl = document.getElementById('action-area');
-    const explainBoxEl = document.getElementById('explanation-box');
-    const transBoxEl = document.getElementById('translation-box');
-    const transContentEl = document.getElementById('trans-content');
-    const btnNextEl = document.getElementById('btn-next');
-    const btnHintEl = document.getElementById('btn-hint');
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
 
-    const finalScore10El = document.getElementById('final-score-10');
-    const finalCorrectCountEl = document.getElementById('final-correct-count');
-    const finalTotalCountEl = document.getElementById('final-total-count');
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
 
-    // Init
-    totalQEl.textContent = quizData.length;
-    loadQuestion();
+            quizData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${index + 1}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
 
-    function loadQuestion() {
-        isAnswered = false;
-        const data = quizData[currentQIndex];
-        
-        qNumberEl.textContent = currentQIndex + 1;
-        questionTextEl.innerHTML = data.question;
-        optionsAreaEl.innerHTML = '';
-        
-        actionAreaEl.style.display = 'none';
-        explainBoxEl.classList.remove('show');
-        transBoxEl.classList.remove('show');
-        btnNextEl.style.display = 'none';
-        btnHintEl.disabled = false;
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
 
-        data.options.forEach((opt, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.textContent = opt;
-            btn.onclick = () => checkAnswer(index, btn);
-            optionsAreaEl.appendChild(btn);
-        });
-    }
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
 
-    function toggleHint() {
-        if(isAnswered) return;
-        const keys = document.querySelectorAll('.key');
-        keys.forEach(k => k.classList.add('active'));
-    }
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
 
-    function checkAnswer(selectedIndex, btnElement) {
-        if (isAnswered) return;
-        isAnswered = true;
-        btnHintEl.disabled = true;
-
-        const data = quizData[currentQIndex];
-        
-        // Auto trigger highlights
-        const keys = document.querySelectorAll('.key');
-        keys.forEach(k => k.classList.add('active'));
-
-        const allBtns = document.querySelectorAll('.option-btn');
-        
-        if (selectedIndex === data.correctIndex) {
-            btnElement.classList.add('correct');
-            scoreCount++; 
-        } else {
-            btnElement.classList.add('wrong');
-            allBtns[data.correctIndex].classList.add('correct');
+                // Sidebar nav item
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = index + 1;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                };
+                nav.appendChild(qNum);
+            });
         }
 
-        allBtns.forEach(b => b.disabled = true);
-
-        transContentEl.textContent = data.translation;
-        explainBoxEl.innerHTML = `
-            <div class="info-row"><span class="info-label">Keyword:</span> ${data.explanation.keyword}</div>
-            <div class="info-row"><span class="info-label">Kiến thức:</span> ${data.explanation.knowledge}</div>
-            <div class="info-row"><span class="info-label">Chủ đề:</span> ${data.explanation.topic}</div>
-            <div class="info-row"><span class="info-label">Đặc trưng:</span> <span style="color:#d63031; font-weight:bold;">${data.explanation.feature}</span></div>
-        `;
-
-        actionAreaEl.style.display = 'flex';
-        
-        btnNextEl.style.display = 'inline-block';
-        if (currentQIndex === quizData.length - 1) {
-            btnNextEl.textContent = "Xem kết quả ➜";
-            btnNextEl.onclick = showResult;
-        } else {
-            btnNextEl.textContent = "Câu tiếp theo ➜";
-            btnNextEl.onclick = nextQuestion;
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
         }
-    }
 
-    function toggleExplanation() {
-        explainBoxEl.classList.toggle('show');
-        if(explainBoxEl.classList.contains('show')) transBoxEl.classList.remove('show');
-    }
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            for (let i = 0; i < 4; i++) {
+                const optTrans = document.getElementById(`trans-opt-${index}-${i}`);
+                if(optTrans) optTrans.classList.toggle('show');
+            }
+            
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
 
-    function toggleTranslate() {
-        transBoxEl.classList.toggle('show');
-        if(transBoxEl.classList.contains('show')) explainBoxEl.classList.remove('show');
-    }
+        function updateStats() {
+            // Cập nhật số câu đúng
+            document.getElementById('stat-correct').innerText = correctCount;
+            // Cập nhật điểm (thang 10, làm tròn 1 số thập phân)
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
 
-    function nextQuestion() {
-        currentQIndex++;
-        loadQuestion();
-    }
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
 
-    function showResult() {
-        quizContentEl.style.display = 'none';
-        resultScreenEl.style.display = 'block';
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
 
-        const total = quizData.length;
-        const score10 = (scoreCount / total) * 10;
-        
-        finalCorrectCountEl.textContent = scoreCount;
-        finalTotalCountEl.textContent = total;
-        finalScore10El.textContent = score10 % 1 === 0 ? score10 : score10.toFixed(1);
-    }
+            // Mở khóa dịch nghĩa
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+                transBtn.title = "Xem bản dịch tiếng Việt";
+            }
 
-    function restartQuiz() {
-        currentQIndex = 0;
-        scoreCount = 0;
-        resultScreenEl.style.display = 'none';
-        quizContentEl.style.display = 'block';
-        loadQuestion();
-    }
-</script>
+            // Xử lý đúng sai
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                // Hiện đáp án đúng
+                buttons[correctIndex].classList.add('correct');
+            }
 
+            // Cập nhật thống kê
+            updateStats();
+
+            // Khóa các nút
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            // Progress bar
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            // Hiện giải thích
+            expBox.innerHTML = `<strong>Giải thích:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            // Kiểm tra xem đã làm hết chưa
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            
+            // Xếp loại
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            // Điền dữ liệu vào Modal
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+
+            // Hiện Modal
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
 </body>
 </html>
