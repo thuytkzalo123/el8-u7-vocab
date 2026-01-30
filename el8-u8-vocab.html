@@ -22,8 +22,9 @@
             margin: 0;
             display: flex;
             flex-direction: column;
+            /* Mặc định desktop: khóa body, chỉ cuộn vùng nội dung con */
             height: 100vh;
-            overflow: hidden; /* Ngăn cuộn body, chỉ cuộn nội dung con */
+            overflow: hidden; 
         }
 
         /* === HEADER === */
@@ -31,7 +32,8 @@
             background: white;
             padding: 10px 20px;
             border-bottom: 1px solid var(--border-color);
-            position: relative;
+            position: sticky; /* Giữ header luôn ở trên cùng */
+            top: 0;
             z-index: 101;
             flex-shrink: 0;
         }
@@ -87,7 +89,7 @@
             margin: 0 auto;
             width: 100%;
             box-sizing: border-box;
-            overflow: hidden; /* Để scroll hoạt động độc lập */
+            overflow: hidden; /* Desktop scroll logic */
         }
 
         /* === SIDEBAR === */
@@ -321,29 +323,43 @@
         .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
         .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
 
-        /* === RESPONSIVE (MOBILE) === */
+        /* === RESPONSIVE FIXES (MOBILE) === */
         @media (max-width: 768px) {
-            .menu-toggle { display: block; } /* Hiện nút Menu */
-            
-            .main-container {
-                padding: 10px; /* Giảm padding */
-                display: block; /* Bỏ flex để xử lý thủ công */
-                position: relative;
+            /* 1. Reset Body: Cho phép cuộn trang tự nhiên trên điện thoại */
+            body {
+                height: auto;
+                overflow: auto; 
+                display: block;
             }
 
-            /* Sidebar biến thành Drawer */
+            .header {
+                position: sticky; /* Vẫn giữ header dính trên cùng */
+                top: 0;
+            }
+
+            .menu-toggle { display: block; }
+
+            /* 2. Reset Main Container */
+            .main-container {
+                padding: 10px;
+                display: block; /* Hủy Flexbox */
+                height: auto;
+                overflow: visible; /* Cho phép nội dung tràn ra để body cuộn */
+            }
+
+            /* 3. Sidebar biến thành Drawer (ngăn kéo) */
             .sidebar {
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 280px;
+                width: 80%; /* Chiếm 80% chiều rộng màn hình */
+                max-width: 300px;
                 height: 100%;
                 margin: 0;
                 border-radius: 0;
                 border: none;
-                border-right: 1px solid #eee;
                 transform: translateX(-100%); /* Ẩn sang trái */
-                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+                box-shadow: 2px 0 10px rgba(0,0,0,0.2);
             }
             
             .sidebar.active {
@@ -352,19 +368,21 @@
 
             .sidebar-overlay.active { display: block; }
 
+            /* 4. Quiz Area: Cho phép mở rộng chiều cao tự do */
             .quiz-area {
                 padding: 0;
-                height: 100%;
-                overflow-y: visible; /* Để body cuộn */
+                height: auto;
+                overflow: visible;
+                margin-bottom: 50px; /* Thêm khoảng trống đáy */
             }
 
             .question-card {
-                padding: 15px; /* Padding nhỏ hơn trên mobile */
+                padding: 15px;
                 margin-bottom: 15px;
             }
 
             .options-list {
-                grid-template-columns: 1fr; /* 1 cột trên mobile */
+                grid-template-columns: 1fr; /* Đáp án xếp 1 cột */
             }
             
             .header-title { font-size: 1em; }
@@ -392,7 +410,7 @@
         <div class="sidebar" id="sidebar">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
-                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.2em; color:#888;" class="mobile-only">✕</span>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
             </div>
             
             <div class="stats-box">
@@ -521,7 +539,6 @@
                 `;
                 container.appendChild(card);
 
-                // Sidebar nav item
                 const qNum = document.createElement('div');
                 qNum.className = 'q-num';
                 qNum.id = `nav-${index}`;
@@ -541,6 +558,13 @@
             const overlay = document.getElementById('sidebar-overlay');
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
+            
+            // Khóa cuộn trang chính khi đang mở menu để tránh lộn xộn (chỉ hiệu quả khi mở menu)
+            if(sidebar.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
         }
 
         function toggleHint(index) {
@@ -610,7 +634,9 @@
         }
 
         function submitQuiz() {
-            if (window.innerWidth <= 768) toggleSidebar(); // Đóng menu nếu đang mở
+            if (window.innerWidth <= 768) {
+                toggleSidebar(); // Đóng menu nếu đang mở
+            }
             
             if (answeredSet.size < totalCount) {
                 const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
