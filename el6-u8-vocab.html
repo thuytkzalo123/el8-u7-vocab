@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bài tập Trắc nghiệm Tiếng Anh - Shopping</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Trắc nghiệm: Sports & TV Programs</title>
     <style>
         :root {
             --primary-blue: #e8f0fe;
@@ -22,22 +22,50 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            /* Fix lỗi cuộn trên mobile */
+            height: auto;
+            overflow: auto; 
         }
 
-        /* Header & Progress */
+        /* === HEADER === */
         .header {
             background: white;
-            padding: 15px 30px;
+            padding: 10px 20px;
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .progress-container {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background-color: #eee;
             border-radius: 4px;
             margin-top: 10px;
@@ -51,19 +79,20 @@
             transition: width 0.4s ease;
         }
 
-        /* Layout */
+        /* === MAIN LAYOUT === */
         .main-container {
             display: flex;
+            flex: 1;
             padding: 20px;
             gap: 25px;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             width: 100%;
             box-sizing: border-box;
-            height: calc(100vh - 80px);
+            overflow: visible;
         }
 
-        /* Sidebar */
+        /* === SIDEBAR === */
         .sidebar {
             width: 280px;
             background: white;
@@ -72,13 +101,24 @@
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            height: fit-content;
-            max-height: 95%;
+            height: calc(100vh - 100px); /* Chiều cao cố định trên desktop */
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
             position: sticky;
-            top: 0;
+            top: 80px;
+            z-index: 1000;
         }
 
-        /* Stats Box trong Sidebar */
+        /* Overlay cho Mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
         .stats-box {
             background-color: #f8f9fa;
             padding: 15px;
@@ -100,7 +140,6 @@
             color: var(--dark-blue);
         }
 
-        /* Navigation Grid */
         .nav-container {
             flex: 1;
             overflow-y: auto;
@@ -121,28 +160,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 0.85em;
-            transition: 0.2s;
+            font-size: 0.9em;
             background: #fff;
         }
 
-        .q-num:hover { background-color: #f1f3f4; }
-        .q-num.done { background-color: #eee; color: #555; }
-        
-        .q-num.done-correct {
-            background-color: #e6f4ea; 
-            border-color: var(--correct-green);
-            color: var(--correct-green);
-            font-weight: bold;
-        }
-        .q-num.done-wrong {
-            background-color: #fce8e6;
-            border-color: var(--wrong-red);
-            color: var(--wrong-red);
-            font-weight: bold;
-        }
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
 
-        /* Nút Nộp Bài */
         .btn-submit {
             width: 100%;
             padding: 12px;
@@ -153,19 +177,13 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 1em;
-            transition: 0.2s;
-        }
-        
-        .btn-submit:hover {
-            background-color: #1558b0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Quiz area */
+        /* === QUIZ AREA === */
         .quiz-area {
             flex: 1;
-            overflow-y: auto;
-            padding-right: 10px;
+            padding-bottom: 20px;
         }
 
         .question-card {
@@ -173,7 +191,7 @@
             padding: 25px;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
@@ -182,30 +200,26 @@
         .question-text {
             font-size: 1.1em;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             line-height: 1.5;
             color: #202124;
         }
 
-        /* Nút Gợi ý */
+        /* Buttons */
         .btn-hint-toggle {
             align-self: flex-start;
             background-color: white;
             border: 1px solid #ffb74d;
             color: #f57f17;
-            padding: 5px 12px;
-            border-radius: 15px;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 0.85em;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 5px;
-            margin-bottom: 10px;
-            transition: 0.2s;
-            font-weight: 500;
+            margin-bottom: 15px;
         }
-
-        .btn-hint-toggle:hover { background-color: #fff8e1; }
 
         .hint-content {
             display: none;
@@ -217,10 +231,8 @@
             font-size: 0.95em;
             color: #e65100;
         }
-        
         .hint-content.show { display: block; animation: fadeIn 0.3s; }
 
-        /* Styles cho đáp án */
         .options-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -228,42 +240,25 @@
         }
 
         .option-btn {
-            padding: 12px 15px;
+            padding: 14px 16px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             background: white;
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s;
             font-size: 1em;
             display: flex;
             flex-direction: column;
-            position: relative;
+            line-height: 1.4;
+            transition: background-color 0.2s;
         }
 
-        .option-btn:hover:not(.disabled) {
-            background-color: #f8f9fa;
-            border-color: #bdc1c6;
-        }
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
 
-        .option-btn.disabled {
-            cursor: default;
-            opacity: 0.8;
-        }
-
-        .option-btn.correct {
-            background-color: #e6f4ea;
-            border-color: var(--correct-green);
-            color: var(--correct-green);
-        }
-
-        .option-btn.wrong {
-            background-color: #fce8e6;
-            border-color: var(--wrong-red);
-            color: var(--wrong-red);
-        }
-
-        /* Nút Dịch nghĩa */
+        /* Translate Button */
         .btn-trans-toggle {
             margin-top: 20px;
             align-self: flex-start;
@@ -271,44 +266,30 @@
             border: none;
             padding: 8px 16px;
             border-radius: 20px;
-            cursor: pointer;
             font-size: 0.9em;
             color: #555;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: 0.3s;
             font-weight: 500;
         }
-
-        .btn-trans-toggle:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: #eee;
-            color: #999;
-        }
-        
-        .btn-trans-toggle:hover:not(:disabled) {
-            background: #e8eaed;
-            color: #1a73e8;
-        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
 
         .trans-text {
             display: none;
             color: var(--trans-color);
             font-style: italic;
-            font-size: 0.9em;
-            margin-top: 6px;
+            font-size: 0.95em;
+            margin-top: 5px;
             font-weight: normal;
             border-top: 1px dashed #eee;
             padding-top: 4px;
         }
-        
         .trans-text.show { display: block; animation: fadeIn 0.3s; }
 
         .explanation-box {
             margin-top: 15px;
-            padding: 12px;
+            padding: 15px;
             border-radius: 6px;
             background-color: #fffde7;
             border-left: 4px solid #fbc02d;
@@ -316,80 +297,101 @@
             font-size: 0.95em;
         }
 
-        /* === Modal Bảng Tổng Kết === */
+        /* === MODAL === */
         .modal-overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
             justify-content: center;
             align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
-
         .modal-content {
             background: white;
             padding: 30px;
-            border-radius: 15px;
-            width: 400px;
-            max-width: 90%;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: zoomIn 0.3s;
         }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
 
-        .modal-score {
-            font-size: 3em;
-            font-weight: bold;
-            color: var(--dark-blue);
-            margin: 10px 0;
+        /* === RESPONSIVE FIXES (MOBILE) === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+
+            .main-container {
+                padding: 10px;
+                display: block; 
+                height: auto;
+                overflow: visible; 
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 80%;
+                max-width: 300px;
+                height: 100%;
+                margin: 0;
+                border-radius: 0;
+                border: none;
+                transform: translateX(-100%);
+                box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            }
+            
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+
+            .quiz-area {
+                padding: 0;
+                height: auto;
+                overflow: visible;
+                margin-bottom: 50px;
+            }
+
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
         }
 
-        .modal-details {
-            margin: 20px 0;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-        }
-
-        .modal-btn {
-            padding: 10px 25px;
-            background: var(--dark-blue);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2 style="margin:0; font-size: 1.2em; color: #202124;">Lớp 8 - Topic: Shopping</h2>
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Topic: Sports & TV (40 Questions)</h2>
+        </div>
         <div class="progress-container">
             <div id="progress-bar"></div>
         </div>
     </div>
 
     <div class="main-container">
-        <div class="sidebar">
-            <h3 style="margin-top:0; color:#444">Thống kê</h3>
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
             
             <div class="stats-box">
                 <div class="stat-item">
                     <span>Số câu đúng:</span>
-                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">37</span></span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">40</span></span>
                 </div>
                 <div class="stat-item">
                     <span>Điểm số:</span>
@@ -398,7 +400,7 @@
             </div>
 
             <div class="nav-container">
-                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <h4 style="margin:0 0 10px 0;">Câu hỏi</h4>
                 <div class="question-grid" id="q-nav"></div>
             </div>
 
@@ -410,61 +412,65 @@
 
     <div class="modal-overlay" id="result-modal">
         <div class="modal-content">
-            <h2 style="color: #444; margin-top:0">Bảng Tổng Kết</h2>
-            <div>Điểm số của bạn:</div>
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
             <div class="modal-score" id="final-score">0.0</div>
             
             <div class="modal-details">
-                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">37</span></p>
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">40</span></p>
                 <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
             </div>
             
-            <button class="modal-btn" onclick="closeModal()">Đóng & Xem lại</button>
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
         </div>
     </div>
 
     <script>
+        // Dữ liệu câu hỏi mới (40 câu)
         const quizData = [
-            // PART 1
-            { q: "Online shopping is buying a product or service over the __________.", qVi: "Mua sắm trực tuyến là mua sản phẩm hoặc dịch vụ qua __________.", key: ["Online shopping", "over the"], opts: ["supermarket", "internet", "shopping centre", "open-air market"], optsVi: ["siêu thị", "internet", "trung tâm mua sắm", "chợ trời"], correct: 1, exp: "Định nghĩa của Online Shopping là mua hàng qua <b>Internet</b>." },
-            { q: "To shop online, you visit a seller’s website and __________ the product you want.", qVi: "Để mua sắm trực tuyến, bạn truy cập trang web của người bán và __________ sản phẩm bạn muốn.", key: ["visit website", "product you want"], opts: ["bargain", "select", "display", "spend"], optsVi: ["mặc cả", "lựa chọn", "trưng bày", "chi tiêu"], correct: 1, exp: "Hành động chọn hàng trên website là <b>select</b>." },
-            { q: "Online shopping is very __________ because you can buy things anytime and anywhere.", qVi: "Mua sắm trực tuyến rất __________ vì bạn có thể mua đồ mọi lúc, mọi nơi.", key: ["anytime", "anywhere"], opts: ["offline", "rare", "convenient", "home-grown"], optsVi: ["ngoại tuyến", "hiếm", "tiện lợi", "cây nhà lá vườn"], correct: 2, exp: "Mua được mọi lúc mọi nơi là đặc điểm của sự tiện lợi (<b>convenient</b>)." },
-            { q: "With __________, people can shop from home without travelling.", qVi: "Với __________, mọi người có thể mua sắm tại nhà mà không cần đi lại.", key: ["shop from home", "without travelling"], opts: ["browsing", "internet access", "fixed price", "price tag"], optsVi: ["duyệt web", "kết nối internet", "giá cố định", "nhãn giá"], correct: 1, exp: "Cần có <b>internet access</b> để mua sắm tại nhà." },
-            { q: "One disadvantage of online shopping is that products are __________ what you expect.", qVi: "Một bất lợi của mua sắm trực tuyến là sản phẩm __________ như bạn mong đợi.", key: ["disadvantage", "what you expect"], opts: ["always", "usually", "sometimes", "never"], optsVi: ["luôn luôn", "thường xuyên", "đôi khi không giống", "không bao giờ"], correct: 2, exp: "Sản phẩm thực tế <b>sometimes</b> (đôi khi) khác với mong đợi." },
-            { q: "If you are not happy with a product, you can return it, but you may have to __________.", qVi: "Nếu bạn không hài lòng với sản phẩm, bạn có thể trả lại, nhưng bạn có thể phải __________.", key: ["return it", "have to"], opts: ["bargain", "pay for shipping", "browse more", "lower the price"], optsVi: ["mặc cả", "trả phí vận chuyển", "xem thêm", "hạ giá"], correct: 1, exp: "Khi hoàn trả hàng online, người mua thường phải <b>pay for shipping</b> (trả tiền ship)." },
-            { q: "Online shopping saves time and money because people don’t need to __________.", qVi: "Mua sắm trực tuyến tiết kiệm thời gian và tiền bạc vì mọi người không cần phải __________.", key: ["saves time", "don’t need to"], opts: ["shop online", "spend time travelling", "browse products", "pay online"], optsVi: ["mua online", "tốn thời gian đi lại", "xem hàng", "trả tiền online"], correct: 1, exp: "Tiết kiệm thời gian vì không phải <b>spend time travelling</b> (tốn thời gian đi lại)." },
-            { q: "Because there are many products to choose from, some people become a __________.", qVi: "Vì có quá nhiều sản phẩm để lựa chọn, một số người trở thành __________.", key: ["many products", "choose from"], opts: ["customer", "shopaholic", "seller", "manager"], optsVi: ["khách hàng", "người nghiện mua sắm", "người bán", "quản lý"], correct: 1, exp: "Sự đa dạng sản phẩm dễ khiến người ta mua quá nhiều và trở thành <b>shopaholic</b>." },
-            { q: "A shopaholic may buy things they don’t really __________.", qVi: "Một người nghiện mua sắm có thể mua những thứ họ không thực sự __________.", key: ["shopaholic", "don’t really"], opts: ["need", "display", "offer", "fix"], optsVi: ["cần", "trưng bày", "cung cấp", "sửa chữa"], correct: 0, exp: "Người nghiện mua sắm thường mua những thứ họ không <b>need</b> (cần)." },
-            { q: "When shopping online, customers often __________ many products before deciding to buy.", qVi: "Khi mua sắm trực tuyến, khách hàng thường __________ nhiều sản phẩm trước khi quyết định mua.", key: ["before deciding", "many products"], opts: ["display", "browse", "avoid", "return"], optsVi: ["trưng bày", "xem lướt/duyệt", "tránh", "trả lại"], correct: 1, exp: "Hành động xem lướt qua các sản phẩm trên mạng gọi là <b>browse</b>." },
-            { q: "Products in online shops are usually shown with a __________.", qVi: "Sản phẩm trong các cửa hàng trực tuyến thường được hiển thị cùng với __________.", key: ["shown with", "online shops"], opts: ["costume", "price tag", "fixed place", "shelf"], optsVi: ["trang phục", "nhãn giá", "địa điểm cố định", "kệ"], correct: 1, exp: "Sản phẩm thường đi kèm hình ảnh và <b>price tag</b> (giá tiền)." },
-            { q: "Unlike offline shopping, online shopping does not allow customers to __________ products.", qVi: "Không giống mua sắm trực tiếp, mua sắm trực tuyến không cho phép khách hàng __________ sản phẩm.", key: ["Unlike offline", "does not allow"], opts: ["order", "touch", "pay for", "return"], optsVi: ["đặt hàng", "chạm vào", "trả tiền", "trả lại"], correct: 1, exp: "Hạn chế của online là không thể <b>touch</b> (sờ/chạm) vào sản phẩm." },
-            { q: "People __________ shop online because it is easy and fast.", qVi: "Mọi người __________ mua sắm trực tuyến vì nó dễ dàng và nhanh chóng.", key: ["easy and fast", "shop online"], opts: ["rarely", "never", "often", "hardly"], optsVi: ["hiếm khi", "không bao giờ", "thường xuyên", "hầu như không"], correct: 2, exp: "Vì tiện lợi nên mọi người <b>often</b> (thường xuyên) mua sắm online." },
-            { q: "When items are __________, customers can buy them at a lower price.", qVi: "Khi các món hàng __________, khách hàng có thể mua chúng với giá thấp hơn.", key: ["lower price", "items are"], opts: ["home-made", "on sale", "offline", "fixed"], optsVi: ["tự làm", "đang giảm giá", "ngoại tuyến", "cố định"], correct: 1, exp: "Giá thấp hơn (lower price) nghĩa là hàng đang <b>on sale</b> (giảm giá)." },
-            { q: "Online shops usually offer a __________ of products for customers to choose from.", qVi: "Các cửa hàng trực tuyến thường cung cấp __________ sản phẩm để khách hàng lựa chọn.", key: ["choose from", "products"], opts: ["lower price", "wide range", "minority group", "farmers’ market"], optsVi: ["giá thấp hơn", "sự đa dạng/phạm vi rộng", "nhóm thiểu số", "chợ nông sản"], correct: 1, exp: "Cụm từ <b>wide range of products</b> nghĩa là sự đa dạng sản phẩm." },
-            // PART 2
-            { q: "Shopping centres usually __________ a lot of customers at weekends.", qVi: "Các trung tâm mua sắm thường __________ rất nhiều khách hàng vào cuối tuần.", key: ["Shopping centres", "customers"], opts: ["buy", "attract", "display", "spend"], optsVi: ["mua", "thu hút", "trưng bày", "chi tiêu"], correct: 1, exp: "Trung tâm mua sắm <b>attract</b> (thu hút) khách hàng." },
-            { q: "Customers like shopping centres because they offer a __________ of products.", qVi: "Khách hàng thích trung tâm mua sắm vì chúng cung cấp __________ sản phẩm.", key: ["offer a", "products"], opts: ["fixed price", "lower price", "wide range", "price tag"], optsVi: ["giá cố định", "giá thấp", "sự đa dạng", "nhãn giá"], correct: 2, exp: "Tương tự câu trên, <b>wide range</b> (sự đa dạng chủng loại)." },
-            { q: "People often feel more __________ when they can touch products before buying.", qVi: "Mọi người thường cảm thấy __________ hơn khi họ có thể chạm vào sản phẩm trước khi mua.", key: ["feel more", "touch products"], opts: ["convenient", "comfortable", "special", "excited"], optsVi: ["tiện lợi", "thoải mái/an tâm", "đặc biệt", "hào hứng"], correct: 1, exp: "Được sờ tận tay giúp người mua cảm thấy <b>comfortable</b> (thoải mái/yên tâm) hơn." },
-            { q: "Many shopping centres offer free __________ such as live music and performances.", qVi: "Nhiều trung tâm mua sắm cung cấp __________ miễn phí như nhạc sống và biểu diễn.", key: ["music", "performances"], opts: ["exercise", "decorations", "entertainment", "internet access"], optsVi: ["tập thể dục", "trang trí", "giải trí", "kết nối internet"], correct: 2, exp: "Nhạc và biểu diễn thuộc về <b>entertainment</b> (giải trí)." },
-            { q: "Some people go to shopping centres just to __________ with friends.", qVi: "Một số người đến trung tâm mua sắm chỉ để __________ với bạn bè.", key: ["with friends", "go to"], opts: ["bargain", "hang out", "spend money", "shop online"], optsVi: ["mặc cả", "đi chơi/tụ tập", "tiêu tiền", "mua online"], correct: 1, exp: "Cụm từ <b>hang out with friends</b> nghĩa là đi chơi/tụ tập bạn bè." },
-            { q: "During holidays, shopping centres are full of __________ and excitement.", qVi: "Trong các ngày lễ, trung tâm mua sắm tràn ngập __________ và sự náo nhiệt.", key: ["holidays", "full of"], opts: ["costumes", "decorations", "shelves", "products"], optsVi: ["trang phục", "đồ trang trí", "kệ hàng", "sản phẩm"], correct: 1, exp: "Ngày lễ thì thường có nhiều <b>decorations</b> (đồ trang trí)." },
-            { q: "People can walk in clean and well-lit areas to get some __________.", qVi: "Mọi người có thể đi bộ trong những khu vực sạch sẽ và đủ ánh sáng để __________.", key: ["walk", "get some"], opts: ["exercise", "sale", "browsing", "shopping"], optsVi: ["tập thể dục/vận động", "giảm giá", "xem hàng", "mua sắm"], correct: 0, exp: "Đi bộ (walk) là một hình thức <b>exercise</b> (vận động)." },
-            { q: "Shopping centres are very __________ because they have air conditioning and heating.", qVi: "Trung tâm mua sắm rất __________ vì chúng có điều hòa và máy sưởi.", key: ["air conditioning", "heating"], opts: ["rare", "offline", "convenient", "home-grown"], optsVi: ["hiếm", "ngoại tuyến", "tiện lợi/thoải mái", "cây nhà lá vườn"], correct: 2, exp: "Có điều hòa nhiệt độ tạo sự <b>convenient</b> (tiện nghi/tiện lợi) cho khách hàng." },
-            { q: "When items are __________, they are sold at a lower price than usual.", qVi: "Khi các mặt hàng __________, chúng được bán với giá thấp hơn bình thường.", key: ["lower price", "than usual"], opts: ["displayed", "fixed", "on sale", "home-made"], optsVi: ["được trưng bày", "cố định", "đang giảm giá", "tự làm"], correct: 2, exp: "Giá thấp hơn bình thường là <b>on sale</b>." },
-            { q: "Some people visit shopping centres to avoid the heat or cold __________.", qVi: "Một số người đến trung tâm mua sắm để tránh cái nóng hoặc lạnh ở __________.", key: ["avoid heat/cold", "visit shopping centres"], opts: ["inside", "online", "outside", "usually"], optsVi: ["bên trong", "trực tuyến", "bên ngoài", "thường xuyên"], correct: 2, exp: "Vào trung tâm để tránh thời tiết khắc nghiệt <b>outside</b> (bên ngoài)." },
-            { q: "In supermarkets, products are usually __________ on shelves with price tags.", qVi: "Trong siêu thị, sản phẩm thường được __________ trên kệ với nhãn giá.", key: ["on shelves", "products"], opts: ["bargained", "displayed", "avoided", "spent"], optsVi: ["mặc cả", "trưng bày", "tránh", "chi tiêu"], correct: 1, exp: "Hàng hóa đặt trên kệ nghĩa là được <b>displayed</b> (trưng bày)." },
-            { q: "Unlike farmers’ markets, most shopping centres have __________ prices.", qVi: "Không giống chợ nông sản, hầu hết các trung tâm mua sắm có giá __________.", key: ["Unlike farmers’ markets", "prices"], opts: ["lower", "fixed", "rare", "online"], optsVi: ["thấp hơn", "cố định", "hiếm", "trực tuyến"], correct: 1, exp: "Ở chợ thì mặc cả, còn trung tâm thương mại thì <b>fixed prices</b> (giá niêm yết/cố định)." },
-            // PART 3
-            { q: "Many people prefer online shopping because they can __________ at home.", qVi: "Nhiều người thích mua sắm trực tuyến vì họ có thể __________ tại nhà.", key: ["prefer online", "at home"], opts: ["bargain", "spend time", "shop", "display"], optsVi: ["mặc cả", "dành thời gian", "mua sắm", "trưng bày"], correct: 2, exp: "Họ có thể <b>shop</b> (mua sắm) ngay tại nhà." },
-            { q: "In an online shop, customers cannot __________ the products before buying.", qVi: "Trong cửa hàng trực tuyến, khách hàng không thể __________ sản phẩm trước khi mua.", key: ["cannot", "before buying"], opts: ["return", "touch", "order", "pay for"], optsVi: ["trả lại", "chạm vào", "đặt hàng", "trả tiền"], correct: 1, exp: "Không thể <b>touch</b> (chạm) vào sản phẩm online." },
-            { q: "Shopping centres and supermarkets are examples of __________ shops.", qVi: "Trung tâm mua sắm và siêu thị là những ví dụ về cửa hàng __________.", key: ["Shopping centres", "examples of"], opts: ["online", "offline", "discount", "speciality"], optsVi: ["trực tuyến", "trực tiếp/truyền thống", "giảm giá", "chuyên dụng"], correct: 1, exp: "Đây là các địa điểm mua bán vật lý (<b>offline</b>)." },
-            { q: "People often compare prices and read reviews when __________ online.", qVi: "Mọi người thường so sánh giá và đọc đánh giá khi __________ trực tuyến.", key: ["compare prices", "online"], opts: ["shopping", "spending", "displaying", "fixing"], optsVi: ["mua sắm", "chi tiêu", "trưng bày", "sửa chữa"], correct: 0, exp: "Hành động này diễn ra khi <b>shopping</b> online." },
-            { q: "Some customers like discount shops because they sell products at a __________.", qVi: "Một số khách hàng thích cửa hàng giảm giá vì họ bán sản phẩm với __________.", key: ["discount shops", "sell at"], opts: ["fixed price", "wide range", "lower price", "price tag"], optsVi: ["giá cố định", "phạm vi rộng", "giá thấp hơn", "nhãn giá"], correct: 2, exp: "Cửa hàng giảm giá (discount shops) thì bán với <b>lower price</b>." },
-            { q: "When shopping online, people may __________ too much money without noticing.", qVi: "Khi mua sắm trực tuyến, mọi người có thể __________ quá nhiều tiền mà không để ý.", key: ["too much money", "without noticing"], opts: ["spend", "save", "avoid", "return"], optsVi: ["tiêu", "tiết kiệm", "tránh", "trả lại"], correct: 0, exp: "Dễ bị <b>spend</b> (tiêu) quá nhiều tiền." },
-            { q: "In supermarkets, products are usually __________ on shelves.", qVi: "Trong siêu thị, sản phẩm thường được __________ trên kệ.", key: ["supermarkets", "on shelves"], opts: ["bargained", "displayed", "avoided", "ordered"], optsVi: ["mặc cả", "trưng bày", "tránh", "đặt hàng"], correct: 1, exp: "Sản phẩm được <b>displayed</b> (trưng bày) trên kệ." },
-            { q: "Online shopping is not always safe because customers __________ know the seller well.", qVi: "Mua sắm trực tuyến không phải lúc nào cũng an toàn vì khách hàng __________ biết rõ người bán.", key: ["not always safe", "know seller"], opts: ["always", "usually", "sometimes", "rarely"], optsVi: ["luôn luôn", "thường xuyên", "đôi khi", "hiếm khi"], correct: 3, exp: "Vì mua qua mạng nên khách hàng <b>rarely</b> (hiếm khi) biết rõ người bán." },
-            { q: "People who buy things they don’t need and can’t stop shopping are called __________.", qVi: "Những người mua những thứ họ không cần và không thể ngừng mua sắm được gọi là __________.", key: ["can’t stop shopping", "called"], opts: ["customers", "shopaholics", "sellers", "shoppers"], optsVi: ["khách hàng", "người nghiện mua sắm", "người bán", "người mua"], correct: 1, exp: "Không ngừng mua sắm là dấu hiệu của <b>shopaholics</b>." },
-            { q: "With internet access, people can shop __________, even late at night.", qVi: "Với kết nối internet, mọi người có thể mua sắm __________, ngay cả vào đêm muộn.", key: ["late at night", "can shop"], opts: ["rarely", "never", "anytime", "offline"], optsVi: ["hiếm khi", "không bao giờ", "bất cứ lúc nào", "ngoại tuyến"], correct: 2, exp: "Mua được cả đêm muộn nghĩa là mua được <b>anytime</b> (bất cứ lúc nào)." }
+            // PART 1 (Câu 1-20)
+            { q: "You need a ______ to play badminton or table tennis.", qVi: "Bạn cần một ______ để chơi cầu lông hoặc bóng bàn.", key: ["play badminton", "table tennis"], opts: ["ball", "goggles", "racket", "bicycle"], optsVi: ["quả bóng", "kính bơi", "cái vợt", "xe đạp"], correct: 2, exp: "Cầu lông và bóng bàn là môn thể thao dùng vợt (<b>racket</b>)." },
+            { q: "The SEA Games ______ every two years.", qVi: "SEA Games ______ mỗi hai năm một lần.", key: ["every two years", "event"], opts: ["take place", "win", "last", "take part in"], optsVi: ["diễn ra", "chiến thắng", "kéo dài", "tham gia"], correct: 0, exp: "Sự kiện diễn ra theo chu kỳ dùng cụm từ <b>take place</b>." },
+            { q: "My brother is very ______. He plays football, basketball, and goes swimming every day.", qVi: "Anh trai tôi rất ______. Anh ấy chơi bóng đá, bóng rổ và đi bơi mỗi ngày.", key: ["plays football", "every day"], opts: ["loser", "champion", "sporty", "equipment"], optsVi: ["người thua cuộc", "nhà vô địch", "yêu thể thao", "thiết bị"], correct: 2, exp: "Người chơi nhiều môn thể thao gọi là người <b>sporty</b> (đam mê thể thao)." },
+            { q: "You should wear ______ to protect your eyes when you go swimming.", qVi: "Bạn nên đeo ______ để bảo vệ mắt khi đi bơi.", key: ["protect eyes", "swimming"], opts: ["shoes", "goggles", "rackets", "boats"], optsVi: ["giày", "kính bơi", "vợt", "thuyền"], correct: 1, exp: "Kính dùng khi đi bơi là <b>goggles</b>." },
+            { q: "In ______, two teams pull a rope as hard as they can.", qVi: "Trong trò ______, hai đội kéo một sợi dây mạnh nhất có thể.", key: ["pull a rope", "two teams"], opts: ["blind man's bluff", "tug of war", "skipping", "wrestling"], optsVi: ["bịt mắt bắt dê", "kéo co", "nhảy dây", "đấu vật"], correct: 1, exp: "Trò chơi kéo dây là <b>tug of war</b> (kéo co)." },
+            { q: "The Olympic ______ was very happy when he received the gold medal.", qVi: "Nhà ______ Olympic rất hạnh phúc khi nhận huy chương vàng.", key: ["Olympic", "gold medal"], opts: ["loser", "player", "champion", "sport star"], optsVi: ["người thua", "người chơi", "nhà vô địch", "ngôi sao thể thao"], correct: 2, exp: "Người nhận huy chương vàng là <b>champion</b> (nhà vô địch)." },
+            { q: "We often go to the ______ to do exercise and lift weights.", qVi: "Chúng tôi thường đến ______ để tập thể dục và nâng tạ.", key: ["do exercise", "lift weights"], opts: ["stadium", "playground", "gym", "boat"], optsVi: ["sân vận động", "sân chơi", "phòng gym", "thuyền"], correct: 2, exp: "Nơi tập thể hình và nâng tạ là <b>gym</b>." },
+            { q: "How long does a football match ______? – Usually 90 minutes.", qVi: "Một trận bóng đá ______ bao lâu? – Thường là 90 phút.", key: ["How long", "90 minutes"], opts: ["take place", "last", "win", "take part in"], optsVi: ["diễn ra", "kéo dài", "thắng", "tham gia"], correct: 1, exp: "Hỏi về khoảng thời gian kéo dài của sự kiện dùng động từ <b>last</b>." },
+            { q: "My grandfather and his friends often play ______ in the park. It’s a quiet game for two people.", qVi: "Ông tôi thường chơi ______ trong công viên. Đó là trò chơi yên tĩnh cho hai người.", key: ["quiet game", "two people"], opts: ["volleyball", "chess", "karate", "aerobics"], optsVi: ["bóng chuyền", "cờ vua/tướng", "võ karate", "thể dục nhịp điệu"], correct: 1, exp: "Trò chơi trí tuệ, yên tĩnh cho 2 người là <b>chess</b> (cờ)." },
+            { q: "To go fishing, you often need a ______ to go out on the lake.", qVi: "Để đi câu cá, bạn thường cần một ______ để ra giữa hồ.", key: ["go fishing", "on the lake"], opts: ["bicycle", "racket", "boat", "ball"], optsVi: ["xe đạp", "vợt", "chiếc thuyền", "bóng"], correct: 2, exp: "Để ra giữa hồ câu cá cần dùng <b>boat</b> (thuyền)." },
+            { q: "Thousands of people went to the ______ to watch the final match.", qVi: "Hàng ngàn người đã đến ______ để xem trận chung kết.", key: ["watch match", "thousands people"], opts: ["gym", "stadium", "playground", "competition"], optsVi: ["phòng gym", "sân vận động", "sân chơi", "cuộc thi"], correct: 1, exp: "Nơi lớn để xem thi đấu thể thao là <b>stadium</b> (sân vận động)." },
+            { q: "______! You played a great game today.", qVi: "______! Bạn đã chơi rất hay hôm nay.", key: ["great game", "exclamation"], opts: ["Sporty", "Winner", "Congratulations", "Champion"], optsVi: ["Yêu thể thao", "Người thắng", "Chúc mừng", "Nhà vô địch"], correct: 2, exp: "Lời chúc mừng khi ai đó làm tốt là <b>Congratulations</b>." },
+            { q: "In a ______, there is always a winner and a ______.", qVi: "Trong một ______, luôn có người thắng và ______.", key: ["winner", "opposite"], opts: ["game / player", "competition / loser", "stadium / champion", "sport star / winner"], optsVi: ["trò chơi / người chơi", "cuộc thi / người thua", "sân / vô địch", "sao / người thắng"], correct: 1, exp: "Trong cuộc thi (<b>competition</b>) có người thắng và người thua (<b>loser</b>)." },
+            { q: "My sister does ______ every morning to keep fit and stay healthy.", qVi: "Chị tôi tập ______ mỗi sáng để giữ dáng và khỏe mạnh.", key: ["keep fit", "does"], opts: ["aerobics", "wrestling", "marathon", "football"], optsVi: ["thể dục nhịp điệu", "đấu vật", "chạy marathon", "bóng đá"], correct: 0, exp: "Cụm từ 'do aerobics' (tập thể dục nhịp điệu). Các môn khác dùng 'play' hoặc 'go'." },
+            { q: "You should wear a pair of good ______ when you go running or playing sports.", qVi: "Bạn nên mang một đôi ______ tốt khi chạy bộ hoặc chơi thể thao.", key: ["running", "wear pair"], opts: ["goggles", "shoes", "bicycles", "equipment"], optsVi: ["kính bơi", "giày", "xe đạp", "thiết bị"], correct: 1, exp: "Chạy bộ cần mang <b>shoes</b> (giày)." },
+            { q: "Do you want to ______ the school's table tennis competition?", qVi: "Bạn có muốn ______ cuộc thi bóng bàn của trường không?", key: ["competition", "join"], opts: ["take part in", "last", "win", "take place"], optsVi: ["tham gia", "kéo dài", "thắng", "diễn ra"], correct: 0, exp: "Tham gia vào một cuộc thi là <b>take part in</b>." },
+            { q: "Pelé is a famous ______; everyone in the world knows him.", qVi: "Pelé là một ______ nổi tiếng; mọi người trên thế giới đều biết ông ấy.", key: ["Pelé", "famous"], opts: ["player", "sport star", "loser", "equipment"], optsVi: ["người chơi", "ngôi sao thể thao", "người thua", "thiết bị"], correct: 1, exp: "Pelé là huyền thoại, được gọi là <b>sport star</b>." },
+            { q: "I often go ______ with my father on weekends. We use a rod and some bait.", qVi: "Tôi thường đi ______ với bố vào cuối tuần. Chúng tôi dùng cần câu và mồi.", key: ["rod", "bait"], opts: ["cycling", "skipping", "fishing", "swimming"], optsVi: ["đạp xe", "nhảy dây", "câu cá", "bơi"], correct: 2, exp: "Dùng cần (rod) và mồi (bait) là đi <b>fishing</b> (câu cá)." },
+            { q: "My favorite indoor ______ is hide-and-seek, but I also like ______. ", qVi: "Trò chơi trong nhà yêu thích của tôi là trốn tìm, nhưng tôi cũng thích ______.", key: ["hide-and-seek", "indoor"], opts: ["sport / karate", "game / blind man's bluff", "competition / marathon", "stadium / gym"], optsVi: ["thể thao/karate", "trò chơi/bịt mắt bắt dê", "cuộc thi/marathon", "sân/gym"], correct: 1, exp: "Trốn tìm là một trò chơi (<b>game</b>), tương tự là bịt mắt bắt dê (<b>blind man's bluff</b>)." },
+            { q: "You need a net and a ______ to play volleyball.", qVi: "Bạn cần một cái lưới và một ______ để chơi bóng chuyền.", key: ["volleyball", "net"], opts: ["ball", "racket", "goggles", "boat"], optsVi: ["quả bóng", "vợt", "kính", "thuyền"], correct: 0, exp: "Bóng chuyền cần lưới và <b>ball</b> (bóng)." },
+            
+            // PART 2 (Câu 21-40)
+            { q: "You need two ______ and a small plastic ball to play table tennis.", qVi: "Bạn cần hai ______ và một quả bóng nhựa nhỏ để chơi bóng bàn.", key: ["table tennis", "two items"], opts: ["shoes", "rackets", "goggles", "bicycles"], optsVi: ["giày", "vợt", "kính", "xe đạp"], correct: 1, exp: "Bóng bàn dùng vợt (<b>rackets</b>)." },
+            { q: "A ______ is a long-distance running race of about 42 kilometres.", qVi: "Một ______ là cuộc đua chạy đường dài khoảng 42 km.", key: ["42 kilometres", "running race"], opts: ["marathon", "cycling", "wrestling", "skipping"], optsVi: ["cuộc đua marathon", "đạp xe", "đấu vật", "nhảy dây"], correct: 0, exp: "Cuộc chạy đua 42km gọi là <b>marathon</b>." },
+            { q: "What ______ is the football match on? – It's on Channel 3.", qVi: "Trận bóng đá chiếu trên ______ nào? – Nó chiếu trên Kênh 3.", key: ["Channel 3", "match on"], opts: ["button", "programme", "channel", "television"], optsVi: ["nút bấm", "chương trình", "kênh", "ti vi"], correct: 2, exp: "Câu trả lời đề cập đến Channel 3, nên câu hỏi hỏi về <b>channel</b> (kênh)." },
+            { q: "My brother is a(n) ______ boy; he can play almost every sport well.", qVi: "Em trai tôi là một cậu bé ______; nó có thể chơi giỏi hầu hết mọi môn thể thao.", key: ["play every sport", "boy"], opts: ["boring", "educational", "sporty", "different"], optsVi: ["nhàm chán", "giáo dục", "mê thể thao", "khác biệt"], correct: 2, exp: "Giỏi thể thao là tính từ <b>sporty</b>." },
+            { q: "Tom and Jerry is a(n) ______ film because it's made from drawings.", qVi: "Tom và Jerry là phim ______ vì nó được làm từ các hình vẽ.", key: ["made from drawings", "Tom and Jerry"], opts: ["wildlife", "live", "animated", "science"], optsVi: ["hoang dã", "trực tiếp", "hoạt hình", "khoa học"], correct: 2, exp: "Phim làm từ tranh vẽ là phim hoạt hình (<b>animated</b>)." },
+            { q: "The players were very happy to hear the ______ from their fans.", qVi: "Các cầu thủ rất vui khi nghe những lời ______ từ người hâm mộ.", key: ["happy to hear", "fans"], opts: ["equipment", "congratulations", "goggles", "characters"], optsVi: ["thiết bị", "chúc mừng", "kính", "nhân vật"], correct: 1, exp: "Nghe lời chúc mừng (<b>congratulations</b>) từ fan." },
+            { q: "I'm ______ in that science programme because it shows how the heart works.", qVi: "Tôi ______ chương trình khoa học đó vì nó chỉ ra cách tim hoạt động.", key: ["science programme", "feeling"], opts: ["interesting", "enjoy", "want", "interested"], optsVi: ["thú vị (tính chất)", "thích", "muốn", "thấy thú vị (cảm xúc)"], correct: 3, exp: "Cấu trúc 'be interested in' (quan tâm/thấy thú vị về cái gì)." },
+            { q: "In the game of ______, you have to think hard before moving your pieces.", qVi: "Trong trò chơi ______, bạn phải suy nghĩ kỹ trước khi di chuyển quân cờ.", key: ["moving pieces", "think hard"], opts: ["volleyball", "karate", "chess", "aerobics"], optsVi: ["bóng chuyền", "karate", "cờ vua", "thể dục"], correct: 2, exp: "Di chuyển các quân cờ (pieces) là trò <b>chess</b>." },
+            { q: "This documentary is a ______ for anyone who loves nature.", qVi: "Phim tài liệu này là một ______ cho bất cứ ai yêu thiên nhiên.", key: ["loves nature", "documentary"], opts: ["must-see", "boring", "popular", "cute"], optsVi: ["điều phải xem", "chán", "phổ biến", "dễ thương"], correct: 0, exp: "Danh từ ghép <b>must-see</b> chỉ một thứ rất hay, đáng xem." },
+            { q: "Before you go swimming, make sure you bring your ______ to see underwater.", qVi: "Trước khi đi bơi, hãy chắc chắn mang theo ______ để nhìn dưới nước.", key: ["see underwater", "swimming"], opts: ["rackets", "goggles", "shoes", "boats"], optsVi: ["vợt", "kính bơi", "giày", "thuyền"], correct: 1, exp: "Để nhìn dưới nước cần <b>goggles</b>." },
+            { q: "Does this talent show ______ on Sunday night?", qVi: "Chương trình tài năng này có ______ vào tối Chủ nhật không?", key: ["Sunday night", "show"], opts: ["take part in", "last", "take place", "win"], optsVi: ["tham gia", "kéo dài", "diễn ra", "thắng"], correct: 2, exp: "Hỏi về lịch trình diễn ra dùng <b>take place</b>." },
+            { q: "There were so many famous ______ in the studio today for the talk show.", qVi: "Có rất nhiều ______ nổi tiếng trong trường quay hôm nay cho buổi trò chuyện.", key: ["talk show", "people"], opts: ["guests", "buttons", "rackets", "equipment"], optsVi: ["khách mời", "nút bấm", "vợt", "thiết bị"], correct: 0, exp: "Người tham dự talk show là <b>guests</b> (khách mời)." },
+            { q: "My sister does ______ every morning at the gym to stay fit.", qVi: "Chị tôi tập ______ mỗi sáng tại phòng gym để giữ dáng.", key: ["at the gym", "does"], opts: ["marathon", "aerobics", "wrestling", "chess"], optsVi: ["marathon", "thể dục nhịp điệu", "đấu vật", "cờ"], correct: 1, exp: "Dùng với động từ 'does' là <b>aerobics</b>." },
+            { q: "We use the ______ to change the volume of the TV.", qVi: "Chúng ta dùng ______ để thay đổi âm lượng TV.", key: ["change volume", "TV"], opts: ["remote control", "playground", "bicycle", "stadium"], optsVi: ["điều khiển từ xa", "sân chơi", "xe đạp", "sân vận động"], correct: 0, exp: "Thiết bị điều khiển TV là <b>remote control</b>." },
+            { q: "You shouldn't ______ too much television; it's not good for your eyes.", qVi: "Bạn không nên ______ ti vi quá nhiều; nó không tốt cho mắt.", key: ["television", "eyes"], opts: ["view", "watch", "see", "look"], optsVi: ["xem (cảnh)", "xem (theo dõi)", "nhìn thấy", "nhìn"], correct: 1, exp: "Xem TV dùng động từ <b>watch</b>." },
+            { q: "In the game of ______, one person covers their eyes and tries to catch others.", qVi: "Trong trò ______, một người che mắt và cố bắt những người khác.", key: ["covers eyes", "catch others"], opts: ["tug of war", "blind man's bluff", "skipping", "karate"], optsVi: ["kéo co", "bịt mắt bắt dê", "nhảy dây", "karate"], correct: 1, exp: "Mô tả của trò <b>blind man's bluff</b> (bịt mắt bắt dê)." },
+            { q: "The ______ told the audience a very funny joke.", qVi: "Người ______ đã kể cho khán giả một câu đùa rất buồn cười.", key: ["funny joke", "audience"], opts: ["character", "performer", "viewer", "sport star"], optsVi: ["nhân vật", "người biểu diễn", "người xem", "ngôi sao thể thao"], correct: 1, exp: "Người đứng trên sân khấu kể chuyện vui là <b>performer</b> (hoặc comedian)." },
+            { q: "To play ______ properly, you need a net and a ball.", qVi: "Để chơi ______ đúng cách, bạn cần lưới và bóng.", key: ["net and ball", "play"], opts: ["volleyball", "cycling", "marathon", "running"], optsVi: ["bóng chuyền", "đạp xe", "marathon", "chạy"], correct: 0, exp: "Môn cần lưới và bóng trong danh sách là <b>volleyball</b>." },
+            { q: "This ______ programme helps children learn English through songs.", qVi: "Chương trình ______ này giúp trẻ em học tiếng Anh qua bài hát.", key: ["learn English", "helps children"], opts: ["wildlife", "comedy", "educational", "sports"], optsVi: ["hoang dã", "hài kịch", "giáo dục", "thể thao"], correct: 2, exp: "Chương trình dạy học là chương trình <b>educational</b> (giáo dục)." },
+            { q: "After the match, the ______ cried because they didn't win the trophy.", qVi: "Sau trận đấu, những ______ đã khóc vì họ không giành được cúp.", key: ["didn't win", "cried"], opts: ["winners", "losers", "champions", "sport stars"], optsVi: ["người thắng", "người thua", "nhà vô địch", "ngôi sao"], correct: 1, exp: "Người không thắng là <b>losers</b> (người thua cuộc)." }
         ];
 
         let answeredSet = new Set();
@@ -512,16 +518,32 @@
                 `;
                 container.appendChild(card);
 
-                // Sidebar nav item
                 const qNum = document.createElement('div');
                 qNum.className = 'q-num';
                 qNum.id = `nav-${index}`;
                 qNum.innerText = index + 1;
                 qNum.onclick = () => {
                     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Nếu đang ở mobile thì đóng menu sau khi chọn câu
+                    if(window.innerWidth <= 768) toggleSidebar();
                 };
                 nav.appendChild(qNum);
             });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Khóa cuộn trang chính khi đang mở menu để tránh lộn xộn
+            if(sidebar.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
         }
 
         function toggleHint(index) {
@@ -550,9 +572,7 @@
         }
 
         function updateStats() {
-            // Cập nhật số câu đúng
             document.getElementById('stat-correct').innerText = correctCount;
-            // Cập nhật điểm (thang 10, làm tròn 1 số thập phân)
             const score = (correctCount / totalCount * 10).toFixed(1);
             document.getElementById('stat-score').innerText = score;
         }
@@ -567,14 +587,11 @@
             const transBtn = document.getElementById(`btn-trans-${qIndex}`);
             const navNum = document.getElementById(`nav-${qIndex}`);
 
-            // Mở khóa dịch nghĩa
             if (transBtn.hasAttribute('disabled')) {
                 transBtn.removeAttribute('disabled');
                 transBtn.innerHTML = '🌐 Dịch nghĩa';
-                transBtn.title = "Xem bản dịch tiếng Việt";
             }
 
-            // Xử lý đúng sai
             if (optIndex === correctIndex) {
                 btn.classList.add('correct');
                 navNum.classList.add('done-correct');
@@ -582,35 +599,30 @@
             } else {
                 btn.classList.add('wrong');
                 navNum.classList.add('done-wrong');
-                // Hiện đáp án đúng
                 buttons[correctIndex].classList.add('correct');
             }
 
-            // Cập nhật thống kê
             updateStats();
-
-            // Khóa các nút
             buttons.forEach(b => b.classList.add('disabled'));
 
-            // Progress bar
             const percent = (answeredSet.size / quizData.length) * 100;
             document.getElementById('progress-bar').style.width = percent + '%';
 
-            // Hiện giải thích
             expBox.innerHTML = `<strong>Giải thích:</strong> ${quizData[qIndex].exp}`;
             expBox.style.display = 'block';
         }
 
         function submitQuiz() {
-            // Kiểm tra xem đã làm hết chưa
+            if (window.innerWidth <= 768) {
+                toggleSidebar(); // Đóng menu nếu đang mở
+            }
+            
             if (answeredSet.size < totalCount) {
                 const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
                 if (!confirmSubmit) return;
             }
 
             const score = (correctCount / totalCount * 10).toFixed(1);
-            
-            // Xếp loại
             let rank = "";
             if(score >= 9) rank = "Xuất sắc (Excellent)";
             else if(score >= 8) rank = "Giỏi (Good)";
@@ -618,12 +630,9 @@
             else if(score >= 5) rank = "Trung bình (Average)";
             else rank = "Cần cố gắng thêm (Poor)";
 
-            // Điền dữ liệu vào Modal
             document.getElementById('final-score').innerText = score;
             document.getElementById('final-correct').innerText = correctCount;
             document.getElementById('final-rank').innerText = rank;
-
-            // Hiện Modal
             document.getElementById('result-modal').style.display = 'flex';
         }
 
