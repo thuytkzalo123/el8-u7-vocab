@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloze Test Mobile Fix</title>
+    <title>Cloze Test Mobile Perfect Scroll</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,7 +18,8 @@
             --green: #1e8e3e;
             --red: #d93025;
             --header-height: 60px;
-            --panel-height: 55vh; /* Chiều cao tối đa của bảng câu hỏi mobile */
+            /* Chiều cao bảng câu hỏi trên mobile: 50% màn hình */
+            --panel-height: 50vh; 
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -82,8 +83,8 @@
         .main-content {
             flex: 1;
             padding: 30px;
-            overflow-y: auto; /* Quan trọng: Cho phép cuộn nội dung */
-            -webkit-overflow-scrolling: touch; /* Mượt mà trên iOS */
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
             display: flex; justify-content: center;
             position: relative;
             scroll-behavior: smooth;
@@ -131,16 +132,12 @@
         .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
         .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
 
-        /* --- 4. CSS MOBILE FIX (QUAN TRỌNG) --- */
+        /* --- 4. CSS MOBILE FIX (FIX LỖI SCROLL) --- */
         @media (max-width: 900px) {
-            body { 
-                flex-direction: column; 
-                padding-top: var(--header-height); 
-            }
+            body { flex-direction: column; padding-top: var(--header-height); }
             
             .mobile-header { display: flex; }
 
-            /* Sidebar Drawer */
             .sidebar {
                 position: fixed; left: 0; top: 0; bottom: 0;
                 width: 85%; max-width: 320px;
@@ -151,29 +148,25 @@
             .sidebar-overlay.active { display: block; }
             .close-sidebar-btn { display: block; }
 
-            /* Fix Scrolling Content */
             .main-content {
                 display: block; width: 100%; padding: 0;
-                /* Chiều cao = 100vh - header */
                 height: calc(100vh - var(--header-height)); 
             }
             .content-wrapper { flex-direction: column; width: 100%; }
             
             .text-panel { 
-                width: 100%; 
-                border-radius: 0; 
-                box-shadow: none; 
+                width: 100%; border-radius: 0; box-shadow: none; 
                 padding: 20px; 
-                /* Padding đáy cực lớn để nội dung không bị che bởi bảng câu hỏi */
-                padding-bottom: 50vh !important; 
+                /* --- MAGIC FIX: TẠO VÙNG ĐỆM ĐỂ CUỘN --- */
+                /* Thêm khoảng trắng 80% màn hình ở dưới đáy bài đọc */
+                /* Giúp nội dung câu 19 có thể cuộn lên tận đỉnh màn hình */
+                padding-bottom: 80vh !important; 
             }
 
-            /* Bottom Sheet Panel */
             .question-panel {
                 position: fixed; bottom: 0; left: 0; right: 0; top: auto;
-                width: 100%; 
-                z-index: 150;
-                transform: translateY(120%); /* Ẩn đi mặc định */
+                width: 100%; z-index: 150;
+                transform: translateY(120%);
                 transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
             }
             .question-panel.active { transform: translateY(0); }
@@ -182,29 +175,24 @@
                 border-radius: 20px 20px 0 0; 
                 padding: 15px 20px 25px 20px;
                 box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
-                max-height: var(--panel-height); 
+                max-height: var(--panel-height); /* Giới hạn chiều cao panel */
                 overflow-y: auto;
                 border-top: 1px solid #ddd;
                 position: relative;
             }
 
-            /* Thanh kéo nhỏ phía trên */
             .drag-handle {
                 width: 40px; height: 5px; background: #e0e0e0;
                 border-radius: 10px; margin: 0 auto 15px auto;
             }
 
-            /* Nút thu gọn trên mobile */
             .mobile-collapse-btn {
-                display: flex !important; /* Chỉ hiện trên mobile */
-                justify-content: center; align-items: center;
-                width: 30px; height: 30px; 
-                background: #f1f3f4; border-radius: 50%;
+                display: flex !important; justify-content: center; align-items: center;
+                width: 30px; height: 30px; background: #f1f3f4; border-radius: 50%;
                 position: absolute; right: 15px; top: 15px;
                 cursor: pointer; color: #555;
             }
 
-            /* Ẩn Empty State trên mobile vì sẽ tự động bật bảng câu hỏi */
             #empty-state { display: none !important; }
         }
 
@@ -220,7 +208,7 @@
         <div class="mobile-score">
             <span id="m-score">0</span> / <span id="m-max">0</span>
         </div>
-        <div class="menu-btn" onclick="document.querySelector('.main-content').scrollTop = 0">
+        <div class="menu-btn" onclick="app.scrollToTop()">
             <i class="fas fa-arrow-up"></i>
         </div>
     </div>
@@ -238,7 +226,7 @@
                 <span class="stat-value"><span id="current-score">0</span> / <span id="max-score">0</span></span>
             </div>
             <div style="font-size: 0.85rem; color: #666; margin-top:5px;">
-                * Mỗi câu 5đ. Trừ 1đ khi mở gợi ý.
+                * 5đ/câu. Trừ 1đ/gợi ý.
             </div>
         </div>
         <div class="question-grid-container">
@@ -254,7 +242,6 @@
 
     <main class="main-content">
         <div class="content-wrapper">
-            
             <div class="text-panel">
                 <h2 id="ex-title" style="margin-top:0; color:var(--primary); font-size:1.3rem; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">Loading...</h2>
                 <div id="ex-content"></div>
@@ -273,7 +260,6 @@
                     </div>
 
                     <div class="hints-list" id="hints-container"></div>
-
                     <div class="options-grid" id="options-container"></div>
                 </div>
 
@@ -297,7 +283,8 @@
                     <p>This event is a great opportunity <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
                     <span id="sig-1-18-2" class="signal-word">local products</span> and support small businesses.</p>
                     <p>Bring your friends and family for a(n) <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span> 
-                    <span id="sig-1-19-2" class="signal-word">experience</span>!</p>
+                    <span id="sig-1-19-2" class="signal-word">experience</span>! This event will surely bring you joy and happiness.</p>
+                    <p>Remember to check out the details on our website. We hope to see you there with your family and friends for an unforgettable time.</p>
                 `,
                 questions: [
                     { id: 17, correct: "A", signalIds: ["sig-1-17-2"], options: [{id: "A", text: "basic"}, {id: "B", text: "dedicated"}, {id: "C", text: "full"}, {id: "D", text: "starter"}], hints: ["Enemy: 4 từ khác nghĩa", "Signal: fresh ... ingredients", "Logic: Tính từ mô tả", "Trans: A. cơ bản | B. tận tụy"] },
@@ -334,9 +321,8 @@
 
                 document.getElementById('ex-title').innerText = exData.title;
                 document.getElementById('ex-content').innerHTML = exData.content;
-                document.querySelector('.main-content').scrollTop = 0; // Reset scroll lên đầu
+                this.scrollToTop();
 
-                // Reset
                 this.closeQuestionPanel();
                 if(window.innerWidth > 900) {
                      document.getElementById('empty-state').style.display = 'block';
@@ -371,27 +357,30 @@
                 const key = `${realIndex}-${qId}`;
                 const qState = this.state.qMap[key];
 
-                // Highlight Gap
                 document.querySelectorAll('.gap').forEach(e => e.classList.remove('active-gap'));
                 const gap = document.getElementById(`gap-${exId}-${qId}`);
                 if(gap) gap.classList.add('active-gap');
 
-                // Highlight Grid
                 document.querySelectorAll('.q-cell').forEach(e => e.classList.remove('active'));
                 document.getElementById(`cell-${qId}`).classList.add('active');
 
-                // Render Data
                 document.getElementById('q-number').innerText = qId;
                 this.renderPointsBadge(qState);
                 this.renderHints(realIndex, qId, qData, qState);
                 this.renderOptions(realIndex, qId, qData, qState);
 
-                // Show Panel
                 document.getElementById('empty-state').style.display = 'none';
                 document.getElementById('q-card-area').style.display = 'block';
                 document.getElementById('question-panel').classList.add('active');
                 
-                // Signal words
+                // --- TỰ ĐỘNG CUỘN ĐẾN TỪ VỰNG ---
+                if(window.innerWidth <= 900 && gap) {
+                    setTimeout(() => {
+                        // Cuộn từ này vào giữa màn hình (nhờ padding đáy lớn nên không sợ bị che)
+                        gap.scrollIntoView({behavior: "smooth", block: "center"}); 
+                    }, 300); // Đợi panel trượt lên xong mới cuộn
+                }
+
                 document.querySelectorAll('.signal-word').forEach(e => e.classList.remove('highlighted'));
                 if (qState.hintsOpen[1] && qData.signalIds) {
                     qData.signalIds.forEach(id => {
@@ -498,6 +487,10 @@
 
             closeQuestionPanel: function() {
                 document.getElementById('question-panel').classList.remove('active');
+            },
+
+            scrollToTop: function() {
+                document.querySelector('.main-content').scrollTop = 0;
             },
 
             nextExercise: function() {
