@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cloze Test: Ms Thuy Ho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-main: #202124;
+            --border: #dadce0;
+            --orange: #f59e0b;
+            --green: #1e8e3e;
+            --red: #d93025;
+            --header-height: 60px;
+            --panel-height: 37.5vh; /* 3/8 màn hình */
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--secondary-bg);
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden; 
+        }
+
+        /* --- HEADER MOBILE --- */
+        .mobile-header {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .menu-btn { font-size: 1.4rem; color: #555; padding: 5px 10px; cursor: pointer; }
+        .mobile-score { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 300px;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            height: 100%; flex-shrink: 0;
+            z-index: 200; 
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header h3 { margin: 0; color: var(--primary); }
+        .close-sidebar-btn { display: none; font-size: 1.2rem; cursor: pointer; }
+        .stats-area { padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid var(--border); }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .stat-value { font-weight: 800; color: var(--primary); }
+        .question-grid-container { flex: 1; padding: 20px; overflow-y: auto; }
+        .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .q-cell {
+            aspect-ratio: 1; background: var(--white); border: 1px solid var(--border);
+            border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-weight: 600; color: #666; transition: 0.2s;
+        }
+        .q-cell.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-cell.done { background: #e6f4ea; color: var(--green); border-color: var(--green); }
+        .q-cell.wrong { background: #fce8e6; color: var(--red); border-color: var(--red); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            display: flex; justify-content: center;
+            position: relative;
+            scroll-behavior: smooth; 
+        }
+        .content-wrapper { display: flex; width: 100%; max-width: 1200px; gap: 25px; }
+
+        /* TEXT PANEL */
+        .text-panel {
+            flex: 2;
+            background: var(--white); border-radius: 12px; padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            height: fit-content;
+            line-height: 2.0; font-size: 1.15rem; color: #333;
+        }
+        
+        .gap {
+            display: inline-block; min-width: 40px; border-bottom: 2px solid #ccc;
+            color: var(--primary); font-weight: 700; text-align: center;
+            cursor: pointer; padding: 2px 6px; transition: 0.2s; border-radius: 4px;
+        }
+        .gap.active-gap { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .gap.correct { color: var(--green); border-bottom-color: var(--green); }
+        .gap.wrong { color: var(--red); border-bottom-color: var(--red); } 
+        
+        .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
+
+        /* QUESTION PANEL */
+        .question-panel {
+            flex: 1; min-width: 350px;
+            position: sticky; top: 0; height: fit-content;
+        }
+        .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
+        .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+        .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
+        .hint-content.show { display: block; }
+
+        /* OPTIONS GRID */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .option-btn {
+            padding: 12px 15px; 
+            border: 1px solid var(--border); 
+            background: white;
+            border-radius: 8px; 
+            cursor: pointer; 
+            text-align: left; 
+            font-size: 1rem;
+            display: flex; 
+            align-items: center;
+            gap: 10px;
+        }
+        .option-label { font-weight: bold; color: #555; min-width: 25px; } 
+        .option-text { flex: 1; } 
+
+        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
+        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; padding-top: var(--header-height); }
+            .mobile-header { display: flex; }
+
+            .sidebar {
+                position: fixed; left: 0; top: 0; bottom: 0;
+                width: 85%; max-width: 320px;
+                transform: translateX(-100%);
+                box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .close-sidebar-btn { display: block; }
+
+            .main-content {
+                display: block; width: 100%; padding: 0;
+                height: calc(100vh - var(--header-height)); 
+            }
+            .content-wrapper { flex-direction: column; width: 100%; }
+            
+            .text-panel { 
+                width: 100%; border-radius: 0; box-shadow: none; 
+                padding: 20px; 
+                padding-bottom: 80vh !important; 
+            }
+
+            .question-panel {
+                position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+                width: 100%; z-index: 150;
+                transform: translateY(120%);
+                transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
+            }
+            .question-panel.active { transform: translateY(0); }
+
+            .q-card {
+                border-radius: 20px 20px 0 0; 
+                padding: 15px 20px 20px 20px;
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+                height: var(--panel-height); 
+                max-height: var(--panel-height);
+                overflow-y: auto;
+                border-top: 1px solid #ddd;
+                position: relative;
+            }
+
+            .drag-handle {
+                width: 40px; height: 5px; background: #e0e0e0;
+                border-radius: 10px; margin: 0 auto 10px auto;
+            }
+
+            .mobile-collapse-btn {
+                display: flex !important; justify-content: center; align-items: center;
+                width: 28px; height: 28px; background: #f1f3f4; border-radius: 50%;
+                position: absolute; right: 15px; top: 12px;
+                cursor: pointer; color: #555;
+            }
+
+            #empty-state { display: none !important; }
+        }
+
+        .mobile-collapse-btn { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <div class="menu-btn" onclick="app.toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="mobile-score">
+            <span id="m-score">0</span> / <span id="m-max">0</span>
+        </div>
+        <div class="menu-btn" onclick="app.scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" onclick="app.toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-book-open"></i> Cloze Test</h3>
+            <i class="fas fa-times close-sidebar-btn" onclick="app.toggleSidebar()"></i>
+        </div>
+        <div class="stats-area">
+            <div class="stat-row">
+                <span>Điểm số:</span>
+                <span class="stat-value"><span id="current-score">0</span> / <span id="max-score">0</span></span>
+            </div>
+            <div style="font-size: 0.85rem; color: #666; margin-top:5px;">
+                * 5đ/câu. Trừ 1đ/gợi ý.
+            </div>
+        </div>
+        <div class="question-grid-container">
+            <div style="font-weight:bold; margin-bottom:10px;">Câu hỏi</div>
+            <div id="sidebar-grid" class="q-grid"></div>
+        </div>
+        <div style="padding: 20px; border-top:1px solid #eee;">
+            <button onclick="app.nextExercise()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">
+                Bài tiếp theo <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="text-panel">
+                <h2 id="ex-title" style="margin-top:0; color:var(--primary); font-size:1.3rem; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">Loading...</h2>
+                <div id="ex-content"></div>
+            </div>
+
+            <div class="question-panel" id="question-panel">
+                <div class="q-card" id="q-card-area">
+                    <div class="drag-handle"></div>
+                    <div class="mobile-collapse-btn" onclick="app.closeQuestionPanel()">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-right: 40px;">
+                        <h3 style="margin:0; font-size:1.1rem;">Câu <span id="q-number">...</span></h3>
+                        <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">5 Points</span>
+                    </div>
+
+                    <div class="hints-list" id="hints-container"></div>
+                    <div class="options-grid" id="options-container"></div>
+                </div>
+
+                <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
+                    <i class="fas fa-mouse-pointer" style="font-size:2rem; margin-bottom:10px;"></i>
+                    <p>Chọn ô trống để bắt đầu</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- DỮ LIỆU BÀI TẬP ĐÃ CẬP NHẬT (ĐỀ 10, 11, 12) ---
+        const exercises = [
+            {
+                id: 10,
+                title: "Đề 10: School Green Club",
+                content: `
+                    <h3 style="margin-top:0">Join the School Green Club!</h3>
+                    <p>Do you care about the environment and want to help protect our planet? The School Green Club is looking for enthusiastic volunteers! We are holding our first project this Sunday, November 24th.</p>
+                    <p>In the morning, we will plant hundreds of trees along Sweet Road to improve the local area. In the afternoon, we will 
+                    <span id="gap-1-17" class="gap" onclick="app.selectQuestion(1, 17)">(17) ______</span> 
+                    the riverbank to remove rubbish and harmful waste.</p>
+                    <p>This is a great opportunity to make a 
+                    <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
+                    for all volunteers. For more information and meet new friends.</p>
+                    <p>Lunch will be 
+                    <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span>. 
+                    Please contact Mr. Hung at 0922444999. Let's work together for a greener future!</p>
+                `,
+                questions: [
+                    { 
+                        id: 17, 
+                        correct: "A", 
+                        signalIds: [], 
+                        options: [
+                            {id: "A", text: "clean up"}, 
+                            {id: "B", text: "pick up"}, 
+                            {id: "C", text: "get up"}, 
+                            {id: "D", text: "give up"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Cụm động từ (Phrasal Verbs). Dễ nhầm giữa 'Clean up' và 'Pick up'.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Tân ngữ phía sau là 'the riverbank' (bờ sông - một địa điểm), mục đích là 'remove rubbish' (loại bỏ rác).", 
+                            "<strong>Logic (Tư duy):</strong> Bạn 'pick up' (nhặt lên) một đồ vật nhỏ (rác), nhưng bạn làm gì với cả một khu vực (bờ sông)? Dọn dẹp hay Nhặt lên?", 
+                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [dọn dẹp] → chúng ta sẽ [dọn dẹp] bờ sông.<br>B. [nhặt lên] → chúng ta sẽ [nhặt lên] bờ sông (Sai logic).<br>C. [thức dậy] → chúng ta sẽ [thức dậy] bờ sông.<br>D. [từ bỏ] → chúng ta sẽ [từ bỏ] bờ sông."
+                        ] 
+                    },
+                    { 
+                        id: 18, 
+                        correct: "B", 
+                        signalIds: [], 
+                        options: [
+                            {id: "A", text: "strong"}, 
+                            {id: "B", text: "real"}, 
+                            {id: "C", text: "long"}, 
+                            {id: "D", text: "short"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Kết hợp từ (Collocation/Word Choice).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Lưu ý: Đề gốc có thể bị thiếu danh từ (ví dụ: make a real difference/effort). Dựa vào các đáp án là Tính từ.", 
+                            "<strong>Logic (Tư duy):</strong> Trong các cụm từ cố định thường đi với 'make a...', tính từ nào thường được dùng để nhấn mạnh sự tác động thực sự hoặc sự khác biệt rõ rệt?", 
+                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [mạnh mẽ] → tạo ra một cái gì đó [mạnh mẽ].<br>B. [thực sự/rõ rệt] → tạo ra một sự khác biệt/tác động [thực sự].<br>C. [dài] → tạo ra một cái gì đó [dài].<br>D. [ngắn] → tạo ra một cái gì đó [ngắn]."
+                        ] 
+                    },
+                    { 
+                        id: 19, 
+                        correct: "C", 
+                        signalIds: [], 
+                        options: [
+                            {id: "A", text: "provide"}, 
+                            {id: "B", text: "provides"}, 
+                            {id: "C", text: "provided"}, 
+                            {id: "D", text: "providing"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Cấu trúc Bị động (Passive Voice).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Chủ ngữ 'Lunch' (Bữa trưa - vật) + động từ 'will be'.", 
+                            "<strong>Logic (Tư duy):</strong> Bữa trưa có tự cung cấp được không hay phải 'được cung cấp'? Sau 'will be', động từ cần ở dạng nào để tạo thành câu bị động?", 
+                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [cung cấp] (nguyên thể) → Bữa trưa sẽ [tự cung cấp].<br>B. [cung cấp] (chia s/es) → Sai ngữ pháp.<br>C. [được cung cấp] (V3/ed) → Bữa trưa sẽ [được cung cấp] (bởi nhà trường).<br>D. [đang cung cấp] (V-ing) → Bữa trưa sẽ [đang cung cấp]."
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 11,
+                title: "Đề 11: Course Deposit Announcement",
+                content: `
+                    <h3 style="margin-top:0">ANNOUNCEMENT</h3>
+                    <p>A $100 deposit per person is required for the 5-day course and $50 per person for the 2-day course. Deposits are 
+                    <span id="gap-2-17" class="gap" onclick="app.selectQuestion(2, 17)">(17) ______</span> 
+                    if notice of cancellation is received at least 14 days prior to reservation period; the 
+                    <span id="gap-2-18" class="gap" onclick="app.selectQuestion(2, 18)">(18) ______</span> 
+                    fee is $10.</p>
+                    <p>Deposit will not be refunded if cancellation is received less than 14 days prior to reservation period. Deposit may be transferred to another session if notice of change is received at least 7 days prior to original date of enrollment.</p>
+                    <p>Transfer of deposit to another session is 
+                    <span id="gap-2-19" class="gap" onclick="app.selectQuestion(2, 19)">(19) ______</span> 
+                    upon availability of space in that session.</p>
+                `,
+                questions: [
+                    { 
+                        id: 17, 
+                        correct: "B", 
+                        signalIds: [], 
+                        options: [
+                            {id: "A", text: "avoidable"}, 
+                            {id: "B", text: "refundable"}, 
+                            {id: "C", text: "understandable"}, 
+                            {id: "D", text: "changeable"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Từ vựng (Tính từ đuôi -able).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Ngữ cảnh 'cancellation' (hủy bỏ) và tiền cọc (deposit).", 
+                            "<strong>Logic (Tư duy):</strong> Khi hủy dịch vụ sớm, điều gì thường xảy ra với tiền đặt cọc? Nó có được 'trả lại' không?", 
+                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [có thể tránh được] → Tiền cọc thì [tránh được].<br>B. [có thể hoàn tiền] → Tiền cọc thì [được hoàn lại].<br>C. [có thể hiểu được] → Tiền cọc thì [dễ hiểu].<br>D. [có thể thay đổi] → Tiền cọc thì [thay đổi được]."
+                        ] 
+                    },
+                    { 
+                        id: 18, 
+                        correct: "C", 
+                        signalIds: [], 
+                        options: [
+                            {id: "A", text: "complaining"}, 
+                            {id: "B", text: "saving"}, 
+                            {id: "C", text: "handling"}, 
+                            {id: "D", text: "punishing"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Kết hợp từ chuyên ngành (Business Collocation).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Danh từ 'fee' (phí) và mức phí nhỏ ($10).", 
+                            "<strong>Logic (Tư duy):</strong> Loại phí nào thường được thu để chi trả cho việc xử lý giấy tờ, thủ tục hành chính?", 
+                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [phàn nàn] → phí [phàn nàn].<br>B. [tiết kiệm] → phí [tiết kiệm].<br>C. [xử lý] → phí [xử lý] (thủ tục/hồ sơ).<br>D. [trừng phạt] → phí [trừng phạt]."
+                        ] 
+                    },
+                    { 
+                        id: 19, 
+                        correct: "B", 
+                        signalIds: [], 
+                        options: [
+                            {id: "A", text: "continental"}, 
+                            {id: "B", text: "contingent"}, 
+                            {id: "C", text: "adaptable"}, 
+                            {id: "D", text: "arrival"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Từ vựng nâng cao & Giới từ đi kèm.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Giới từ 'upon' đứng ngay sau ô trống.", 
+                            "<strong>Logic (Tư duy):</strong> Cụm từ nào mang nghĩa 'phụ thuộc vào' hoặc 'tùy thuộc vào' điều kiện nào đó (ở đây là 'sự còn chỗ')? Contingent + ...?", 
+                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [thuộc lục địa] → là [lục địa] dựa trên sự còn chỗ.<br>B. [phụ thuộc vào] → là [phụ thuộc] vào sự còn chỗ.<br>C. [có thể thích nghi] → là [thích nghi] dựa trên sự còn chỗ.<br>D. [sự đến] → là [sự đến] dựa trên sự còn chỗ."
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 12,
+                title: "Đề 12: Outdoor Cinema",
+                content: `
+                    <h3 style="margin-top:0">OUTDOOR CINEMA</h3>
+                    <p>The community park offers a great place to relax and enjoy nature. It is 
+                    <span id="gap-3-17" class="gap" onclick="app.selectQuestion(3, 17)">(17) ______</span> 
+                    by trees and flowers, making it an ideal spot for a peaceful afternoon.</p>
+                    <p>Visitors can enjoy 
+                    <span id="gap-3-18" class="gap" onclick="app.selectQuestion(3, 18)">(18) ______</span> 
+                    along the scenic trails or sit by the lake to watch the birds. If you plan to visit, it's a good idea to bring a blanket to sit on and bring a picnic basket.</p>
+                    <p>The park also hosts outdoor events and concerts on weekends, which are bought for everyone. To attend these events, you can buy tickets online or at the entrance. If you have 
+                    <span id="gap-3-19" class="gap" onclick="app.selectQuestion(3, 19)">(19) ______</span> 
+                    questions, contact us via email.</p>
+                `,
+                questions: [
+                    { 
+                        id: 17, 
+                        correct: "D", 
+                        signalIds: [], 
+                        options: [
+                            {id: "A", text: "located"}, 
+                            {id: "B", text: "situated"}, 
+                            {id: "C", text: "made"}, 
+                            {id: "D", text: "surrounded"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Từ vựng (Phân biệt từ gần nghĩa/Bị động).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'by trees and flowers' (bởi cây và hoa).", 
+                            "<strong>Logic (Tư duy):</strong> Công viên 'được đặt tại' (located/situated) hay 'được bao quanh' (surrounded) bởi cây cối? 'Located' thường đi với giới từ 'in/at/on', còn 'by' đi với từ nào?", 
+                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [được tọa lạc] → Nó được [tọa lạc] bởi cây cối.<br>B. [được nằm ở] → Nó được [nằm ở] bởi cây cối.<br>C. [được làm] → Nó được [làm] bởi cây cối.<br>D. [được bao quanh] → Nó được [bao quanh] bởi cây cối."
+                        ] 
+                    },
+                    { 
+                        id: 18, 
+                        correct: "A", 
+                        signalIds: [], 
+                        options: [
+                            {id: "A", text: "walking"}, 
+                            {id: "B", text: "to walk"}, 
+                            {id: "C", text: "to be walked"}, 
+                            {id: "D", text: "walks"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Dạng động từ sau 'Enjoy'.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Động từ 'enjoy' đứng trước.", 
+                            "<strong>Logic (Tư duy):</strong> Quy tắc cơ bản: Sau các động từ chỉ sự yêu thích (enjoy, love, like, dislike...) thì động từ đi kèm phải ở dạng nào?", 
+                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [đi bộ] (V-ing) → Du khách có thể tận hưởng việc [đi bộ]...<br>B. [để đi bộ] (To V) → Tận hưởng [để đi bộ]...<br>C. [để được đi bộ] (Bị động) → Tận hưởng [để được dắt đi]...<br>D. [đi bộ] (Số ít) → Sai ngữ pháp."
+                        ] 
+                    },
+                    { 
+                        id: 19, 
+                        correct: "C", 
+                        signalIds: [], 
+                        options: [
+                            {id: "A", text: "much"}, 
+                            {id: "B", text: "many"}, 
+                            {id: "C", text: "any"}, 
+                            {id: "D", text: "some"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Lượng từ (Quantifiers).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Mệnh đề điều kiện 'If' + danh từ đếm được 'questions'.", 
+                            "<strong>Logic (Tư duy):</strong> Trong câu điều kiện (If) hoặc câu nghi vấn/phủ định, từ nào thường được dùng để chỉ 'bất cứ' cái gì?", 
+                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [nhiều] (dùng cho không đếm được) → Nếu bạn có [nhiều] câu hỏi.<br>B. [nhiều] (đếm được) → Nếu bạn có [nhiều] câu hỏi (Cũng đúng ngữ pháp nhưng ít tự nhiên hơn trong câu 'If').<br>C. [bất cứ] → Nếu bạn có [bất cứ] câu hỏi nào.<br>D. [một vài] → Nếu bạn có [một vài] câu hỏi."
+                        ] 
+                    }
+                ]
+            }
+        ];
+
+        // --- APP LOGIC GIỮ NGUYÊN ---
+        const app = {
+            state: { exIdx: 0, currentScore: 0, maxScore: 0, qMap: {} },
+
+            initExercise: function(index) {
+                if(index >= exercises.length) { alert("Hoàn thành tất cả!"); return; }
+                this.state.exIdx = index;
+                const exData = exercises[index];
+
+                document.getElementById('ex-title').innerText = exData.title;
+                document.getElementById('ex-content').innerHTML = exData.content;
+                this.scrollToTop();
+
+                this.closeQuestionPanel();
+                if(window.innerWidth > 900) {
+                     document.getElementById('empty-state').style.display = 'block';
+                     document.getElementById('q-card-area').style.display = 'none';
+                }
+
+                const grid = document.getElementById('sidebar-grid');
+                grid.innerHTML = '';
+                exData.questions.forEach(q => {
+                    const key = `${index}-${q.id}`;
+                    if (!this.state.qMap[key]) {
+                        this.state.qMap[key] = { points: 5, hintsOpen: [false,false,false,false], answered: false, userChoice: null };
+                        this.state.maxScore += 5;
+                    }
+                    const cell = document.createElement('div');
+                    cell.className = 'q-cell';
+                    cell.id = `cell-${q.id}`;
+                    cell.innerText = q.id;
+                    cell.onclick = () => {
+                        this.selectQuestion(index+1, q.id);
+                        if(window.innerWidth <= 900) this.toggleSidebar();
+                    };
+                    grid.appendChild(cell);
+                });
+                this.updateStats();
+            },
+
+            selectQuestion: function(exId, qId) {
+                const realIndex = exId - 1;
+                const exData = exercises[realIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+                const key = `${realIndex}-${qId}`;
+                const qState = this.state.qMap[key];
+
+                document.querySelectorAll('.gap').forEach(e => e.classList.remove('active-gap'));
+                const gap = document.getElementById(`gap-${exId}-${qId}`);
+                if(gap) gap.classList.add('active-gap');
+
+                document.querySelectorAll('.q-cell').forEach(e => e.classList.remove('active'));
+                document.getElementById(`cell-${qId}`).classList.add('active');
+
+                document.getElementById('q-number').innerText = qId;
+                this.renderPointsBadge(qState);
+                this.renderHints(realIndex, qId, qData, qState);
+                this.renderOptions(realIndex, qId, qData, qState);
+
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('q-card-area').style.display = 'block';
+                document.getElementById('question-panel').classList.add('active');
+                
+                // --- AUTO-FOCUS TOP 1/3 ---
+                if(window.innerWidth <= 900 && gap) {
+                    setTimeout(() => {
+                        const container = document.querySelector('.main-content');
+                        const gapRect = gap.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        const currentScroll = container.scrollTop;
+                        const gapTopRelative = gapRect.top - containerRect.top; 
+                        
+                        const targetScroll = currentScroll + gapTopRelative - 70;
+
+                        container.scrollTo({
+                            top: targetScroll,
+                            behavior: 'smooth'
+                        });
+                    }, 300);
+                }
+
+                document.querySelectorAll('.signal-word').forEach(e => e.classList.remove('highlighted'));
+                if (qState.hintsOpen[1] && qData.signalIds) {
+                    qData.signalIds.forEach(id => {
+                        const el = document.getElementById(id);
+                        if(el) el.classList.add('highlighted');
+                    });
+                }
+            },
+
+            renderPointsBadge: function(qState) {
+                const badge = document.getElementById('q-points-badge');
+                badge.innerText = `${qState.points} pts`;
+                badge.style.background = qState.answered ? (qState.points > 0 ? 'var(--green)' : 'var(--red)') : 'var(--primary)';
+            },
+
+            renderHints: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('hints-container');
+                container.innerHTML = '';
+                qData.hints.forEach((hintText, i) => {
+                    const isOpen = qState.hintsOpen[i];
+                    const isLocked = i > 0 && !qState.hintsOpen[i-1] && !qState.answered;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'hint-item';
+                    div.innerHTML = `
+                        <div class="hint-header" onclick="app.openHint(${exIndex}, ${qId}, ${i})" style="opacity:${isLocked?0.5:1}">
+                            <span><i class="fas ${isOpen?'fa-book-open':(isLocked?'fa-lock':'fa-lightbulb')}" style="color:${isOpen?'var(--primary)':'var(--orange)'};margin-right:8px;"></i>${isOpen?`Gợi ý ${i+1}`:`Gợi ý ${i+1}`}</span>
+                            ${(!isOpen && !qState.answered) ? '<span style="font-size:0.75rem; color:red; bg:#fee; padding:2px;">-1đ</span>' : ''}
+                        </div>
+                        <div class="hint-content ${isOpen ? 'show' : ''}">${hintText}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            },
+
+            openHint: function(exIndex, qId, i) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                if(qState.answered || qState.hintsOpen[i]) return;
+                if(i > 0 && !qState.hintsOpen[i-1]) { alert("Vui lòng mở theo thứ tự!"); return; }
+                
+                if(qState.points > 0) qState.points--;
+                qState.hintsOpen[i] = true;
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            renderOptions: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                qData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `<span class="option-label">${opt.id}.</span> <span class="option-text">${opt.text}</span>`;
+                    
+                    if(qState.answered) {
+                        btn.disabled = true;
+                        if(opt.id === qData.correct) btn.classList.add('correct-select');
+                        if(opt.id === qState.userChoice && opt.id !== qData.correct) btn.classList.add('wrong-select');
+                    } else {
+                        btn.onclick = () => this.submitAnswer(exIndex, qId, opt.id);
+                    }
+                    container.appendChild(btn);
+                });
+            },
+
+            submitAnswer: function(exIndex, qId, choiceId) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                const exData = exercises[exIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+
+                qState.answered = true;
+                qState.userChoice = choiceId;
+
+                const gap = document.getElementById(`gap-${exIndex+1}-${qId}`);
+                const cell = document.getElementById(`cell-${qId}`);
+
+                if(choiceId === qData.correct) {
+                    this.state.currentScore += qState.points;
+                    gap.classList.add('correct');
+                    gap.innerText = qData.options.find(o=>o.id===choiceId).text;
+                    cell.classList.add('done');
+                } else {
+                    qState.points = 0;
+                    gap.classList.add('wrong');
+                    gap.innerText = qData.options.find(o=>o.id===qData.correct).text;
+                    cell.classList.add('wrong');
+                }
+                this.updateStats();
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            updateStats: function() {
+                const s = this.state.currentScore;
+                const m = this.state.maxScore;
+                document.getElementById('current-score').innerText = s;
+                document.getElementById('max-score').innerText = m;
+                document.getElementById('m-score').innerText = s;
+                document.getElementById('m-max').innerText = m;
+            },
+
+            toggleSidebar: function() {
+                document.getElementById('sidebar').classList.toggle('active');
+                document.querySelector('.sidebar-overlay').classList.toggle('active');
+            },
+
+            closeQuestionPanel: function() {
+                document.getElementById('question-panel').classList.remove('active');
+            },
+
+            scrollToTop: function() {
+                document.querySelector('.main-content').scrollTop = 0;
+            },
+
+            nextExercise: function() {
+                this.initExercise(this.state.exIdx + 1);
+            }
+        };
+
+        app.initExercise(0);
+    </script>
+</body>
+</html>
