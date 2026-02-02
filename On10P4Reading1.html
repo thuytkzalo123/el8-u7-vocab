@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloze Test: Options Top - Hints Bottom</title>
+    <title>Cloze Test: New Layout & Logic</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,7 +18,7 @@
             --green: #1e8e3e;
             --red: #d93025;
             --header-height: 60px;
-            --panel-height: 45vh; /* Tăng nhẹ chiều cao panel mobile để chứa đủ options */
+            --panel-height: 50vh; /* Tăng chiều cao panel để chứa đủ 3 phần */
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -115,63 +115,39 @@
         }
         .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         
-        /* HINTS LIST (Sẽ nằm dưới cùng) */
-        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+        /* 1. OPTIONS (TOP) */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .option-btn {
+            padding: 12px 15px; border: 1px solid var(--border); background: white;
+            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .option-label { font-weight: bold; color: #555; min-width: 25px; } 
+        .option-text { flex: 1; } 
+        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
+        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+
+        /* 2. HINTS (MIDDLE) */
+        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #eee; }
         .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
         .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
         .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
         .hint-content.show { display: block; }
 
-        /* OPTIONS GRID (Sẽ nằm trên) */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .option-btn {
-            padding: 12px 15px; 
-            border: 1px solid var(--border); 
-            background: white;
-            border-radius: 8px; 
-            cursor: pointer; 
-            text-align: left; 
-            font-size: 1rem;
-            display: flex; 
-            align-items: center;
-            gap: 10px;
-        }
-        .option-label { font-weight: bold; color: #555; min-width: 25px; } 
-        .option-text { flex: 1; } 
-
-        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
-        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
-
-        /* NÚT DỊCH (Ở GIỮA) */
+        /* 3. TRANSLATION (BOTTOM) */
         .trans-toggle-btn {
-            width: 100%;
-            margin-top: 5px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border: 1px dashed var(--primary);
-            color: var(--primary);
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
+            width: 100%; margin-top: 5px; padding: 10px;
+            background-color: #f8f9fa; border: 1px dashed var(--primary);
+            color: var(--primary); border-radius: 8px; font-weight: 600;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
             transition: 0.2s;
         }
         .trans-toggle-btn:hover { background-color: #e8f0fe; }
         .trans-box {
-            margin-top: 10px;
-            padding: 12px;
-            background-color: #eef7ff;
-            border-left: 4px solid var(--primary);
-            border-radius: 4px;
-            color: #333;
-            font-style: italic;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            display: none;
-            animation: fadeIn 0.3s ease;
+            margin-top: 10px; padding: 12px;
+            background-color: #eef7ff; border-left: 4px solid var(--primary);
+            border-radius: 4px; color: #333; font-style: italic; font-size: 0.95rem;
+            line-height: 1.5; display: none; animation: fadeIn 0.3s ease;
         }
         .trans-box.show { display: block; }
 
@@ -301,14 +277,14 @@
 
                     <div class="options-grid" id="options-container"></div>
 
+                    <div class="hints-list" id="hints-container"></div>
+
                     <div id="translation-section">
                         <button class="trans-toggle-btn" onclick="app.toggleTranslation()">
                             <i class="fas fa-language"></i> Dịch câu này
                         </button>
                         <div id="trans-content" class="trans-box"></div>
                     </div>
-
-                    <div class="hints-list" id="hints-container"></div>
 
                 </div>
 
@@ -321,7 +297,7 @@
     </main>
 
     <script>
-        // --- DỮ LIỆU BÀI TẬP (ĐỀ 10, 11, 12) ---
+        // --- DỮ LIỆU ĐỀ 10, 11, 12 (UPDATED LOGIC) ---
         const exercises = [
             {
                 id: 10,
@@ -344,7 +320,8 @@
                         id: 17, 
                         correct: "A", 
                         signalIds: [], 
-                        sentence_translation: "Vào buổi chiều, chúng tôi sẽ [dọn dẹp] bờ sông để loại bỏ rác thải và chất thải độc hại.", 
+                        // Dịch câu gốc có chỗ trống
+                        sentence_translation: "Vào buổi chiều, chúng tôi sẽ ... bờ sông để loại bỏ rác thải và chất thải độc hại.", 
                         options: [
                             {id: "A", text: "clean up"}, 
                             {id: "B", text: "pick up"}, 
@@ -352,16 +329,16 @@
                             {id: "D", text: "give up"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Cụm động từ (Phrasal Verbs).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'the riverbank' (bờ sông) và 'remove rubbish' (loại bỏ rác).", 
-                            "<strong>Logic (Tư duy):</strong> 'Pick up' là nhặt lên (hành động nhỏ), còn 'Clean up' là làm sạch cả một khu vực. Bạn làm gì với cả một bờ sông?", 
-                            "<strong>Trans (Dịch đáp án):</strong><br>A. dọn dẹp<br>B. nhặt lên<br>C. thức dậy<br>D. từ bỏ"
+                            "<strong>Enemy (Phân loại):</strong> Phrasal Verbs (Cụm động từ). Phân biệt nghĩa.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'the riverbank' (khu vực bờ sông) và mục đích 'remove rubbish' (loại bỏ rác).", 
+                            "<strong>Logic (Tư duy):</strong> Bạn 'pick up' (nhặt lên) một đồ vật nhỏ, nhưng bạn làm gì với cả một khu vực (bờ sông) để nó sạch sẽ?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. dọn dẹp (khu vực)<br>B. nhặt lên (đồ vật)<br>C. thức dậy<br>D. từ bỏ"
                         ] 
                     },
                     { 
                         id: 18, 
                         correct: "B", 
-                        sentence_translation: "Đây là một cơ hội tuyệt vời để tạo ra một sự khác biệt [thực sự] cho tất cả các tình nguyện viên.",
+                        sentence_translation: "Đây là một cơ hội tuyệt vời để tạo ra một sự khác biệt ... cho tất cả các tình nguyện viên.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "strong"}, 
@@ -370,16 +347,16 @@
                             {id: "D", text: "short"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Collocation (Kết hợp từ).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'make a ... difference' (tạo sự khác biệt).", 
-                            "<strong>Logic (Tư duy):</strong> Trong tiếng Anh, người ta thường nói 'make a REAL difference' (tạo sự khác biệt thực sự) hay 'make a STRONG difference'?", 
-                            "<strong>Trans (Dịch đáp án):</strong><br>A. mạnh mẽ<br>B. thực sự/rõ rệt<br>C. dài<br>D. ngắn"
+                            "<strong>Enemy (Phân loại):</strong> Collocation (Kết hợp từ). Chọn tính từ phù hợp.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Cụm từ 'make a ... difference' (tạo sự khác biệt).", 
+                            "<strong>Logic (Tư duy):</strong> Trong tiếng Anh, tính từ nào thường đi với 'difference' để nhấn mạnh sự thay đổi đó là 'thực sự' và 'có ý nghĩa'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. mạnh mẽ<br>B. thực sự / rõ rệt<br>C. dài<br>D. ngắn"
                         ] 
                     },
                     { 
                         id: 19, 
                         correct: "C", 
-                        sentence_translation: "Bữa trưa sẽ [được cung cấp].",
+                        sentence_translation: "Bữa trưa sẽ ... (bởi nhà trường).",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "provide"}, 
@@ -388,10 +365,10 @@
                             {id: "D", text: "providing"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Bị động (Passive Voice).", 
+                            "<strong>Enemy (Phân loại):</strong> Passive Voice (Câu bị động).", 
                             "<strong>Signal (Dấu hiệu):</strong> Chủ ngữ 'Lunch' (vật) + 'will be'.", 
-                            "<strong>Logic (Tư duy):</strong> Bữa trưa có tự 'cung cấp' được không? Sau 'be' cần V3/ed để tạo thể bị động.", 
-                            "<strong>Trans (Dịch đáp án):</strong><br>A. cung cấp (V-inf)<br>B. cung cấp (V-s)<br>C. được cung cấp (V3)<br>D. đang cung cấp (V-ing)"
+                            "<strong>Logic (Tư duy):</strong> Bữa trưa có thể tự 'cung cấp' hành động hay nó 'được cung cấp' bởi người khác? Cấu trúc bị động tương lai: Will be + V...?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. cung cấp (nguyên thể)<br>B. cung cấp (số ít)<br>C. được cung cấp (V3/ed)<br>D. đang cung cấp (V-ing)"
                         ] 
                     }
                 ]
@@ -415,7 +392,7 @@
                     { 
                         id: 17, 
                         correct: "B", 
-                        sentence_translation: "Tiền đặt cọc [có thể được hoàn lại] nếu thông báo hủy được nhận trước ít nhất 14 ngày.",
+                        sentence_translation: "Tiền đặt cọc là ... nếu thông báo hủy được nhận trước ít nhất 14 ngày.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "avoidable"}, 
@@ -424,16 +401,16 @@
                             {id: "D", text: "changeable"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Từ vựng (Tính từ đuôi -able).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'cancellation' (hủy bỏ) và 'deposit' (tiền cọc).", 
-                            "<strong>Logic (Tư duy):</strong> Khi hủy dịch vụ đúng hạn thì tiền cọc sẽ thế nào?", 
-                            "<strong>Trans (Dịch đáp án):</strong><br>A. tránh được<br>B. được hoàn lại<br>C. dễ hiểu<br>D. có thể thay đổi"
+                            "<strong>Enemy (Phân loại):</strong> Từ vựng (Word Meaning - Adjectives).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Ngữ cảnh 'cancellation' (hủy) và 'deposits' (tiền cọc).", 
+                            "<strong>Logic (Tư duy):</strong> Nếu bạn hủy khóa học đúng hạn (trước 14 ngày), điều gì thường xảy ra với tiền cọc của bạn?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. có thể tránh được<br>B. có thể hoàn lại<br>C. có thể hiểu được<br>D. có thể thay đổi"
                         ] 
                     },
                     { 
                         id: 18, 
                         correct: "C", 
-                        sentence_translation: "Phí [xử lý] là 10 đô la.",
+                        sentence_translation: "... phí ... là 10 đô la.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "complaining"}, 
@@ -442,16 +419,16 @@
                             {id: "D", text: "punishing"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Từ chuyên ngành (Collocation).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'fee' (phí).", 
-                            "<strong>Logic (Tư duy):</strong> Phí thu để thực hiện các thủ tục giấy tờ gọi là gì?", 
-                            "<strong>Trans (Dịch đáp án):</strong><br>A. phàn nàn<br>B. tiết kiệm<br>C. xử lý (hồ sơ)<br>D. trừng phạt"
+                            "<strong>Enemy (Phân loại):</strong> Business Collocation (Thuật ngữ kinh doanh).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'fee' (khoản phí).", 
+                            "<strong>Logic (Tư duy):</strong> Khoản phí nhỏ thu để chi trả cho công sức làm thủ tục hành chính, giấy tờ gọi là phí gì?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. phàn nàn<br>B. tiết kiệm<br>C. xử lý (hồ sơ/thủ tục)<br>D. trừng phạt"
                         ] 
                     },
                     { 
                         id: 19, 
                         correct: "B", 
-                        sentence_translation: "Việc chuyển tiền cọc sang khóa học khác là [phụ thuộc vào] sự còn chỗ trống trong khóa học đó.",
+                        sentence_translation: "Việc chuyển tiền cọc sang khóa học khác là ... vào sự còn chỗ trống trong khóa học đó.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "continental"}, 
@@ -460,10 +437,10 @@
                             {id: "D", text: "arrival"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Từ vựng nâng cao.", 
-                            "<strong>Signal (Dấu hiệu):</strong> Giới từ 'upon' phía sau.", 
-                            "<strong>Logic (Tư duy):</strong> Cụm 'Contingent upon' = 'Dependent on' (Phụ thuộc vào).", 
-                            "<strong>Trans (Dịch đáp án):</strong><br>A. thuộc lục địa<br>B. phụ thuộc vào<br>C. thích nghi<br>D. sự đến"
+                            "<strong>Enemy (Phân loại):</strong> Advanced Vocabulary & Preposition (Từ vựng nâng cao).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Giới từ 'upon' đứng ngay sau ô trống.", 
+                            "<strong>Logic (Tư duy):</strong> Cụm từ nào đi với 'upon' mang nghĩa tương đương với 'dependent on' (phụ thuộc vào)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. thuộc lục địa<br>B. phụ thuộc vào (điều kiện)<br>C. có thể thích nghi<br>D. sự đến"
                         ] 
                     }
                 ]
@@ -487,7 +464,7 @@
                     { 
                         id: 17, 
                         correct: "D", 
-                        sentence_translation: "Nó được [bao quanh] bởi cây cối và hoa lá.",
+                        sentence_translation: "Nó được ... bởi cây cối và hoa lá, tạo nên một địa điểm lý tưởng.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "located"}, 
@@ -496,16 +473,16 @@
                             {id: "D", text: "surrounded"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Từ vựng.", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'by trees and flowers' (bởi cây và hoa).", 
-                            "<strong>Logic (Tư duy):</strong> 'Located' thường đi với 'in/at'. Còn từ nào đi với 'by' mang nghĩa được bao bọc?", 
-                            "<strong>Trans (Dịch đáp án):</strong><br>A. tọa lạc<br>B. nằm ở<br>C. làm<br>D. bao quanh"
+                            "<strong>Enemy (Phân loại):</strong> Từ vựng & Giới từ đi kèm.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Cụm từ 'by trees and flowers' (bởi cây và hoa).", 
+                            "<strong>Logic (Tư duy):</strong> 'Located' và 'Situated' thường đi với giới từ 'in', 'at', 'on'. Từ nào đi với 'by' để mang nghĩa 'được bao bọc'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tọa lạc<br>B. nằm ở<br>C. làm<br>D. bao quanh/vây quanh"
                         ] 
                     },
                     { 
                         id: 18, 
                         correct: "A", 
-                        sentence_translation: "Du khách có thể tận hưởng việc [đi bộ] dọc theo những con đường mòn đẹp mắt.",
+                        sentence_translation: "Du khách có thể tận hưởng việc ... dọc theo những con đường mòn đẹp mắt.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "walking"}, 
@@ -514,16 +491,16 @@
                             {id: "D", text: "walks"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Verb Form (V-ing/To V).", 
+                            "<strong>Enemy (Phân loại):</strong> Verb Form (Gerund vs Infinitive).", 
                             "<strong>Signal (Dấu hiệu):</strong> Động từ 'enjoy'.", 
-                            "<strong>Logic (Tư duy):</strong> Sau 'enjoy', 'love', 'like' luôn là V-ing.", 
-                            "<strong>Trans (Dịch đáp án):</strong><br>A. đi bộ (V-ing)<br>B. để đi bộ<br>C. được đi bộ<br>D. đi bộ (số ít)"
+                            "<strong>Logic (Tư duy):</strong> Quy tắc ngữ pháp cơ bản: Sau các động từ chỉ sở thích như 'enjoy', 'like', 'love', 'hate', động từ đi kèm phải ở dạng nào?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. đi bộ (V-ing)<br>B. để đi bộ (To V)<br>C. để được đi bộ (Bị động)<br>D. đi bộ (số ít)"
                         ] 
                     },
                     { 
                         id: 19, 
                         correct: "C", 
-                        sentence_translation: "Nếu bạn có [bất kỳ] câu hỏi nào, hãy liên hệ với chúng tôi qua email.",
+                        sentence_translation: "Nếu bạn có ... câu hỏi nào, hãy liên hệ với chúng tôi qua email.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "much"}, 
@@ -532,10 +509,10 @@
                             {id: "D", text: "some"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Lượng từ.", 
-                            "<strong>Signal (Dấu hiệu):</strong> Câu điều kiện 'If' + 'questions'.", 
-                            "<strong>Logic (Tư duy):</strong> Trong câu điều kiện hoặc câu phủ định/nghi vấn, từ nào mang nghĩa 'bất cứ'?", 
-                            "<strong>Trans (Dịch đáp án):</strong><br>A. nhiều (không đếm được)<br>B. nhiều (đếm được)<br>C. bất kỳ<br>D. một vài"
+                            "<strong>Enemy (Phân loại):</strong> Quantifiers (Lượng từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Mệnh đề điều kiện 'If' + danh từ 'questions' (số nhiều).", 
+                            "<strong>Logic (Tư duy):</strong> Trong câu điều kiện (If), câu phủ định hoặc câu hỏi, từ nào thường được dùng để chỉ ý nghĩa 'bất cứ'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. nhiều (không đếm được)<br>B. nhiều (đếm được)<br>C. bất kỳ/bất cứ<br>D. một vài (thường dùng trong câu khẳng định)"
                         ] 
                     }
                 ]
@@ -601,7 +578,7 @@
                 this.renderHints(realIndex, qId, qData, qState);
                 this.renderOptions(realIndex, qId, qData, qState);
 
-                // --- XỬ LÝ PHẦN DỊCH ---
+                // --- XỬ LÝ PHẦN DỊCH CÂU (Vị trí cuối cùng) ---
                 document.getElementById('trans-content').classList.remove('show');
                 document.querySelector('.trans-toggle-btn').innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
                 const transText = qData.sentence_translation || "Chưa có bản dịch cho câu này.";
@@ -618,13 +595,8 @@
                         const containerRect = container.getBoundingClientRect();
                         const currentScroll = container.scrollTop;
                         const gapTopRelative = gapRect.top - containerRect.top; 
-                        
                         const targetScroll = currentScroll + gapTopRelative - 70;
-
-                        container.scrollTo({
-                            top: targetScroll,
-                            behavior: 'smooth'
-                        });
+                        container.scrollTo({ top: targetScroll, behavior: 'smooth' });
                     }, 300);
                 }
 
