@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cloze Test: Thinking Logic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-main: #202124;
+            --border: #dadce0;
+            --orange: #f59e0b;
+            --green: #1e8e3e;
+            --red: #d93025;
+            --header-height: 60px;
+            --panel-height: 50vh; 
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--secondary-bg);
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden; 
+        }
+
+        /* --- HEADER MOBILE --- */
+        .mobile-header {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .menu-btn { font-size: 1.4rem; color: #555; padding: 5px 10px; cursor: pointer; }
+        .mobile-score { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 300px;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            height: 100%; flex-shrink: 0;
+            z-index: 200; 
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header h3 { margin: 0; color: var(--primary); }
+        .close-sidebar-btn { display: none; font-size: 1.2rem; cursor: pointer; }
+        .stats-area { padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid var(--border); }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .stat-value { font-weight: 800; color: var(--primary); }
+        .question-grid-container { flex: 1; padding: 20px; overflow-y: auto; }
+        .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .q-cell {
+            aspect-ratio: 1; background: var(--white); border: 1px solid var(--border);
+            border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-weight: 600; color: #666; transition: 0.2s;
+        }
+        .q-cell.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-cell.done { background: #e6f4ea; color: var(--green); border-color: var(--green); }
+        .q-cell.wrong { background: #fce8e6; color: var(--red); border-color: var(--red); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            display: flex; justify-content: center;
+            position: relative;
+            scroll-behavior: smooth; 
+        }
+        .content-wrapper { display: flex; width: 100%; max-width: 1200px; gap: 25px; }
+
+        /* TEXT PANEL */
+        .text-panel {
+            flex: 2;
+            background: var(--white); border-radius: 12px; padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            height: fit-content;
+            line-height: 2.0; font-size: 1.15rem; color: #333;
+        }
+        
+        .gap {
+            display: inline-block; min-width: 40px; border-bottom: 2px solid #ccc;
+            color: var(--primary); font-weight: 700; text-align: center;
+            cursor: pointer; padding: 2px 6px; transition: 0.2s; border-radius: 4px;
+        }
+        .gap.active-gap { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .gap.correct { color: var(--green); border-bottom-color: var(--green); }
+        .gap.wrong { color: var(--red); border-bottom-color: var(--red); } 
+        .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
+
+        /* QUESTION PANEL */
+        .question-panel {
+            flex: 1; min-width: 350px;
+            position: sticky; top: 0; height: fit-content;
+        }
+        .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        /* 1. OPTIONS (TOP) */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .option-btn {
+            padding: 12px 15px; border: 1px solid var(--border); background: white;
+            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .option-label { font-weight: bold; color: #555; min-width: 25px; } 
+        .option-text { flex: 1; } 
+        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
+        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+
+        /* 2. HINTS (MIDDLE) */
+        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #eee; }
+        .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
+        .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+        .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
+        .hint-content.show { display: block; }
+
+        /* 3. TRANSLATION (BOTTOM) */
+        .trans-toggle-btn {
+            width: 100%; margin-top: 5px; padding: 10px;
+            background-color: #f8f9fa; border: 1px dashed var(--primary);
+            color: var(--primary); border-radius: 8px; font-weight: 600;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .trans-toggle-btn:hover { background-color: #e8f0fe; }
+        .trans-box {
+            margin-top: 10px; padding: 12px;
+            background-color: #eef7ff; border-left: 4px solid var(--primary);
+            border-radius: 4px; color: #333; font-style: italic; font-size: 0.95rem;
+            line-height: 1.5; display: none; animation: fadeIn 0.3s ease;
+        }
+        .trans-box.show { display: block; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; padding-top: var(--header-height); }
+            .mobile-header { display: flex; }
+
+            .sidebar {
+                position: fixed; left: 0; top: 0; bottom: 0;
+                width: 85%; max-width: 320px;
+                transform: translateX(-100%);
+                box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .close-sidebar-btn { display: block; }
+
+            .main-content {
+                display: block; width: 100%; padding: 0;
+                height: calc(100vh - var(--header-height)); 
+            }
+            .content-wrapper { flex-direction: column; width: 100%; }
+            
+            .text-panel { 
+                width: 100%; border-radius: 0; box-shadow: none; 
+                padding: 20px; 
+                padding-bottom: 80vh !important; 
+            }
+
+            .question-panel {
+                position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+                width: 100%; z-index: 150;
+                transform: translateY(120%);
+                transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
+            }
+            .question-panel.active { transform: translateY(0); }
+
+            .q-card {
+                border-radius: 20px 20px 0 0; 
+                padding: 15px 20px 20px 20px;
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+                height: var(--panel-height); 
+                max-height: var(--panel-height);
+                overflow-y: auto;
+                border-top: 1px solid #ddd;
+                position: relative;
+            }
+
+            .drag-handle {
+                width: 40px; height: 5px; background: #e0e0e0;
+                border-radius: 10px; margin: 0 auto 10px auto;
+            }
+
+            .mobile-collapse-btn {
+                display: flex !important; justify-content: center; align-items: center;
+                width: 28px; height: 28px; background: #f1f3f4; border-radius: 50%;
+                position: absolute; right: 15px; top: 12px;
+                cursor: pointer; color: #555;
+            }
+
+            #empty-state { display: none !important; }
+        }
+
+        .mobile-collapse-btn { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <div class="menu-btn" onclick="app.toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="mobile-score">
+            <span id="m-score">0</span> / <span id="m-max">0</span>
+        </div>
+        <div class="menu-btn" onclick="app.scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" onclick="app.toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-book-open"></i> Cloze Test</h3>
+            <i class="fas fa-times close-sidebar-btn" onclick="app.toggleSidebar()"></i>
+        </div>
+        <div class="stats-area">
+            <div class="stat-row">
+                <span>Điểm số:</span>
+                <span class="stat-value"><span id="current-score">0</span> / <span id="max-score">0</span></span>
+            </div>
+            <div style="font-size: 0.85rem; color: #666; margin-top:5px;">
+                * 5đ/câu. Trừ 1đ/gợi ý.
+            </div>
+        </div>
+        <div class="question-grid-container">
+            <div style="font-weight:bold; margin-bottom:10px;">Câu hỏi</div>
+            <div id="sidebar-grid" class="q-grid"></div>
+        </div>
+        <div style="padding: 20px; border-top:1px solid #eee;">
+            <button onclick="app.nextExercise()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">
+                Bài tiếp theo <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="text-panel">
+                <h2 id="ex-title" style="margin-top:0; color:var(--primary); font-size:1.3rem; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">Loading...</h2>
+                <div id="ex-content"></div>
+            </div>
+
+            <div class="question-panel" id="question-panel">
+                <div class="q-card" id="q-card-area">
+                    <div class="drag-handle"></div>
+                    <div class="mobile-collapse-btn" onclick="app.closeQuestionPanel()">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-right: 40px;">
+                        <h3 style="margin:0; font-size:1.1rem;">Câu <span id="q-number">...</span></h3>
+                        <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">5 Points</span>
+                    </div>
+
+                    <div class="options-grid" id="options-container"></div>
+
+                    <div class="hints-list" id="hints-container"></div>
+
+                    <div id="translation-section">
+                        <button class="trans-toggle-btn" onclick="app.toggleTranslation()">
+                            <i class="fas fa-language"></i> Dịch câu này
+                        </button>
+                        <div id="trans-content" class="trans-box"></div>
+                    </div>
+
+                </div>
+
+                <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
+                    <i class="fas fa-mouse-pointer" style="font-size:2rem; margin-bottom:10px;"></i>
+                    <p>Chọn ô trống để bắt đầu</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+       // --- DỮ LIỆU CẬP NHẬT: ĐỀ 1 & ĐỀ 2 (TƯ DUY SÂU) ---
+        const exercises = [
+            {
+                id: 1, // Đề 1 (Trang 1)
+                title: "Đề 1: Healthy Lifestyle Campaign",
+                content: `
+                    <h3 style="margin-top:0">HEALTHY LIFESTYLE CAMPAIGN</h3>
+                    <p>Join us for a Healthy Lifestyle Campaign at our school. Throughout the month, we'll be organizing various activities and initiatives to promote 
+                    <span id="gap-1-20" class="gap" onclick="app.selectQuestion(1, 20)">(20) ______</span> 
+                    and mental well-being.</p>
+                    <p>On the campaign, you can engage 
+                    <span id="gap-1-21" class="gap" onclick="app.selectQuestion(1, 21)">(21) ______</span> 
+                    interactive workshops, fitness classes, and awareness sessions that focus on the importance of maintaining a healthy lifestyle. These activities aim to enhance 
+                    <span id="gap-1-22" class="gap" onclick="app.selectQuestion(1, 22)">(22) ______</span> 
+                    about the benefits of exercise, proper nutrition, and stress management.</p>
+                    <p><span id="gap-1-23" class="gap" onclick="app.selectQuestion(1, 23)">(23) ______</span> 
+                    you want to get more involved, keep in touch with our campaign coordinator who will provide more information on upcoming events and guide you on how to adopt 
+                    <span id="gap-1-24" class="gap" onclick="app.selectQuestion(1, 24)">(24) ______</span>.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "...chúng tôi sẽ tổ chức nhiều hoạt động... để thúc đẩy sức khỏe [thể chất] và tinh thần.", 
+                        options: [
+                            {id: "A", text: "physic"}, 
+                            {id: "B", text: "physically"}, 
+                            {id: "C", text: "physics"}, 
+                            {id: "D", text: "physical"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Word Form (Từ loại).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'promote ... and mental well-being'.", 
+                            "<strong>Logic (Tư duy):</strong> Từ cần điền đứng trước danh từ 'well-being' và nối với tính từ 'mental' bằng chữ 'and'. Vậy từ đó cần là Danh từ, Động từ hay Tính từ?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. thuốc xổ (từ cổ/ít dùng)<br>B. về mặt thể chất (Adv)<br>C. vật lý học (N)<br>D. thuộc về thể chất (Adj)"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Trong chiến dịch này, bạn có thể [tham gia vào] các hội thảo tương tác...", 
+                        options: [
+                            {id: "A", text: "in"}, 
+                            {id: "B", text: "on"}, 
+                            {id: "C", text: "at"}, 
+                            {id: "D", text: "to"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Preposition/Phrasal Verb.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'engage'.", 
+                            "<strong>Logic (Tư duy):</strong> Giới từ nào luôn đi kèm với động từ 'engage' để mang nghĩa 'tham gia vào' (participate)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. trong<br>B. trên<br>C. tại<br>D. tới"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Các hoạt động này nhằm mục đích nâng cao [nhận thức] về lợi ích của việc tập thể dục...", 
+                        options: [
+                            {id: "A", text: "awareness"}, 
+                            {id: "B", text: "supporting"}, 
+                            {id: "C", text: "investment"}, 
+                            {id: "D", text: "education"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation (Kết hợp từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'enhance ... about'.", 
+                            "<strong>Logic (Tư duy):</strong> Danh từ nào thường đi với giới từ 'about' để diễn tả sự hiểu biết về một vấn đề?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. nhận thức<br>B. việc hỗ trợ<br>C. sự đầu tư<br>D. giáo dục"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "[Nếu] bạn muốn tham gia nhiều hơn, hãy giữ liên lạc...", 
+                        options: [
+                            {id: "A", text: "And"}, 
+                            {id: "B", text: "But"}, 
+                            {id: "C", text: "If"}, 
+                            {id: "D", text: "Although"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Conjunction (Liên từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'you want...', 'keep in touch'.", 
+                            "<strong>Logic (Tư duy):</strong> Mệnh đề đầu tiên đặt ra một điều kiện cho hành động ở mệnh đề sau. Liên từ nào dùng cho câu điều kiện?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Và<br>B. Nhưng<br>C. Nếu<br>D. Mặc dù"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "...hướng dẫn bạn cách áp dụng [một lối sống lành mạnh hơn].", 
+                        options: [
+                            {id: "A", text: "a lifestyle healthier"}, 
+                            {id: "B", text: "a health lifestyle"}, 
+                            {id: "C", text: "a lifestyle health"}, 
+                            {id: "D", text: "a healthier lifestyle"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Word Order (Trật tự từ trong cụm danh từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'lifestyle' (Noun), 'healthier' (Adjective).", 
+                            "<strong>Logic (Tư duy):</strong> Trong cụm danh từ tiếng Anh, Tính từ bổ nghĩa đứng trước hay đứng sau Danh từ?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. (Sai trật tự)<br>B. (Sai loại từ)<br>C. (Sai trật tự)<br>D. một lối sống lành mạnh hơn"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 2, // Đề 2 (Trang 4)
+                title: "Đề 2: Benefits of Learning English",
+                content: `
+                    <h3 style="margin-top:0">The Benefits of Learning English</h3>
+                    <p>Learning English has become increasingly important in today's globalized world. It offers numerous benefits, both personal and professional.</p>
+                    <p>Firstly, English is the language of international communication. 
+                    <span id="gap-2-20" class="gap" onclick="app.selectQuestion(2, 20)">(20) ______</span> 
+                    you want to travel, study abroad, or work in a multinational company, knowing English will open up many opportunities.</p>
+                    <p>Secondly, English provides access to a vast amount of information. A significant portion of the internet is published in English. 
+                    <span id="gap-2-21" class="gap" onclick="app.selectQuestion(2, 21)">(21) ______</span>, 
+                    proficiency in English enables you to stay updated with the latest developments.</p>
+                    <p>Moreover, learning English can enhance your cognitive abilities. 
+                    <span id="gap-2-22" class="gap" onclick="app.selectQuestion(2, 22)">(22) ______</span> 
+                    the process of acquiring a new language challenges your brain, leading to mental agility.</p>
+                    <p>In addition, English is considered the language of business. Many global industries use English. 
+                    <span id="gap-2-23" class="gap" onclick="app.selectQuestion(2, 23)">(23) ______</span>, 
+                    having strong English skills can significantly boost your career prospects.</p>
+                    <p><span id="gap-2-24" class="gap" onclick="app.selectQuestion(2, 24)">(24) ______</span>, 
+                    learning English is an investment in yourself. It's a skill that will continue to be valuable throughout your life.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "[Dù cho] bạn muốn đi du lịch, du học, hay làm việc..., biết tiếng Anh sẽ mở ra nhiều cơ hội.", 
+                        options: [
+                            {id: "A", text: "Whether"}, 
+                            {id: "B", text: "Although"}, 
+                            {id: "C", text: "Since"}, 
+                            {id: "D", text: "Despite"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Conjunction (Liên từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'travel, study..., or work'.", 
+                            "<strong>Logic (Tư duy):</strong> Liên từ nào thường đi cặp với 'or' để liệt kê các lựa chọn hoặc khả năng khác nhau?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Liệu rằng / Dù cho (...hay...)<br>B. Mặc dù<br>C. Bởi vì / Kể từ khi<br>D. Bất chấp"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "[Hơn nữa], thành thạo tiếng Anh giúp bạn cập nhật những phát triển mới nhất.", 
+                        options: [
+                            {id: "A", text: "In contrast"}, 
+                            {id: "B", text: "For example"}, 
+                            {id: "C", text: "However"}, 
+                            {id: "D", text: "Furthermore"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Linking Words (Từ nối).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Sentence 1: 'provides access to information'. Sentence 2: 'enables you to stay updated'.", 
+                            "<strong>Logic (Tư duy):</strong> Câu sau bổ sung thêm lợi ích (tương đồng) hay phản bác lại câu trước?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Ngược lại<br>B. Ví dụ<br>C. Tuy nhiên<br>D. Hơn nữa / Thêm vào đó"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "[Thêm vào đó] quá trình thụ đắc ngôn ngữ mới thách thức não bộ của bạn...", 
+                        options: [
+                            {id: "A", text: "Nevertheless"}, 
+                            {id: "B", text: "Consequently"}, 
+                            {id: "C", text: "Otherwise"}, 
+                            {id: "D", text: "In addition"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Linking Words (Từ nối).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Previous: 'enhance cognitive abilities'. Current: 'challenges your brain'.", 
+                            "<strong>Logic (Tư duy):</strong> Câu này giải thích rõ hơn hoặc thêm vào ý 'enhance cognitive abilities'. Từ nối nào dùng để thêm thông tin bổ trợ?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Tuy nhiên<br>B. Hậu quả là<br>C. Nếu không thì<br>D. Thêm vào đó / Ngoài ra"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "[Vì vậy], có kỹ năng tiếng Anh tốt có thể thúc đẩy triển vọng nghề nghiệp của bạn.", 
+                        options: [
+                            {id: "A", text: "As a result"}, 
+                            {id: "B", text: "On the other hand"}, 
+                            {id: "C", text: "Therefore"}, 
+                            {id: "D", text: "To sum up"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Linking Words (Cause & Effect).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'global industries use English' (Cause) -> 'boost your career' (Effect).", 
+                            "<strong>Logic (Tư duy):</strong> Từ nối nào diễn tả kết quả logic hoặc hệ quả của sự việc trước đó?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Kết quả là (thường đứng đầu câu chỉ kết quả cụ thể)<br>B. Mặt khác<br>C. Vì vậy / Do đó<br>D. Tóm lại"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "[Tóm lại], học tiếng Anh là một sự đầu tư cho bản thân.", 
+                        options: [
+                            {id: "A", text: "All are correct"}, 
+                            {id: "B", text: "All in all"}, 
+                            {id: "C", text: "The"}, 
+                            {id: "D", text: "But"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Concluding Phrase (Cụm từ kết luận).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Vị trí đầu đoạn cuối cùng.", 
+                            "<strong>Logic (Tư duy):</strong> Cụm từ nào thường được dùng để bắt đầu đoạn kết bài, tóm tắt lại toàn bộ ý chính?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Tất cả đều đúng<br>B. Tóm lại / Nhìn chung<br>C. (Mạo từ)<br>D. Nhưng"
+                        ] 
+                    }
+                ]
+            }
+        ];
+
+
+        // --- APP LOGIC GIỮ NGUYÊN ---
+        const app = {
+            state: { exIdx: 0, currentScore: 0, maxScore: 0, qMap: {} },
+
+            initExercise: function(index) {
+                if(index >= exercises.length) { alert("Hoàn thành tất cả!"); return; }
+                this.state.exIdx = index;
+                const exData = exercises[index];
+
+                document.getElementById('ex-title').innerText = exData.title;
+                document.getElementById('ex-content').innerHTML = exData.content;
+                this.scrollToTop();
+
+                this.closeQuestionPanel();
+                if(window.innerWidth > 900) {
+                     document.getElementById('empty-state').style.display = 'block';
+                     document.getElementById('q-card-area').style.display = 'none';
+                }
+
+                const grid = document.getElementById('sidebar-grid');
+                grid.innerHTML = '';
+                exData.questions.forEach(q => {
+                    const key = `${index}-${q.id}`;
+                    if (!this.state.qMap[key]) {
+                        this.state.qMap[key] = { points: 5, hintsOpen: [false,false,false,false], answered: false, userChoice: null };
+                        this.state.maxScore += 5;
+                    }
+                    const cell = document.createElement('div');
+                    cell.className = 'q-cell';
+                    cell.id = `cell-${q.id}`;
+                    cell.innerText = q.id;
+                    cell.onclick = () => {
+                        this.selectQuestion(index+1, q.id);
+                        if(window.innerWidth <= 900) this.toggleSidebar();
+                    };
+                    grid.appendChild(cell);
+                });
+                this.updateStats();
+            },
+
+            selectQuestion: function(exId, qId) {
+                const realIndex = exId - 1;
+                const exData = exercises[realIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+                const key = `${realIndex}-${qId}`;
+                const qState = this.state.qMap[key];
+
+                document.querySelectorAll('.gap').forEach(e => e.classList.remove('active-gap'));
+                const gap = document.getElementById(`gap-${exId}-${qId}`);
+                if(gap) gap.classList.add('active-gap');
+
+                document.querySelectorAll('.q-cell').forEach(e => e.classList.remove('active'));
+                document.getElementById(`cell-${qId}`).classList.add('active');
+
+                document.getElementById('q-number').innerText = qId;
+                this.renderPointsBadge(qState);
+                this.renderHints(realIndex, qId, qData, qState);
+                this.renderOptions(realIndex, qId, qData, qState);
+
+                // --- XỬ LÝ PHẦN DỊCH CÂU ---
+                document.getElementById('trans-content').classList.remove('show');
+                document.querySelector('.trans-toggle-btn').innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                const transText = qData.sentence_translation || "Chưa có bản dịch cho câu này.";
+                document.getElementById('trans-content').innerHTML = transText;
+
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('q-card-area').style.display = 'block';
+                document.getElementById('question-panel').classList.add('active');
+                
+                if(window.innerWidth <= 900 && gap) {
+                    setTimeout(() => {
+                        const container = document.querySelector('.main-content');
+                        const gapRect = gap.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        const currentScroll = container.scrollTop;
+                        const gapTopRelative = gapRect.top - containerRect.top; 
+                        const targetScroll = currentScroll + gapTopRelative - 70;
+                        container.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                    }, 300);
+                }
+
+                document.querySelectorAll('.signal-word').forEach(e => e.classList.remove('highlighted'));
+                if (qState.hintsOpen[1] && qData.signalIds) {
+                    qData.signalIds.forEach(id => {
+                        const el = document.getElementById(id);
+                        if(el) el.classList.add('highlighted');
+                    });
+                }
+            },
+
+            renderPointsBadge: function(qState) {
+                const badge = document.getElementById('q-points-badge');
+                badge.innerText = `${qState.points} pts`;
+                badge.style.background = qState.answered ? (qState.points > 0 ? 'var(--green)' : 'var(--red)') : 'var(--primary)';
+            },
+
+            renderHints: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('hints-container');
+                container.innerHTML = '';
+                qData.hints.forEach((hintText, i) => {
+                    const isOpen = qState.hintsOpen[i];
+                    const isLocked = i > 0 && !qState.hintsOpen[i-1] && !qState.answered;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'hint-item';
+                    div.innerHTML = `
+                        <div class="hint-header" onclick="app.openHint(${exIndex}, ${qId}, ${i})" style="opacity:${isLocked?0.5:1}">
+                            <span><i class="fas ${isOpen?'fa-book-open':(isLocked?'fa-lock':'fa-lightbulb')}" style="color:${isOpen?'var(--primary)':'var(--orange)'};margin-right:8px;"></i>${isOpen?`Gợi ý ${i+1}`:`Gợi ý ${i+1}`}</span>
+                            ${(!isOpen && !qState.answered) ? '<span style="font-size:0.75rem; color:red; bg:#fee; padding:2px;">-1đ</span>' : ''}
+                        </div>
+                        <div class="hint-content ${isOpen ? 'show' : ''}">${hintText}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            },
+
+            openHint: function(exIndex, qId, i) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                if(qState.answered || qState.hintsOpen[i]) return;
+                if(i > 0 && !qState.hintsOpen[i-1]) { alert("Vui lòng mở theo thứ tự!"); return; }
+                
+                if(qState.points > 0) qState.points--;
+                qState.hintsOpen[i] = true;
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            renderOptions: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                qData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `<span class="option-label">${opt.id}.</span> <span class="option-text">${opt.text}</span>`;
+                    
+                    if(qState.answered) {
+                        btn.disabled = true;
+                        if(opt.id === qData.correct) btn.classList.add('correct-select');
+                        if(opt.id === qState.userChoice && opt.id !== qData.correct) btn.classList.add('wrong-select');
+                    } else {
+                        btn.onclick = () => this.submitAnswer(exIndex, qId, opt.id);
+                    }
+                    container.appendChild(btn);
+                });
+            },
+
+            toggleTranslation: function() {
+                const box = document.getElementById('trans-content');
+                const btn = document.querySelector('.trans-toggle-btn');
+                
+                if (box.classList.contains('show')) {
+                    box.classList.remove('show');
+                    btn.innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                    btn.style.backgroundColor = "#f8f9fa";
+                    btn.style.color = "var(--primary)";
+                } else {
+                    box.classList.add('show');
+                    btn.innerHTML = '<i class="fas fa-chevron-up"></i> Ẩn dịch';
+                    btn.style.backgroundColor = "var(--primary)";
+                    btn.style.color = "white";
+                }
+            },
+
+            submitAnswer: function(exIndex, qId, choiceId) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                const exData = exercises[exIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+
+                qState.answered = true;
+                qState.userChoice = choiceId;
+
+                const gap = document.getElementById(`gap-${exIndex+1}-${qId}`);
+                const cell = document.getElementById(`cell-${qId}`);
+
+                if(choiceId === qData.correct) {
+                    this.state.currentScore += qState.points;
+                    gap.classList.add('correct');
+                    gap.innerText = qData.options.find(o=>o.id===choiceId).text;
+                    cell.classList.add('done');
+                } else {
+                    qState.points = 0;
+                    gap.classList.add('wrong');
+                    gap.innerText = qData.options.find(o=>o.id===qData.correct).text;
+                    cell.classList.add('wrong');
+                }
+                this.updateStats();
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            updateStats: function() {
+                const s = this.state.currentScore;
+                const m = this.state.maxScore;
+                document.getElementById('current-score').innerText = s;
+                document.getElementById('max-score').innerText = m;
+                document.getElementById('m-score').innerText = s;
+                document.getElementById('m-max').innerText = m;
+            },
+
+            toggleSidebar: function() {
+                document.getElementById('sidebar').classList.toggle('active');
+                document.querySelector('.sidebar-overlay').classList.toggle('active');
+            },
+
+            closeQuestionPanel: function() {
+                document.getElementById('question-panel').classList.remove('active');
+            },
+
+            scrollToTop: function() {
+                document.querySelector('.main-content').scrollTop = 0;
+            },
+
+            nextExercise: function() {
+                this.initExercise(this.state.exIdx + 1);
+            }
+        };
+
+        app.initExercise(0);
+    </script>
+</body>
+</html>
