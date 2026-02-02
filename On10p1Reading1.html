@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloze Test Deep Thinking</title>
+    <title>Cloze Test No Line-through</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,7 +18,6 @@
             --green: #1e8e3e;
             --red: #d93025;
             --header-height: 60px;
-            /* Panel chiếm 3/8 chiều cao màn hình */
             --panel-height: 37.5vh; 
         }
 
@@ -99,6 +98,7 @@
             line-height: 2.0; font-size: 1.15rem; color: #333;
         }
         
+        /* GAPS STYLE */
         .gap {
             display: inline-block; min-width: 40px; border-bottom: 2px solid #ccc;
             color: var(--primary); font-weight: 700; text-align: center;
@@ -106,7 +106,14 @@
         }
         .gap.active-gap { background-color: var(--primary); color: white; border-color: var(--primary); }
         .gap.correct { color: var(--green); border-bottom-color: var(--green); }
-        .gap.wrong { color: var(--red); border-bottom-color: var(--red); text-decoration: line-through; }
+        
+        /* --- ĐÃ SỬA: BỎ GẠCH NGANG Ở ĐÂY --- */
+        .gap.wrong { 
+            color: var(--red); 
+            border-bottom-color: var(--red); 
+            /* text-decoration: line-through;  <-- Dòng này đã bị xóa */
+        }
+
         .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
 
         /* QUESTION PANEL (DESKTOP) */
@@ -121,22 +128,15 @@
         .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
         .hint-content.show { display: block; }
 
-        /* --- SỬA LỖI NÚT ĐÁP ÁN DÍNH CHỮ --- */
+        /* OPTIONS GRID */
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .option-btn {
-            padding: 12px 15px; 
-            border: 1px solid var(--border); 
-            background: white;
-            border-radius: 8px; 
-            cursor: pointer; 
-            text-align: left; 
-            font-size: 1rem;
-            display: flex; 
-            align-items: center;
-            gap: 10px; /* Tạo khoảng cách an toàn giữa chữ cái và nội dung */
+            padding: 12px 15px; border: 1px solid var(--border); background: white;
+            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
         }
-        .option-label { font-weight: bold; color: #555; min-width: 25px; } /* Chữ A. B. */
-        .option-text { flex: 1; } /* Nội dung đáp án */
+        .option-label { font-weight: bold; color: #555; min-width: 25px; }
+        .option-text { flex: 1; }
 
         .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
         .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
@@ -278,7 +278,7 @@
     </main>
 
     <script>
-        // --- CẬP NHẬT DỮ LIỆU VỚI LOGIC HINT SÂU SẮC ---
+        // --- DỮ LIỆU BÀI TẬP ---
         const exercises = [
             {
                 id: 1,
@@ -476,14 +476,12 @@
                 this.selectQuestion(exIndex+1, qId);
             },
 
-            // --- FIX HIỂN THỊ NÚT ĐÁP ÁN ---
             renderOptions: function(exIndex, qId, qData, qState) {
                 const container = document.getElementById('options-container');
                 container.innerHTML = '';
                 qData.options.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.className = 'option-btn';
-                    // Tách chữ cái và nội dung bằng thẻ span riêng
                     btn.innerHTML = `<span class="option-label">${opt.id}.</span> <span class="option-text">${opt.text}</span>`;
                     
                     if(qState.answered) {
