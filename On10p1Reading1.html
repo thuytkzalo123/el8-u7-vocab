@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloze Test: 3/8 Panel & Top Scroll</title>
+    <title>Cloze Test Deep Thinking</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,9 +18,7 @@
             --green: #1e8e3e;
             --red: #d93025;
             --header-height: 60px;
-            
-            /* --- CẤU HÌNH CHIỀU CAO PANEL --- */
-            /* 3/8 màn hình = 37.5vh */
+            /* Panel chiếm 3/8 chiều cao màn hình */
             --panel-height: 37.5vh; 
         }
 
@@ -88,7 +86,7 @@
             -webkit-overflow-scrolling: touch; 
             display: flex; justify-content: center;
             position: relative;
-            scroll-behavior: smooth; /* Cuộn mượt */
+            scroll-behavior: smooth; 
         }
         .content-wrapper { display: flex; width: 100%; max-width: 1200px; gap: 25px; }
 
@@ -120,21 +118,32 @@
         .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
         .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
         .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
-        .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.9rem; display: none; }
+        .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
         .hint-content.show { display: block; }
+
+        /* --- SỬA LỖI NÚT ĐÁP ÁN DÍNH CHỮ --- */
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .option-btn {
-            padding: 12px; border: 1px solid var(--border); background: white;
-            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
-            display: flex; align-items: center;
+            padding: 12px 15px; 
+            border: 1px solid var(--border); 
+            background: white;
+            border-radius: 8px; 
+            cursor: pointer; 
+            text-align: left; 
+            font-size: 1rem;
+            display: flex; 
+            align-items: center;
+            gap: 10px; /* Tạo khoảng cách an toàn giữa chữ cái và nội dung */
         }
+        .option-label { font-weight: bold; color: #555; min-width: 25px; } /* Chữ A. B. */
+        .option-text { flex: 1; } /* Nội dung đáp án */
+
         .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
         .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
 
         /* --- 4. CSS MOBILE FIX --- */
         @media (max-width: 900px) {
             body { flex-direction: column; padding-top: var(--header-height); }
-            
             .mobile-header { display: flex; }
 
             .sidebar {
@@ -156,7 +165,6 @@
             .text-panel { 
                 width: 100%; border-radius: 0; box-shadow: none; 
                 padding: 20px; 
-                /* Padding đáy lớn để luôn cuộn được dòng cuối lên trên */
                 padding-bottom: 80vh !important; 
             }
 
@@ -172,11 +180,8 @@
                 border-radius: 20px 20px 0 0; 
                 padding: 15px 20px 20px 20px;
                 box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
-                
-                /* CHIỀU CAO PANEL: 3/8 MÀN HÌNH */
                 height: var(--panel-height); 
                 max-height: var(--panel-height);
-                
                 overflow-y: auto;
                 border-top: 1px solid #ddd;
                 position: relative;
@@ -273,41 +278,74 @@
     </main>
 
     <script>
+        // --- CẬP NHẬT DỮ LIỆU VỚI LOGIC HINT SÂU SẮC ---
         const exercises = [
             {
                 id: 1,
                 title: "Food Fair Advertisement",
                 content: `
-                    <p>Join us this weekend for the Hai Duong Food Fair! Taste a variety of delicious dishes made from <span id="sig-1-17-2" class="signal-word">fresh</span>, 
+                    <p>Discover the Best of Hai Phong at Our Food Fair!</p>
+                    <p>Join us this weekend for the Hai Duong Food Fair! Taste a variety of delicious dishes made from fresh, 
                     <span id="gap-1-17" class="gap" onclick="app.selectQuestion(1, 17)">(17) ______</span> 
-                    <span id="sig-1-17-2" class="signal-word">ingredients</span>.</p>
-                    <p>This event is a great opportunity <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
-                    <span id="sig-1-18-2" class="signal-word">local products</span> and support small businesses.</p>
-                    <p>Bring your friends and family for a(n) <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span> 
-                    <span id="sig-1-19-2" class="signal-word">experience</span>! This event will surely bring you joy and happiness.</p>
-                    <p>Remember to check out the details on our website. We hope to see you there with your family and friends for an unforgettable time.</p>
+                    <span id="sig-1-17-2" class="signal-word">ingredients</span>. From traditional Vietnamese cuisine to modern fusion, there's something for everyone. Whether you want to enjoy your meal here or take way, we've got you covered.</p>
+                    <p>This event is a great opportunity 
+                    <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
+                    <span id="sig-1-18-2" class="signal-word">local products</span> and support small businesses. Don't miss out on the fun activities, cooking demonstrations, and special discounts. Bring your friends and family for a(n) 
+                    <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span> 
+                    <span id="sig-1-19-2" class="signal-word">experience</span>!</p>
                 `,
                 questions: [
-                    { id: 17, correct: "A", signalIds: ["sig-1-17-2"], options: [{id: "A", text: "basic"}, {id: "B", text: "dedicated"}, {id: "C", text: "full"}, {id: "D", text: "starter"}], hints: ["Enemy: 4 từ khác nghĩa", "Signal: fresh ... ingredients", "Logic: Tính từ mô tả", "Trans: A. cơ bản | B. tận tụy"] },
-                    { id: 18, correct: "B", signalIds: ["sig-1-18-2"], options: [{id: "A", text: "contribute"}, {id: "B", text: "promote"}, {id: "C", text: "invite"}, {id: "D", text: "occupy"}], hints: ["Enemy: Ngữ nghĩa", "Signal: local products", "Logic: Quảng bá sản phẩm", "Trans: B. quảng bá"] },
-                    { id: 19, correct: "A", signalIds: ["sig-1-19-2"], options: [{id: "A", text: "unforgettable"}, {id: "B", text: "forget"}, {id: "C", text: "forgetful"}, {id: "D", text: "forgettably"}], hints: ["Enemy: Từ loại", "Signal: a(n) ... experience", "Logic: Tính từ", "Trans: A. đáng nhớ"] }
-                ]
-            },
-            {
-                id: 2,
-                title: "Community Clean-up Day",
-                content: `
-                    <p>Gloves and tools will be <span id="gap-2-17" class="gap" onclick="app.selectQuestion(2, 17)">(17) ______</span>.</p>
-                    <p>This is a great opportunity to <span id="gap-2-18" class="gap" onclick="app.selectQuestion(2, 18)">(18) ______</span> 
-                    <span id="sig-2-18-2" class="signal-word">your neighbors</span>.</p>
-                    <p>We <span id="sig-2-19-2" class="signal-word">look forward to</span> 
-                    <span id="gap-2-19" class="gap" onclick="app.selectQuestion(2, 19)">(19) ______</span> 
-                    <span id="sig-2-19-2" class="signal-word">you</span> there!</p>
-                `,
-                questions: [
-                    { id: 17, correct: "B", signalIds: [], options: [{id: "A", text: "supplied"}, {id: "B", text: "provided"}, {id: "C", text: "given"}, {id: "D", text: "offered"}], hints: ["Bị động", "Chủ ngữ Tools", "Cung cấp", "Trans: Provided"] },
-                    { id: 18, correct: "D", signalIds: ["sig-2-18-2"], options: [{id: "A", text: "join"}, {id: "B", text: "know"}, {id: "C", text: "unite"}, {id: "D", text: "meet"}], hints: ["Động từ", "neighbors", "Gặp gỡ", "Trans: Meet"] },
-                    { id: 19, correct: "B", signalIds: ["sig-2-19-2"], options: [{id: "A", text: "see"}, {id: "B", text: "seeing"}, {id: "C", text: "to see"}, {id: "D", text: "saw"}], hints: ["V-ing", "look forward to", "Cấu trúc", "Trans: Seeing"] }
+                    { 
+                        id: 17, 
+                        correct: "A", 
+                        signalIds: ["sig-1-17-2"], 
+                        options: [
+                            {id: "A", text: "basic"}, 
+                            {id: "B", text: "dedicated"}, 
+                            {id: "C", text: "full"}, 
+                            {id: "D", text: "starter"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> 4 đáp án đều là Tính từ nhưng khác nghĩa hoàn toàn. Đây là câu hỏi về TỪ VỰNG (Ngữ nghĩa).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Hãy nhìn vào danh từ đứng sau 'ingredients' (nguyên liệu) và tính từ song song 'fresh' (tươi).", 
+                            "<strong>Logic (Tư duy):</strong> Chúng ta cần một từ mô tả tính chất của 'nguyên liệu' nấu ăn. Từ nào mang nghĩa 'cơ bản' hoặc 'thiết yếu' trong nấu nướng?", 
+                            "<strong>Translation (Dịch):</strong><br>A. [cơ bản] + nguyên liệu<br>B. [tận tụy] + nguyên liệu<br>C. [đầy] + nguyên liệu<br>D. [khai vị] + nguyên liệu"
+                        ] 
+                    },
+                    { 
+                        id: 18, 
+                        correct: "B", 
+                        signalIds: ["sig-1-18-2"], 
+                        options: [
+                            {id: "A", text: "contribute"}, 
+                            {id: "B", text: "promote"}, 
+                            {id: "C", text: "invite"}, 
+                            {id: "D", text: "occupy"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> 4 đáp án là Động từ khác nhau. Đây là câu hỏi về NGỮ NGHĨA.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Chú ý danh từ phía sau 'local products' (sản phẩm địa phương) và ngữ cảnh 'Food Fair' (Hội chợ).", 
+                            "<strong>Logic (Tư duy):</strong> Mục đích chính của việc tổ chức hội chợ là để làm gì đối với các sản phẩm địa phương? Bạn đến đó để 'chiếm giữ' hay để 'quảng bá/thúc đẩy' chúng?", 
+                            "<strong>Translation (Dịch):</strong><br>A. [đóng góp] + sản phẩm<br>B. [quảng bá/thúc đẩy] + sản phẩm<br>C. [mời] + sản phẩm<br>D. [chiếm giữ] + sản phẩm"
+                        ] 
+                    },
+                    { 
+                        id: 19, 
+                        correct: "A", 
+                        signalIds: ["sig-1-19-2"], 
+                        options: [
+                            {id: "A", text: "unforgettable"}, 
+                            {id: "B", text: "forget"}, 
+                            {id: "C", text: "forgetful"}, 
+                            {id: "D", text: "forgettably"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Tất cả đáp án đều có gốc từ 'forget' nhưng khác đuôi. Đây là câu hỏi về TỪ LOẠI (Word Form).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Vị trí cần điền nằm sau mạo từ 'a(n)' và trước danh từ 'experience'.", 
+                            "<strong>Logic (Tư duy):</strong> Theo trật tự từ trong tiếng Anh, từ loại nào dùng để bổ nghĩa cho Danh từ đứng sau nó? (Tính từ, Động từ, hay Trạng từ?)", 
+                            "<strong>Translation (Dịch):</strong><br>A. [đáng nhớ/không thể quên] (Tính từ)<br>B. [quên] (Động từ)<br>C. [hay quên] (Tính từ chỉ người)<br>D. [một cách dễ quên] (Trạng từ)"
+                        ] 
+                    }
                 ]
             }
         ];
@@ -374,18 +412,16 @@
                 document.getElementById('q-card-area').style.display = 'block';
                 document.getElementById('question-panel').classList.add('active');
                 
-                // --- XỬ LÝ TỰ ĐỘNG CUỘN (AUTO-FOCUS TOP 1/3) ---
+                // --- AUTO-FOCUS TOP 1/3 ---
                 if(window.innerWidth <= 900 && gap) {
                     setTimeout(() => {
                         const container = document.querySelector('.main-content');
-                        // Lấy vị trí của gap so với đầu trang container
                         const gapRect = gap.getBoundingClientRect();
                         const containerRect = container.getBoundingClientRect();
                         const currentScroll = container.scrollTop;
-                        const gapTopRelative = gapRect.top - containerRect.top; // Khoảng cách từ đỉnh container đến gap
+                        const gapTopRelative = gapRect.top - containerRect.top; 
                         
-                        // Mục tiêu: Gap cách đỉnh container khoảng 70px (Dòng 2-3)
-                        // Công thức: ScrollTo = (Vị trí hiện tại) + (Khoảng cách tương đối) - (Offset mong muốn)
+                        // Đẩy gap lên vị trí cách đỉnh 70px
                         const targetScroll = currentScroll + gapTopRelative - 70;
 
                         container.scrollTo({
@@ -440,13 +476,15 @@
                 this.selectQuestion(exIndex+1, qId);
             },
 
+            // --- FIX HIỂN THỊ NÚT ĐÁP ÁN ---
             renderOptions: function(exIndex, qId, qData, qState) {
                 const container = document.getElementById('options-container');
                 container.innerHTML = '';
                 qData.options.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.className = 'option-btn';
-                    btn.innerHTML = `<span>${opt.id}</span> ${opt.text}`;
+                    // Tách chữ cái và nội dung bằng thẻ span riêng
+                    btn.innerHTML = `<span class="option-label">${opt.id}.</span> <span class="option-text">${opt.text}</span>`;
                     
                     if(qState.answered) {
                         btn.disabled = true;
