@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloze Test: New Layout & Logic</title>
+    <title>Cloze Test: Smart Logic Hints</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,7 +18,7 @@
             --green: #1e8e3e;
             --red: #d93025;
             --header-height: 60px;
-            --panel-height: 50vh; /* Tăng chiều cao panel để chứa đủ 3 phần */
+            --panel-height: 50vh; 
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -297,7 +297,7 @@
     </main>
 
     <script>
-        // --- DỮ LIỆU ĐỀ 10, 11, 12 (UPDATED LOGIC) ---
+        // --- DỮ LIỆU BÀI TẬP (ĐÃ CẬP NHẬT LOGIC HINT) ---
         const exercises = [
             {
                 id: 10,
@@ -320,7 +320,7 @@
                         id: 17, 
                         correct: "A", 
                         signalIds: [], 
-                        // Dịch câu gốc có chỗ trống
+                        // Dịch câu gốc (giữ ...)
                         sentence_translation: "Vào buổi chiều, chúng tôi sẽ ... bờ sông để loại bỏ rác thải và chất thải độc hại.", 
                         options: [
                             {id: "A", text: "clean up"}, 
@@ -329,9 +329,9 @@
                             {id: "D", text: "give up"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Phrasal Verbs (Cụm động từ). Phân biệt nghĩa.", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'the riverbank' (khu vực bờ sông) và mục đích 'remove rubbish' (loại bỏ rác).", 
-                            "<strong>Logic (Tư duy):</strong> Bạn 'pick up' (nhặt lên) một đồ vật nhỏ, nhưng bạn làm gì với cả một khu vực (bờ sông) để nó sạch sẽ?", 
+                            "<strong>Enemy (Phân loại):</strong> 4 đáp án là Phrasal Verbs (Cụm động từ). Cần hiểu ngữ nghĩa.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'the riverbank' (địa điểm), 'remove rubbish' (mục đích).", 
+                            "<strong>Logic (Tư duy):</strong> 'We' làm hành động gì với 'the riverbank' để loại bỏ rác thải? Dọn dẹp cả khu vực hay chỉ nhặt lên?", 
                             "<strong>Translation (Dịch đáp án):</strong><br>A. dọn dẹp (khu vực)<br>B. nhặt lên (đồ vật)<br>C. thức dậy<br>D. từ bỏ"
                         ] 
                     },
@@ -348,8 +348,8 @@
                         ], 
                         hints: [
                             "<strong>Enemy (Phân loại):</strong> Collocation (Kết hợp từ). Chọn tính từ phù hợp.", 
-                            "<strong>Signal (Dấu hiệu):</strong> Cụm từ 'make a ... difference' (tạo sự khác biệt).", 
-                            "<strong>Logic (Tư duy):</strong> Trong tiếng Anh, tính từ nào thường đi với 'difference' để nhấn mạnh sự thay đổi đó là 'thực sự' và 'có ý nghĩa'?", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'make a ... difference' (tạo sự khác biệt).", 
+                            "<strong>Logic (Tư duy):</strong> Trong tiếng Anh, khi muốn nhấn mạnh một sự thay đổi là có ý nghĩa thực tế, ta dùng tính từ nào đi với 'difference'?", 
                             "<strong>Translation (Dịch đáp án):</strong><br>A. mạnh mẽ<br>B. thực sự / rõ rệt<br>C. dài<br>D. ngắn"
                         ] 
                     },
@@ -367,8 +367,8 @@
                         hints: [
                             "<strong>Enemy (Phân loại):</strong> Passive Voice (Câu bị động).", 
                             "<strong>Signal (Dấu hiệu):</strong> Chủ ngữ 'Lunch' (vật) + 'will be'.", 
-                            "<strong>Logic (Tư duy):</strong> Bữa trưa có thể tự 'cung cấp' hành động hay nó 'được cung cấp' bởi người khác? Cấu trúc bị động tương lai: Will be + V...?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. cung cấp (nguyên thể)<br>B. cung cấp (số ít)<br>C. được cung cấp (V3/ed)<br>D. đang cung cấp (V-ing)"
+                            "<strong>Logic (Tư duy):</strong> Bữa trưa có tự thực hiện hành động cung cấp không, hay nó được cung cấp? Sau 'be' cần dạng động từ gì?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. cung cấp (V-inf)<br>B. cung cấp (V-s)<br>C. được cung cấp (V3/ed)<br>D. đang cung cấp (V-ing)"
                         ] 
                     }
                 ]
@@ -401,9 +401,9 @@
                             {id: "D", text: "changeable"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Từ vựng (Word Meaning - Adjectives).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Ngữ cảnh 'cancellation' (hủy) và 'deposits' (tiền cọc).", 
-                            "<strong>Logic (Tư duy):</strong> Nếu bạn hủy khóa học đúng hạn (trước 14 ngày), điều gì thường xảy ra với tiền cọc của bạn?", 
+                            "<strong>Enemy (Phân loại):</strong> Word Meaning (Từ vựng tính từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'Deposits' (Tiền cọc), 'cancellation' (Hủy bỏ).", 
+                            "<strong>Logic (Tư duy):</strong> Nếu khách hàng hủy đúng hạn quy định, số tiền cọc của họ sẽ được xử lý như thế nào?", 
                             "<strong>Translation (Dịch đáp án):</strong><br>A. có thể tránh được<br>B. có thể hoàn lại<br>C. có thể hiểu được<br>D. có thể thay đổi"
                         ] 
                     },
@@ -419,9 +419,9 @@
                             {id: "D", text: "punishing"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Business Collocation (Thuật ngữ kinh doanh).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'fee' (khoản phí).", 
-                            "<strong>Logic (Tư duy):</strong> Khoản phí nhỏ thu để chi trả cho công sức làm thủ tục hành chính, giấy tờ gọi là phí gì?", 
+                            "<strong>Enemy (Phân loại):</strong> Business Collocation (Từ vựng kinh doanh).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'fee' (phí).", 
+                            "<strong>Logic (Tư duy):</strong> Khoản phí nhỏ (10$) thường được thu để chi trả cho công sức xử lý giấy tờ/thủ tục gọi là gì?", 
                             "<strong>Translation (Dịch đáp án):</strong><br>A. phàn nàn<br>B. tiết kiệm<br>C. xử lý (hồ sơ/thủ tục)<br>D. trừng phạt"
                         ] 
                     },
@@ -437,10 +437,10 @@
                             {id: "D", text: "arrival"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Advanced Vocabulary & Preposition (Từ vựng nâng cao).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Giới từ 'upon' đứng ngay sau ô trống.", 
-                            "<strong>Logic (Tư duy):</strong> Cụm từ nào đi với 'upon' mang nghĩa tương đương với 'dependent on' (phụ thuộc vào)?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. thuộc lục địa<br>B. phụ thuộc vào (điều kiện)<br>C. có thể thích nghi<br>D. sự đến"
+                            "<strong>Enemy (Phân loại):</strong> Advanced Vocabulary + Preposition.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Giới từ 'upon' ngay sau ô trống.", 
+                            "<strong>Logic (Tư duy):</strong> Cụm từ nào đi với 'upon' mang nghĩa là 'tùy thuộc vào' (giống dependent on)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. thuộc lục địa<br>B. phụ thuộc (vào điều kiện)<br>C. có thể thích nghi<br>D. sự đến"
                         ] 
                     }
                 ]
@@ -473,9 +473,9 @@
                             {id: "D", text: "surrounded"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Từ vựng & Giới từ đi kèm.", 
-                            "<strong>Signal (Dấu hiệu):</strong> Cụm từ 'by trees and flowers' (bởi cây và hoa).", 
-                            "<strong>Logic (Tư duy):</strong> 'Located' và 'Situated' thường đi với giới từ 'in', 'at', 'on'. Từ nào đi với 'by' để mang nghĩa 'được bao bọc'?", 
+                            "<strong>Enemy (Phân loại):</strong> Word Meaning & Preposition.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'by trees and flowers' (bởi cây và hoa).", 
+                            "<strong>Logic (Tư duy):</strong> 'Located' thường đi với giới từ 'in/at'. Động từ nào đi với 'by' để diễn tả trạng thái bị bao bọc xung quanh?", 
                             "<strong>Translation (Dịch đáp án):</strong><br>A. tọa lạc<br>B. nằm ở<br>C. làm<br>D. bao quanh/vây quanh"
                         ] 
                     },
@@ -491,9 +491,9 @@
                             {id: "D", text: "walks"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Verb Form (Gerund vs Infinitive).", 
+                            "<strong>Enemy (Phân loại):</strong> Verb Form (V-ing vs To V).", 
                             "<strong>Signal (Dấu hiệu):</strong> Động từ 'enjoy'.", 
-                            "<strong>Logic (Tư duy):</strong> Quy tắc ngữ pháp cơ bản: Sau các động từ chỉ sở thích như 'enjoy', 'like', 'love', 'hate', động từ đi kèm phải ở dạng nào?", 
+                            "<strong>Logic (Tư duy):</strong> Theo quy tắc ngữ pháp, động từ đi sau 'enjoy' luôn phải ở dạng nào?", 
                             "<strong>Translation (Dịch đáp án):</strong><br>A. đi bộ (V-ing)<br>B. để đi bộ (To V)<br>C. để được đi bộ (Bị động)<br>D. đi bộ (số ít)"
                         ] 
                     },
@@ -510,9 +510,9 @@
                         ], 
                         hints: [
                             "<strong>Enemy (Phân loại):</strong> Quantifiers (Lượng từ).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Mệnh đề điều kiện 'If' + danh từ 'questions' (số nhiều).", 
-                            "<strong>Logic (Tư duy):</strong> Trong câu điều kiện (If), câu phủ định hoặc câu hỏi, từ nào thường được dùng để chỉ ý nghĩa 'bất cứ'?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. nhiều (không đếm được)<br>B. nhiều (đếm được)<br>C. bất kỳ/bất cứ<br>D. một vài (thường dùng trong câu khẳng định)"
+                            "<strong>Signal (Dấu hiệu):</strong> Câu điều kiện 'If' + danh từ 'questions'.", 
+                            "<strong>Logic (Tư duy):</strong> Trong câu điều kiện (If) hoặc câu nghi vấn/phủ định, từ nào được dùng để chỉ 'bất cứ' cái gì?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. nhiều (không đếm được)<br>B. nhiều (đếm được)<br>C. bất kỳ/bất cứ<br>D. một vài (dùng trong câu khẳng định)"
                         ] 
                     }
                 ]
@@ -578,7 +578,7 @@
                 this.renderHints(realIndex, qId, qData, qState);
                 this.renderOptions(realIndex, qId, qData, qState);
 
-                // --- XỬ LÝ PHẦN DỊCH CÂU (Vị trí cuối cùng) ---
+                // --- XỬ LÝ PHẦN DỊCH CÂU (Dưới cùng) ---
                 document.getElementById('trans-content').classList.remove('show');
                 document.querySelector('.trans-toggle-btn').innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
                 const transText = qData.sentence_translation || "Chưa có bản dịch cho câu này.";
