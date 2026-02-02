@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloze Test Mobile Responsive</title>
+    <title>Cloze Test Mobile Fix</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -17,8 +17,8 @@
             --orange: #f59e0b;
             --green: #1e8e3e;
             --red: #d93025;
-            --shadow: 0 4px 12px rgba(0,0,0,0.1);
             --header-height: 60px;
+            --panel-height: 55vh; /* Chiều cao tối đa của bảng câu hỏi mobile */
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -30,10 +30,10 @@
             margin: 0;
             height: 100vh;
             display: flex;
-            overflow: hidden; /* Prevent body scroll, handle inside containers */
+            overflow: hidden; 
         }
 
-        /* --- MOBILE HEADER (Only visible on mobile) --- */
+        /* --- 1. HEADER MOBILE --- */
         .mobile-header {
             display: none;
             position: fixed; top: 0; left: 0; right: 0;
@@ -46,30 +46,25 @@
             justify-content: space-between;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .menu-btn { font-size: 1.5rem; color: var(--text-main); cursor: pointer; padding: 5px; }
+        .menu-btn { font-size: 1.4rem; color: #555; padding: 5px 10px; cursor: pointer; }
         .mobile-score { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
 
-        /* --- SIDEBAR --- */
+        /* --- 2. SIDEBAR --- */
         .sidebar {
             width: 300px;
             background: var(--white);
             border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            flex-shrink: 0;
-            z-index: 101; /* Higher than content */
+            display: flex; flex-direction: column;
+            height: 100%; flex-shrink: 0;
+            z-index: 200; 
             transition: transform 0.3s ease;
         }
-
         .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .sidebar-header h3 { margin: 0; color: var(--primary); }
         .close-sidebar-btn { display: none; font-size: 1.2rem; cursor: pointer; }
-
         .stats-area { padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid var(--border); }
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
         .stat-value { font-weight: 800; color: var(--primary); }
-
         .question-grid-container { flex: 1; padding: 20px; overflow-y: auto; }
         .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .q-cell {
@@ -80,20 +75,18 @@
         .q-cell.active { background: var(--primary); color: white; border-color: var(--primary); }
         .q-cell.done { background: #e6f4ea; color: var(--green); border-color: var(--green); }
         .q-cell.wrong { background: #fce8e6; color: var(--red); border-color: var(--red); }
+        
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; }
 
-        /* Overlay for Mobile Sidebar */
-        .sidebar-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
-        }
-
-        /* --- MAIN CONTENT --- */
+        /* --- 3. MAIN CONTENT --- */
         .main-content {
             flex: 1;
             padding: 30px;
-            overflow-y: auto;
-            display: flex;
-            justify-content: center;
+            overflow-y: auto; /* Quan trọng: Cho phép cuộn nội dung */
+            -webkit-overflow-scrolling: touch; /* Mượt mà trên iOS */
+            display: flex; justify-content: center;
             position: relative;
+            scroll-behavior: smooth;
         }
         .content-wrapper { display: flex; width: 100%; max-width: 1200px; gap: 25px; }
 
@@ -101,11 +94,12 @@
         .text-panel {
             flex: 2;
             background: var(--white); border-radius: 12px; padding: 30px;
-            box-shadow: var(--shadow); height: fit-content;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            height: fit-content;
             line-height: 1.9; font-size: 1.1rem; color: #333;
-            margin-bottom: 100px; /* Space for bottom sheet on mobile */
         }
         
+        /* Gaps */
         .gap {
             display: inline-block; min-width: 40px; border-bottom: 2px solid #ccc;
             color: var(--primary); font-weight: 700; text-align: center;
@@ -116,81 +110,105 @@
         .gap.wrong { color: var(--red); border-bottom-color: var(--red); text-decoration: line-through; }
         .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
 
-        /* QUESTION PANEL */
+        /* QUESTION PANEL (DESKTOP) */
         .question-panel {
             flex: 1; min-width: 350px;
             position: sticky; top: 0; height: fit-content;
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
         }
-        .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: var(--shadow); }
-
-        /* HINTS & OPTIONS */
+        .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
         .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
         .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
         .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.9rem; display: none; }
         .hint-content.show { display: block; }
-
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .option-btn {
             padding: 12px; border: 1px solid var(--border); background: white;
             border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
             display: flex; align-items: center;
         }
-        .option-btn span { font-weight: bold; margin-right: 8px; min-width: 20px; }
+        .option-btn:active { background: #eee; }
         .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
         .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
 
-        /* --- RESPONSIVE CSS (MOBILE) --- */
+        /* --- 4. CSS MOBILE FIX (QUAN TRỌNG) --- */
         @media (max-width: 900px) {
-            body { flex-direction: column; padding-top: var(--header-height); }
+            body { 
+                flex-direction: column; 
+                padding-top: var(--header-height); 
+            }
             
-            /* Mobile Header Visible */
             .mobile-header { display: flex; }
-            
-            /* Sidebar becomes Drawer */
+
+            /* Sidebar Drawer */
             .sidebar {
                 position: fixed; left: 0; top: 0; bottom: 0;
-                width: 80%; max-width: 300px;
-                transform: translateX(-100%); /* Hide by default */
-                box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+                width: 85%; max-width: 320px;
+                transform: translateX(-100%);
+                box-shadow: 2px 0 15px rgba(0,0,0,0.2);
             }
             .sidebar.active { transform: translateX(0); }
             .sidebar-overlay.active { display: block; }
             .close-sidebar-btn { display: block; }
 
-            /* Main Content Adjustments */
-            .main-content { padding: 15px; width: 100%; display: block; }
+            /* Fix Scrolling Content */
+            .main-content {
+                display: block; width: 100%; padding: 0;
+                /* Chiều cao = 100vh - header */
+                height: calc(100vh - var(--header-height)); 
+            }
             .content-wrapper { flex-direction: column; width: 100%; }
-            .text-panel { width: 100%; padding: 20px; font-size: 1rem; margin-bottom: 300px; /* Extra scroll space */ }
+            
+            .text-panel { 
+                width: 100%; 
+                border-radius: 0; 
+                box-shadow: none; 
+                padding: 20px; 
+                /* Padding đáy cực lớn để nội dung không bị che bởi bảng câu hỏi */
+                padding-bottom: 50vh !important; 
+            }
 
-            /* Question Panel becomes Bottom Sheet */
+            /* Bottom Sheet Panel */
             .question-panel {
                 position: fixed; bottom: 0; left: 0; right: 0; top: auto;
-                width: 100%; min-width: 0;
-                z-index: 99;
-                transform: translateY(110%); /* Slide down hidden */
+                width: 100%; 
+                z-index: 150;
+                transform: translateY(120%); /* Ẩn đi mặc định */
+                transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
             }
             .question-panel.active { transform: translateY(0); }
 
             .q-card {
-                border-radius: 20px 20px 0 0; /* Rounded top only */
-                padding: 20px;
-                box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-                max-height: 60vh; /* Max height 60% screen */
+                border-radius: 20px 20px 0 0; 
+                padding: 15px 20px 25px 20px;
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+                max-height: var(--panel-height); 
                 overflow-y: auto;
-                border-top: 1px solid #eee;
-            }
-            
-            /* Drag handle indicator */
-            .q-card::before {
-                content: ''; display: block; width: 40px; height: 4px;
-                background: #ddd; border-radius: 2px; margin: 0 auto 15px auto;
+                border-top: 1px solid #ddd;
+                position: relative;
             }
 
-            /* Adjust Empty State */
-            #empty-state { display: none !important; } /* Hide empty state on mobile, auto open */
+            /* Thanh kéo nhỏ phía trên */
+            .drag-handle {
+                width: 40px; height: 5px; background: #e0e0e0;
+                border-radius: 10px; margin: 0 auto 15px auto;
+            }
+
+            /* Nút thu gọn trên mobile */
+            .mobile-collapse-btn {
+                display: flex !important; /* Chỉ hiện trên mobile */
+                justify-content: center; align-items: center;
+                width: 30px; height: 30px; 
+                background: #f1f3f4; border-radius: 50%;
+                position: absolute; right: 15px; top: 15px;
+                cursor: pointer; color: #555;
+            }
+
+            /* Ẩn Empty State trên mobile vì sẽ tự động bật bảng câu hỏi */
+            #empty-state { display: none !important; }
         }
+
+        .mobile-collapse-btn { display: none; }
     </style>
 </head>
 <body>
@@ -202,7 +220,10 @@
         <div class="mobile-score">
             <span id="m-score">0</span> / <span id="m-max">0</span>
         </div>
-        <div style="width: 30px;"></div> </div>
+        <div class="menu-btn" onclick="document.querySelector('.main-content').scrollTop = 0">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+    </div>
 
     <div class="sidebar-overlay" onclick="app.toggleSidebar()"></div>
 
@@ -213,35 +234,40 @@
         </div>
         <div class="stats-area">
             <div class="stat-row">
-                <span>Điểm của bạn:</span>
+                <span>Điểm số:</span>
                 <span class="stat-value"><span id="current-score">0</span> / <span id="max-score">0</span></span>
             </div>
-            <div style="font-size: 0.8rem; color: #666; margin-top:5px;">
-                * 5 điểm/câu. Trừ 1 điểm/gợi ý.
+            <div style="font-size: 0.85rem; color: #666; margin-top:5px;">
+                * Mỗi câu 5đ. Trừ 1đ khi mở gợi ý.
             </div>
         </div>
         <div class="question-grid-container">
-            <div style="font-weight:bold; margin-bottom:10px;">Danh sách câu hỏi</div>
+            <div style="font-weight:bold; margin-bottom:10px;">Câu hỏi</div>
             <div id="sidebar-grid" class="q-grid"></div>
         </div>
-        <div style="padding: 20px;">
+        <div style="padding: 20px; border-top:1px solid #eee;">
             <button onclick="app.nextExercise()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">
                 Bài tiếp theo <i class="fas fa-arrow-right"></i>
             </button>
         </div>
     </aside>
 
-    <main class="main-content" id="main-container">
+    <main class="main-content">
         <div class="content-wrapper">
             
             <div class="text-panel">
-                <h2 id="ex-title" style="margin-top:0; color:var(--primary); font-size:1.3rem; margin-bottom:15px;">Loading...</h2>
+                <h2 id="ex-title" style="margin-top:0; color:var(--primary); font-size:1.3rem; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">Loading...</h2>
                 <div id="ex-content"></div>
             </div>
 
             <div class="question-panel" id="question-panel">
                 <div class="q-card" id="q-card-area">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div class="drag-handle"></div>
+                    <div class="mobile-collapse-btn" onclick="app.closeQuestionPanel()">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-right: 40px;">
                         <h3 style="margin:0; font-size:1.1rem;">Câu <span id="q-number">...</span></h3>
                         <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">5 Points</span>
                     </div>
@@ -249,22 +275,17 @@
                     <div class="hints-list" id="hints-container"></div>
 
                     <div class="options-grid" id="options-container"></div>
-                    
-                    <div style="text-align:center; margin-top:15px; display:none;" id="mobile-close-q">
-                        <button onclick="app.closeQuestionPanel()" style="background:none; border:none; color:#666; text-decoration:underline;">Đóng</button>
-                    </div>
                 </div>
 
                 <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
                     <i class="fas fa-mouse-pointer" style="font-size:2rem; margin-bottom:10px;"></i>
-                    <p>Chọn ô trống để trả lời</p>
+                    <p>Chọn ô trống để bắt đầu</p>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        // --- DATA (KHÔNG ĐỔI) ---
         const exercises = [
             {
                 id: 1,
@@ -279,21 +300,9 @@
                     <span id="sig-1-19-2" class="signal-word">experience</span>!</p>
                 `,
                 questions: [
-                    {
-                        id: 17, correct: "A", signalIds: ["sig-1-17-2"],
-                        options: [{id: "A", text: "basic"}, {id: "B", text: "dedicated"}, {id: "C", text: "full"}, {id: "D", text: "starter"}],
-                        hints: ["Hint 1 (Enemy): TỪ VỰNG.", "Hint 2 (Signal): fresh + ... + ingredients.", "Hint 3 (Logic): Tính từ mô tả.", "Hint 4 (Trans): A. cơ bản | B. tận tụy"]
-                    },
-                    {
-                        id: 18, correct: "B", signalIds: ["sig-1-18-2"],
-                        options: [{id: "A", text: "contribute"}, {id: "B", text: "promote"}, {id: "C", text: "invite"}, {id: "D", text: "occupy"}],
-                        hints: ["Hint 1 (Enemy): NGỮ NGHĨA.", "Hint 2 (Signal): ... local products.", "Hint 3 (Logic): Làm gì với sản phẩm?", "Hint 4 (Trans): B. quảng bá"]
-                    },
-                    {
-                        id: 19, correct: "A", signalIds: ["sig-1-19-2"],
-                        options: [{id: "A", text: "unforgettable"}, {id: "B", text: "forget"}, {id: "C", text: "forgetful"}, {id: "D", text: "forgettably"}],
-                        hints: ["Hint 1 (Enemy): TỪ LOẠI.", "Hint 2 (Signal): a(n) ... experience.", "Hint 3 (Logic): Tính từ.", "Hint 4 (Trans): A. đáng nhớ"]
-                    }
+                    { id: 17, correct: "A", signalIds: ["sig-1-17-2"], options: [{id: "A", text: "basic"}, {id: "B", text: "dedicated"}, {id: "C", text: "full"}, {id: "D", text: "starter"}], hints: ["Enemy: 4 từ khác nghĩa", "Signal: fresh ... ingredients", "Logic: Tính từ mô tả", "Trans: A. cơ bản | B. tận tụy"] },
+                    { id: 18, correct: "B", signalIds: ["sig-1-18-2"], options: [{id: "A", text: "contribute"}, {id: "B", text: "promote"}, {id: "C", text: "invite"}, {id: "D", text: "occupy"}], hints: ["Enemy: Ngữ nghĩa", "Signal: local products", "Logic: Quảng bá sản phẩm", "Trans: B. quảng bá"] },
+                    { id: 19, correct: "A", signalIds: ["sig-1-19-2"], options: [{id: "A", text: "unforgettable"}, {id: "B", text: "forget"}, {id: "C", text: "forgetful"}, {id: "D", text: "forgettably"}], hints: ["Enemy: Từ loại", "Signal: a(n) ... experience", "Logic: Tính từ", "Trans: A. đáng nhớ"] }
                 ]
             },
             {
@@ -308,33 +317,32 @@
                     <span id="sig-2-19-2" class="signal-word">you</span> there!</p>
                 `,
                 questions: [
-                    { id: 17, correct: "B", signalIds: [], options: [{id: "A", text: "supplied"}, {id: "B", text: "provided"}, {id: "C", text: "given"}, {id: "D", text: "offered"}], hints: ["Hint 1: Bị động", "Hint 2: Tools", "Hint 3: Cung cấp", "Hint 4: Provided"] },
-                    { id: 18, correct: "D", signalIds: ["sig-2-18-2"], options: [{id: "A", text: "join"}, {id: "B", text: "know"}, {id: "C", text: "unite"}, {id: "D", text: "meet"}], hints: ["Hint 1: Động từ", "Hint 2: neighbors", "Hint 3: Gặp gỡ", "Hint 4: Meet"] },
-                    { id: 19, correct: "B", signalIds: ["sig-2-19-2"], options: [{id: "A", text: "see"}, {id: "B", text: "seeing"}, {id: "C", text: "to see"}, {id: "D", text: "saw"}], hints: ["Hint 1: V-ing", "Hint 2: look forward to", "Hint 3: Cấu trúc", "Hint 4: Seeing"] }
+                    { id: 17, correct: "B", signalIds: [], options: [{id: "A", text: "supplied"}, {id: "B", text: "provided"}, {id: "C", text: "given"}, {id: "D", text: "offered"}], hints: ["Bị động", "Chủ ngữ Tools", "Cung cấp", "Trans: Provided"] },
+                    { id: 18, correct: "D", signalIds: ["sig-2-18-2"], options: [{id: "A", text: "join"}, {id: "B", text: "know"}, {id: "C", text: "unite"}, {id: "D", text: "meet"}], hints: ["Động từ", "neighbors", "Gặp gỡ", "Trans: Meet"] },
+                    { id: 19, correct: "B", signalIds: ["sig-2-19-2"], options: [{id: "A", text: "see"}, {id: "B", text: "seeing"}, {id: "C", text: "to see"}, {id: "D", text: "saw"}], hints: ["V-ing", "look forward to", "Cấu trúc", "Trans: Seeing"] }
                 ]
             }
         ];
 
-        // --- CONTROLLER ---
         const app = {
             state: { exIdx: 0, currentScore: 0, maxScore: 0, qMap: {} },
 
             initExercise: function(index) {
-                if(index >= exercises.length) { alert("Đã hoàn thành!"); return; }
+                if(index >= exercises.length) { alert("Hoàn thành tất cả!"); return; }
                 this.state.exIdx = index;
                 const exData = exercises[index];
 
                 document.getElementById('ex-title').innerText = exData.title;
                 document.getElementById('ex-content').innerHTML = exData.content;
-                
-                // Reset UI
+                document.querySelector('.main-content').scrollTop = 0; // Reset scroll lên đầu
+
+                // Reset
                 this.closeQuestionPanel();
                 if(window.innerWidth > 900) {
                      document.getElementById('empty-state').style.display = 'block';
                      document.getElementById('q-card-area').style.display = 'none';
                 }
 
-                // Grid setup
                 const grid = document.getElementById('sidebar-grid');
                 grid.innerHTML = '';
                 exData.questions.forEach(q => {
@@ -349,7 +357,7 @@
                     cell.innerText = q.id;
                     cell.onclick = () => {
                         this.selectQuestion(index+1, q.id);
-                        this.toggleSidebar(); // Close sidebar on mobile select
+                        if(window.innerWidth <= 900) this.toggleSidebar();
                     };
                     grid.appendChild(cell);
                 });
@@ -363,25 +371,24 @@
                 const key = `${realIndex}-${qId}`;
                 const qState = this.state.qMap[key];
 
-                // Highlights
+                // Highlight Gap
                 document.querySelectorAll('.gap').forEach(e => e.classList.remove('active-gap'));
                 const gap = document.getElementById(`gap-${exId}-${qId}`);
                 if(gap) gap.classList.add('active-gap');
 
+                // Highlight Grid
                 document.querySelectorAll('.q-cell').forEach(e => e.classList.remove('active'));
                 document.getElementById(`cell-${qId}`).classList.add('active');
 
-                // Render Card Info
+                // Render Data
                 document.getElementById('q-number').innerText = qId;
                 this.renderPointsBadge(qState);
                 this.renderHints(realIndex, qId, qData, qState);
                 this.renderOptions(realIndex, qId, qData, qState);
 
-                // Show Panel (Desktop vs Mobile)
+                // Show Panel
                 document.getElementById('empty-state').style.display = 'none';
                 document.getElementById('q-card-area').style.display = 'block';
-                
-                // Mobile: Slide Up
                 document.getElementById('question-panel').classList.add('active');
                 
                 // Signal words
@@ -423,7 +430,7 @@
             openHint: function(exIndex, qId, i) {
                 const qState = this.state.qMap[`${exIndex}-${qId}`];
                 if(qState.answered || qState.hintsOpen[i]) return;
-                if(i > 0 && !qState.hintsOpen[i-1]) { alert("Mở theo thứ tự!"); return; }
+                if(i > 0 && !qState.hintsOpen[i-1]) { alert("Vui lòng mở theo thứ tự!"); return; }
                 
                 if(qState.points > 0) qState.points--;
                 qState.hintsOpen[i] = true;
