@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloze Test: Ms Thuy Ho</title>
+    <title>Cloze Test: Options Top - Hints Bottom</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,7 +18,7 @@
             --green: #1e8e3e;
             --red: #d93025;
             --header-height: 60px;
-            --panel-height: 37.5vh; /* 3/8 màn hình */
+            --panel-height: 45vh; /* Tăng nhẹ chiều cao panel mobile để chứa đủ options */
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -106,7 +106,6 @@
         .gap.active-gap { background-color: var(--primary); color: white; border-color: var(--primary); }
         .gap.correct { color: var(--green); border-bottom-color: var(--green); }
         .gap.wrong { color: var(--red); border-bottom-color: var(--red); } 
-        
         .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
 
         /* QUESTION PANEL */
@@ -115,14 +114,16 @@
             position: sticky; top: 0; height: fit-content;
         }
         .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        
+        /* HINTS LIST (Sẽ nằm dưới cùng) */
+        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
         .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
         .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
         .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
         .hint-content.show { display: block; }
 
-        /* OPTIONS GRID */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        /* OPTIONS GRID (Sẽ nằm trên) */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .option-btn {
             padding: 12px 15px; 
             border: 1px solid var(--border); 
@@ -140,6 +141,39 @@
 
         .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
         .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+
+        /* NÚT DỊCH (Ở GIỮA) */
+        .trans-toggle-btn {
+            width: 100%;
+            margin-top: 5px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px dashed var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .trans-toggle-btn:hover { background-color: #e8f0fe; }
+        .trans-box {
+            margin-top: 10px;
+            padding: 12px;
+            background-color: #eef7ff;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            color: #333;
+            font-style: italic;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .trans-box.show { display: block; }
 
         /* --- MOBILE RESPONSIVE --- */
         @media (max-width: 900px) {
@@ -265,8 +299,17 @@
                         <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">5 Points</span>
                     </div>
 
-                    <div class="hints-list" id="hints-container"></div>
                     <div class="options-grid" id="options-container"></div>
+
+                    <div id="translation-section">
+                        <button class="trans-toggle-btn" onclick="app.toggleTranslation()">
+                            <i class="fas fa-language"></i> Dịch câu này
+                        </button>
+                        <div id="trans-content" class="trans-box"></div>
+                    </div>
+
+                    <div class="hints-list" id="hints-container"></div>
+
                 </div>
 
                 <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
@@ -278,7 +321,7 @@
     </main>
 
     <script>
-        // --- DỮ LIỆU BÀI TẬP ĐÃ CẬP NHẬT (ĐỀ 10, 11, 12) ---
+        // --- DỮ LIỆU BÀI TẬP (ĐỀ 10, 11, 12) ---
         const exercises = [
             {
                 id: 10,
@@ -301,6 +344,7 @@
                         id: 17, 
                         correct: "A", 
                         signalIds: [], 
+                        sentence_translation: "Vào buổi chiều, chúng tôi sẽ [dọn dẹp] bờ sông để loại bỏ rác thải và chất thải độc hại.", 
                         options: [
                             {id: "A", text: "clean up"}, 
                             {id: "B", text: "pick up"}, 
@@ -309,14 +353,15 @@
                         ], 
                         hints: [
                             "<strong>Enemy (Phân loại):</strong> Cụm động từ (Phrasal Verbs).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Tân ngữ phía sau là 'the riverbank' (bờ sông - một địa điểm), mục đích là 'remove rubbish' (loại bỏ rác).", 
-                            "<strong>Logic (Tư duy):</strong> Bạn 'pick up' (nhặt lên) một đồ vật nhỏ (rác), nhưng bạn làm gì với cả một khu vực (bờ sông)? Dọn dẹp hay Nhặt lên?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [dọn dẹp] → chúng ta sẽ [dọn dẹp] bờ sông.<br>B. [nhặt lên] → chúng ta sẽ [nhặt lên] bờ sông (Sai logic).<br>C. [thức dậy] → chúng ta sẽ [thức dậy] bờ sông.<br>D. [từ bỏ] → chúng ta sẽ [từ bỏ] bờ sông."
+                            "<strong>Signal (Dấu hiệu):</strong> 'the riverbank' (bờ sông) và 'remove rubbish' (loại bỏ rác).", 
+                            "<strong>Logic (Tư duy):</strong> 'Pick up' là nhặt lên (hành động nhỏ), còn 'Clean up' là làm sạch cả một khu vực. Bạn làm gì với cả một bờ sông?", 
+                            "<strong>Trans (Dịch đáp án):</strong><br>A. dọn dẹp<br>B. nhặt lên<br>C. thức dậy<br>D. từ bỏ"
                         ] 
                     },
                     { 
                         id: 18, 
                         correct: "B", 
+                        sentence_translation: "Đây là một cơ hội tuyệt vời để tạo ra một sự khác biệt [thực sự] cho tất cả các tình nguyện viên.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "strong"}, 
@@ -325,15 +370,16 @@
                             {id: "D", text: "short"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Kết hợp từ (Collocation/Word Choice).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Danh từ effort. Dựa vào các đáp án là Tính từ.", 
-                            "<strong>Logic (Tư duy):</strong> Trong các cụm từ cố định thường đi với 'make a...efford', tính từ nào thường được dùng để nhấn mạnh sự tác động thực sự hoặc sự khác biệt rõ rệt?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [mạnh mẽ] → tạo ra một cái gì đó [mạnh mẽ].<br>B. [thực sự/rõ rệt] → tạo ra một sự khác biệt/tác động [thực sự].<br>C. [dài] → tạo ra một cái gì đó [dài].<br>D. [ngắn] → tạo ra một cái gì đó [ngắn]."
+                            "<strong>Enemy (Phân loại):</strong> Collocation (Kết hợp từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'make a ... difference' (tạo sự khác biệt).", 
+                            "<strong>Logic (Tư duy):</strong> Trong tiếng Anh, người ta thường nói 'make a REAL difference' (tạo sự khác biệt thực sự) hay 'make a STRONG difference'?", 
+                            "<strong>Trans (Dịch đáp án):</strong><br>A. mạnh mẽ<br>B. thực sự/rõ rệt<br>C. dài<br>D. ngắn"
                         ] 
                     },
                     { 
                         id: 19, 
                         correct: "C", 
+                        sentence_translation: "Bữa trưa sẽ [được cung cấp].",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "provide"}, 
@@ -342,10 +388,10 @@
                             {id: "D", text: "providing"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Cấu trúc Bị động (Passive Voice).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Chủ ngữ 'Lunch' (Bữa trưa - vật) + động từ 'will be'.", 
-                            "<strong>Logic (Tư duy):</strong> Bữa trưa có tự cung cấp được không hay phải 'được cung cấp'? Sau 'will be', động từ cần ở dạng nào để tạo thành câu bị động?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [cung cấp] (nguyên thể) → Bữa trưa sẽ [tự cung cấp].<br>B. [cung cấp] (chia s/es) → Sai ngữ pháp.<br>C. [được cung cấp] (V3/ed) → Bữa trưa sẽ [được cung cấp] (bởi nhà trường).<br>D. [đang cung cấp] (V-ing) → Bữa trưa sẽ [đang cung cấp]."
+                            "<strong>Enemy (Phân loại):</strong> Bị động (Passive Voice).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Chủ ngữ 'Lunch' (vật) + 'will be'.", 
+                            "<strong>Logic (Tư duy):</strong> Bữa trưa có tự 'cung cấp' được không? Sau 'be' cần V3/ed để tạo thể bị động.", 
+                            "<strong>Trans (Dịch đáp án):</strong><br>A. cung cấp (V-inf)<br>B. cung cấp (V-s)<br>C. được cung cấp (V3)<br>D. đang cung cấp (V-ing)"
                         ] 
                     }
                 ]
@@ -369,6 +415,7 @@
                     { 
                         id: 17, 
                         correct: "B", 
+                        sentence_translation: "Tiền đặt cọc [có thể được hoàn lại] nếu thông báo hủy được nhận trước ít nhất 14 ngày.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "avoidable"}, 
@@ -378,14 +425,15 @@
                         ], 
                         hints: [
                             "<strong>Enemy (Phân loại):</strong> Từ vựng (Tính từ đuôi -able).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Ngữ cảnh 'cancellation' (hủy bỏ) và tiền cọc (deposit).", 
-                            "<strong>Logic (Tư duy):</strong> Khi hủy dịch vụ sớm, điều gì thường xảy ra với tiền đặt cọc? Nó có được 'trả lại' không?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [có thể tránh được] → Tiền cọc thì [tránh được].<br>B. [có thể hoàn tiền] → Tiền cọc thì [được hoàn lại].<br>C. [có thể hiểu được] → Tiền cọc thì [dễ hiểu].<br>D. [có thể thay đổi] → Tiền cọc thì [thay đổi được]."
+                            "<strong>Signal (Dấu hiệu):</strong> 'cancellation' (hủy bỏ) và 'deposit' (tiền cọc).", 
+                            "<strong>Logic (Tư duy):</strong> Khi hủy dịch vụ đúng hạn thì tiền cọc sẽ thế nào?", 
+                            "<strong>Trans (Dịch đáp án):</strong><br>A. tránh được<br>B. được hoàn lại<br>C. dễ hiểu<br>D. có thể thay đổi"
                         ] 
                     },
                     { 
                         id: 18, 
                         correct: "C", 
+                        sentence_translation: "Phí [xử lý] là 10 đô la.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "complaining"}, 
@@ -394,15 +442,16 @@
                             {id: "D", text: "punishing"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Kết hợp từ chuyên ngành (Business Collocation).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Danh từ 'fee' (phí) và mức phí nhỏ ($10).", 
-                            "<strong>Logic (Tư duy):</strong> Loại phí nào thường được thu để chi trả cho việc xử lý giấy tờ, thủ tục hành chính?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [phàn nàn] → phí [phàn nàn].<br>B. [tiết kiệm] → phí [tiết kiệm].<br>C. [xử lý] → phí [xử lý] (thủ tục/hồ sơ).<br>D. [trừng phạt] → phí [trừng phạt]."
+                            "<strong>Enemy (Phân loại):</strong> Từ chuyên ngành (Collocation).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'fee' (phí).", 
+                            "<strong>Logic (Tư duy):</strong> Phí thu để thực hiện các thủ tục giấy tờ gọi là gì?", 
+                            "<strong>Trans (Dịch đáp án):</strong><br>A. phàn nàn<br>B. tiết kiệm<br>C. xử lý (hồ sơ)<br>D. trừng phạt"
                         ] 
                     },
                     { 
                         id: 19, 
                         correct: "B", 
+                        sentence_translation: "Việc chuyển tiền cọc sang khóa học khác là [phụ thuộc vào] sự còn chỗ trống trong khóa học đó.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "continental"}, 
@@ -411,10 +460,10 @@
                             {id: "D", text: "arrival"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Từ vựng nâng cao & Giới từ đi kèm.", 
-                            "<strong>Signal (Dấu hiệu):</strong> Giới từ 'upon' đứng ngay sau ô trống.", 
-                            "<strong>Logic (Tư duy):</strong> Cụm từ nào mang nghĩa 'phụ thuộc vào' hoặc 'tùy thuộc vào' điều kiện nào đó (ở đây là 'sự còn chỗ')? Contingent + ...?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [thuộc lục địa] → là [lục địa] dựa trên sự còn chỗ.<br>B. [phụ thuộc vào] → là [phụ thuộc] vào sự còn chỗ.<br>C. [có thể thích nghi] → là [thích nghi] dựa trên sự còn chỗ.<br>D. [sự đến] → là [sự đến] dựa trên sự còn chỗ."
+                            "<strong>Enemy (Phân loại):</strong> Từ vựng nâng cao.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Giới từ 'upon' phía sau.", 
+                            "<strong>Logic (Tư duy):</strong> Cụm 'Contingent upon' = 'Dependent on' (Phụ thuộc vào).", 
+                            "<strong>Trans (Dịch đáp án):</strong><br>A. thuộc lục địa<br>B. phụ thuộc vào<br>C. thích nghi<br>D. sự đến"
                         ] 
                     }
                 ]
@@ -438,6 +487,7 @@
                     { 
                         id: 17, 
                         correct: "D", 
+                        sentence_translation: "Nó được [bao quanh] bởi cây cối và hoa lá.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "located"}, 
@@ -446,15 +496,16 @@
                             {id: "D", text: "surrounded"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Từ vựng (Phân biệt từ gần nghĩa/Bị động).", 
+                            "<strong>Enemy (Phân loại):</strong> Từ vựng.", 
                             "<strong>Signal (Dấu hiệu):</strong> 'by trees and flowers' (bởi cây và hoa).", 
-                            "<strong>Logic (Tư duy):</strong> Công viên 'được đặt tại' (located/situated) hay 'được bao quanh' (surrounded) bởi cây cối? 'Located' thường đi với giới từ 'in/at/on', còn 'by' đi với từ nào?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [được tọa lạc] → Nó được [tọa lạc] bởi cây cối.<br>B. [được nằm ở] → Nó được [nằm ở] bởi cây cối.<br>C. [được làm] → Nó được [làm] bởi cây cối.<br>D. [được bao quanh] → Nó được [bao quanh] bởi cây cối."
+                            "<strong>Logic (Tư duy):</strong> 'Located' thường đi với 'in/at'. Còn từ nào đi với 'by' mang nghĩa được bao bọc?", 
+                            "<strong>Trans (Dịch đáp án):</strong><br>A. tọa lạc<br>B. nằm ở<br>C. làm<br>D. bao quanh"
                         ] 
                     },
                     { 
                         id: 18, 
                         correct: "A", 
+                        sentence_translation: "Du khách có thể tận hưởng việc [đi bộ] dọc theo những con đường mòn đẹp mắt.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "walking"}, 
@@ -463,15 +514,16 @@
                             {id: "D", text: "walks"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Dạng động từ sau 'Enjoy'.", 
-                            "<strong>Signal (Dấu hiệu):</strong> Động từ 'enjoy' đứng trước.", 
-                            "<strong>Logic (Tư duy):</strong> Quy tắc cơ bản: Sau các động từ chỉ sự yêu thích (enjoy, love, like, dislike...) thì động từ đi kèm phải ở dạng nào?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [đi bộ] (V-ing) → Du khách có thể tận hưởng việc [đi bộ]...<br>B. [để đi bộ] (To V) → Tận hưởng [để đi bộ]...<br>C. [để được đi bộ] (Bị động) → Tận hưởng [để được dắt đi]...<br>D. [đi bộ] (Số ít) → Sai ngữ pháp."
+                            "<strong>Enemy (Phân loại):</strong> Verb Form (V-ing/To V).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Động từ 'enjoy'.", 
+                            "<strong>Logic (Tư duy):</strong> Sau 'enjoy', 'love', 'like' luôn là V-ing.", 
+                            "<strong>Trans (Dịch đáp án):</strong><br>A. đi bộ (V-ing)<br>B. để đi bộ<br>C. được đi bộ<br>D. đi bộ (số ít)"
                         ] 
                     },
                     { 
                         id: 19, 
                         correct: "C", 
+                        sentence_translation: "Nếu bạn có [bất kỳ] câu hỏi nào, hãy liên hệ với chúng tôi qua email.",
                         signalIds: [], 
                         options: [
                             {id: "A", text: "much"}, 
@@ -480,17 +532,17 @@
                             {id: "D", text: "some"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Lượng từ (Quantifiers).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Mệnh đề điều kiện 'If' + danh từ đếm được 'questions'.", 
-                            "<strong>Logic (Tư duy):</strong> Trong câu điều kiện (If) hoặc câu nghi vấn/phủ định, từ nào thường được dùng để chỉ 'bất cứ' cái gì?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [nhiều] (dùng cho không đếm được) → Nếu bạn có [nhiều] câu hỏi.<br>B. [nhiều] (đếm được) → Nếu bạn có [nhiều] câu hỏi (Cũng đúng ngữ pháp nhưng ít tự nhiên hơn trong câu 'If').<br>C. [bất cứ] → Nếu bạn có [bất cứ] câu hỏi nào.<br>D. [một vài] → Nếu bạn có [một vài] câu hỏi."
+                            "<strong>Enemy (Phân loại):</strong> Lượng từ.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Câu điều kiện 'If' + 'questions'.", 
+                            "<strong>Logic (Tư duy):</strong> Trong câu điều kiện hoặc câu phủ định/nghi vấn, từ nào mang nghĩa 'bất cứ'?", 
+                            "<strong>Trans (Dịch đáp án):</strong><br>A. nhiều (không đếm được)<br>B. nhiều (đếm được)<br>C. bất kỳ<br>D. một vài"
                         ] 
                     }
                 ]
             }
         ];
 
-        // --- APP LOGIC GIỮ NGUYÊN ---
+        // --- APP LOGIC ---
         const app = {
             state: { exIdx: 0, currentScore: 0, maxScore: 0, qMap: {} },
 
@@ -549,11 +601,16 @@
                 this.renderHints(realIndex, qId, qData, qState);
                 this.renderOptions(realIndex, qId, qData, qState);
 
+                // --- XỬ LÝ PHẦN DỊCH ---
+                document.getElementById('trans-content').classList.remove('show');
+                document.querySelector('.trans-toggle-btn').innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                const transText = qData.sentence_translation || "Chưa có bản dịch cho câu này.";
+                document.getElementById('trans-content').innerHTML = transText;
+
                 document.getElementById('empty-state').style.display = 'none';
                 document.getElementById('q-card-area').style.display = 'block';
                 document.getElementById('question-panel').classList.add('active');
                 
-                // --- AUTO-FOCUS TOP 1/3 ---
                 if(window.innerWidth <= 900 && gap) {
                     setTimeout(() => {
                         const container = document.querySelector('.main-content');
@@ -633,6 +690,23 @@
                     }
                     container.appendChild(btn);
                 });
+            },
+
+            toggleTranslation: function() {
+                const box = document.getElementById('trans-content');
+                const btn = document.querySelector('.trans-toggle-btn');
+                
+                if (box.classList.contains('show')) {
+                    box.classList.remove('show');
+                    btn.innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                    btn.style.backgroundColor = "#f8f9fa";
+                    btn.style.color = "var(--primary)";
+                } else {
+                    box.classList.add('show');
+                    btn.innerHTML = '<i class="fas fa-chevron-up"></i> Ẩn dịch';
+                    btn.style.backgroundColor = "var(--primary)";
+                    btn.style.color = "white";
+                }
             },
 
             submitAnswer: function(exIndex, qId, choiceId) {
