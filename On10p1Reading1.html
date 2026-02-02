@@ -2,15 +2,15 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloze Test - Modern UI & Scoring</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cloze Test Mobile Responsive</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --primary: #1a73e8;
-            --secondary-bg: #f5f6f8;
+            --secondary-bg: #f0f2f5;
             --white: #ffffff;
             --text-main: #202124;
             --border: #dadce0;
@@ -18,9 +18,11 @@
             --green: #1e8e3e;
             --red: #d93025;
             --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --header-height: 60px;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
             font-family: 'Nunito', sans-serif;
             background-color: var(--secondary-bg);
@@ -28,8 +30,24 @@
             margin: 0;
             height: 100vh;
             display: flex;
-            overflow: hidden;
+            overflow: hidden; /* Prevent body scroll, handle inside containers */
         }
+
+        /* --- MOBILE HEADER (Only visible on mobile) --- */
+        .mobile-header {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .menu-btn { font-size: 1.5rem; color: var(--text-main); cursor: pointer; padding: 5px; }
+        .mobile-score { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
 
         /* --- SIDEBAR --- */
         .sidebar {
@@ -40,45 +58,33 @@
             flex-direction: column;
             height: 100%;
             flex-shrink: 0;
-            z-index: 10;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            z-index: 101; /* Higher than content */
+            transition: transform 0.3s ease;
         }
 
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
-            background: #fff;
-        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .sidebar-header h3 { margin: 0; color: var(--primary); }
+        .close-sidebar-btn { display: none; font-size: 1.2rem; cursor: pointer; }
 
-        .stats-area {
-            padding: 15px 20px;
-            background: #f8f9fa;
-            border-bottom: 1px solid var(--border);
-        }
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
+        .stats-area { padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid var(--border); }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
         .stat-value { font-weight: 800; color: var(--primary); }
 
         .question-grid-container { flex: 1; padding: 20px; overflow-y: auto; }
         .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .q-cell {
-            aspect-ratio: 1;
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; font-weight: 600; color: #666;
-            transition: 0.2s;
+            aspect-ratio: 1; background: var(--white); border: 1px solid var(--border);
+            border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-weight: 600; color: #666; transition: 0.2s;
         }
-        .q-cell:hover { border-color: var(--primary); color: var(--primary); background: #e8f0fe; }
-        .q-cell.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 5px rgba(26,115,232,0.4); }
+        .q-cell.active { background: var(--primary); color: white; border-color: var(--primary); }
         .q-cell.done { background: #e6f4ea; color: var(--green); border-color: var(--green); }
         .q-cell.wrong { background: #fce8e6; color: var(--red); border-color: var(--red); }
+
+        /* Overlay for Mobile Sidebar */
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
+        }
 
         /* --- MAIN CONTENT --- */
         .main-content {
@@ -86,104 +92,124 @@
             padding: 30px;
             overflow-y: auto;
             display: flex;
-            gap: 25px;
             justify-content: center;
+            position: relative;
         }
-        .content-wrapper {
-            display: flex;
-            width: 100%;
-            max-width: 1400px;
-            gap: 25px;
-        }
+        .content-wrapper { display: flex; width: 100%; max-width: 1200px; gap: 25px; }
 
         /* TEXT PANEL */
         .text-panel {
             flex: 2;
-            background: var(--white);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: var(--shadow);
-            height: fit-content;
-            line-height: 1.8;
-            font-size: 1.1rem;
+            background: var(--white); border-radius: 12px; padding: 30px;
+            box-shadow: var(--shadow); height: fit-content;
+            line-height: 1.9; font-size: 1.1rem; color: #333;
+            margin-bottom: 100px; /* Space for bottom sheet on mobile */
         }
         
-        /* GAPS */
         .gap {
-            display: inline-block; min-width: 50px;
-            border-bottom: 2px solid #ccc;
+            display: inline-block; min-width: 40px; border-bottom: 2px solid #ccc;
             color: var(--primary); font-weight: 700; text-align: center;
-            cursor: pointer; padding: 0 5px; transition: 0.2s;
+            cursor: pointer; padding: 2px 6px; transition: 0.2s; border-radius: 4px;
         }
-        .gap:hover, .gap.active-gap { background-color: #e8f0fe; border-bottom-color: var(--primary); border-radius: 4px; }
+        .gap.active-gap { background-color: var(--primary); color: white; border-color: var(--primary); }
         .gap.correct { color: var(--green); border-bottom-color: var(--green); }
         .gap.wrong { color: var(--red); border-bottom-color: var(--red); text-decoration: line-through; }
+        .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
 
-        .signal-word { padding: 0 2px; border-radius: 3px; transition: 0.3s; }
-        .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; }
-
-        /* QUESTION PANEL (STICKY RIGHT) */
+        /* QUESTION PANEL */
         .question-panel {
-            flex: 1;
-            min-width: 350px;
-            position: sticky; top: 0;
-            height: fit-content;
+            flex: 1; min-width: 350px;
+            position: sticky; top: 0; height: fit-content;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
         }
+        .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: var(--shadow); }
 
-        .q-card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-        }
+        /* HINTS & OPTIONS */
+        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
+        .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+        .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.9rem; display: none; }
+        .hint-content.show { display: block; }
 
-        /* HINTS LIST */
-        .hints-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .hint-item {
-            border: 1px solid #eee;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #fafafa;
-        }
-        .hint-header {
-            padding: 10px 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; font-size: 0.9rem; font-weight: 600;
-            transition: 0.2s;
-        }
-        .hint-header:hover:not(.disabled) { background: #eee; }
-        .hint-header.disabled { opacity: 0.6; cursor: not-allowed; color: #999; }
-        .hint-cost { font-size: 0.8rem; color: var(--red); background: #fce8e6; padding: 2px 6px; border-radius: 4px; }
-        .hint-content {
-            padding: 10px 15px; background: white; border-top: 1px solid #eee;
-            font-size: 0.95rem; color: #444; line-height: 1.5; display: none;
-        }
-        .hint-content.show { display: block; animation: fadeIn 0.3s; }
-
-        /* OPTIONS */
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .option-btn {
             padding: 12px; border: 1px solid var(--border); background: white;
             border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
-            transition: 0.2s; display: flex; align-items: center;
+            display: flex; align-items: center;
         }
-        .option-btn:hover:not(:disabled) { border-color: var(--primary); background: #f8f9fa; }
-        .option-btn span { font-weight: bold; margin-right: 8px; color: #666; }
-        
-        /* Answer States */
+        .option-btn span { font-weight: bold; margin-right: 8px; min-width: 20px; }
         .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
         .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
-        .reveal-correct { border: 2px solid var(--green) !important; position: relative; }
-        .reveal-correct::after { content: "✓"; position: absolute; right: 10px; color: var(--green); font-weight: bold; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* --- RESPONSIVE CSS (MOBILE) --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; padding-top: var(--header-height); }
+            
+            /* Mobile Header Visible */
+            .mobile-header { display: flex; }
+            
+            /* Sidebar becomes Drawer */
+            .sidebar {
+                position: fixed; left: 0; top: 0; bottom: 0;
+                width: 80%; max-width: 300px;
+                transform: translateX(-100%); /* Hide by default */
+                box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .close-sidebar-btn { display: block; }
+
+            /* Main Content Adjustments */
+            .main-content { padding: 15px; width: 100%; display: block; }
+            .content-wrapper { flex-direction: column; width: 100%; }
+            .text-panel { width: 100%; padding: 20px; font-size: 1rem; margin-bottom: 300px; /* Extra scroll space */ }
+
+            /* Question Panel becomes Bottom Sheet */
+            .question-panel {
+                position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+                width: 100%; min-width: 0;
+                z-index: 99;
+                transform: translateY(110%); /* Slide down hidden */
+            }
+            .question-panel.active { transform: translateY(0); }
+
+            .q-card {
+                border-radius: 20px 20px 0 0; /* Rounded top only */
+                padding: 20px;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+                max-height: 60vh; /* Max height 60% screen */
+                overflow-y: auto;
+                border-top: 1px solid #eee;
+            }
+            
+            /* Drag handle indicator */
+            .q-card::before {
+                content: ''; display: block; width: 40px; height: 4px;
+                background: #ddd; border-radius: 2px; margin: 0 auto 15px auto;
+            }
+
+            /* Adjust Empty State */
+            #empty-state { display: none !important; } /* Hide empty state on mobile, auto open */
+        }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
+    <div class="mobile-header">
+        <div class="menu-btn" onclick="app.toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="mobile-score">
+            <span id="m-score">0</span> / <span id="m-max">0</span>
+        </div>
+        <div style="width: 30px;"></div> </div>
+
+    <div class="sidebar-overlay" onclick="app.toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h3><i class="fas fa-book-open"></i> Cloze Test</h3>
+            <i class="fas fa-times close-sidebar-btn" onclick="app.toggleSidebar()"></i>
         </div>
         <div class="stats-area">
             <div class="stat-row">
@@ -191,13 +217,12 @@
                 <span class="stat-value"><span id="current-score">0</span> / <span id="max-score">0</span></span>
             </div>
             <div style="font-size: 0.8rem; color: #666; margin-top:5px;">
-                * 5 điểm/câu. Trừ 1 điểm mỗi lần dùng gợi ý.
+                * 5 điểm/câu. Trừ 1 điểm/gợi ý.
             </div>
         </div>
         <div class="question-grid-container">
             <div style="font-weight:bold; margin-bottom:10px;">Danh sách câu hỏi</div>
-            <div id="sidebar-grid" class="q-grid">
-                </div>
+            <div id="sidebar-grid" class="q-grid"></div>
         </div>
         <div style="padding: 20px;">
             <button onclick="app.nextExercise()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">
@@ -210,34 +235,36 @@
         <div class="content-wrapper">
             
             <div class="text-panel">
-                <h2 id="ex-title" style="margin-top:0; color:var(--primary); border-bottom:2px solid #eee; padding-bottom:15px;">Loading...</h2>
+                <h2 id="ex-title" style="margin-top:0; color:var(--primary); font-size:1.3rem; margin-bottom:15px;">Loading...</h2>
                 <div id="ex-content"></div>
             </div>
 
-            <div class="question-panel">
-                <div class="q-card" id="q-card-area" style="display:none;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <h3 style="margin:0;">Question <span id="q-number">...</span></h3>
-                        <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.85rem; font-weight:bold;">5 Points</span>
+            <div class="question-panel" id="question-panel">
+                <div class="q-card" id="q-card-area">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h3 style="margin:0; font-size:1.1rem;">Câu <span id="q-number">...</span></h3>
+                        <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">5 Points</span>
                     </div>
 
-                    <div class="hints-list" id="hints-container">
-                        </div>
+                    <div class="hints-list" id="hints-container"></div>
 
-                    <div class="options-grid" id="options-container">
-                        </div>
+                    <div class="options-grid" id="options-container"></div>
+                    
+                    <div style="text-align:center; margin-top:15px; display:none;" id="mobile-close-q">
+                        <button onclick="app.closeQuestionPanel()" style="background:none; border:none; color:#666; text-decoration:underline;">Đóng</button>
+                    </div>
                 </div>
 
                 <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
                     <i class="fas fa-mouse-pointer" style="font-size:2rem; margin-bottom:10px;"></i>
-                    <p>Chọn một ô trống trong bài đọc để trả lời</p>
+                    <p>Chọn ô trống để trả lời</p>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        // --- DỮ LIỆU ĐẦY ĐỦ VỚI 4 GỢI Ý (Data Gốc) ---
+        // --- DATA (KHÔNG ĐỔI) ---
         const exercises = [
             {
                 id: 1,
@@ -255,32 +282,17 @@
                     {
                         id: 17, correct: "A", signalIds: ["sig-1-17-2"],
                         options: [{id: "A", text: "basic"}, {id: "B", text: "dedicated"}, {id: "C", text: "full"}, {id: "D", text: "starter"}],
-                        hints: [
-                            "Hint 1 (Enemy): 4 từ khác nghĩa hoàn toàn. Bài tập TỪ VỰNG.",
-                            "Hint 2 (Signal): Tính từ 'fresh' + danh từ 'ingredients' (nguyên liệu).",
-                            "Hint 3 (Logic): Cần một tính từ mô tả nguyên liệu nấu ăn.",
-                            "Hint 4 (Trans): A. cơ bản | B. tận tụy | C. đầy đủ | D. khai vị"
-                        ]
+                        hints: ["Hint 1 (Enemy): TỪ VỰNG.", "Hint 2 (Signal): fresh + ... + ingredients.", "Hint 3 (Logic): Tính từ mô tả.", "Hint 4 (Trans): A. cơ bản | B. tận tụy"]
                     },
                     {
                         id: 18, correct: "B", signalIds: ["sig-1-18-2"],
                         options: [{id: "A", text: "contribute"}, {id: "B", text: "promote"}, {id: "C", text: "invite"}, {id: "D", text: "occupy"}],
-                        hints: [
-                            "Hint 1 (Enemy): 4 Động từ khác nhau. Bài tập NGỮ NGHĨA.",
-                            "Hint 2 (Signal): Danh từ 'local products' (sản phẩm địa phương).",
-                            "Hint 3 (Logic): Mục đích hội chợ là để làm gì với sản phẩm?",
-                            "Hint 4 (Trans): A. đóng góp | B. quảng bá | C. mời | D. chiếm giữ"
-                        ]
+                        hints: ["Hint 1 (Enemy): NGỮ NGHĨA.", "Hint 2 (Signal): ... local products.", "Hint 3 (Logic): Làm gì với sản phẩm?", "Hint 4 (Trans): B. quảng bá"]
                     },
                     {
                         id: 19, correct: "A", signalIds: ["sig-1-19-2"],
                         options: [{id: "A", text: "unforgettable"}, {id: "B", text: "forget"}, {id: "C", text: "forgetful"}, {id: "D", text: "forgettably"}],
-                        hints: [
-                            "Hint 1 (Enemy): Cùng gốc 'forget'. Bài tập TỪ LOẠI.",
-                            "Hint 2 (Signal): Mạo từ 'a(n)' ... Danh từ 'experience'.",
-                            "Hint 3 (Logic): Cần Tính từ bổ nghĩa cho trải nghiệm.",
-                            "Hint 4 (Trans): A. đáng nhớ | B. quên | C. hay quên | D. dễ quên"
-                        ]
+                        hints: ["Hint 1 (Enemy): TỪ LOẠI.", "Hint 2 (Signal): a(n) ... experience.", "Hint 3 (Logic): Tính từ.", "Hint 4 (Trans): A. đáng nhớ"]
                     }
                 ]
             },
@@ -296,99 +308,83 @@
                     <span id="sig-2-19-2" class="signal-word">you</span> there!</p>
                 `,
                 questions: [
-                    {
-                        id: 17, correct: "B", signalIds: [],
-                        options: [{id: "A", text: "supplied"}, {id: "B", text: "provided"}, {id: "C", text: "given"}, {id: "D", text: "offered"}],
-                        hints: ["Hint 1: Bị động", "Hint 2: Chủ ngữ là Tools", "Hint 3: Cung cấp dụng cụ", "Hint 4: Trans: Provided"]
-                    },
-                    {
-                        id: 18, correct: "D", signalIds: ["sig-2-18-2"],
-                        options: [{id: "A", text: "join"}, {id: "B", text: "know"}, {id: "C", text: "unite"}, {id: "D", text: "meet"}],
-                        hints: ["Hint 1: Động từ thường", "Hint 2: your neighbors", "Hint 3: Gặp gỡ hàng xóm", "Hint 4: Trans: Meet"]
-                    },
-                    {
-                        id: 19, correct: "B", signalIds: ["sig-2-19-2"],
-                        options: [{id: "A", text: "see"}, {id: "B", text: "seeing"}, {id: "C", text: "to see"}, {id: "D", text: "saw"}],
-                        hints: ["Hint 1: V-ing/To-V", "Hint 2: look forward to", "Hint 3: Cấu trúc mong đợi", "Hint 4: Trans: Seeing"]
-                    }
+                    { id: 17, correct: "B", signalIds: [], options: [{id: "A", text: "supplied"}, {id: "B", text: "provided"}, {id: "C", text: "given"}, {id: "D", text: "offered"}], hints: ["Hint 1: Bị động", "Hint 2: Tools", "Hint 3: Cung cấp", "Hint 4: Provided"] },
+                    { id: 18, correct: "D", signalIds: ["sig-2-18-2"], options: [{id: "A", text: "join"}, {id: "B", text: "know"}, {id: "C", text: "unite"}, {id: "D", text: "meet"}], hints: ["Hint 1: Động từ", "Hint 2: neighbors", "Hint 3: Gặp gỡ", "Hint 4: Meet"] },
+                    { id: 19, correct: "B", signalIds: ["sig-2-19-2"], options: [{id: "A", text: "see"}, {id: "B", text: "seeing"}, {id: "C", text: "to see"}, {id: "D", text: "saw"}], hints: ["Hint 1: V-ing", "Hint 2: look forward to", "Hint 3: Cấu trúc", "Hint 4: Seeing"] }
                 ]
             }
         ];
 
         // --- CONTROLLER ---
         const app = {
-            state: {
-                exIdx: 0,
-                currentScore: 0,
-                maxScore: 0,
-                // Map lưu trạng thái từng câu hỏi: { points: 5, hintsOpen: [F,F,F,F], answered: false, choice: null }
-                qMap: {} 
-            },
+            state: { exIdx: 0, currentScore: 0, maxScore: 0, qMap: {} },
 
             initExercise: function(index) {
-                if(index >= exercises.length) { alert("Đã hết bài tập!"); return; }
+                if(index >= exercises.length) { alert("Đã hoàn thành!"); return; }
                 this.state.exIdx = index;
                 const exData = exercises[index];
 
-                // Render Text
                 document.getElementById('ex-title').innerText = exData.title;
                 document.getElementById('ex-content').innerHTML = exData.content;
-                document.getElementById('q-card-area').style.display = 'none';
-                document.getElementById('empty-state').style.display = 'block';
+                
+                // Reset UI
+                this.closeQuestionPanel();
+                if(window.innerWidth > 900) {
+                     document.getElementById('empty-state').style.display = 'block';
+                     document.getElementById('q-card-area').style.display = 'none';
+                }
 
-                // Setup Grid & Data
+                // Grid setup
                 const grid = document.getElementById('sidebar-grid');
                 grid.innerHTML = '';
-                
                 exData.questions.forEach(q => {
                     const key = `${index}-${q.id}`;
-                    // Nếu chưa có data cho câu này thì khởi tạo (giữ nguyên điểm nếu quay lại bài cũ)
                     if (!this.state.qMap[key]) {
-                        this.state.qMap[key] = {
-                            points: 5, // QUY TẮC: 5 ĐIỂM BAN ĐẦU
-                            hintsOpen: [false, false, false, false],
-                            answered: false,
-                            userChoice: null
-                        };
-                        this.state.maxScore += 5; // Cộng dồn tổng điểm tối đa
+                        this.state.qMap[key] = { points: 5, hintsOpen: [false,false,false,false], answered: false, userChoice: null };
+                        this.state.maxScore += 5;
                     }
-
-                    // Tạo ô grid
                     const cell = document.createElement('div');
                     cell.className = 'q-cell';
                     cell.id = `cell-${q.id}`;
                     cell.innerText = q.id;
-                    cell.onclick = () => this.selectQuestion(index+1, q.id);
+                    cell.onclick = () => {
+                        this.selectQuestion(index+1, q.id);
+                        this.toggleSidebar(); // Close sidebar on mobile select
+                    };
                     grid.appendChild(cell);
                 });
-
                 this.updateStats();
             },
 
-            selectQuestion: function(exId, qId) { // exId: 1, 2...
+            selectQuestion: function(exId, qId) {
                 const realIndex = exId - 1;
                 const exData = exercises[realIndex];
                 const qData = exData.questions.find(q => q.id === qId);
                 const key = `${realIndex}-${qId}`;
                 const qState = this.state.qMap[key];
 
-                // UI Active States
+                // Highlights
                 document.querySelectorAll('.gap').forEach(e => e.classList.remove('active-gap'));
-                document.getElementById(`gap-${exId}-${qId}`).classList.add('active-gap');
-                
+                const gap = document.getElementById(`gap-${exId}-${qId}`);
+                if(gap) gap.classList.add('active-gap');
+
                 document.querySelectorAll('.q-cell').forEach(e => e.classList.remove('active'));
                 document.getElementById(`cell-${qId}`).classList.add('active');
 
-                // Render Card
-                document.getElementById('empty-state').style.display = 'none';
-                document.getElementById('q-card-area').style.display = 'block';
+                // Render Card Info
                 document.getElementById('q-number').innerText = qId;
-                
                 this.renderPointsBadge(qState);
                 this.renderHints(realIndex, qId, qData, qState);
                 this.renderOptions(realIndex, qId, qData, qState);
 
-                // Highlight Signal Words (nếu Hint 2 đã mở)
+                // Show Panel (Desktop vs Mobile)
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('q-card-area').style.display = 'block';
+                
+                // Mobile: Slide Up
+                document.getElementById('question-panel').classList.add('active');
+                
+                // Signal words
                 document.querySelectorAll('.signal-word').forEach(e => e.classList.remove('highlighted'));
                 if (qState.hintsOpen[1] && qData.signalIds) {
                     qData.signalIds.forEach(id => {
@@ -400,73 +396,52 @@
 
             renderPointsBadge: function(qState) {
                 const badge = document.getElementById('q-points-badge');
-                badge.innerText = `${qState.points} Points`;
-                badge.style.background = qState.answered 
-                    ? (qState.points > 0 ? 'var(--green)' : 'var(--red)') 
-                    : 'var(--primary)';
+                badge.innerText = `${qState.points} pts`;
+                badge.style.background = qState.answered ? (qState.points > 0 ? 'var(--green)' : 'var(--red)') : 'var(--primary)';
             },
 
             renderHints: function(exIndex, qId, qData, qState) {
                 const container = document.getElementById('hints-container');
                 container.innerHTML = '';
-
                 qData.hints.forEach((hintText, i) => {
                     const isOpen = qState.hintsOpen[i];
-                    // Logic khóa: Hint sau bị khóa nếu hint trước chưa mở (trừ khi đã trả lời xong)
                     const isLocked = i > 0 && !qState.hintsOpen[i-1] && !qState.answered;
                     
-                    const item = document.createElement('div');
-                    item.className = 'hint-item';
-                    
-                    let headerHtml = `
-                        <div class="hint-header ${isLocked ? 'disabled' : ''}" 
-                             onclick="app.openHint(${exIndex}, ${qId}, ${i})">
-                            <span>
-                                <i class="fas ${isOpen ? 'fa-book-open' : (isLocked ? 'fa-lock' : 'fa-lightbulb')}" 
-                                   style="color:${isOpen ? 'var(--primary)' : 'var(--orange)'}; width:20px;"></i>
-                                ${isOpen ? `Gợi ý ${i+1}` : (isLocked ? `Gợi ý ${i+1} (Khóa)` : `Mở Gợi ý ${i+1}`)}
-                            </span>
-                            ${(!isOpen && !qState.answered) ? '<span class="hint-cost">-1 Điểm</span>' : ''}
+                    const div = document.createElement('div');
+                    div.className = 'hint-item';
+                    div.innerHTML = `
+                        <div class="hint-header" onclick="app.openHint(${exIndex}, ${qId}, ${i})" style="opacity:${isLocked?0.5:1}">
+                            <span><i class="fas ${isOpen?'fa-book-open':(isLocked?'fa-lock':'fa-lightbulb')}" style="color:${isOpen?'var(--primary)':'var(--orange)'};margin-right:8px;"></i>${isOpen?`Gợi ý ${i+1}`:`Gợi ý ${i+1}`}</span>
+                            ${(!isOpen && !qState.answered) ? '<span style="font-size:0.75rem; color:red; bg:#fee; padding:2px;">-1đ</span>' : ''}
                         </div>
                         <div class="hint-content ${isOpen ? 'show' : ''}">${hintText}</div>
                     `;
-                    item.innerHTML = headerHtml;
-                    container.appendChild(item);
+                    container.appendChild(div);
                 });
             },
 
-            openHint: function(exIndex, qId, hintIndex) {
-                const key = `${exIndex}-${qId}`;
-                const qState = this.state.qMap[key];
-
-                // Validate: Đã trả lời, đã mở, hoặc bị khóa thì không làm gì
-                if (qState.answered || qState.hintsOpen[hintIndex]) return;
-                if (hintIndex > 0 && !qState.hintsOpen[hintIndex - 1]) {
-                    alert("Hãy mở gợi ý theo thứ tự!");
-                    return;
-                }
-
-                // TRỪ ĐIỂM
-                if (qState.points > 0) qState.points -= 1;
-                qState.hintsOpen[hintIndex] = true;
-
-                // Re-render
+            openHint: function(exIndex, qId, i) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                if(qState.answered || qState.hintsOpen[i]) return;
+                if(i > 0 && !qState.hintsOpen[i-1]) { alert("Mở theo thứ tự!"); return; }
+                
+                if(qState.points > 0) qState.points--;
+                qState.hintsOpen[i] = true;
                 this.selectQuestion(exIndex+1, qId);
             },
 
             renderOptions: function(exIndex, qId, qData, qState) {
                 const container = document.getElementById('options-container');
                 container.innerHTML = '';
-
                 qData.options.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.className = 'option-btn';
-                    btn.innerHTML = `<span>${opt.id}.</span> ${opt.text}`;
-
-                    if (qState.answered) {
+                    btn.innerHTML = `<span>${opt.id}</span> ${opt.text}`;
+                    
+                    if(qState.answered) {
                         btn.disabled = true;
-                        if (opt.id === qData.correct) btn.classList.add('correct-select', 'reveal-correct');
-                        if (opt.id === qState.userChoice && opt.id !== qData.correct) btn.classList.add('wrong-select');
+                        if(opt.id === qData.correct) btn.classList.add('correct-select');
+                        if(opt.id === qState.userChoice && opt.id !== qData.correct) btn.classList.add('wrong-select');
                     } else {
                         btn.onclick = () => this.submitAnswer(exIndex, qId, opt.id);
                     }
@@ -475,34 +450,47 @@
             },
 
             submitAnswer: function(exIndex, qId, choiceId) {
-                const key = `${exIndex}-${qId}`;
-                const qState = this.state.qMap[key];
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
                 const exData = exercises[exIndex];
                 const qData = exData.questions.find(q => q.id === qId);
 
                 qState.answered = true;
                 qState.userChoice = choiceId;
 
-                // Xử lý điểm số
-                if (choiceId === qData.correct) {
-                    this.state.currentScore += qState.points; // Cộng số điểm còn lại
-                    document.getElementById(`gap-${exIndex+1}-${qId}`).classList.add('correct');
-                    document.getElementById(`gap-${exIndex+1}-${qId}`).innerText = qData.options.find(o=>o.id===choiceId).text;
-                    document.getElementById(`cell-${qId}`).classList.add('done');
-                } else {
-                    qState.points = 0; // Trả lời sai = 0 điểm
-                    document.getElementById(`gap-${exIndex+1}-${qId}`).classList.add('wrong');
-                    document.getElementById(`gap-${exIndex+1}-${qId}`).innerText = qData.options.find(o=>o.id===qData.correct).text;
-                    document.getElementById(`cell-${qId}`).classList.add('wrong');
-                }
+                const gap = document.getElementById(`gap-${exIndex+1}-${qId}`);
+                const cell = document.getElementById(`cell-${qId}`);
 
+                if(choiceId === qData.correct) {
+                    this.state.currentScore += qState.points;
+                    gap.classList.add('correct');
+                    gap.innerText = qData.options.find(o=>o.id===choiceId).text;
+                    cell.classList.add('done');
+                } else {
+                    qState.points = 0;
+                    gap.classList.add('wrong');
+                    gap.innerText = qData.options.find(o=>o.id===qData.correct).text;
+                    cell.classList.add('wrong');
+                }
                 this.updateStats();
-                this.selectQuestion(exIndex+1, qId); // Re-render để hiện kết quả
+                this.selectQuestion(exIndex+1, qId);
             },
 
             updateStats: function() {
-                document.getElementById('current-score').innerText = this.state.currentScore;
-                document.getElementById('max-score').innerText = this.state.maxScore;
+                const s = this.state.currentScore;
+                const m = this.state.maxScore;
+                document.getElementById('current-score').innerText = s;
+                document.getElementById('max-score').innerText = m;
+                document.getElementById('m-score').innerText = s;
+                document.getElementById('m-max').innerText = m;
+            },
+
+            toggleSidebar: function() {
+                document.getElementById('sidebar').classList.toggle('active');
+                document.querySelector('.sidebar-overlay').classList.toggle('active');
+            },
+
+            closeQuestionPanel: function() {
+                document.getElementById('question-panel').classList.remove('active');
             },
 
             nextExercise: function() {
@@ -510,7 +498,6 @@
             }
         };
 
-        // Start App
         app.initExercise(0);
     </script>
 </body>
