@@ -3,389 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reading Part 1 - 3 Levels</title>
-   <script>
-        function checkPassword() {
-            var password = prompt("Vui lòng nhập mật khẩu để truy cập nội dung:");
-            if (password !== "9999") { // Thay "123456" bằng mật khẩu của bạn
-                alert("Mật khẩu sai! Trang sẽ tự động đóng.");
-                window.location.href = "about:blank"; // Chuyển hướng đi nơi khác
-            }
-        }
-        checkPassword(); // Chạy hàm kiểm tra ngay khi load trang
-    </script>
-</head>
-<body>
-    <h1>Chào mừng bạn đến với Thư Viện!</h1>
-    <p>Nội dung này đã được bảo vệ.</p>
-</body>
-</html>
+    <title>Cloze Test - Modern UI & Scoring</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        /* --- 1. SETUP BIẾN MÀU & CẤU HÌNH CHUNG --- */
         :root {
-            --primary-color: #007bff;       /* Xanh dương */
-            --success-color: #28a745;       /* Xanh lá */
-            --error-color: #dc3545;         /* Đỏ */
-            --highlight-color: #ffd700;     /* Vàng Gold - Dùng cho Hint 2 */
-            --bg-color: #f4f6f9;
-            --text-color: #333;
+            --primary: #1a73e8;
+            --secondary-bg: #f5f6f8;
             --white: #ffffff;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --text-main: #202124;
+            --border: #dadce0;
+            --orange: #f59e0b;
+            --green: #1e8e3e;
+            --red: #d93025;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { margin: 0; padding: 20px; background-color: var(--bg-color); color: var(--text-color); }
-
-        /* --- PASSWORD OVERLAY --- */
-        #password-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: white;
-        }
-        #password-input { padding: 10px; font-size: 1.2rem; border-radius: 5px; border: none; margin-bottom: 10px; }
-        #password-btn { padding: 10px 20px; font-size: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; }
-        
-        /* --- 2. LAYOUT FLEXBOX (2 CỘT) --- */
-        .container {
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--secondary-bg);
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh;
             display: flex;
-            flex-wrap: wrap; 
-            justify-content: center;
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-            opacity: 0; transition: opacity 1s; 
+            overflow: hidden;
         }
-        .container.visible { opacity: 1; }
 
-        /* --- CỘT TRÁI: ĐOẠN VĂN --- */
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 300px;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            flex-shrink: 0;
+            z-index: 10;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            background: #fff;
+        }
+        .sidebar-header h3 { margin: 0; color: var(--primary); }
+
+        .stats-area {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--border);
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .stat-value { font-weight: 800; color: var(--primary); }
+
+        .question-grid-container { flex: 1; padding: 20px; overflow-y: auto; }
+        .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .q-cell {
+            aspect-ratio: 1;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-weight: 600; color: #666;
+            transition: 0.2s;
+        }
+        .q-cell:hover { border-color: var(--primary); color: var(--primary); background: #e8f0fe; }
+        .q-cell.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 5px rgba(26,115,232,0.4); }
+        .q-cell.done { background: #e6f4ea; color: var(--green); border-color: var(--green); }
+        .q-cell.wrong { background: #fce8e6; color: var(--red); border-color: var(--red); }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+        }
+        .content-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1400px;
+            gap: 25px;
+        }
+
+        /* TEXT PANEL */
         .text-panel {
-            flex: 0 0 750px; max-width: 100%;
-            background: var(--white); padding: 30px; border-radius: 8px;
-            box-shadow: var(--shadow); font-size: 1.1rem; line-height: 1.8;
+            flex: 2;
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        /* GAPS */
+        .gap {
+            display: inline-block; min-width: 50px;
+            border-bottom: 2px solid #ccc;
+            color: var(--primary); font-weight: 700; text-align: center;
+            cursor: pointer; padding: 0 5px; transition: 0.2s;
+        }
+        .gap:hover, .gap.active-gap { background-color: #e8f0fe; border-bottom-color: var(--primary); border-radius: 4px; }
+        .gap.correct { color: var(--green); border-bottom-color: var(--green); }
+        .gap.wrong { color: var(--red); border-bottom-color: var(--red); text-decoration: line-through; }
+
+        .signal-word { padding: 0 2px; border-radius: 3px; transition: 0.3s; }
+        .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; }
+
+        /* QUESTION PANEL (STICKY RIGHT) */
+        .question-panel {
+            flex: 1;
+            min-width: 350px;
+            position: sticky; top: 0;
             height: fit-content;
         }
 
-        /* --- CỘT PHẢI: BẢNG CÂU HỎI (STICKY) --- */
-        .question-panel {
-            flex: 0 0 450px; max-width: 100%;
-            background: var(--white); padding: 20px; border-radius: 8px;
+        .q-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
             box-shadow: var(--shadow);
-            position: sticky; top: 20px;
-            height: fit-content; max-height: 95vh; overflow-y: auto;
         }
 
-        @media (max-width: 1250px) {
-            .container { flex-direction: column; align-items: center; }
-            .text-panel, .question-panel { flex: 1; width: 100%; max-width: 800px; }
-            .question-panel { position: static; height: auto; }
+        /* HINTS LIST */
+        .hints-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .hint-item {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fafafa;
         }
-
-        /* --- ELEMENTS --- */
-        .gap {
-            display: inline-block; min-width: 50px;
-            border-bottom: 2px solid var(--primary-color);
-            color: var(--primary-color); font-weight: bold;
-            text-align: center; cursor: pointer; padding: 0 5px;
-            transition: all 0.3s;
-        }
-        .gap:hover, .gap.active { background-color: #eef7ff; border-radius: 4px; }
-        .gap.correct { color: var(--success-color); border-bottom-color: var(--success-color); }
-        .gap.wrong { color: var(--error-color); border-bottom-color: var(--error-color); text-decoration: line-through; }
-
-        .signal-word { transition: background-color 0.5s ease; border-radius: 3px; padding: 0 2px; }
-        .signal-word.highlighted { background-color: var(--highlight-color); font-weight: bold; color: black; }
-
-        /* HEADER SCORE */
-        .header-score {
+        .hint-header {
+            padding: 10px 15px;
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee;
+            cursor: pointer; font-size: 0.9rem; font-weight: 600;
+            transition: 0.2s;
         }
-        .score-display { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
-
-        /* OPTIONS GRID */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .option-btn {
-            padding: 12px; border: 1px solid #ddd; background: white;
-            border-radius: 6px; cursor: pointer; font-size: 1rem;
-            transition: all 0.2s; text-align: left;
-        }
-        .option-btn:hover:not(:disabled) { background-color: #f0f0f0; }
-        
-        /* TRẠNG THÁI ĐÁP ÁN (CHỮ TRẮNG) */
-        .option-btn.correct-select { 
-            background-color: var(--success-color) !important; 
-            color: white !important; 
-            border-color: var(--success-color) !important;
-            font-weight: bold;
-        }
-        .option-btn.wrong-select { 
-            background-color: var(--error-color) !important; 
-            color: white !important; 
-            border-color: var(--error-color) !important;
-            font-weight: bold;
-        }
-        .option-btn.reveal-correct { 
-            border: 2px solid var(--success-color); 
-            color: var(--success-color); 
-            font-weight: bold;
-            position: relative;
-        }
-        .option-btn.reveal-correct::after {
-            content: "✓"; position: absolute; right: 10px; font-weight: bold;
-        }
-        .option-btn:disabled { cursor: default; opacity: 0.9; }
-
-        /* HINTS */
-        .hints-container { display: flex; flex-direction: column; gap: 8px; }
-        .hint-btn {
-            width: 100%; text-align: left; padding: 10px;
-            background: #f8f9fa; border: 1px solid #eee; border-radius: 5px;
-            cursor: pointer; font-weight: 600; color: #555;
-            display: flex; justify-content: space-between;
-        }
-        .hint-btn:hover:not(:disabled) { background: #e2e6ea; }
-        .hint-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #eee; }
-        
-        .hint-cost { font-size: 0.8em; color: var(--error-color); }
+        .hint-header:hover:not(.disabled) { background: #eee; }
+        .hint-header.disabled { opacity: 0.6; cursor: not-allowed; color: #999; }
+        .hint-cost { font-size: 0.8rem; color: var(--red); background: #fce8e6; padding: 2px 6px; border-radius: 4px; }
         .hint-content {
-            padding: 10px; background: #fff; display: none;
-            border: 1px solid #eee; border-top: none;
-            font-size: 0.95rem; color: #444; line-height: 1.5;
+            padding: 10px 15px; background: white; border-top: 1px solid #eee;
+            font-size: 0.95rem; color: #444; line-height: 1.5; display: none;
         }
         .hint-content.show { display: block; animation: fadeIn 0.3s; }
 
-        /* NEXT BUTTON */
-        .nav-btn {
-            margin-top: 20px; width: 100%; padding: 15px;
-            background: var(--primary-color); color: white;
-            border: none; border-radius: 5px; font-size: 1.1rem; font-weight: bold;
-            cursor: pointer; display: none; 
+        /* OPTIONS */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .option-btn {
+            padding: 12px; border: 1px solid var(--border); background: white;
+            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
+            transition: 0.2s; display: flex; align-items: center;
         }
-        .nav-btn:hover { background: #0056b3; }
+        .option-btn:hover:not(:disabled) { border-color: var(--primary); background: #f8f9fa; }
+        .option-btn span { font-weight: bold; margin-right: 8px; color: #666; }
+        
+        /* Answer States */
+        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
+        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+        .reveal-correct { border: 2px solid var(--green) !important; position: relative; }
+        .reveal-correct::after { content: "✓"; position: absolute; right: 10px; color: var(--green); font-weight: bold; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div id="password-overlay">
-        <h2>🔒 Yêu cầu Mật khẩu</h2>
-        <p>Nhập mật khẩu để truy cập 3 bài Cloze Test (Gợi ý: 1234)</p>
-        <input type="password" id="password-input" placeholder="Nhập mật khẩu...">
-        <button id="password-btn" onclick="app.checkPassword()">Vào làm bài</button>
-        <p id="pass-error" style="color: #ff6b6b; display: none; margin-top: 10px;">Mật khẩu sai!</p>
-    </div>
-
-    <div class="container" id="main-container">
-        <div class="text-panel">
-            <h2 id="ex-title">Loading...</h2>
-            <div id="ex-content"></div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-book-open"></i> Cloze Test</h3>
         </div>
-
-        <div class="question-panel">
-            <div class="header-score">
-                <span>Cloze Test Series</span>
-                <span class="score-display">
-                    Score: <span id="current-score">0</span> / <span id="max-score">0</span>
-                </span>
+        <div class="stats-area">
+            <div class="stat-row">
+                <span>Điểm của bạn:</span>
+                <span class="stat-value"><span id="current-score">0</span> / <span id="max-score">0</span></span>
             </div>
-
-            <div id="game-area">
-                <div style="text-align: center; color: #888; padding: 20px;">
-                    Hãy chọn một ô trống bên trái để bắt đầu.
+            <div style="font-size: 0.8rem; color: #666; margin-top:5px;">
+                * 5 điểm/câu. Trừ 1 điểm mỗi lần dùng gợi ý.
+            </div>
+        </div>
+        <div class="question-grid-container">
+            <div style="font-weight:bold; margin-bottom:10px;">Danh sách câu hỏi</div>
+            <div id="sidebar-grid" class="q-grid">
                 </div>
-            </div>
-
-            <button id="next-ex-btn" class="nav-btn" onclick="app.nextExercise()">
-                Chuyển sang bài tiếp theo ➡
+        </div>
+        <div style="padding: 20px;">
+            <button onclick="app.nextExercise()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">
+                Bài tiếp theo <i class="fas fa-arrow-right"></i>
             </button>
         </div>
-    </div>
+    </aside>
+
+    <main class="main-content" id="main-container">
+        <div class="content-wrapper">
+            
+            <div class="text-panel">
+                <h2 id="ex-title" style="margin-top:0; color:var(--primary); border-bottom:2px solid #eee; padding-bottom:15px;">Loading...</h2>
+                <div id="ex-content"></div>
+            </div>
+
+            <div class="question-panel">
+                <div class="q-card" id="q-card-area" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="margin:0;">Question <span id="q-number">...</span></h3>
+                        <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.85rem; font-weight:bold;">5 Points</span>
+                    </div>
+
+                    <div class="hints-list" id="hints-container">
+                        </div>
+
+                    <div class="options-grid" id="options-container">
+                        </div>
+                </div>
+
+                <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
+                    <i class="fas fa-mouse-pointer" style="font-size:2rem; margin-bottom:10px;"></i>
+                    <p>Chọn một ô trống trong bài đọc để trả lời</p>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        // --- DATA STORE (3 ĐỀ MỚI) ---
+        // --- DỮ LIỆU ĐẦY ĐỦ VỚI 4 GỢI Ý (Data Gốc) ---
         const exercises = [
             {
                 id: 1,
-                title: "Đề 1: Food Fair Advertisement",
+                title: "Food Fair Advertisement",
                 content: `
-                    <h3 style="margin-top:0">Discover the Best of Hai Phong at Our Food Fair!</h3>
-                    <p>
-                        Join us this weekend for the Hai Duong Food Fair! Taste a variety of delicious dishes made from <span id="sig-1-17-2" class="signal-word">fresh</span>, 
-                        <span id="gap-1-17" class="gap" onclick="app.selectQuestion(1, 17)">(17) ______</span> 
-                        <span id="sig-1-17-2" class="signal-word">ingredients</span>. 
-                        From traditional Vietnamese cuisine to modern fusion, there's something for everyone. Whether you want to enjoy your meal here or take way, we've got you covered.
-                    </p>
-                    <p>
-                        This event is a great opportunity 
-                        <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
-                        <span id="sig-1-18-2" class="signal-word">local products</span> 
-                        and support small businesses. Don't miss out on the fun activities, cooking demonstrations, and special discounts. 
-                        Bring your friends and family for a(n) 
-                        <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span> 
-                        <span id="sig-1-19-2" class="signal-word">experience</span>!
-                    </p>
+                    <p>Join us this weekend for the Hai Duong Food Fair! Taste a variety of delicious dishes made from <span id="sig-1-17-2" class="signal-word">fresh</span>, 
+                    <span id="gap-1-17" class="gap" onclick="app.selectQuestion(1, 17)">(17) ______</span> 
+                    <span id="sig-1-17-2" class="signal-word">ingredients</span>.</p>
+                    <p>This event is a great opportunity <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
+                    <span id="sig-1-18-2" class="signal-word">local products</span> and support small businesses.</p>
+                    <p>Bring your friends and family for a(n) <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span> 
+                    <span id="sig-1-19-2" class="signal-word">experience</span>!</p>
                 `,
                 questions: [
                     {
-                        id: 17,
+                        id: 17, correct: "A", signalIds: ["sig-1-17-2"],
                         options: [{id: "A", text: "basic"}, {id: "B", text: "dedicated"}, {id: "C", text: "full"}, {id: "D", text: "starter"}],
-                        correct: "A",
-                        signalElementIds: ["sig-1-17-2"], // ingredients
                         hints: [
-                            "Hint 1 (Enemy): 4 từ khác nghĩa hoàn toàn. Đây là bài tập về TỪ VỰNG/KẾT HỢP TỪ.",
-                            "Hint 2 (Signal): Hãy nhìn vào tính từ 'fresh' phía trước + danh từ 'ingredients' (nguyên liệu) đứng sau.",
-                            "Hint 3 (Logic): Cần một tính từ phù hợp để mô tả 'ingredients' (nguyên liệu).",
-                            "Hint 4 (Trans):<br>A. [cơ bản] + nguyên liệu<br>B. [tận tụy] + nguyên liệu<br>C. [đầy] + nguyên liệu<br>D. [khai vị] + nguyên liệu"
+                            "Hint 1 (Enemy): 4 từ khác nghĩa hoàn toàn. Bài tập TỪ VỰNG.",
+                            "Hint 2 (Signal): Tính từ 'fresh' + danh từ 'ingredients' (nguyên liệu).",
+                            "Hint 3 (Logic): Cần một tính từ mô tả nguyên liệu nấu ăn.",
+                            "Hint 4 (Trans): A. cơ bản | B. tận tụy | C. đầy đủ | D. khai vị"
                         ]
                     },
                     {
-                        id: 18,
+                        id: 18, correct: "B", signalIds: ["sig-1-18-2"],
                         options: [{id: "A", text: "contribute"}, {id: "B", text: "promote"}, {id: "C", text: "invite"}, {id: "D", text: "occupy"}],
-                        correct: "B",
-                        signalElementIds: ["sig-1-18-2"], // local products
                         hints: [
                             "Hint 1 (Enemy): 4 Động từ khác nhau. Bài tập NGỮ NGHĨA.",
-                            "Hint 2 (Signal): Danh từ 'local products' (sản phẩm địa phương) đứng sau.",
-                            "Hint 3 (Logic): Mục đích của 'fair' hội chợ là để làm gì.",
-                            "Hint 4 (Trans):<br>A. [đóng góp] + sản phẩm địa phương<br>B. [quảng bá] + sản phẩm địa phương<br>C. [mời] + sản phẩm địa phương<br>D. [chiếm giữ] + sản phẩm địa phương"
+                            "Hint 2 (Signal): Danh từ 'local products' (sản phẩm địa phương).",
+                            "Hint 3 (Logic): Mục đích hội chợ là để làm gì với sản phẩm?",
+                            "Hint 4 (Trans): A. đóng góp | B. quảng bá | C. mời | D. chiếm giữ"
                         ]
                     },
                     {
-                        id: 19,
+                        id: 19, correct: "A", signalIds: ["sig-1-19-2"],
                         options: [{id: "A", text: "unforgettable"}, {id: "B", text: "forget"}, {id: "C", text: "forgetful"}, {id: "D", text: "forgettably"}],
-                        correct: "A",
-                        signalElementIds: ["sig-1-19-2"], // experience
                         hints: [
-                            "Hint 1 (Enemy): 4 từ cùng gốc 'forget'. Bài tập TỪ LOẠI.",
-                            "Hint 2 (Signal): Mạo từ 'a(n)' đứng trước và Danh từ 'experience' đứng sau.",
-                            "Hint 3 (Logic): Vị trí này cần một Tính từ bổ nghĩa cho danh từ.",
-                            "Hint 4 (Trans):<br>A. [đáng nhớ/không thể quên] + trải nghiệm<br>B. [quên] + trải nghiệm<br>C. [hay quên] + trải nghiệm<br>D. [một cách dễ quên] + trải nghiệm"
+                            "Hint 1 (Enemy): Cùng gốc 'forget'. Bài tập TỪ LOẠI.",
+                            "Hint 2 (Signal): Mạo từ 'a(n)' ... Danh từ 'experience'.",
+                            "Hint 3 (Logic): Cần Tính từ bổ nghĩa cho trải nghiệm.",
+                            "Hint 4 (Trans): A. đáng nhớ | B. quên | C. hay quên | D. dễ quên"
                         ]
                     }
                 ]
             },
             {
                 id: 2,
-                title: "Đề 2: Community Clean-up Day",
+                title: "Community Clean-up Day",
                 content: `
-                    <h3 style="margin-top:0">Community Clean-up Day!</h3>
-                    <p>
-                        Join us for our annual Community Clean-up Day on Saturday , November 11th, from 9:00 AM to 1:00 PM! We will be meeting at the Central Park entrance.
-                        Our goal is to make our neighborhood a cleaner and greener place. We need volunteers to help us pick up litter, plant new trees, and tidy up the flower beds.
-                        Gloves, trash bags, and tools will be 
-                        <span id="gap-2-17" class="gap" onclick="app.selectQuestion(2, 17)">(17) ______</span>.
-                        <span id="sig-2-17-prev" class="signal-word" style="display:none">will be</span>. Please wear comfortable clothes and sturdy shoes. Light refreshments will be provided.
-                    </p>
-                    <p>
-                        This is a great opportunity to 
-                        <span id="gap-2-18" class="gap" onclick="app.selectQuestion(2, 18)">(18) ______</span> 
-                        <span id="sig-2-18-2" class="signal-word">your neighbors</span> 
-                        and contribute to a healthier environment. All ages are welcome, but children under 12 must be accompanied by an adult.
-                        To register or for more information, please visit our website at www.communitycleanup.org or call us at 555-1234. We </span> 
-                        <span id="sig-2-19-2" class="signal-word">look forward to</span> 
-                        <span id="gap-2-19" class="gap" onclick="app.selectQuestion(2, 19)">(19) ______</span> 
-                        <span id="sig-2-19-2" class="signal-word">you</span> there!
-                    </p>
+                    <p>Gloves and tools will be <span id="gap-2-17" class="gap" onclick="app.selectQuestion(2, 17)">(17) ______</span>.</p>
+                    <p>This is a great opportunity to <span id="gap-2-18" class="gap" onclick="app.selectQuestion(2, 18)">(18) ______</span> 
+                    <span id="sig-2-18-2" class="signal-word">your neighbors</span>.</p>
+                    <p>We <span id="sig-2-19-2" class="signal-word">look forward to</span> 
+                    <span id="gap-2-19" class="gap" onclick="app.selectQuestion(2, 19)">(19) ______</span> 
+                    <span id="sig-2-19-2" class="signal-word">you</span> there!</p>
                 `,
                 questions: [
                     {
-                        id: 17,
+                        id: 17, correct: "B", signalIds: [],
                         options: [{id: "A", text: "supplied"}, {id: "B", text: "provided"}, {id: "C", text: "given"}, {id: "D", text: "offered"}],
-                        correct: "B",
-                        signalElementIds: [], // Không có signal word cụ thể bôi đen rõ ràng ngoài ngữ cảnh câu
-                        hints: [
-                            "Hint 1 (Enemy): 4 Động từ dạng bị động (V3). Bài tập TỪ VỰNG/NGỮ NGHĨA.",
-                            "Hint 2 (Signal): Chủ ngữ là 'Tools/Gloves' (dụng cụ).",
-                            "Hint 3 (Logic): Dụng cụ sẽ được ... cho tình nguyện viên sử dụng.",
-                            "Hint 4 (Trans):<br>A. [được tiếp tế] <br>B. [được cung cấp] (dùng cho vật dụng)<br>C. [được tặng/cho]<br>D. [được mời chào]"
-                        ]
+                        hints: ["Hint 1: Bị động", "Hint 2: Chủ ngữ là Tools", "Hint 3: Cung cấp dụng cụ", "Hint 4: Trans: Provided"]
                     },
                     {
-                        id: 18,
+                        id: 18, correct: "D", signalIds: ["sig-2-18-2"],
                         options: [{id: "A", text: "join"}, {id: "B", text: "know"}, {id: "C", text: "unite"}, {id: "D", text: "meet"}],
-                        correct: "D",
-                        signalElementIds: ["sig-2-18-2"], // your neighbors
-                        hints: [
-                            "Hint 1 (Enemy): 4 Động từ thường. Bài tập NGỮ NGHĨA.",
-                            "Hint 2 (Signal): Đối tượng phía sau là 'your neighbors' (hàng xóm).",
-                            "Hint 3 (Logic): Chúng ta ... hàng xóm.",
-                            "Hint 4 (Trans):<br>A. [tham gia] + hàng xóm<br>B. [biết] + hàng xóm<br>C. [thống nhất] + hàng xóm<br>D. [gặp gỡ] + hàng xóm"
-                        ]
+                        hints: ["Hint 1: Động từ thường", "Hint 2: your neighbors", "Hint 3: Gặp gỡ hàng xóm", "Hint 4: Trans: Meet"]
                     },
                     {
-                        id: 19,
+                        id: 19, correct: "B", signalIds: ["sig-2-19-2"],
                         options: [{id: "A", text: "see"}, {id: "B", text: "seeing"}, {id: "C", text: "to see"}, {id: "D", text: "saw"}],
-                        correct: "B",
-                        signalElementIds: ["sig-2-19-2"], // you
-                        hints: [
-                            "Hint 1 (Enemy): Các dạng của động từ 'See'. Bài tập NGỮ PHÁP (Verb Form).",
-                            "Hint 2 (Signal): Hãy nhìn cụm từ cố định đứng trước: 'look forward to'.",
-                            "Hint 3 (Logic): Cấu trúc: Look forward to + V_ing(Mong chờ làm gì đó).",
-                            "Hint 4 (Trans):<br>A. see (V-inf)<br>B. seeing (V-ing)<br>C. to see (To V)<br>D. saw (V-ed)"
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 3,
-                title: "Đề 3: Independence Day Discount",
-                content: `
-                    <h3 style="margin-top:0">SPECIAL MOVIE TICKET DISCOUNT</h3>
-                    <p>
-                        To celebrate Vietnam's Independence Day on September 2nd, our cinema is happy to offer special discounts on movie tickets. From September 1st to 3rd, you can buy tickets at only 50% of the normal price. This offer is valid for all movies at 
-                        <span id="gap-3-17" class="gap" onclick="app.selectQuestion(3, 17)">(17) ______</span> 
-                        <span id="sig-3-17-2" class="signal-word">cinema</span>. 
-                    </p>
-                    <p>
-                        If you are not sure 
-                        <span id="gap-3-18" class="gap" onclick="app.selectQuestion(3, 18)">(18) ______</span> 
-                        <span id="sig-3-18-2" class="signal-word">to get</span> 
-                        the tickets online, please visit our website for clear instructions. We also recommend students and families to come early, as seats are limited.
-                    </p>
-                    <p>
-                        Join us on this national holiday and enjoy wonderful movies at a very reasonable 
-                        <span id="gap-3-19" class="gap" onclick="app.selectQuestion(3, 19)">(19) ______</span>.
-                        <span id="sig-3-19-prev" class="signal-word" style="display:none">reasonable</span>. Don't miss this chance to have fun with your friends and family.
-                    </p>
-                `,
-                questions: [
-                    {
-                        id: 17,
-                        options: [{id: "A", text: "a"}, {id: "B", text: "the"}, {id: "C", text: "an"}, {id: "D", text: "Ø"}],
-                        correct: "B",
-                        signalElementIds: ["sig-3-17-2"], // cinema
-                        hints: [
-                            "Hint 1 (Enemy): Các Mạo từ. Bài tập NGỮ PHÁP.",
-                            "Hint 2 (Signal): Danh từ 'cinema' và ngữ cảnh bài viết ('our cinema' ở câu đầu).",
-                            "Hint 3 (Logic): Rạp phim này đã được xác định (của người viết thông báo).",
-                            "Hint 4 (Trans):<br>A. một (rạp nào đó)<br>B. rạp này (xác định)<br>C. một (dùng trước nguyên âm)<br>D. rỗng"
-                        ]
-                    },
-                    {
-                        id: 18,
-                        options: [{id: "A", text: "how"}, {id: "B", text: "what"}, {id: "C", text: "when"}, {id: "D", text: "why"}],
-                        correct: "A",
-                        signalElementIds: ["sig-3-18-2"], // to get
-                        hints: [
-                            "Hint 1 (Enemy): Từ để hỏi (Wh-words). Bài tập CẤU TRÚC.",
-                            "Hint 2 (Signal): Động từ 'to get' phía sau và ngữ cảnh 'instructions' (hướng dẫn).",
-                            "Hint 3 (Logic): Hướng dẫn thì phải là về 'cách thức'.",
-                            "Hint 4 (Trans):<br>A. [làm thế nào] + để mua vé<br>B. [cái gì] + để mua vé<br>C. [khi nào] + để mua vé<br>D. [tại sao] + để mua vé"
-                        ]
-                    },
-                    {
-                        id: 19,
-                        options: [{id: "A", text: "price"}, {id: "B", text: "pricey"}, {id: "C", text: "priceless"}, {id: "D", text: "pricing"}],
-                        correct: "A",
-                        signalElementIds: [], // Signal là "reasonable" đứng trước (nhưng trong code này gap click vào mới hiện hint)
-                        hints: [
-                            "Hint 1 (Enemy): Các từ cùng gốc 'price'. Bài tập TỪ LOẠI.",
-                            "Hint 2 (Signal): Tính từ 'reasonable' (hợp lý) đứng ngay trước.",
-                            "Hint 3 (Logic): Sau tính từ cần một Danh từ.",
-                            "Hint 4 (Trans):<br>A. [giá cả] (Danh từ)<br>B. [đắt đỏ] (Tính từ)<br>C. [vô giá] (Tính từ)<br>D. [việc định giá] (Danh động từ)"
-                        ]
+                        hints: ["Hint 1: V-ing/To-V", "Hint 2: look forward to", "Hint 3: Cấu trúc mong đợi", "Hint 4: Trans: Seeing"]
                     }
                 ]
             }
@@ -394,216 +318,200 @@
         // --- CONTROLLER ---
         const app = {
             state: {
-                currentExIndex: 0,
+                exIdx: 0,
                 currentScore: 0,
-                maxScore: 0, 
-                questionsMap: {}, 
+                maxScore: 0,
+                // Map lưu trạng thái từng câu hỏi: { points: 5, hintsOpen: [F,F,F,F], answered: false, choice: null }
+                qMap: {} 
             },
 
-            // 1. PASSWORD CHECK
-            checkPassword: function() {
-                const pass = document.getElementById('password-input').value;
-                if (pass === "1234") {
-                    document.getElementById('password-overlay').style.display = 'none';
-                    document.getElementById('main-container').classList.add('visible');
-                    this.initExercise(0);
-                } else {
-                    document.getElementById('pass-error').style.display = 'block';
-                }
-            },
-
-            // 2. KHỞI TẠO BÀI TẬP
             initExercise: function(index) {
-                if (index >= exercises.length) {
-                    alert("Chúc mừng! Bạn đã hoàn thành tất cả bài tập.");
-                    return;
-                }
-
-                this.state.currentExIndex = index;
+                if(index >= exercises.length) { alert("Đã hết bài tập!"); return; }
+                this.state.exIdx = index;
                 const exData = exercises[index];
 
-                // Cập nhật giao diện Text
+                // Render Text
                 document.getElementById('ex-title').innerText = exData.title;
                 document.getElementById('ex-content').innerHTML = exData.content;
-                document.getElementById('game-area').innerHTML = '<div style="text-align:center; color:#888; padding:20px;">Chọn ô trống để bắt đầu.</div>';
-                
-                // Nút Next
-                const btn = document.getElementById('next-ex-btn');
-                btn.style.display = 'none';
+                document.getElementById('q-card-area').style.display = 'none';
+                document.getElementById('empty-state').style.display = 'block';
 
-                // Reset map câu hỏi cho bài mới (Giữ lại điểm cũ, chỉ cộng thêm maxScore)
-                // Lưu ý: ID câu hỏi trong data lặp lại (17,18,19), nên cần key unique: `exIndex-qId`
+                // Setup Grid & Data
+                const grid = document.getElementById('sidebar-grid');
+                grid.innerHTML = '';
+                
                 exData.questions.forEach(q => {
-                    const uniqueKey = `${index}-${q.id}`;
-                    this.state.questionsMap[uniqueKey] = {
-                        answered: false,
-                        points: 5,
-                        hintsOpened: [false, false, false, false],
-                        userAnswer: null
-                    };
-                    this.state.maxScore += 5;
+                    const key = `${index}-${q.id}`;
+                    // Nếu chưa có data cho câu này thì khởi tạo (giữ nguyên điểm nếu quay lại bài cũ)
+                    if (!this.state.qMap[key]) {
+                        this.state.qMap[key] = {
+                            points: 5, // QUY TẮC: 5 ĐIỂM BAN ĐẦU
+                            hintsOpen: [false, false, false, false],
+                            answered: false,
+                            userChoice: null
+                        };
+                        this.state.maxScore += 5; // Cộng dồn tổng điểm tối đa
+                    }
+
+                    // Tạo ô grid
+                    const cell = document.createElement('div');
+                    cell.className = 'q-cell';
+                    cell.id = `cell-${q.id}`;
+                    cell.innerText = q.id;
+                    cell.onclick = () => this.selectQuestion(index+1, q.id);
+                    grid.appendChild(cell);
                 });
-                
-                this.updateScoreDisplay();
+
+                this.updateStats();
             },
 
-            // 3. CHỌN CÂU HỎI
-            selectQuestion: function(exId, qId) {
-                // exId truyền vào từ HTML là số thứ tự bài (1, 2, 3), đổi về index (0, 1, 2)
-                const realExIndex = exId - 1; 
-                
-                // Highlight gap
-                document.querySelectorAll('.gap').forEach(el => el.classList.remove('active'));
-                const activeGap = document.getElementById(`gap-${exId}-${qId}`);
-                if(activeGap) activeGap.classList.add('active');
-
-                this.renderGamePanel(realExIndex, qId);
-            },
-
-            // 4. RENDER BẢNG CÂU HỎI
-            renderGamePanel: function(exIndex, qId) {
-                const exData = exercises[exIndex];
+            selectQuestion: function(exId, qId) { // exId: 1, 2...
+                const realIndex = exId - 1;
+                const exData = exercises[realIndex];
                 const qData = exData.questions.find(q => q.id === qId);
-                const uniqueKey = `${exIndex}-${qId}`;
-                const qState = this.state.questionsMap[uniqueKey];
-                const panel = document.getElementById('game-area');
+                const key = `${realIndex}-${qId}`;
+                const qState = this.state.qMap[key];
 
-                if (!qData) return;
+                // UI Active States
+                document.querySelectorAll('.gap').forEach(e => e.classList.remove('active-gap'));
+                document.getElementById(`gap-${exId}-${qId}`).classList.add('active-gap');
+                
+                document.querySelectorAll('.q-cell').forEach(e => e.classList.remove('active'));
+                document.getElementById(`cell-${qId}`).classList.add('active');
 
-                // Xử lý logic Hint 2 (Highlight lại nếu đã mở)
-                document.querySelectorAll('.signal-word').forEach(el => el.classList.remove('highlighted'));
-                if (qState.hintsOpened[1]) { 
-                    qData.signalElementIds.forEach(id => {
-                         const el = document.getElementById(id);
-                         if(el) el.classList.add('highlighted');
+                // Render Card
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('q-card-area').style.display = 'block';
+                document.getElementById('q-number').innerText = qId;
+                
+                this.renderPointsBadge(qState);
+                this.renderHints(realIndex, qId, qData, qState);
+                this.renderOptions(realIndex, qId, qData, qState);
+
+                // Highlight Signal Words (nếu Hint 2 đã mở)
+                document.querySelectorAll('.signal-word').forEach(e => e.classList.remove('highlighted'));
+                if (qState.hintsOpen[1] && qData.signalIds) {
+                    qData.signalIds.forEach(id => {
+                        const el = document.getElementById(id);
+                        if(el) el.classList.add('highlighted');
                     });
                 }
-
-                let html = `
-                    <div class="current-q-info">
-                        <div style="font-weight:bold; margin-bottom:5px;">Question ${qId}</div>
-                        <div style="font-size:0.9rem; color:#666;">
-                            Điểm: <b style="color:${qState.answered ? (qState.points > 0 ? 'var(--success-color)' : 'var(--error-color)') : 'var(--primary-color)'}">
-                                ${qState.answered ? (qState.points > 0 ? '+' + qState.points : '0') : qState.points}
-                            </b>
-                        </div>
-                    </div>
-
-                    <div class="options-grid">
-                        ${qData.options.map(opt => {
-                            let btnClass = 'option-btn';
-                            let disabled = '';
-                            if (qState.answered) {
-                                disabled = 'disabled';
-                                if (opt.id === qData.correct) btnClass += ' reveal-correct';
-                                if (opt.id === qState.userAnswer) {
-                                    btnClass += (opt.id === qData.correct) ? ' correct-select' : ' wrong-select';
-                                }
-                            }
-                            return `<button class="${btnClass}" ${disabled} onclick="app.submitAnswer(${exIndex}, ${qId}, '${opt.id}')">${opt.id}. ${opt.text}</button>`;
-                        }).join('')}
-                    </div>
-
-                    <div class="hints-container">
-                        <div style="font-size:0.9rem; font-weight:bold; margin-bottom:5px; color:#555;">Gợi ý (Mở theo thứ tự):</div>
-                        ${qData.hints.map((hintText, index) => {
-                            const isOpened = qState.hintsOpened[index];
-                            const isLocked = index > 0 && !qState.hintsOpened[index - 1];
-                            const disabledAttr = (qState.answered || isLocked) && !isOpened ? 'disabled' : '';
-
-                            return `
-                                <div class="hint-item">
-                                    <button class="hint-btn" ${disabledAttr} onclick="app.openHint(${exIndex}, ${qId}, ${index})">
-                                        <span>${isOpened ? '📖 Hint ' + (index+1) : (isLocked ? '🔒 Locked' : '🔐 Mở Hint ' + (index+1))}</span>
-                                        <span class="hint-cost">${isOpened || qState.answered ? '' : '-1 Point'}</span>
-                                    </button>
-                                    <div class="hint-content ${isOpened ? 'show' : ''}">${hintText}</div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                `;
-                panel.innerHTML = html;
             },
 
-            // 5. XỬ LÝ HINT
+            renderPointsBadge: function(qState) {
+                const badge = document.getElementById('q-points-badge');
+                badge.innerText = `${qState.points} Points`;
+                badge.style.background = qState.answered 
+                    ? (qState.points > 0 ? 'var(--green)' : 'var(--red)') 
+                    : 'var(--primary)';
+            },
+
+            renderHints: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('hints-container');
+                container.innerHTML = '';
+
+                qData.hints.forEach((hintText, i) => {
+                    const isOpen = qState.hintsOpen[i];
+                    // Logic khóa: Hint sau bị khóa nếu hint trước chưa mở (trừ khi đã trả lời xong)
+                    const isLocked = i > 0 && !qState.hintsOpen[i-1] && !qState.answered;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'hint-item';
+                    
+                    let headerHtml = `
+                        <div class="hint-header ${isLocked ? 'disabled' : ''}" 
+                             onclick="app.openHint(${exIndex}, ${qId}, ${i})">
+                            <span>
+                                <i class="fas ${isOpen ? 'fa-book-open' : (isLocked ? 'fa-lock' : 'fa-lightbulb')}" 
+                                   style="color:${isOpen ? 'var(--primary)' : 'var(--orange)'}; width:20px;"></i>
+                                ${isOpen ? `Gợi ý ${i+1}` : (isLocked ? `Gợi ý ${i+1} (Khóa)` : `Mở Gợi ý ${i+1}`)}
+                            </span>
+                            ${(!isOpen && !qState.answered) ? '<span class="hint-cost">-1 Điểm</span>' : ''}
+                        </div>
+                        <div class="hint-content ${isOpen ? 'show' : ''}">${hintText}</div>
+                    `;
+                    item.innerHTML = headerHtml;
+                    container.appendChild(item);
+                });
+            },
+
             openHint: function(exIndex, qId, hintIndex) {
-                const uniqueKey = `${exIndex}-${qId}`;
-                const qState = this.state.questionsMap[uniqueKey];
-                
-                if (hintIndex > 0 && !qState.hintsOpened[hintIndex - 1]) {
-                    alert("Bạn phải mở gợi ý trước đó trước!");
+                const key = `${exIndex}-${qId}`;
+                const qState = this.state.qMap[key];
+
+                // Validate: Đã trả lời, đã mở, hoặc bị khóa thì không làm gì
+                if (qState.answered || qState.hintsOpen[hintIndex]) return;
+                if (hintIndex > 0 && !qState.hintsOpen[hintIndex - 1]) {
+                    alert("Hãy mở gợi ý theo thứ tự!");
                     return;
                 }
-                
-                if (!qState.answered && !qState.hintsOpened[hintIndex]) {
-                    if (qState.points > 0) qState.points -= 1;
-                    qState.hintsOpened[hintIndex] = true;
-                    this.renderGamePanel(exIndex, qId);
-                }
+
+                // TRỪ ĐIỂM
+                if (qState.points > 0) qState.points -= 1;
+                qState.hintsOpen[hintIndex] = true;
+
+                // Re-render
+                this.selectQuestion(exIndex+1, qId);
             },
 
-            // 6. XỬ LÝ TRẢ LỜI
-            submitAnswer: function(exIndex, qId, selectedOptId) {
-                const uniqueKey = `${exIndex}-${qId}`;
-                const qState = this.state.questionsMap[uniqueKey];
+            renderOptions: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+
+                qData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `<span>${opt.id}.</span> ${opt.text}`;
+
+                    if (qState.answered) {
+                        btn.disabled = true;
+                        if (opt.id === qData.correct) btn.classList.add('correct-select', 'reveal-correct');
+                        if (opt.id === qState.userChoice && opt.id !== qData.correct) btn.classList.add('wrong-select');
+                    } else {
+                        btn.onclick = () => this.submitAnswer(exIndex, qId, opt.id);
+                    }
+                    container.appendChild(btn);
+                });
+            },
+
+            submitAnswer: function(exIndex, qId, choiceId) {
+                const key = `${exIndex}-${qId}`;
+                const qState = this.state.qMap[key];
                 const exData = exercises[exIndex];
                 const qData = exData.questions.find(q => q.id === qId);
 
-                if (qState.answered) return;
-
-                qState.userAnswer = selectedOptId;
                 qState.answered = true;
+                qState.userChoice = choiceId;
 
-                // ID gap trong HTML: gap-{exIndex+1}-{qId}
-                const gapEl = document.getElementById(`gap-${exIndex + 1}-${qId}`);
-                const correctText = qData.options.find(o => o.id === qData.correct).text;
-
-                if (selectedOptId === qData.correct) {
-                    this.state.currentScore += qState.points;
-                    gapEl.classList.add('correct');
-                    gapEl.classList.remove('wrong');
-                    gapEl.innerText = correctText;
+                // Xử lý điểm số
+                if (choiceId === qData.correct) {
+                    this.state.currentScore += qState.points; // Cộng số điểm còn lại
+                    document.getElementById(`gap-${exIndex+1}-${qId}`).classList.add('correct');
+                    document.getElementById(`gap-${exIndex+1}-${qId}`).innerText = qData.options.find(o=>o.id===choiceId).text;
+                    document.getElementById(`cell-${qId}`).classList.add('done');
                 } else {
-                    qState.points = 0;
-                    gapEl.classList.add('wrong');
-                    gapEl.innerText = correctText;
+                    qState.points = 0; // Trả lời sai = 0 điểm
+                    document.getElementById(`gap-${exIndex+1}-${qId}`).classList.add('wrong');
+                    document.getElementById(`gap-${exIndex+1}-${qId}`).innerText = qData.options.find(o=>o.id===qData.correct).text;
+                    document.getElementById(`cell-${qId}`).classList.add('wrong');
                 }
 
-                this.updateScoreDisplay();
-                this.renderGamePanel(exIndex, qId);
-                this.checkExerciseCompletion(exIndex);
+                this.updateStats();
+                this.selectQuestion(exIndex+1, qId); // Re-render để hiện kết quả
             },
 
-            // 7. KIỂM TRA HOÀN THÀNH BÀI
-            checkExerciseCompletion: function(exIndex) {
-                const exData = exercises[exIndex];
-                const allAnswered = exData.questions.every(q => this.state.questionsMap[`${exIndex}-${q.id}`].answered);
-                
-                if (allAnswered) {
-                    const btn = document.getElementById('next-ex-btn');
-                    if (exIndex < exercises.length - 1) {
-                        btn.style.display = 'block';
-                        btn.innerText = "Chuyển sang bài tiếp theo ➡";
-                    } else {
-                        btn.style.display = 'block';
-                        btn.innerText = "HOÀN THÀNH TẤT CẢ";
-                        btn.onclick = () => alert("Bạn đã hoàn thành 3 bài Cloze Test! Tổng điểm: " + this.state.currentScore + "/" + this.state.maxScore);
-                    }
-                }
+            updateStats: function() {
+                document.getElementById('current-score').innerText = this.state.currentScore;
+                document.getElementById('max-score').innerText = this.state.maxScore;
             },
 
             nextExercise: function() {
-                this.initExercise(this.state.currentExIndex + 1);
-            },
-
-            updateScoreDisplay: function() {
-                document.getElementById('current-score').innerText = this.state.currentScore;
-                document.getElementById('max-score').innerText = this.state.maxScore;
+                this.initExercise(this.state.exIdx + 1);
             }
         };
+
+        // Start App
+        app.initExercise(0);
     </script>
 </body>
-
 </html>
-
