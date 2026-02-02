@@ -297,228 +297,227 @@
     </main>
 
     <script>
-       // --- DỮ LIỆU CẬP NHẬT: ĐỀ 1 & ĐỀ 2 (TƯ DUY SÂU) ---
+      // --- DỮ LIỆU CẬP NHẬT: ĐỀ 3 & ĐỀ 4 ---
         const exercises = [
             {
-                id: 1, // Đề 1 (Trang 1)
-                title: "Đề 1: Healthy Lifestyle Campaign",
+                id: 3,
+                title: "Đề 3: Well-balanced Life",
                 content: `
-                    <h3 style="margin-top:0">HEALTHY LIFESTYLE CAMPAIGN</h3>
-                    <p>Join us for a Healthy Lifestyle Campaign at our school. Throughout the month, we'll be organizing various activities and initiatives to promote 
-                    <span id="gap-1-20" class="gap" onclick="app.selectQuestion(1, 20)">(20) ______</span> 
-                    and mental well-being.</p>
-                    <p>On the campaign, you can engage 
-                    <span id="gap-1-21" class="gap" onclick="app.selectQuestion(1, 21)">(21) ______</span> 
-                    interactive workshops, fitness classes, and awareness sessions that focus on the importance of maintaining a healthy lifestyle. These activities aim to enhance 
-                    <span id="gap-1-22" class="gap" onclick="app.selectQuestion(1, 22)">(22) ______</span> 
-                    about the benefits of exercise, proper nutrition, and stress management.</p>
-                    <p><span id="gap-1-23" class="gap" onclick="app.selectQuestion(1, 23)">(23) ______</span> 
-                    you want to get more involved, keep in touch with our campaign coordinator who will provide more information on upcoming events and guide you on how to adopt 
-                    <span id="gap-1-24" class="gap" onclick="app.selectQuestion(1, 24)">(24) ______</span>.</p>
+                    <h3 style="margin-top:0">Well-balanced Life</h3>
+                    <p>When I was at school, I had to learn how to have a well-balanced life in order to reduce stress and anxiety. Here are some of the typical things I did. Firstly, I managed my time properly.</p>
+                    <p><span id="gap-1-20" class="gap" onclick="app.selectQuestion(1, 20)">(20) ______</span> 
+                    started to plan my schedule, made a weekly work list and gave priority to some of my work. This helped me concentrate my efforts on my most important tasks.</p>
+                    <p>In addition, I communicated with my family, friends, and teachers about my busy schedule and problems, so they would offer me additional 
+                    <span id="gap-1-21" class="gap" onclick="app.selectQuestion(1, 21)">(21) ______</span>.</p>
+                    <p>I also took breaks appropriately because they helped me keep away from stress and anxiety and gave my brain a rest and improved my 
+                    <span id="gap-1-22" class="gap" onclick="app.selectQuestion(1, 22)">(22) ______</span>. 
+                    Finally, I looked after my 
+                    <span id="gap-1-23" class="gap" onclick="app.selectQuestion(1, 23)">(23) ______</span>. 
+                    I got at least eight hours of sleep a day. I played football with my classmates twice a week and went for a walk with my grandparents early every morning.</p>
+                    <p>Besides, I also tried to 
+                    <span id="gap-1-24" class="gap" onclick="app.selectQuestion(1, 24)">(24) ______</span> 
+                    a healthy diet: eating a lot of fruit and vegetables and little fattening foods like chips, cookies, pizza, etc.</p>
                 `,
                 questions: [
                     { 
                         id: 20, 
-                        correct: "D", 
+                        correct: "B", 
                         signalIds: [], 
-                        sentence_translation: "...chúng tôi sẽ tổ chức nhiều hoạt động... để thúc đẩy sức khỏe [thể chất] và tinh thần.", 
+                        sentence_translation: "... ..., tôi bắt đầu lên kế hoạch cho lịch trình của mình...", 
                         options: [
-                            {id: "A", text: "physic"}, 
-                            {id: "B", text: "physically"}, 
-                            {id: "C", text: "physics"}, 
-                            {id: "D", text: "physical"}
+                            {id: "A", text: "however"}, 
+                            {id: "B", text: "therefore"}, 
+                            {id: "C", text: "but"}, 
+                            {id: "D", text: "because"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Word Form (Từ loại).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'promote ... and mental well-being'.", 
-                            "<strong>Logic (Tư duy):</strong> Từ cần điền đứng trước danh từ 'well-being' và nối với tính từ 'mental' bằng chữ 'and'. Vậy từ đó cần là Danh từ, Động từ hay Tính từ?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. thuốc xổ (từ cổ/ít dùng)<br>B. về mặt thể chất (Adv)<br>C. vật lý học (N)<br>D. thuộc về thể chất (Adj)"
+                            "<strong>Enemy (Phân loại):</strong> Linking Words (Từ nối).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'managed my time properly' (Cause) -> 'started to plan' (Effect).", 
+                            "<strong>Logic (Tư duy):</strong> Hành động 'plan my schedule' là kết quả của việc muốn 'manage time properly'. Từ nối nào diễn tả kết quả (Result)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tuy nhiên<br>B. vì vậy/do đó<br>C. nhưng<br>D. bởi vì"
                         ] 
                     },
                     { 
                         id: 21, 
-                        correct: "A", 
+                        correct: "C", 
                         signalIds: [], 
-                        sentence_translation: "Trong chiến dịch này, bạn có thể [tham gia vào] các hội thảo tương tác...", 
+                        sentence_translation: "...để họ có thể cung cấp cho tôi thêm ... (sự giúp đỡ/hỗ trợ).", 
                         options: [
-                            {id: "A", text: "in"}, 
-                            {id: "B", text: "on"}, 
-                            {id: "C", text: "at"}, 
-                            {id: "D", text: "to"}
+                            {id: "A", text: "a"}, 
+                            {id: "B", text: "the"}, 
+                            {id: "C", text: "some"}, 
+                            {id: "D", text: "No article"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Preposition/Phrasal Verb.", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'engage'.", 
-                            "<strong>Logic (Tư duy):</strong> Giới từ nào luôn đi kèm với động từ 'engage' để mang nghĩa 'tham gia vào' (participate)?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. trong<br>B. trên<br>C. tại<br>D. tới"
+                            "<strong>Enemy (Phân loại):</strong> Quantifiers/Articles (Lượng từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'offer me additional...'.", 
+                            "<strong>Logic (Tư duy):</strong> Dù danh từ phía sau bị ẩn (thường là help/support - không đếm được), từ nào trong 4 đáp án có thể đi với danh từ không đếm được mang nghĩa 'một chút/một vài'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. một (đếm được)<br>B. xác định<br>C. một vài/một chút<br>D. không mạo từ"
                         ] 
                     },
                     { 
                         id: 22, 
-                        correct: "A", 
+                        correct: "C", 
                         signalIds: [], 
-                        sentence_translation: "Các hoạt động này nhằm mục đích nâng cao [nhận thức] về lợi ích của việc tập thể dục...", 
+                        sentence_translation: "...và giúp bộ não nghỉ ngơi cũng như cải thiện ... của tôi.", 
                         options: [
-                            {id: "A", text: "awareness"}, 
-                            {id: "B", text: "supporting"}, 
-                            {id: "C", text: "investment"}, 
-                            {id: "D", text: "education"}
+                            {id: "A", text: "happy"}, 
+                            {id: "B", text: "happier"}, 
+                            {id: "C", text: "happiness"}, 
+                            {id: "D", text: "happily"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Collocation (Kết hợp từ).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'enhance ... about'.", 
-                            "<strong>Logic (Tư duy):</strong> Danh từ nào thường đi với giới từ 'about' để diễn tả sự hiểu biết về một vấn đề?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. nhận thức<br>B. việc hỗ trợ<br>C. sự đầu tư<br>D. giáo dục"
+                            "<strong>Enemy (Phân loại):</strong> Word Form (Từ loại).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'improved my ...'.", 
+                            "<strong>Logic (Tư duy):</strong> Sau tính từ sở hữu 'my', ta cần loại từ gì (Noun, Verb, Adj)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. vui vẻ (Adj)<br>B. vui hơn (Adj-er)<br>C. niềm hạnh phúc (N)<br>D. một cách vui vẻ (Adv)"
                         ] 
                     },
                     { 
                         id: 23, 
                         correct: "C", 
                         signalIds: [], 
-                        sentence_translation: "[Nếu] bạn muốn tham gia nhiều hơn, hãy giữ liên lạc...", 
+                        sentence_translation: "Cuối cùng, tôi chăm sóc ... của mình.", 
                         options: [
-                            {id: "A", text: "And"}, 
-                            {id: "B", text: "But"}, 
-                            {id: "C", text: "If"}, 
-                            {id: "D", text: "Although"}
+                            {id: "A", text: "healthy diet"}, 
+                            {id: "B", text: "junk foods"}, 
+                            {id: "C", text: "physical health"}, 
+                            {id: "D", text: "mood"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Conjunction (Liên từ).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'you want...', 'keep in touch'.", 
-                            "<strong>Logic (Tư duy):</strong> Mệnh đề đầu tiên đặt ra một điều kiện cho hành động ở mệnh đề sau. Liên từ nào dùng cho câu điều kiện?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. Và<br>B. Nhưng<br>C. Nếu<br>D. Mặc dù"
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary Context (Ngữ cảnh).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'sleep', 'played football', 'went for a walk'.", 
+                            "<strong>Logic (Tư duy):</strong> Những hoạt động như ngủ đủ giấc, chơi bóng đá, đi bộ liên quan đến khía cạnh nào của sức khỏe?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. chế độ ăn lành mạnh<br>B. đồ ăn vặt<br>C. sức khỏe thể chất<br>D. tâm trạng"
                         ] 
                     },
                     { 
                         id: 24, 
                         correct: "D", 
                         signalIds: [], 
-                        sentence_translation: "...hướng dẫn bạn cách áp dụng [một lối sống lành mạnh hơn].", 
+                        sentence_translation: "Bên cạnh đó, tôi cũng cố gắng ... một chế độ ăn uống lành mạnh...", 
                         options: [
-                            {id: "A", text: "a lifestyle healthier"}, 
-                            {id: "B", text: "a health lifestyle"}, 
-                            {id: "C", text: "a lifestyle health"}, 
-                            {id: "D", text: "a healthier lifestyle"}
+                            {id: "A", text: "take part"}, 
+                            {id: "B", text: "healthy diet"}, 
+                            {id: "C", text: "be careful"}, 
+                            {id: "D", text: "make sure"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Word Order (Trật tự từ trong cụm danh từ).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'lifestyle' (Noun), 'healthier' (Adjective).", 
-                            "<strong>Logic (Tư duy):</strong> Trong cụm danh từ tiếng Anh, Tính từ bổ nghĩa đứng trước hay đứng sau Danh từ?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. (Sai trật tự)<br>B. (Sai loại từ)<br>C. (Sai trật tự)<br>D. một lối sống lành mạnh hơn"
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary/Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'tried to ... a healthy diet'.", 
+                            "<strong>Logic (Tư duy):</strong> (Lưu ý: Có thể đề gốc muốn dùng từ 'maintain' hoặc 'follow'). Trong các đáp án này, cụm từ nào hợp lý nhất về mặt ngữ pháp để điền vào chỗ trống?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tham gia<br>B. chế độ ăn (N)<br>C. cẩn thận<br>D. đảm bảo (make sure of/to have)"
                         ] 
                     }
                 ]
             },
             {
-                id: 2, // Đề 2 (Trang 4)
-                title: "Đề 2: Benefits of Learning English",
+                id: 4,
+                title: "Đề 4: Wearable Technology",
                 content: `
-                    <h3 style="margin-top:0">The Benefits of Learning English</h3>
-                    <p>Learning English has become increasingly important in today's globalized world. It offers numerous benefits, both personal and professional.</p>
-                    <p>Firstly, English is the language of international communication. 
+                    <h3 style="margin-top:0">Wearable Technology</h3>
+                    <p>The 
                     <span id="gap-2-20" class="gap" onclick="app.selectQuestion(2, 20)">(20) ______</span> 
-                    you want to travel, study abroad, or work in a multinational company, knowing English will open up many opportunities.</p>
-                    <p>Secondly, English provides access to a vast amount of information. A significant portion of the internet is published in English. 
-                    <span id="gap-2-21" class="gap" onclick="app.selectQuestion(2, 21)">(21) ______</span>, 
-                    proficiency in English enables you to stay updated with the latest developments.</p>
-                    <p>Moreover, learning English can enhance your cognitive abilities. 
+                    rise of wearable technology has opened new doors for personal health monitoring. Devices like smartwatches and fitness trackers 
+                    <span id="gap-2-21" class="gap" onclick="app.selectQuestion(2, 21)">(21) ______</span> 
+                    people to monitor their heart rate, steps, and sleep patterns. This data can then be 
                     <span id="gap-2-22" class="gap" onclick="app.selectQuestion(2, 22)">(22) ______</span> 
-                    the process of acquiring a new language challenges your brain, leading to mental agility.</p>
-                    <p>In addition, English is considered the language of business. Many global industries use English. 
+                    to health apps for analysis.</p>
+                    <p>In the future, wearable technology is expected to include more advanced medical features... As technology 
                     <span id="gap-2-23" class="gap" onclick="app.selectQuestion(2, 23)">(23) ______</span>, 
-                    having strong English skills can significantly boost your career prospects.</p>
-                    <p><span id="gap-2-24" class="gap" onclick="app.selectQuestion(2, 24)">(24) ______</span>, 
-                    learning English is an investment in yourself. It's a skill that will continue to be valuable throughout your life.</p>
+                    wearables will become smaller, more accurate, and integrated into our everyday lives. The 
+                    <span id="gap-2-24" class="gap" onclick="app.selectQuestion(2, 24)">(24) ______</span> 
+                    for wearable technology are extensive and ever-growing.</p>
                 `,
                 questions: [
                     { 
                         id: 20, 
                         correct: "A", 
                         signalIds: [], 
-                        sentence_translation: "[Dù cho] bạn muốn đi du lịch, du học, hay làm việc..., biết tiếng Anh sẽ mở ra nhiều cơ hội.", 
+                        sentence_translation: "Sự gia tăng ... của công nghệ đeo được đã mở ra những cánh cửa mới...", 
                         options: [
-                            {id: "A", text: "Whether"}, 
-                            {id: "B", text: "Although"}, 
-                            {id: "C", text: "Since"}, 
-                            {id: "D", text: "Despite"}
+                            {id: "A", text: "recent"}, 
+                            {id: "B", text: "late"}, 
+                            {id: "C", text: "early"}, 
+                            {id: "D", text: "lately"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Conjunction (Liên từ).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'travel, study..., or work'.", 
-                            "<strong>Logic (Tư duy):</strong> Liên từ nào thường đi cặp với 'or' để liệt kê các lựa chọn hoặc khả năng khác nhau?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. Liệu rằng / Dù cho (...hay...)<br>B. Mặc dù<br>C. Bởi vì / Kể từ khi<br>D. Bất chấp"
+                            "<strong>Enemy (Phân loại):</strong> Word Form/Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'The ... rise' (Noun phrase).", 
+                            "<strong>Logic (Tư duy):</strong> Vị trí này cần một Tính từ bổ nghĩa cho 'rise'. 'Lately' là loại từ gì?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. gần đây (Adj)<br>B. muộn<br>C. sớm<br>D. gần đây (Adv)"
                         ] 
                     },
                     { 
                         id: 21, 
-                        correct: "D", 
+                        correct: "A", 
                         signalIds: [], 
-                        sentence_translation: "[Hơn nữa], thành thạo tiếng Anh giúp bạn cập nhật những phát triển mới nhất.", 
+                        sentence_translation: "Các thiết bị như đồng hồ thông minh ... mọi người theo dõi nhịp tim của họ.", 
                         options: [
-                            {id: "A", text: "In contrast"}, 
-                            {id: "B", text: "For example"}, 
-                            {id: "C", text: "However"}, 
-                            {id: "D", text: "Furthermore"}
+                            {id: "A", text: "allow"}, 
+                            {id: "B", text: "let"}, 
+                            {id: "C", text: "admit"}, 
+                            {id: "D", text: "accept"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Linking Words (Từ nối).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Sentence 1: 'provides access to information'. Sentence 2: 'enables you to stay updated'.", 
-                            "<strong>Logic (Tư duy):</strong> Câu sau bổ sung thêm lợi ích (tương đồng) hay phản bác lại câu trước?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. Ngược lại<br>B. Ví dụ<br>C. Tuy nhiên<br>D. Hơn nữa / Thêm vào đó"
+                            "<strong>Enemy (Phân loại):</strong> Verb Patterns (Cấu trúc động từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'people' (Object) + 'to monitor' (to V).", 
+                            "<strong>Logic (Tư duy):</strong> Cấu trúc [Verb + O + to V]. Động từ 'let' có đi với 'to V' không?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. cho phép (+ to V)<br>B. để (+ V-inf)<br>C. thừa nhận<br>D. chấp nhận"
                         ] 
                     },
                     { 
                         id: 22, 
-                        correct: "D", 
+                        correct: "C", 
                         signalIds: [], 
-                        sentence_translation: "[Thêm vào đó] quá trình thụ đắc ngôn ngữ mới thách thức não bộ của bạn...", 
+                        sentence_translation: "Dữ liệu này sau đó có thể được ... sang các ứng dụng sức khỏe để phân tích.", 
                         options: [
-                            {id: "A", text: "Nevertheless"}, 
-                            {id: "B", text: "Consequently"}, 
-                            {id: "C", text: "Otherwise"}, 
-                            {id: "D", text: "In addition"}
+                            {id: "A", text: "sent"}, 
+                            {id: "B", text: "connected"}, 
+                            {id: "C", text: "transferred"}, 
+                            {id: "D", text: "streamed"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Linking Words (Từ nối).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Previous: 'enhance cognitive abilities'. Current: 'challenges your brain'.", 
-                            "<strong>Logic (Tư duy):</strong> Câu này giải thích rõ hơn hoặc thêm vào ý 'enhance cognitive abilities'. Từ nối nào dùng để thêm thông tin bổ trợ?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. Tuy nhiên<br>B. Hậu quả là<br>C. Nếu không thì<br>D. Thêm vào đó / Ngoài ra"
+                            "<strong>Enemy (Phân loại):</strong> Word Choice (Từ vựng).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'This data' + 'to health apps'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào mang tính kỹ thuật thường dùng để chỉ việc di chuyển dữ liệu từ nơi này sang nơi khác?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. gửi<br>B. kết nối<br>C. chuyển đổi/truyền tải<br>D. phát trực tuyến"
                         ] 
                     },
                     { 
                         id: 23, 
-                        correct: "C", 
+                        correct: "A", 
                         signalIds: [], 
-                        sentence_translation: "[Vì vậy], có kỹ năng tiếng Anh tốt có thể thúc đẩy triển vọng nghề nghiệp của bạn.", 
+                        sentence_translation: "Khi công nghệ ..., các thiết bị đeo sẽ trở nên nhỏ hơn...", 
                         options: [
-                            {id: "A", text: "As a result"}, 
-                            {id: "B", text: "On the other hand"}, 
-                            {id: "C", text: "Therefore"}, 
-                            {id: "D", text: "To sum up"}
+                            {id: "A", text: "advances"}, 
+                            {id: "B", text: "progresses"}, 
+                            {id: "C", text: "moves"}, 
+                            {id: "D", text: "performed"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Linking Words (Cause & Effect).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'global industries use English' (Cause) -> 'boost your career' (Effect).", 
-                            "<strong>Logic (Tư duy):</strong> Từ nối nào diễn tả kết quả logic hoặc hệ quả của sự việc trước đó?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. Kết quả là (thường đứng đầu câu chỉ kết quả cụ thể)<br>B. Mặt khác<br>C. Vì vậy / Do đó<br>D. Tóm lại"
+                            "<strong>Enemy (Phân loại):</strong> Collocation (Kết hợp từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'technology'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào đi với 'technology' để diễn tả sự phát triển đi lên?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tiến bộ/phát triển<br>B. tiến triển (thường dùng cho quá trình)<br>C. di chuyển<br>D. biểu diễn"
                         ] 
                     },
                     { 
                         id: 24, 
                         correct: "B", 
                         signalIds: [], 
-                        sentence_translation: "[Tóm lại], học tiếng Anh là một sự đầu tư cho bản thân.", 
+                        sentence_translation: "Những ... cho công nghệ đeo được là rất lớn và ngày càng phát triển.", 
                         options: [
-                            {id: "A", text: "All are correct"}, 
-                            {id: "B", text: "All in all"}, 
-                            {id: "C", text: "The"}, 
-                            {id: "D", text: "But"}
+                            {id: "A", text: "potential"}, 
+                            {id: "B", text: "possibilities"}, 
+                            {id: "C", text: "impossible"}, 
+                            {id: "D", text: "possibility"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Concluding Phrase (Cụm từ kết luận).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Vị trí đầu đoạn cuối cùng.", 
-                            "<strong>Logic (Tư duy):</strong> Cụm từ nào thường được dùng để bắt đầu đoạn kết bài, tóm tắt lại toàn bộ ý chính?", 
-                            "<strong>Translation (Dịch đáp án):</strong><br>A. Tất cả đều đúng<br>B. Tóm lại / Nhìn chung<br>C. (Mạo từ)<br>D. Nhưng"
+                            "<strong>Enemy (Phân loại):</strong> Subject-Verb Agreement (Hòa hợp chủ vị).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'The ...' (Subject) + 'are' (Verb plural).", 
+                            "<strong>Logic (Tư duy):</strong> Động từ chính là 'are' (số nhiều), vậy Chủ ngữ cần điền phải ở dạng số ít hay số nhiều?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tiềm năng (không đếm được)<br>B. những khả năng (số nhiều)<br>C. không thể (Adj)<br>D. khả năng (số ít)"
                         ] 
                     }
                 ]
