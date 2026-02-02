@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloze Test: Full Context Translation</title>
+    <title>Cloze Test: Thinking Logic</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,7 +18,7 @@
             --green: #1e8e3e;
             --red: #d93025;
             --header-height: 60px;
-            --panel-height: 37.5vh; 
+            --panel-height: 50vh; 
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -106,40 +106,50 @@
         .gap.active-gap { background-color: var(--primary); color: white; border-color: var(--primary); }
         .gap.correct { color: var(--green); border-bottom-color: var(--green); }
         .gap.wrong { color: var(--red); border-bottom-color: var(--red); } 
-        
         .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
 
-        /* QUESTION PANEL (DESKTOP) */
+        /* QUESTION PANEL */
         .question-panel {
             flex: 1; min-width: 350px;
             position: sticky; top: 0; height: fit-content;
         }
         .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        
+        /* 1. OPTIONS (TOP) */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .option-btn {
+            padding: 12px 15px; border: 1px solid var(--border); background: white;
+            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .option-label { font-weight: bold; color: #555; min-width: 25px; } 
+        .option-text { flex: 1; } 
+        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
+        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+
+        /* 2. HINTS (MIDDLE) */
+        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #eee; }
         .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
         .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
         .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
         .hint-content.show { display: block; }
 
-        /* OPTIONS GRID */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .option-btn {
-            padding: 12px 15px; 
-            border: 1px solid var(--border); 
-            background: white;
-            border-radius: 8px; 
-            cursor: pointer; 
-            text-align: left; 
-            font-size: 1rem;
-            display: flex; 
-            align-items: center;
-            gap: 10px;
+        /* 3. TRANSLATION (BOTTOM) */
+        .trans-toggle-btn {
+            width: 100%; margin-top: 5px; padding: 10px;
+            background-color: #f8f9fa; border: 1px dashed var(--primary);
+            color: var(--primary); border-radius: 8px; font-weight: 600;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+            transition: 0.2s;
         }
-        .option-label { font-weight: bold; color: #555; min-width: 25px; } 
-        .option-text { flex: 1; } 
-
-        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
-        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+        .trans-toggle-btn:hover { background-color: #e8f0fe; }
+        .trans-box {
+            margin-top: 10px; padding: 12px;
+            background-color: #eef7ff; border-left: 4px solid var(--primary);
+            border-radius: 4px; color: #333; font-style: italic; font-size: 0.95rem;
+            line-height: 1.5; display: none; animation: fadeIn 0.3s ease;
+        }
+        .trans-box.show { display: block; }
 
         /* --- MOBILE RESPONSIVE --- */
         @media (max-width: 900px) {
@@ -265,8 +275,17 @@
                         <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">5 Points</span>
                     </div>
 
-                    <div class="hints-list" id="hints-container"></div>
                     <div class="options-grid" id="options-container"></div>
+
+                    <div class="hints-list" id="hints-container"></div>
+
+                    <div id="translation-section">
+                        <button class="trans-toggle-btn" onclick="app.toggleTranslation()">
+                            <i class="fas fa-language"></i> Dịch câu này
+                        </button>
+                        <div id="trans-content" class="trans-box"></div>
+                    </div>
+
                 </div>
 
                 <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
@@ -278,23 +297,94 @@
     </main>
 
     <script>
-        // --- CẬP NHẬT DỮ LIỆU ĐỀ 7, 8, 9 ---
+        // --- DỮ LIỆU BÀI TẬP ĐÃ CẬP NHẬT (THINKING LOGIC) ---
+      // --- DỮ LIỆU CẬP NHẬT: CAREER CHOICES, ĐỀ 7, ĐỀ 8 ---
         const exercises = [
             {
-                id: 7,
+                id: 1, // Bài mới: Career Choices
+                title: "Career Choices Announcement",
+                content: `
+                    <h3 style="margin-top:0">Career Choices Announcement</h3>
+                    <p>Choosing the right career is very important for your future. A good career gives you 
+                    <span id="gap-1-17" class="gap" onclick="app.selectQuestion(1, 17)">(17) ______</span> 
+                    opportunities to grow and learn. It also helps you feel successful.</p>
+                    <p>When selecting 
+                    <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
+                    job, think about what you enjoy and what skills you have. Some people like jobs where they can work with others, while some prefer working alone.</p>
+                    <p>There are many careers to choose from, such as doctor, teacher, or engineer. Each job is different and requires special skills. You should choose a career 
+                    <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span> 
+                    fits your interests and goals. Sometimes, people change careers because they want to try something new or develop new skills.</p>
+                `,
+                questions: [
+                    { 
+                        id: 17, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Một nghề nghiệp tốt mang lại cho bạn ... cơ hội để phát triển và học hỏi.", 
+                        options: [
+                            {id: "A", text: "many"}, 
+                            {id: "B", text: "few"}, 
+                            {id: "C", text: "little"}, 
+                            {id: "D", text: "much"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Quantifiers (Lượng từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'opportunities' (Plural Countable Noun).", 
+                            "<strong>Logic (Tư duy):</strong> 'Opportunities' là danh từ đếm được số nhiều. 'A good career' mang ý nghĩa tích cực, vậy nó cung cấp số lượng cơ hội như thế nào?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. nhiều (cho danh từ đếm được)<br>B. rất ít (cho danh từ đếm được)<br>C. rất ít (cho danh từ không đếm được)<br>D. nhiều (cho danh từ không đếm được)"
+                        ] 
+                    },
+                    { 
+                        id: 18, 
+                        correct: "A", 
+                        sentence_translation: "Khi lựa chọn ... công việc, hãy nghĩ về những gì bạn thích.", 
+                        options: [
+                            {id: "A", text: "a"}, 
+                            {id: "B", text: "an"}, 
+                            {id: "C", text: "the"}, 
+                            {id: "D", text: "Ø (no article)"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Articles (Mạo từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'job' (Singular Countable Noun).", 
+                            "<strong>Logic (Tư duy):</strong> 'Job' được nhắc đến lần đầu, mang nghĩa chung chung (bất kỳ công việc nào). Từ này bắt đầu bằng phụ âm hay nguyên âm?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. một (trước phụ âm)<br>B. một (trước nguyên âm)<br>C. cái đó (xác định)<br>D. không mạo từ"
+                        ] 
+                    },
+                    { 
+                        id: 19, 
+                        correct: "B", 
+                        sentence_translation: "Bạn nên chọn một nghề nghiệp ... phù hợp với sở thích và mục tiêu của bạn.", 
+                        options: [
+                            {id: "A", text: "who"}, 
+                            {id: "B", text: "that"}, 
+                            {id: "C", text: "what"}, 
+                            {id: "D", text: "where"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Relative Pronouns (Đại từ quan hệ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'a career' (Thing/Object).", 
+                            "<strong>Logic (Tư duy):</strong> Đại từ quan hệ nào thay thế cho danh từ chỉ vật ('career') để làm chủ ngữ cho động từ 'fits'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. người mà<br>B. cái mà<br>C. cái gì<br>D. nơi mà"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 7, // Giữ ID theo đề bài
                 title: "Đề 7: Field Trip to Cuc Phuong",
                 content: `
                     <h3 style="margin-top:0">School Announcement: Field Trip</h3>
                     <p>We are 
-                    <span id="gap-1-17" class="gap" onclick="app.selectQuestion(1, 17)">(17) ______</span> 
+                    <span id="gap-2-17" class="gap" onclick="app.selectQuestion(2, 17)">(17) ______</span> 
                     to announce a field trip to Cuc Phuong National Park. Please note the following details:</p>
                     <p>• Date: Next Friday, February 12th</p>
                     <p>• Departure: School bus 
-                    <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
+                    <span id="gap-2-18" class="gap" onclick="app.selectQuestion(2, 18)">(18) ______</span> 
                     at 8:00 AM</p>
                     <p>• Bring: Packed lunch, water bottle, and comfortable shoes.</p>
                     <p>• Explore: Nature trails, wildlife, and learn 
-                    <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span> 
+                    <span id="gap-2-19" class="gap" onclick="app.selectQuestion(2, 19)">(19) ______</span> 
                     conservation efforts. Don't miss out on this educational adventure!</p>
                 `,
                 questions: [
@@ -302,6 +392,7 @@
                         id: 17, 
                         correct: "B", 
                         signalIds: [], 
+                        sentence_translation: "Chúng tôi rất ... khi thông báo về chuyến đi thực tế đến Vườn Quốc gia Cúc Phương.", 
                         options: [
                             {id: "A", text: "excite"}, 
                             {id: "B", text: "excited"}, 
@@ -309,16 +400,17 @@
                             {id: "D", text: "excitingly"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Bài tập WORD FORM (Động/Tính/Danh từ).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Chủ ngữ chỉ người 'We' + 'are' (tobe).", 
-                            "<strong>Logic (Tư duy):</strong> Khi chủ ngữ là NGƯỜI và muốn miêu tả CẢM XÚC của họ về một sự kiện, ta dùng Tính từ đuôi -ED hay -ING?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [làm hào hứng] (V) → Chúng tôi [làm hào hứng] để thông báo...<br>B. [cảm thấy hào hứng] (Adj) → Chúng tôi [cảm thấy hào hứng] để thông báo...<br>C. [sự hào hứng] (N) → Chúng tôi [sự hào hứng] để thông báo...<br>D. [một cách hào hứng] (Adv) → Chúng tôi [một cách hào hứng] để thông báo..."
+                            "<strong>Enemy (Phân loại):</strong> Word Form (Từ loại - Adjectives).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'We' (Subject - Person) + 'are' (To be).", 
+                            "<strong>Logic (Tư duy):</strong> Để diễn tả cảm xúc của con người ('We'), ta dùng tính từ đuôi -ED hay -ING?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. làm hào hứng (V)<br>B. cảm thấy hào hứng (Adj)<br>C. sự hào hứng (N)<br>D. một cách hào hứng (Adv)"
                         ] 
                     },
                     { 
                         id: 18, 
                         correct: "D", 
                         signalIds: [], 
+                        sentence_translation: "Xe buýt của trường ... lúc 8 giờ sáng.", 
                         options: [
                             {id: "A", text: "left"}, 
                             {id: "B", text: "has left"}, 
@@ -326,16 +418,17 @@
                             {id: "D", text: "leaves"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Bài tập THÌ (Tenses).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Giờ giấc cố định 'at 8:00 AM' và chủ ngữ 'School bus'.", 
-                            "<strong>Logic (Tư duy):</strong> Trong tiếng Anh, khi nói về lịch trình tàu xe, máy bay, thời gian biểu cố định (timetable), ta dùng thì gì dù sự việc chưa xảy ra?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [đã rời đi] (QkĐ) → Xe buýt [đã rời đi] lúc 8 giờ.<br>B. [vừa mới rời đi] (HTHT) → Xe buýt [vừa mới rời đi] lúc 8 giờ.<br>C. [đã rời đi trước đó] (QKHT) → Xe buýt [đã rời đi xong xuôi] lúc 8 giờ.<br>D. [rời đi theo lịch] (HTĐ) → Xe buýt [có lịch rời đi] lúc 8 giờ."
+                            "<strong>Enemy (Phân loại):</strong> Tenses (Thì).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'at 8:00 AM' (Scheduled time).", 
+                            "<strong>Logic (Tư duy):</strong> Thì nào được dùng để nói về lịch trình tàu xe, thời gian biểu cố định (Timetable) trong tương lai?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. đã rời đi (Quá khứ)<br>B. vừa rời đi (HTHT)<br>C. đã rời đi (QKHT)<br>D. rời đi (Hiện tại đơn - Lịch trình)"
                         ] 
                     },
                     { 
                         id: 19, 
                         correct: "C", 
                         signalIds: [], 
+                        sentence_translation: "...và tìm hiểu ... các nỗ lực bảo tồn.", 
                         options: [
                             {id: "A", text: "with"}, 
                             {id: "B", text: "to"}, 
@@ -343,27 +436,27 @@
                             {id: "D", text: "at"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Giới từ (Prepositions).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Động từ 'learn' đứng trước.", 
-                            "<strong>Logic (Tư duy):</strong> Cụm động từ nào mang nghĩa 'tìm hiểu VỀ cái gì đó'? Learn + ...?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [với] → tìm hiểu [với] các nỗ lực bảo tồn.<br>B. [để/tới] → tìm hiểu [tới] các nỗ lực bảo tồn.<br>C. [về] → tìm hiểu [về] các nỗ lực bảo tồn.<br>D. [tại] → tìm hiểu [tại] các nỗ lực bảo tồn."
+                            "<strong>Enemy (Phân loại):</strong> Prepositions (Giới từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'learn'.", 
+                            "<strong>Logic (Tư duy):</strong> Cụm động từ nào mang nghĩa 'thu nhận kiến thức VỀ cái gì đó'? 'Learn' + ...?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. với<br>B. tới<br>C. về<br>D. tại"
                         ] 
                     }
                 ]
             },
             {
-                id: 8,
+                id: 8, // Giữ ID theo đề bài
                 title: "Đề 8: Sports Day Announcement",
                 content: `
                     <h3 style="margin-top:0">Sports Day Announcement</h3>
                     <p>Dear Students, We are thrilled to announce that our school will hold a Sports Day on June 15th. This is a fantastic opportunity for everyone 
-                    <span id="gap-2-17" class="gap" onclick="app.selectQuestion(2, 17)">(17) ______</span> 
+                    <span id="gap-3-17" class="gap" onclick="app.selectQuestion(3, 17)">(17) ______</span> 
                     outdoor activities and showcase their athletic skills. On this day, students will participate in various events, including relay races, football matches, and tug-of-war.</p>
                     <p>All students are encouraged 
-                    <span id="gap-2-18" class="gap" onclick="app.selectQuestion(2, 18)">(18) ______</span> 
+                    <span id="gap-3-18" class="gap" onclick="app.selectQuestion(3, 18)">(18) ______</span> 
                     in and show their team spirit. The event will begin at 8.00 a.m in the school playground. Please wear comfortable sportswear and bring a water bottle to stay hydrated.</p>
                     <p>We also recommend 
-                    <span id="gap-2-19" class="gap" onclick="app.selectQuestion(2, 19)">(19) ______</span> 
+                    <span id="gap-3-19" class="gap" onclick="app.selectQuestion(3, 19)">(19) ______</span> 
                     sunscreen and hats for protection against the sun. Let's come together for a fun and active day!</p>
                 `,
                 questions: [
@@ -371,6 +464,7 @@
                         id: 17, 
                         correct: "D", 
                         signalIds: [], 
+                        sentence_translation: "Đây là cơ hội tuyệt vời cho mọi người ... các hoạt động ngoài trời.", 
                         options: [
                             {id: "A", text: "enjoys"}, 
                             {id: "B", text: "enjoying"}, 
@@ -378,16 +472,17 @@
                             {id: "D", text: "to enjoy"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Dạng động từ (V-ing/To V/V-inf).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Cụm danh từ 'opportunity' (cơ hội) + for everyone.", 
-                            "<strong>Logic (Tư duy):</strong> Sau các danh từ chỉ khả năng hoặc cơ hội (opportunity, chance, way...), ta dùng dạng động từ nào để chỉ mục đích (cơ hội ĐỂ làm gì)?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [tận hưởng] (chia số ít) → cơ hội cho mọi người [tận hưởng]...<br>B. [đang tận hưởng] (V-ing) → cơ hội cho mọi người [đang tận hưởng]...<br>C. [tận hưởng] (V-inf) → cơ hội cho mọi người [tận hưởng]...<br>D. [để tận hưởng] (To V) → cơ hội cho mọi người [để tận hưởng]..."
+                            "<strong>Enemy (Phân loại):</strong> Verb Forms (To V / V-ing).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'opportunity'.", 
+                            "<strong>Logic (Tư duy):</strong> Sau danh từ 'opportunity' (cơ hội), ta dùng dạng động từ nào để chỉ mục đích (cơ hội ĐỂ làm gì)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tận hưởng (số ít)<br>B. việc tận hưởng<br>C. tận hưởng (nguyên thể)<br>D. để tận hưởng"
                         ] 
                     },
                     { 
                         id: 18, 
                         correct: "D", 
                         signalIds: [], 
+                        sentence_translation: "Tất cả học sinh được khuyến khích ... và thể hiện tinh thần đồng đội.", 
                         options: [
                             {id: "A", text: "join"}, 
                             {id: "B", text: "joining"}, 
@@ -395,16 +490,17 @@
                             {id: "D", text: "to join"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Cấu trúc Bị động với động từ khuyên bảo.", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'are encouraged' (được khuyến khích).", 
-                            "<strong>Logic (Tư duy):</strong> Cấu trúc chủ động là 'Encourage s.o TO do sth'. Vậy khi chuyển sang bị động 'S + be encouraged + ...', động từ phía sau là gì?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [tham gia] (V-inf) → được khuyến khích [tham gia]...<br>B. [việc tham gia] (V-ing) → được khuyến khích [việc tham gia]...<br>C. [tham gia] (chia số ít) → được khuyến khích [tham gia]...<br>D. [hãy/để tham gia] (To V) → được khuyến khích [hãy tham gia]..."
+                            "<strong>Enemy (Phân loại):</strong> Passive Voice Structure.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'are encouraged'.", 
+                            "<strong>Logic (Tư duy):</strong> Cấu trúc 'Encourage sb TO do sth'. Khi chuyển sang bị động 'Sb be encouraged + ...', động từ theo sau là gì?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tham gia<br>B. đang tham gia<br>C. tham gia (số ít)<br>D. (để) tham gia"
                         ] 
                     },
                     { 
                         id: 19, 
                         correct: "C", 
                         signalIds: [], 
+                        sentence_translation: "Chúng tôi cũng khuyên ... kem chống nắng và mũ.", 
                         options: [
                             {id: "A", text: "wear"}, 
                             {id: "B", text: "to wear"}, 
@@ -412,85 +508,15 @@
                             {id: "D", text: "wears"}
                         ], 
                         hints: [
-                            "<strong>Enemy (Phân loại):</strong> Dạng động từ sau động từ chính.", 
-                            "<strong>Signal (Dấu hiệu):</strong> Động từ 'recommend' đứng ngay trước.", 
-                            "<strong>Logic (Tư duy):</strong> Với các động từ như 'recommend', 'suggest', 'avoid'... nếu KHÔNG có tân ngữ chỉ người ở giữa, động từ đi sau phải ở dạng nào?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [đội/bôi] (V-inf) → khuyên [bôi] kem chống nắng...<br>B. [để bôi] (To V) → khuyên [để bôi] kem chống nắng...<br>C. [việc bôi] (V-ing) → khuyên [việc bôi/nên bôi] kem chống nắng...<br>D. [bôi] (chia số ít) → khuyên [bôi] kem chống nắng..."
-                        ] 
-                    }
-                ]
-            },
-            {
-                id: 9,
-                title: "Đề 9: Community Garden Project",
-                content: `
-                    <h3 style="margin-top:0">Community Garden Project!</h3>
-                    <p>Are you interested in helping our local environment? The City Council is starting a new community garden project at Green Park. This initiative aims to transform an unused area into a vibrant space. We are looking for volunteers to help with planting and watering.</p>
-                    <p>This project will also serve as a wonderful tourist 
-                    <span id="gap-3-17" class="gap" onclick="app.selectQuestion(3, 17)">(17) ______</span> 
-                    for visitors interested in sustainable living. Come and join us to 
-                    <span id="gap-3-18" class="gap" onclick="app.selectQuestion(3, 18)">(18) ______</span> 
-                    our community greener and more beautiful. We will provide all the necessary tools.</p>
-                    <p>We hope to see many of you 
-                    <span id="gap-3-19" class="gap" onclick="app.selectQuestion(3, 19)">(19) ______</span> 
-                    at the park on Saturday morning. Let's work together!</p>
-                `,
-                questions: [
-                    { 
-                        id: 17, 
-                        correct: "C", 
-                        signalIds: [], 
-                        options: [
-                            {id: "A", text: "facility"}, 
-                            {id: "B", text: "speciality"}, 
-                            {id: "C", text: "attraction"}, 
-                            {id: "D", text: "workshop"}
-                        ], 
-                        hints: [
-                            "<strong>Enemy (Phân loại):</strong> TỪ VỰNG (Danh từ).", 
-                            "<strong>Signal (Dấu hiệu):</strong> 'tourist' (du lịch) + [Danh từ] + 'for visitors' (cho du khách).", 
-                            "<strong>Logic (Tư duy):</strong> Từ ghép nào phổ biến dùng để chỉ một địa điểm thú vị thu hút khách du lịch?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [cơ sở vật chất] → một [cơ sở vật chất] du lịch tuyệt vời.<br>B. [đặc sản] → một [đặc sản] du lịch tuyệt vời.<br>C. [điểm thu hút] → một [điểm thu hút] du lịch tuyệt vời.<br>D. [hội thảo] → một [hội thảo] du lịch tuyệt vời."
-                        ] 
-                    },
-                    { 
-                        id: 18, 
-                        correct: "B", 
-                        signalIds: [], 
-                        options: [
-                            {id: "A", text: "help"}, 
-                            {id: "B", text: "make"}, 
-                            {id: "C", text: "do"}, 
-                            {id: "D", text: "take"}
-                        ], 
-                        hints: [
-                            "<strong>Enemy (Phân loại):</strong> Kết hợp từ (Collocations/Cấu trúc câu).", 
-                            "<strong>Signal (Dấu hiệu):</strong> Tân ngữ 'our community' + Tính từ 'greener'.", 
-                            "<strong>Logic (Tư duy):</strong> Động từ nào đi với cấu trúc [V + O + Adj] mang nghĩa 'khiến cho ai/cái gì trở nên thế nào'?", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [giúp] → để [giúp] cộng đồng xanh hơn.<br>B. [làm cho/khiến] → để [làm cho] cộng đồng xanh hơn.<br>C. [thực hiện] → để [thực hiện] cộng đồng xanh hơn.<br>D. [lấy] → để [lấy] cộng đồng xanh hơn."
-                        ] 
-                    },
-                    { 
-                        id: 19, 
-                        correct: "C", 
-                        signalIds: [], 
-                        options: [
-                            {id: "A", text: "turn on"}, 
-                            {id: "B", text: "turn down"}, 
-                            {id: "C", text: "turn up"}, 
-                            {id: "D", text: "turn off"}
-                        ], 
-                        hints: [
-                            "<strong>Enemy (Phân loại):</strong> Cụm động từ (Phrasal Verbs) với Turn.", 
-                            "<strong>Signal (Dấu hiệu):</strong> Ngữ cảnh 'hope to see... at the park' (hy vọng gặp... tại công viên).", 
-                            "<strong>Logic (Tư duy):</strong> Cần một cụm từ mang nghĩa là 'xuất hiện' hoặc 'có mặt' tại một địa điểm.", 
-                            "<strong>Translation (Dịch ngữ cảnh):</strong><br>A. [bật lên] → thấy các bạn [bật lên] tại công viên.<br>B. [từ chối/vặn nhỏ] → thấy các bạn [từ chối] tại công viên.<br>C. [xuất hiện/đến] → thấy các bạn [xuất hiện] tại công viên.<br>D. [tắt đi] → thấy các bạn [tắt đi] tại công viên."
+                            "<strong>Enemy (Phân loại):</strong> Verb Pattern (Mẫu câu động từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'recommend' (No object).", 
+                            "<strong>Logic (Tư duy):</strong> Động từ 'recommend' nếu không có tân ngữ chỉ người đi kèm thì động từ ngay sau nó phải ở dạng nào?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. mặc/đội (nguyên thể)<br>B. để đội<br>C. việc đội/nên đội<br>D. đội (số ít)"
                         ] 
                     }
                 ]
             }
         ];
-
         // --- APP LOGIC GIỮ NGUYÊN ---
         const app = {
             state: { exIdx: 0, currentScore: 0, maxScore: 0, qMap: {} },
@@ -550,11 +576,16 @@
                 this.renderHints(realIndex, qId, qData, qState);
                 this.renderOptions(realIndex, qId, qData, qState);
 
+                // --- XỬ LÝ PHẦN DỊCH CÂU ---
+                document.getElementById('trans-content').classList.remove('show');
+                document.querySelector('.trans-toggle-btn').innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                const transText = qData.sentence_translation || "Chưa có bản dịch cho câu này.";
+                document.getElementById('trans-content').innerHTML = transText;
+
                 document.getElementById('empty-state').style.display = 'none';
                 document.getElementById('q-card-area').style.display = 'block';
                 document.getElementById('question-panel').classList.add('active');
                 
-                // --- AUTO-FOCUS TOP 1/3 ---
                 if(window.innerWidth <= 900 && gap) {
                     setTimeout(() => {
                         const container = document.querySelector('.main-content');
@@ -562,13 +593,8 @@
                         const containerRect = container.getBoundingClientRect();
                         const currentScroll = container.scrollTop;
                         const gapTopRelative = gapRect.top - containerRect.top; 
-                        
                         const targetScroll = currentScroll + gapTopRelative - 70;
-
-                        container.scrollTo({
-                            top: targetScroll,
-                            behavior: 'smooth'
-                        });
+                        container.scrollTo({ top: targetScroll, behavior: 'smooth' });
                     }, 300);
                 }
 
@@ -634,6 +660,23 @@
                     }
                     container.appendChild(btn);
                 });
+            },
+
+            toggleTranslation: function() {
+                const box = document.getElementById('trans-content');
+                const btn = document.querySelector('.trans-toggle-btn');
+                
+                if (box.classList.contains('show')) {
+                    box.classList.remove('show');
+                    btn.innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                    btn.style.backgroundColor = "#f8f9fa";
+                    btn.style.color = "var(--primary)";
+                } else {
+                    box.classList.add('show');
+                    btn.innerHTML = '<i class="fas fa-chevron-up"></i> Ẩn dịch';
+                    btn.style.backgroundColor = "var(--primary)";
+                    btn.style.color = "white";
+                }
             },
 
             submitAnswer: function(exIndex, qId, choiceId) {
