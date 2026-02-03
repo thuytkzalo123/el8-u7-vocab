@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cloze Test: Thinking Logic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-main: #202124;
+            --border: #dadce0;
+            --orange: #f59e0b;
+            --green: #1e8e3e;
+            --red: #d93025;
+            --header-height: 60px;
+            --panel-height: 50vh; 
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--secondary-bg);
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden; 
+        }
+
+        /* --- HEADER MOBILE --- */
+        .mobile-header {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .menu-btn { font-size: 1.4rem; color: #555; padding: 5px 10px; cursor: pointer; }
+        .mobile-score { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 300px;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            height: 100%; flex-shrink: 0;
+            z-index: 200; 
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header h3 { margin: 0; color: var(--primary); }
+        .close-sidebar-btn { display: none; font-size: 1.2rem; cursor: pointer; }
+        .stats-area { padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid var(--border); }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .stat-value { font-weight: 800; color: var(--primary); }
+        .question-grid-container { flex: 1; padding: 20px; overflow-y: auto; }
+        .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .q-cell {
+            aspect-ratio: 1; background: var(--white); border: 1px solid var(--border);
+            border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-weight: 600; color: #666; transition: 0.2s;
+        }
+        .q-cell.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-cell.done { background: #e6f4ea; color: var(--green); border-color: var(--green); }
+        .q-cell.wrong { background: #fce8e6; color: var(--red); border-color: var(--red); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            display: flex; justify-content: center;
+            position: relative;
+            scroll-behavior: smooth; 
+        }
+        .content-wrapper { display: flex; width: 100%; max-width: 1200px; gap: 25px; }
+
+        /* TEXT PANEL */
+        .text-panel {
+            flex: 2;
+            background: var(--white); border-radius: 12px; padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            height: fit-content;
+            line-height: 2.0; font-size: 1.15rem; color: #333;
+        }
+        
+        .gap {
+            display: inline-block; min-width: 40px; border-bottom: 2px solid #ccc;
+            color: var(--primary); font-weight: 700; text-align: center;
+            cursor: pointer; padding: 2px 6px; transition: 0.2s; border-radius: 4px;
+        }
+        .gap.active-gap { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .gap.correct { color: var(--green); border-bottom-color: var(--green); }
+        .gap.wrong { color: var(--red); border-bottom-color: var(--red); } 
+        .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
+
+        /* QUESTION PANEL */
+        .question-panel {
+            flex: 1; min-width: 350px;
+            position: sticky; top: 0; height: fit-content;
+        }
+        .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        /* 1. OPTIONS (TOP) */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .option-btn {
+            padding: 12px 15px; border: 1px solid var(--border); background: white;
+            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .option-label { font-weight: bold; color: #555; min-width: 25px; } 
+        .option-text { flex: 1; } 
+        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
+        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+
+        /* 2. HINTS (MIDDLE) */
+        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #eee; }
+        .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
+        .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+        .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
+        .hint-content.show { display: block; }
+
+        /* 3. TRANSLATION (BOTTOM) */
+        .trans-toggle-btn {
+            width: 100%; margin-top: 5px; padding: 10px;
+            background-color: #f8f9fa; border: 1px dashed var(--primary);
+            color: var(--primary); border-radius: 8px; font-weight: 600;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .trans-toggle-btn:hover { background-color: #e8f0fe; }
+        .trans-box {
+            margin-top: 10px; padding: 12px;
+            background-color: #eef7ff; border-left: 4px solid var(--primary);
+            border-radius: 4px; color: #333; font-style: italic; font-size: 0.95rem;
+            line-height: 1.5; display: none; animation: fadeIn 0.3s ease;
+        }
+        .trans-box.show { display: block; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; padding-top: var(--header-height); }
+            .mobile-header { display: flex; }
+
+            .sidebar {
+                position: fixed; left: 0; top: 0; bottom: 0;
+                width: 85%; max-width: 320px;
+                transform: translateX(-100%);
+                box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .close-sidebar-btn { display: block; }
+
+            .main-content {
+                display: block; width: 100%; padding: 0;
+                height: calc(100vh - var(--header-height)); 
+            }
+            .content-wrapper { flex-direction: column; width: 100%; }
+            
+            .text-panel { 
+                width: 100%; border-radius: 0; box-shadow: none; 
+                padding: 20px; 
+                padding-bottom: 80vh !important; 
+            }
+
+            .question-panel {
+                position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+                width: 100%; z-index: 150;
+                transform: translateY(120%);
+                transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
+            }
+            .question-panel.active { transform: translateY(0); }
+
+            .q-card {
+                border-radius: 20px 20px 0 0; 
+                padding: 15px 20px 20px 20px;
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+                height: var(--panel-height); 
+                max-height: var(--panel-height);
+                overflow-y: auto;
+                border-top: 1px solid #ddd;
+                position: relative;
+            }
+
+            .drag-handle {
+                width: 40px; height: 5px; background: #e0e0e0;
+                border-radius: 10px; margin: 0 auto 10px auto;
+            }
+
+            .mobile-collapse-btn {
+                display: flex !important; justify-content: center; align-items: center;
+                width: 28px; height: 28px; background: #f1f3f4; border-radius: 50%;
+                position: absolute; right: 15px; top: 12px;
+                cursor: pointer; color: #555;
+            }
+
+            #empty-state { display: none !important; }
+        }
+
+        .mobile-collapse-btn { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <div class="menu-btn" onclick="app.toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="mobile-score">
+            <span id="m-score">0</span> / <span id="m-max">0</span>
+        </div>
+        <div class="menu-btn" onclick="app.scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" onclick="app.toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-book-open"></i> Cloze Test</h3>
+            <i class="fas fa-times close-sidebar-btn" onclick="app.toggleSidebar()"></i>
+        </div>
+        <div class="stats-area">
+            <div class="stat-row">
+                <span>Điểm số:</span>
+                <span class="stat-value"><span id="current-score">0</span> / <span id="max-score">0</span></span>
+            </div>
+            <div style="font-size: 0.85rem; color: #666; margin-top:5px;">
+                * 5đ/câu. Trừ 1đ/gợi ý.
+            </div>
+        </div>
+        <div class="question-grid-container">
+            <div style="font-weight:bold; margin-bottom:10px;">Câu hỏi</div>
+            <div id="sidebar-grid" class="q-grid"></div>
+        </div>
+        <div style="padding: 20px; border-top:1px solid #eee;">
+            <button onclick="app.nextExercise()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">
+                Bài tiếp theo <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="text-panel">
+                <h2 id="ex-title" style="margin-top:0; color:var(--primary); font-size:1.3rem; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">Loading...</h2>
+                <div id="ex-content"></div>
+            </div>
+
+            <div class="question-panel" id="question-panel">
+                <div class="q-card" id="q-card-area">
+                    <div class="drag-handle"></div>
+                    <div class="mobile-collapse-btn" onclick="app.closeQuestionPanel()">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-right: 40px;">
+                        <h3 style="margin:0; font-size:1.1rem;">Câu <span id="q-number">...</span></h3>
+                        <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">5 Points</span>
+                    </div>
+
+                    <div class="options-grid" id="options-container"></div>
+
+                    <div class="hints-list" id="hints-container"></div>
+
+                    <div id="translation-section">
+                        <button class="trans-toggle-btn" onclick="app.toggleTranslation()">
+                            <i class="fas fa-language"></i> Dịch câu này
+                        </button>
+                        <div id="trans-content" class="trans-box"></div>
+                    </div>
+
+                </div>
+
+                <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
+                    <i class="fas fa-mouse-pointer" style="font-size:2rem; margin-bottom:10px;"></i>
+                    <p>Chọn ô trống để bắt đầu</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+       // --- DỮ LIỆU CẬP NHẬT: ĐỀ 13, 14, 15 ---
+
+// --- DỮ LIỆU CẬP NHẬT: ĐỀ 11 & ĐỀ 13 ---
+        const exercises = [
+            {
+                id: 11, // Đề 11 (Trang 22)
+                title: "Đề 11: Food Habits (Past vs Present)",
+                content: `
+                    <h3 style="margin-top:0">Food Habits: Past vs Present</h3>
+                    <p>There are differences in terms of food habits between past and present lifestyles. People used to grow food like fruits, vegetables, and 
+                    <span id="gap-1-20" class="gap" onclick="app.selectQuestion(1, 20)">(20) ______</span> 
+                    and livestock on farms.</p>
+                    <p>They always had 
+                    <span id="gap-1-21" class="gap" onclick="app.selectQuestion(1, 21)">(21) ______</span> 
+                    vegetables and fruits. They were, therefore, healthier and didn't need much extra 
+                    <span id="gap-1-22" class="gap" onclick="app.selectQuestion(1, 22)">(22) ______</span> 
+                    because their daily work kept their bodies running. They had few diseases, especially those related to their digestive system.</p>
+                    <p>At present, technology has turned agriculture into mass 
+                    <span id="gap-1-23" class="gap" onclick="app.selectQuestion(1, 23)">(23) ______</span> 
+                    assure fruitful crops. People keep their food in the fridge for some days or weeks before using it.</p>
+                    <p>Ready-made food at markets uses preservatives to keep it 
+                    <span id="gap-1-24" class="gap" onclick="app.selectQuestion(1, 24)">(24) ______</span>. 
+                    People eat more spicy fried food. Fast food is another major factor in modern food habits... As a result, people now are less healthy.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Mọi người từng tự trồng thực phẩm như trái cây, rau củ, và ... cùng gia súc trên trang trại.", 
+                        options: [
+                            {id: "A", text: "cereal"}, 
+                            {id: "B", text: "bananas"}, 
+                            {id: "C", text: "cattle"}, 
+                            {id: "D", text: "carrots"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary (Agriculture).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'grow food like...', 'livestock' (animals).", 
+                            "<strong>Logic (Tư duy):</strong> 'Livestock' (cattle) is already mentioned separately. 'Bananas' and 'carrots' are fruits/vegetables. Which option represents 'grains' (a major crop type)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. ngũ cốc<br>B. chuối<br>C. gia súc<br>D. cà rốt"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "Họ luôn có rau quả ...", 
+                        options: [
+                            {id: "A", text: "convenient"}, 
+                            {id: "B", text: "ready-made"}, 
+                            {id: "C", text: "fresh"}, 
+                            {id: "D", text: "old"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Adjective Context.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'grow food', 'on farms', 'past lifestyles'.", 
+                            "<strong>Logic (Tư duy):</strong> Food that is grown at home and eaten immediately usually has what quality?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tiện lợi<br>B. làm sẵn<br>C. tươi<br>D. cũ"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "Họ khỏe mạnh hơn và không cần nhiều ... thêm vì công việc hàng ngày giúp cơ thể vận động.", 
+                        options: [
+                            {id: "A", text: "food"}, 
+                            {id: "B", text: "exercise"}, 
+                            {id: "C", text: "energy"}, 
+                            {id: "D", text: "medicine"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Noun Context.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'daily work', 'kept their bodies running'.", 
+                            "<strong>Logic (Tư duy):</strong> If 'daily work' already provides physical activity, what do they not need to do 'extra' of?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. thức ăn<br>B. tập thể dục<br>C. năng lượng<br>D. thuốc"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "Hiện tại, công nghệ đã biến nông nghiệp thành ... hàng loạt.", 
+                        options: [
+                            {id: "A", text: "crops"}, 
+                            {id: "B", text: "farming"}, 
+                            {id: "C", text: "storage"}, 
+                            {id: "D", text: "production"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'mass ...'.", 
+                            "<strong>Logic (Tư duy):</strong> Which noun combines with 'mass' to describe creating goods (or food) in large quantities?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. mùa màng<br>B. canh tác<br>C. lưu trữ<br>D. sản xuất"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "Thực phẩm làm sẵn... sử dụng chất bảo quản để giữ nó (được) ...", 
+                        options: [
+                            {id: "A", text: "shorter"}, 
+                            {id: "B", text: "longer"}, 
+                            {id: "C", text: "stronger"}, 
+                            {id: "D", text: "healthier"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Comparative Adjective.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'preservatives', 'keep it...'.", 
+                            "<strong>Logic (Tư duy):</strong> What is the main purpose of 'preservatives' regarding the time food can be kept?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. ngắn hơn<br>B. lâu hơn<br>C. mạnh hơn<br>D. khỏe mạnh hơn"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 13, // Đề 13 (Trang 26)
+                title: "Đề 13: Vietnamese Lifestyle Changes",
+                content: `
+                    <h3 style="margin-top:0">Vietnamese Lifestyle Changes</h3>
+                    <p>Vietnamese lifestyle has changed greatly over the years. In the past, most families lived in the countryside... Although living conditions were not modern, many people still felt 
+                    <span id="gap-2-20" class="gap" onclick="app.selectQuestion(2, 20)">(20) ______</span> 
+                    because family members stayed close and supported one another.</p>
+                    <p>Today, life has become more convenient... However, busy schedules sometimes make people 
+                    <span id="gap-2-21" class="gap" onclick="app.selectQuestion(2, 21)">(21) ______</span> 
+                    time for family activities. Children often focus on studying... instead of helping with housework.</p>
+                    <p>Even though lifestyles are changing, cultural traditions remain important... By balancing modern life 
+                    <span id="gap-2-22" class="gap" onclick="app.selectQuestion(2, 22)">(22) ______</span> 
+                    cultural values, Vietnamese people believe they can build a happy future.</p>
+                    <p>In the coming years, lifestyle habits will continue to develop, but strong family bonds will always play an important 
+                    <span id="gap-2-23" class="gap" onclick="app.selectQuestion(2, 23)">(23) ______</span> 
+                    in society and help people feel 
+                    <span id="gap-2-24" class="gap" onclick="app.selectQuestion(2, 24)">(24) ______</span> 
+                    in their community.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "...nhiều người vẫn cảm thấy ... vì các thành viên trong gia đình sống gần gũi và hỗ trợ lẫn nhau.", 
+                        options: [
+                            {id: "A", text: "stressed"}, 
+                            {id: "B", text: "happy"}, 
+                            {id: "C", text: "lonely"}, 
+                            {id: "D", text: "bored"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Adjective (Emotion).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'family members stayed close', 'supported one another'.", 
+                            "<strong>Logic (Tư duy):</strong> If you have 'support' and 'closeness' from family, what positive emotion do you feel?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. căng thẳng<br>B. hạnh phúc<br>C. cô đơn<br>D. buồn chán"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "Tuy nhiên, lịch trình bận rộn đôi khi khiến mọi người ... thời gian cho các hoạt động gia đình.", 
+                        options: [
+                            {id: "A", text: "make"}, 
+                            {id: "B", text: "find"}, 
+                            {id: "C", text: "spend"}, 
+                            {id: "D", text: "save"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'busy schedules', 'make people ... time'.", 
+                            "<strong>Logic (Tư duy):</strong> When you are 'busy', it is difficult to do what with time? (Think of a phrase meaning 'manage to get time').", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tạo ra<br>B. tìm thấy/dành được<br>C. tiêu xài<br>D. tiết kiệm"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Bằng cách cân bằng cuộc sống hiện đại ... các giá trị văn hóa...", 
+                        options: [
+                            {id: "A", text: "and"}, 
+                            {id: "B", text: "or"}, 
+                            {id: "C", text: "because"}, 
+                            {id: "D", text: "but"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Conjunction.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'balancing', 'modern life', 'cultural values'.", 
+                            "<strong>Logic (Tư duy):</strong> The verb 'balance' implies bringing two things together. Which conjunction links two equal noun phrases?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. và<br>B. hoặc<br>C. bởi vì<br>D. nhưng"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "...sự gắn kết gia đình bền chặt sẽ luôn đóng một ... quan trọng trong xã hội...", 
+                        options: [
+                            {id: "A", text: "plan"}, 
+                            {id: "B", text: "role"}, 
+                            {id: "C", text: "model"}, 
+                            {id: "D", text: "type"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'play an important ...'.", 
+                            "<strong>Logic (Tư duy):</strong> Which noun completes the fixed phrase 'play a ...'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. kế hoạch<br>B. vai trò<br>C. mô hình<br>D. loại"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "...và giúp mọi người cảm thấy ... trong cộng đồng của họ.", 
+                        options: [
+                            {id: "A", text: "safe"}, 
+                            {id: "B", text: "lost"}, 
+                            {id: "C", text: "supported"}, 
+                            {id: "D", text: "separate"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Adjective (Feeling).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'strong family bonds', 'help people feel...'.", 
+                            "<strong>Logic (Tư duy):</strong> 'Bonds' and 'community' provide help. Which adjective means 'feeling backed or helped by others'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. an toàn<br>B. lạc lõng<br>C. được hỗ trợ<br>D. tách biệt"
+                        ] 
+                    }
+                ]
+            }
+        ];
+        // --- APP LOGIC GIỮ NGUYÊN ---
+        const app = {
+            state: { exIdx: 0, currentScore: 0, maxScore: 0, qMap: {} },
+
+            initExercise: function(index) {
+                if(index >= exercises.length) { alert("Hoàn thành tất cả!"); return; }
+                this.state.exIdx = index;
+                const exData = exercises[index];
+
+                document.getElementById('ex-title').innerText = exData.title;
+                document.getElementById('ex-content').innerHTML = exData.content;
+                this.scrollToTop();
+
+                this.closeQuestionPanel();
+                if(window.innerWidth > 900) {
+                     document.getElementById('empty-state').style.display = 'block';
+                     document.getElementById('q-card-area').style.display = 'none';
+                }
+
+                const grid = document.getElementById('sidebar-grid');
+                grid.innerHTML = '';
+                exData.questions.forEach(q => {
+                    const key = `${index}-${q.id}`;
+                    if (!this.state.qMap[key]) {
+                        this.state.qMap[key] = { points: 5, hintsOpen: [false,false,false,false], answered: false, userChoice: null };
+                        this.state.maxScore += 5;
+                    }
+                    const cell = document.createElement('div');
+                    cell.className = 'q-cell';
+                    cell.id = `cell-${q.id}`;
+                    cell.innerText = q.id;
+                    cell.onclick = () => {
+                        this.selectQuestion(index+1, q.id);
+                        if(window.innerWidth <= 900) this.toggleSidebar();
+                    };
+                    grid.appendChild(cell);
+                });
+                this.updateStats();
+            },
+
+            selectQuestion: function(exId, qId) {
+                const realIndex = exId - 1;
+                const exData = exercises[realIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+                const key = `${realIndex}-${qId}`;
+                const qState = this.state.qMap[key];
+
+                document.querySelectorAll('.gap').forEach(e => e.classList.remove('active-gap'));
+                const gap = document.getElementById(`gap-${exId}-${qId}`);
+                if(gap) gap.classList.add('active-gap');
+
+                document.querySelectorAll('.q-cell').forEach(e => e.classList.remove('active'));
+                document.getElementById(`cell-${qId}`).classList.add('active');
+
+                document.getElementById('q-number').innerText = qId;
+                this.renderPointsBadge(qState);
+                this.renderHints(realIndex, qId, qData, qState);
+                this.renderOptions(realIndex, qId, qData, qState);
+
+                // --- XỬ LÝ PHẦN DỊCH CÂU ---
+                document.getElementById('trans-content').classList.remove('show');
+                document.querySelector('.trans-toggle-btn').innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                const transText = qData.sentence_translation || "Chưa có bản dịch cho câu này.";
+                document.getElementById('trans-content').innerHTML = transText;
+
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('q-card-area').style.display = 'block';
+                document.getElementById('question-panel').classList.add('active');
+                
+                if(window.innerWidth <= 900 && gap) {
+                    setTimeout(() => {
+                        const container = document.querySelector('.main-content');
+                        const gapRect = gap.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        const currentScroll = container.scrollTop;
+                        const gapTopRelative = gapRect.top - containerRect.top; 
+                        const targetScroll = currentScroll + gapTopRelative - 70;
+                        container.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                    }, 300);
+                }
+
+                document.querySelectorAll('.signal-word').forEach(e => e.classList.remove('highlighted'));
+                if (qState.hintsOpen[1] && qData.signalIds) {
+                    qData.signalIds.forEach(id => {
+                        const el = document.getElementById(id);
+                        if(el) el.classList.add('highlighted');
+                    });
+                }
+            },
+
+            renderPointsBadge: function(qState) {
+                const badge = document.getElementById('q-points-badge');
+                badge.innerText = `${qState.points} pts`;
+                badge.style.background = qState.answered ? (qState.points > 0 ? 'var(--green)' : 'var(--red)') : 'var(--primary)';
+            },
+
+            renderHints: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('hints-container');
+                container.innerHTML = '';
+                qData.hints.forEach((hintText, i) => {
+                    const isOpen = qState.hintsOpen[i];
+                    const isLocked = i > 0 && !qState.hintsOpen[i-1] && !qState.answered;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'hint-item';
+                    div.innerHTML = `
+                        <div class="hint-header" onclick="app.openHint(${exIndex}, ${qId}, ${i})" style="opacity:${isLocked?0.5:1}">
+                            <span><i class="fas ${isOpen?'fa-book-open':(isLocked?'fa-lock':'fa-lightbulb')}" style="color:${isOpen?'var(--primary)':'var(--orange)'};margin-right:8px;"></i>${isOpen?`Gợi ý ${i+1}`:`Gợi ý ${i+1}`}</span>
+                            ${(!isOpen && !qState.answered) ? '<span style="font-size:0.75rem; color:red; bg:#fee; padding:2px;">-1đ</span>' : ''}
+                        </div>
+                        <div class="hint-content ${isOpen ? 'show' : ''}">${hintText}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            },
+
+            openHint: function(exIndex, qId, i) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                if(qState.answered || qState.hintsOpen[i]) return;
+                if(i > 0 && !qState.hintsOpen[i-1]) { alert("Vui lòng mở theo thứ tự!"); return; }
+                
+                if(qState.points > 0) qState.points--;
+                qState.hintsOpen[i] = true;
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            renderOptions: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                qData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `<span class="option-label">${opt.id}.</span> <span class="option-text">${opt.text}</span>`;
+                    
+                    if(qState.answered) {
+                        btn.disabled = true;
+                        if(opt.id === qData.correct) btn.classList.add('correct-select');
+                        if(opt.id === qState.userChoice && opt.id !== qData.correct) btn.classList.add('wrong-select');
+                    } else {
+                        btn.onclick = () => this.submitAnswer(exIndex, qId, opt.id);
+                    }
+                    container.appendChild(btn);
+                });
+            },
+
+            toggleTranslation: function() {
+                const box = document.getElementById('trans-content');
+                const btn = document.querySelector('.trans-toggle-btn');
+                
+                if (box.classList.contains('show')) {
+                    box.classList.remove('show');
+                    btn.innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                    btn.style.backgroundColor = "#f8f9fa";
+                    btn.style.color = "var(--primary)";
+                } else {
+                    box.classList.add('show');
+                    btn.innerHTML = '<i class="fas fa-chevron-up"></i> Ẩn dịch';
+                    btn.style.backgroundColor = "var(--primary)";
+                    btn.style.color = "white";
+                }
+            },
+
+            submitAnswer: function(exIndex, qId, choiceId) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                const exData = exercises[exIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+
+                qState.answered = true;
+                qState.userChoice = choiceId;
+
+                const gap = document.getElementById(`gap-${exIndex+1}-${qId}`);
+                const cell = document.getElementById(`cell-${qId}`);
+
+                if(choiceId === qData.correct) {
+                    this.state.currentScore += qState.points;
+                    gap.classList.add('correct');
+                    gap.innerText = qData.options.find(o=>o.id===choiceId).text;
+                    cell.classList.add('done');
+                } else {
+                    qState.points = 0;
+                    gap.classList.add('wrong');
+                    gap.innerText = qData.options.find(o=>o.id===qData.correct).text;
+                    cell.classList.add('wrong');
+                }
+                this.updateStats();
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            updateStats: function() {
+                const s = this.state.currentScore;
+                const m = this.state.maxScore;
+                document.getElementById('current-score').innerText = s;
+                document.getElementById('max-score').innerText = m;
+                document.getElementById('m-score').innerText = s;
+                document.getElementById('m-max').innerText = m;
+            },
+
+            toggleSidebar: function() {
+                document.getElementById('sidebar').classList.toggle('active');
+                document.querySelector('.sidebar-overlay').classList.toggle('active');
+            },
+
+            closeQuestionPanel: function() {
+                document.getElementById('question-panel').classList.remove('active');
+            },
+
+            scrollToTop: function() {
+                document.querySelector('.main-content').scrollTop = 0;
+            },
+
+            nextExercise: function() {
+                this.initExercise(this.state.exIdx + 1);
+            }
+        };
+
+        app.initExercise(0);
+    </script>
+</body>
+</html>
