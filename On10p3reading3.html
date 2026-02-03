@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Đọc Hiểu: Urban Green Spaces</title>
+    <style>
+        :root {
+            --primary-color: #15803d; /* Xanh lá đậm chủ đạo */
+            --bg-color: #f0fdf4;
+            --text-color: #14532d;
+            --highlight-yellow: #fde047;
+            --highlight-user: #fca5a5;
+            --correct-color: #16a34a;
+            --wrong-color: #dc2626;
+            --sidebar-width: 140px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; background-color: var(--bg-color);
+            height: 100vh; display: flex; flex-direction: column; color: var(--text-color);
+        }
+
+        .container { display: flex; flex: 1; height: 100%; overflow: hidden; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width); background: white; border-right: 1px solid #bbf7d0;
+            display: flex; flex-direction: column; padding: 15px 10px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 20;
+        }
+        .q-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .q-btn {
+            width: 100%; padding: 12px 5px; border: 1px solid #bbf7d0;
+            border-radius: 8px; cursor: pointer; background: white;
+            font-weight: 600; font-size: 0.9rem; color: #64748b; text-align: center;
+            transition: all 0.2s;
+        }
+        .q-btn:hover { background-color: #dcfce7; border-color: #86efac; }
+        .q-btn.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 4px 6px -1px rgba(21, 128, 61, 0.4); }
+        .q-btn.completed { border-color: var(--correct-color); background-color: #dcfce7; color: var(--correct-color); }
+        
+        .submit-btn {
+            margin-top: 15px; padding: 12px; background: #0ea5e9; color: white;
+            border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
+            text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.4);
+        }
+        .submit-btn:hover { background: #0284c7; transform: translateY(-1px); }
+
+        /* READING CONTENT */
+        .reading-content {
+            flex: 1; background: white; padding: 40px 60px; overflow-y: auto;
+            border-right: 1px solid #bbf7d0; line-height: 1.9; font-size: 1.15rem;
+            position: relative; scroll-behavior: smooth;
+        }
+        .reading-content h2 { color: #14532d; margin-top: 0; border-bottom: 2px solid #dcfce7; padding-bottom: 15px; }
+        .reading-content p { margin-bottom: 25px; text-align: justify; }
+        
+        .system-highlight { 
+            background-color: var(--highlight-yellow); border-radius: 4px; 
+            box-shadow: 0 0 0 3px var(--highlight-yellow); transition: background 0.3s; 
+        }
+        
+        .my-vocab-mark {
+            background-color: var(--highlight-user); border-bottom: 2px solid #ef4444;
+            cursor: pointer; padding: 0 2px; border-radius: 3px; position: relative;
+        }
+        .my-vocab-mark:hover::after {
+            content: attr(title); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            background: #333; color: #fff; padding: 4px 8px; border-radius: 4px;
+            font-size: 0.8rem; white-space: nowrap; pointer-events: none; z-index: 10;
+        }
+
+        /* Tooltip */
+        .selection-tooltip {
+            position: absolute; display: none; background: #14532d; color: white; 
+            padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); z-index: 100;
+            animation: fadeIn 0.2s; user-select: none;
+        }
+        .selection-tooltip:hover { background: #15803d; }
+        .selection-tooltip::after {
+            content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px;
+            border-width: 6px; border-style: solid; border-color: #14532d transparent transparent transparent;
+        }
+
+        /* QUESTION PANEL */
+        .question-panel {
+            width: 420px; min-width: 380px; background: #f8fafc; padding: 25px;
+            display: flex; flex-direction: column; overflow-y: auto; border-left: 1px solid #e2e8f0;
+        }
+        .question-card { 
+            background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; 
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0;
+        }
+        .q-header { font-size: 0.85rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .q-text { font-weight: 600; font-size: 1.1rem; margin-bottom: 20px; color: #1e293b; }
+
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { 
+            padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; 
+            cursor: pointer; background: white; text-align: left; font-size: 1rem; color: #475569;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { background-color: #f0fdf4; border-color: #4ade80; }
+        .option-btn.correct { background-color: #dcfce7; border-color: var(--correct-color); color: #15803d; font-weight: 700; }
+        .option-btn.wrong { background-color: #fee2e2; border-color: var(--wrong-color); color: #b91c1c; opacity: 0.8; }
+
+        /* Hints Steps */
+        .hint-container { display: flex; flex-direction: column; gap: 10px; }
+        .hint-step { background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        .hint-header { 
+            padding: 12px 15px; background: #fff; cursor: pointer; 
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 600; font-size: 0.95rem; color: #475569;
+        }
+        .hint-header:hover { background: #f8fafc; }
+        
+        .hint-step:nth-child(1) .hint-header { border-left: 4px solid #3b82f6; } /* Xanh */
+        .hint-step:nth-child(2) .hint-header { border-left: 4px solid #f59e0b; } /* Cam */
+        .hint-step:nth-child(3) .hint-header { border-left: 4px solid #8b5cf6; } /* Tím */
+        .hint-step:nth-child(4) .hint-header { border-left: 4px solid #10b981; } /* Xanh lá */
+
+        .hint-body { 
+            padding: 15px; display: none; border-top: 1px solid #f1f5f9; 
+            color: #334155; font-size: 0.95rem; background-color: #fcfcfc; line-height: 1.6;
+        }
+        .hint-step.active .hint-body { display: block; animation: slideDown 0.2s; }
+        .translate-box { margin-top: 10px; padding: 10px; background-color: #ecfdf5; border: 1px dashed #10b981; border-radius: 6px; color: #065f46; font-size: 0.95rem; }
+
+        /* User Vocab Panel */
+        .user-vocab-panel { margin-top: 20px; background: #fff1f2; border: 1px dashed #f43f5e; padding: 15px; border-radius: 12px; }
+        .vocab-item-row { display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px solid #ffe4e6; padding: 8px 0; }
+        .del-btn { color: #f43f5e; cursor: pointer; font-weight: bold; padding: 0 5px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); display: none;
+            justify-content: center; align-items: center; z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+        .modal-content {
+            background: white; width: 600px; max-height: 85vh; border-radius: 16px;
+            padding: 40px; overflow-y: auto; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="q-list" id="sidebarList"></div>
+        <button class="submit-btn" onclick="submitQuiz()">Nộp bài</button>
+    </div>
+
+    <div class="reading-content" id="readingText">
+        <div id="vocabTooltip" class="selection-tooltip" onmousedown="event.preventDefault()" onclick="saveSelectedVocab()">
+            ✨ Dịch & Lưu
+        </div>
+
+        <h2>Urban Green Spaces</h2>
+        <p style="font-size: 0.9rem; color: #15803d; font-style: italic; background: #dcfce7; padding: 10px; border-radius: 6px;">
+            💡 <strong>Mẹo hay:</strong> Bôi đen bất kỳ từ vựng nào (ví dụ: "mitigate", "tranquility") để xem nghĩa tiếng Việt tự động.
+        </p>
+        
+        <p id="para1">
+            <span id="p1-main">Urban green spaces, such as parks, gardens, and tree-lined streets, play a crucial role in enhancing the quality of life in cities. They provide a multitude of benefits for both the environment and the well-being of urban residents.</span>
+        </p>
+
+        <p id="para2">
+            <span id="p2-mitigate">Environmentally, green spaces help to <strong>mitigate</strong> the effects of climate change.</span> Trees and plants absorb carbon dioxide, a major greenhouse gas, and release oxygen, thus improving air quality. <span id="p2-temp">They also help to <strong>regulate urban temperatures</strong> by providing shade and reducing the "urban heat island" effect, where cities are significantly warmer than surrounding rural areas.</span> Furthermore, green spaces contribute to biodiversity by offering habitats for various species of plants and animals, some of which are essential for maintaining healthy ecosystems.
+        </p>
+
+        <p id="para3">
+            From a human perspective, urban green spaces are vital for physical and mental health. They offer opportunities for recreation and exercise, encouraging people to engage in activities like walking, jogging, and cycling. <span id="p3-health">This physical activity helps to reduce the risk of chronic diseases and promotes overall fitness.</span> Moreover, studies have shown that spending time in nature can significantly reduce stress levels, improve mood, and enhance cognitive function. <span id="p3-tranquility">The calming effect of green environments can help urban dwellers escape the pressures of city life and find a <strong>sense of tranquility</strong>.</span>
+        </p>
+
+        <p id="para4">
+            Green spaces also foster social interaction and community building. Parks often serve as gathering places for people of all ages, providing venues for picnics, cultural events, and casual encounters. These interactions strengthen social ties and create a sense of community belonging. Children, in particular, benefit from green spaces as they offer safe areas for play and exploration, contributing to their physical and social development.
+        </p>
+
+        <p id="para5">
+            <span id="p5-challenges">Despite their numerous benefits, urban green spaces often face <strong>challenges</strong> such as limited land availability, inadequate funding, and pressure from urban development.</span> Therefore, it is essential for urban planners and policymakers to prioritize the creation and maintenance of these valuable assets to ensure sustainable and livable cities for future generations.
+        </p>
+    </div>
+
+    <div class="question-panel">
+        <div id="questionContainer"></div>
+        
+        <div class="user-vocab-panel" id="userVocabPanel" style="display:none;">
+            <h4 style="margin:0 0 10px 0; color:#be123c; display:flex; align-items:center; gap:5px;">
+                📒 Từ vựng của tôi <span style="font-size:0.8rem; font-weight:normal; color:#881337;" id="vocabCount">(0)</span>
+            </h4>
+            <div id="userVocabList" style="display: flex; flex-direction: column;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="resultModal">
+    <div class="modal-content">
+        <div style="text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 25px; margin-bottom: 25px;">
+            <h2 style="margin:0; color: var(--primary-color);">🎉 Tổng Kết Bài Làm</h2>
+            <div style="font-size: 3rem; font-weight: 800; color: var(--primary-color); margin: 10px 0;" id="scoreText">0/6</div>
+            <p style="color: #64748b;">Bạn đã hoàn thành bài luyện tập về Không gian xanh đô thị.</p>
+        </div>
+
+        <div>
+            <h3 style="background:#fff1f2; color:#be123c; padding:10px 15px; border-radius:8px; display:inline-block; margin-top:0;">
+                📒 Danh sách từ vựng bạn đã lưu
+            </h3>
+            <div id="finalVocabGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;"></div>
+            <p id="noVocabMsg" style="color:#64748b; font-style:italic; display:none; text-align:center;">Bạn chưa đánh dấu từ vựng nào.</p>
+        </div>
+
+        <button style="display:block; width:100%; margin-top:30px; padding:15px; background:var(--text-color); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:1rem;" onclick="closeModal()">
+            Đóng và Xem lại bài làm
+        </button>
+    </div>
+</div>
+
+<script>
+    // --- TỪ ĐIỂN TÍCH HỢP (BUILT-IN DICTIONARY) ---
+    const builtInDict = {
+        "urban": "Thuộc thành thị / Đô thị",
+        "green spaces": "Không gian xanh",
+        "parks": "Công viên",
+        "gardens": "Khu vườn",
+        "crucial": "Cốt yếu / Quan trọng",
+        "enhancing": "Nâng cao",
+        "quality of life": "Chất lượng cuộc sống",
+        "residents": "Cư dân",
+        "environmentally": "Về mặt môi trường",
+        "mitigate": "Làm dịu bớt / Giảm nhẹ",
+        "climate change": "Biến đổi khí hậu",
+        "absorb": "Hấp thụ",
+        "carbon dioxide": "Khí CO2",
+        "regulate": "Điều hòa",
+        "temperatures": "Nhiệt độ",
+        "shade": "Bóng râm",
+        "urban heat island": "Đảo nhiệt đô thị",
+        "biodiversity": "Đa dạng sinh học",
+        "habitats": "Môi trường sống",
+        "ecosystems": "Hệ sinh thái",
+        "perspective": "Góc nhìn",
+        "vital": "Thiết yếu",
+        "mental health": "Sức khỏe tinh thần",
+        "recreation": "Giải trí",
+        "chronic diseases": "Các bệnh mãn tính",
+        "cognitive function": "Chức năng nhận thức",
+        "tranquility": "Sự bình yên / Tĩnh lặng",
+        "social interaction": "Tương tác xã hội",
+        "challenges": "Những thách thức",
+        "inadequate": "Không đủ / Thiếu",
+        "funding": "Nguồn vốn / Kinh phí",
+        "prioritize": "Ưu tiên",
+        "sustainable": "Bền vững"
+    };
+
+    // --- DỮ LIỆU CÂU HỎI (URBAN GREEN SPACES) ---
+    const quizData = [
+        {
+            id: 25,
+            questionText: "What is the main idea of the passage?",
+            options: { A: "The challenges of creating urban green spaces.", B: "The importance of urban green spaces for cities and residents.", C: "The environmental benefits of urban green spaces.", D: "The role of green spaces in promoting social interaction." },
+            correct: "B",
+            relatedSentenceId: "p1-main", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Ý chính (Main Idea).<br><strong>Chiến thuật:</strong> Nên làm câu này cuối cùng sau khi đã đọc toàn bài.",
+                step2: "<strong>Định vị thông tin:</strong> Đọc câu đầu tiên của đoạn 1 (Topic sentence) và các câu chủ đề của đoạn 2, 3, 4.<br><em>(Bấm vào đây để highlight câu chủ đề)</em>",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Đoạn 1 nói chung về vai trò của không gian xanh.<br>- Đoạn 2 nói về lợi ích Môi trường.<br>- Đoạn 3 nói về lợi ích Con người (Sức khỏe).<br>- Đoạn 4 nói về lợi ích Xã hội.<br>- Vậy bài văn chỉ nói về một khía cạnh (như Môi trường hay Xã hội) hay tổng hợp tầm quan trọng đối với cả thành phố và cư dân?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>B</strong>.<br>- Lý do: Phương án này bao quát nhất (importance for cities and residents), trong khi các phương án khác chỉ là ý phụ của từng đoạn.<br><div class='translate-box'><strong>Dịch:</strong> Các không gian xanh đô thị... đóng vai trò cốt yếu trong việc nâng cao chất lượng cuộc sống tại các thành phố.</div>"
+            }
+        },
+        {
+            id: 26,
+            questionText: "According to the passage, how do green spaces help regulate urban temperatures?",
+            options: { A: "By releasing more carbon dioxide.", B: "By providing shade and reducing the urban heat island effect.", C: "By increasing the urban heat island effect.", D: "By absorbing more sunlight." },
+            correct: "B",
+            relatedSentenceId: "p2-temp", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Chi tiết (Detail).<br><strong>Từ khóa:</strong> \"regulate urban temperatures\" (điều hòa nhiệt độ đô thị).",
+                step2: "<strong>Định vị thông tin:</strong> Tìm cụm từ khóa \"regulate urban temperatures\" trong đoạn 2.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Tìm đến câu chứa từ khóa. Đọc phần giải thích ngay sau chữ \"by\" (bằng cách...).<br>- Tác giả nhắc đến việc cung cấp cái gì (shade?) và làm giảm hiệu ứng gì (heat island)?<br>- So sánh thông tin này với các lựa chọn bên dưới.",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>B</strong>.<br>- Lý do: Khớp thông tin về việc cung cấp bóng râm (shade) và giảm hiệu ứng đảo nhiệt (reducing heat island effect).<br><div class='translate-box'><strong>Dịch:</strong> Chúng cũng giúp điều hòa nhiệt độ đô thị bằng cách cung cấp bóng râm và giảm hiệu ứng 'đảo nhiệt đô thị'.</div>"
+            }
+        },
+        {
+            id: 27,
+            questionText: "The word \"mitigate\" in paragraph 2 is closest in meaning to",
+            options: { A: "create", B: "intensify", C: "alleviate", D: "worsen" },
+            correct: "C",
+            relatedSentenceId: "p2-mitigate", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Từ vựng (Đồng nghĩa).<br><strong>Từ khóa:</strong> \"mitigate\".",
+                step2: "<strong>Định vị thông tin:</strong> Tìm câu \"green spaces help to mitigate the effects of climate change\" ở đầu đoạn 2.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Xét ngữ cảnh: Không gian xanh (cây cối) tác động đến biến đổi khí hậu.<br>- Đây là tác động tốt hay xấu? Cây cối giúp làm tăng hay làm giảm sự khắc nghiệt của khí hậu?<br>- Tìm một từ trong các phương án mang nghĩa \"làm giảm bớt\" hoặc \"làm dịu đi\".",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>C (alleviate)</strong>.<br>- Lý do: Alleviate = Mitigate (Làm giảm nhẹ/Làm dịu bớt).<br><div class='translate-box'><strong>Dịch:</strong> Về mặt môi trường, các không gian xanh giúp giảm nhẹ các tác động của biến đổi khí hậu.</div>"
+            }
+        },
+        {
+            id: 28,
+            questionText: "Which of the following is NOT mentioned as a benefit of urban green spaces for human health?",
+            options: { A: "Improving mood.", B: "Reducing stress levels.", C: "Enhancing cognitive function.", D: "Increasing the risk of chronic diseases." },
+            correct: "D",
+            relatedSentenceId: "p3-health", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Phủ định (NOT mentioned).<br><strong>Chiến thuật:</strong> Tìm cái SAI hoặc KHÔNG CÓ trong bài.",
+                step2: "<strong>Định vị thông tin:</strong> Đọc đoạn 3 (Human perspective - Sức khỏe con người).",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Kiểm tra từng ý trong bài:<br>  + Có nhắc đến \"mood\" (tâm trạng) không?<br>  + Có nhắc đến \"stress\" không?<br>  + Có nhắc đến \"cognitive function\" (nhận thức) không?<br>  + Về \"chronic diseases\" (bệnh mãn tính), bài viết nói là giúp \"reduce\" (giảm) hay \"increase\" (tăng) nguy cơ?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>D</strong>.<br>- Lý do: Bài viết nói giúp \"reduce the risk\" (giảm nguy cơ), trong khi đáp án D nói \"Increasing\" (Tăng) -> Đây là thông tin sai.<br><div class='translate-box'><strong>Dịch:</strong> Hoạt động thể chất này giúp giảm nguy cơ mắc các bệnh mãn tính và thúc đẩy thể lực tổng thể.</div>"
+            }
+        },
+        {
+            id: 29,
+            questionText: "What is one of the challenges urban green spaces often face?",
+            options: { A: "Unlimited land availability.", B: "Pressure from urban development.", C: "Excessive funding.", D: "Lack of interest from residents." },
+            correct: "B",
+            relatedSentenceId: "p5-challenges", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Chi tiết (Detail).<br><strong>Từ khóa:</strong> \"challenges\" (thách thức).",
+                step2: "<strong>Định vị thông tin:</strong> Tìm từ khóa \"challenges\" ở đoạn cuối (đoạn 5).",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Đọc danh sách các thách thức được liệt kê sau từ \"such as\".<br>- Tìm sự tương đồng: Bài viết nhắc đến \"limited land\" (đất đai hạn chế) hay \"unlimited\"? Nhắc đến \"inadequate funding\" (thiếu vốn) hay \"excessive\" (dư thừa)?<br>- Có nhắc đến áp lực từ \"urban development\" không?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>B</strong>.<br>- Lý do: Khớp thông tin \"pressure from urban development\" trong bài.<br><div class='translate-box'><strong>Dịch:</strong> Bất chấp vô số lợi ích, không gian xanh đô thị thường đối mặt với thách thức như quỹ đất hạn hẹp, thiếu kinh phí và áp lực từ sự phát triển đô thị.</div>"
+            }
+        },
+        {
+            id: 30,
+            questionText: "The phrase \"a sense of tranquility\" in paragraph 3 most likely means",
+            options: { A: "a feeling of peace and quiet", B: "a feeling of excitement", C: "a feeling of anxiety", D: "a feeling of loneliness" },
+            correct: "A",
+            relatedSentenceId: "p3-tranquility", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Từ vựng/Cụm từ.<br><strong>Từ khóa:</strong> \"sense of tranquility\".",
+                step2: "<strong>Định vị thông tin:</strong> Tìm cụm từ này ở cuối đoạn 3.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Dựa vào ngữ cảnh: Câu trước nhắc đến \"calming effect\" (tác dụng làm bình tĩnh) và \"escape pressures\" (thoát khỏi áp lực).<br>- Nếu bạn thoát khỏi áp lực ồn ào của thành phố để tìm đến thiên nhiên, bạn sẽ tìm thấy cảm giác gì? Hào hứng (excitement), lo âu (anxiety) hay bình yên (peace)?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>A</strong>.<br>- Lý do: Tranquility = Peace and quiet (Sự thanh bình/Yên tĩnh).<br><div class='translate-box'><strong>Dịch:</strong> Tác dụng xoa dịu của môi trường xanh có thể giúp cư dân đô thị thoát khỏi áp lực cuộc sống thành phố và tìm thấy cảm giác bình yên.</div>"
+            }
+        }
+    ];
+
+    // --- VARIABLES ---
+    let userVocabCollection = []; 
+    let currentSelectionRange = null; 
+    let currentQIndex = 0;
+    let userResults = {}; 
+
+    // --- INIT ---
+    function init() {
+        renderSidebar();
+        loadQuestion(0);
+    }
+
+    // --- SIDEBAR & QUESTION UI ---
+    function renderSidebar() {
+        const sidebarList = document.getElementById('sidebarList');
+        sidebarList.innerHTML = '';
+        quizData.forEach((q, index) => {
+            const btn = document.createElement('div');
+            btn.className = `q-btn ${index === 0 ? 'active' : ''}`;
+            btn.id = `q-btn-${index}`;
+            btn.innerText = `Câu ${q.id}`;
+            btn.onclick = () => loadQuestion(index);
+            sidebarList.appendChild(btn);
+        });
+    }
+
+    function loadQuestion(index) {
+        currentQIndex = index;
+        const q = quizData[index];
+        
+        document.querySelectorAll('.q-btn').forEach((b, i) => {
+            b.classList.remove('active');
+            if (i === index) b.classList.add('active');
+        });
+        
+        document.querySelectorAll('.system-highlight').forEach(el => el.classList.remove('system-highlight'));
+
+        const container = document.getElementById('questionContainer');
+        const isAnswered = userResults.hasOwnProperty(index);
+        
+        container.innerHTML = `
+            <div class="question-card">
+                <div class="q-header">Question ${q.id}</div>
+                <div class="q-text">${q.questionText}</div>
+                <div class="options-grid">
+                    ${Object.entries(q.options).map(([key, val]) => 
+                        `<button class="option-btn" onclick="checkAnswer('${key}')" id="opt-${key}">
+                            <strong>${key}.</strong> ${val}
+                        </button>`
+                    ).join('')}
+                </div>
+            </div>
+            
+            <div class="hint-container">
+                ${renderHintStep(1, "Bước 1: Phân tích & Phân loại", q.hints.step1)}
+                ${renderHintStep(2, "Bước 2: Định vị thông tin (Scanning)", q.hints.step2, true)}
+                ${renderHintStep(3, "Bước 3: Tư duy & Suy luận (Scaffolding)", q.hints.step3)}
+                ${renderHintStep(4, "Bước 4: Xác định thông tin & Kết luận", q.hints.step4)}
+            </div>
+        `;
+
+        if (isAnswered) {
+             const correctBtn = document.getElementById(`opt-${q.correct}`);
+             if(correctBtn) correctBtn.classList.add('correct');
+             document.querySelectorAll('.hint-step').forEach(el => el.classList.add('active'));
+        }
+    }
+
+    function renderHintStep(step, title, content, isHighlight=false) {
+        return `
+            <div class="hint-step">
+                <div class="hint-header" onclick="toggleHint(this, ${isHighlight})">
+                    <span>${title}</span>
+                    <span>▼</span>
+                </div>
+                <div class="hint-body">${content}</div>
+            </div>
+        `;
+    }
+
+    function toggleHint(header, isHighlight) {
+        const parent = header.parentElement;
+        parent.classList.toggle('active');
+        
+        if(isHighlight) {
+            const q = quizData[currentQIndex];
+            const ids = q.relatedSentenceId.split(','); 
+            ids.forEach(id => {
+                const el = document.getElementById(id.trim());
+                if(el) {
+                    if (parent.classList.contains('active')) {
+                        el.classList.add('system-highlight');
+                        if(ids.length === 1) el.scrollIntoView({behavior:'smooth', block:'center'});
+                    } else {
+                        el.classList.remove('system-highlight');
+                    }
+                }
+            });
+        }
+    }
+
+    function checkAnswer(choice) {
+        if(userResults.hasOwnProperty(currentQIndex)) return;
+        const q = quizData[currentQIndex];
+        const isCorrect = (choice === q.correct);
+        userResults[currentQIndex] = isCorrect;
+        
+        const userBtn = document.getElementById(`opt-${choice}`);
+        const correctBtn = document.getElementById(`opt-${q.correct}`);
+        
+        if (isCorrect) {
+            userBtn.classList.add('correct');
+        } else {
+            userBtn.classList.add('wrong');
+            correctBtn.classList.add('correct');
+        }
+        
+        document.getElementById(`q-btn-${currentQIndex}`).classList.add('completed');
+        const steps = document.querySelectorAll('.hint-step');
+        steps[3].classList.add('active'); 
+    }
+
+    // --- LOGIC XỬ LÝ TỪ VỰNG ---
+    const readingArea = document.getElementById('readingText');
+    const tooltip = document.getElementById('vocabTooltip');
+
+    readingArea.addEventListener('mouseup', function() {
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+        
+        if (text.length > 0 && text.length < 80) {
+            currentSelectionRange = selection.getRangeAt(0).cloneRange();
+            
+            const rect = currentSelectionRange.getBoundingClientRect();
+            const containerRect = readingArea.getBoundingClientRect();
+            
+            tooltip.style.left = (rect.left + rect.width/2 - 50 - containerRect.left + 60) + 'px'; 
+            tooltip.style.top = (rect.top - 45 - containerRect.top + 40) + 'px'; 
+            tooltip.style.display = 'block';
+        } else {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    document.addEventListener('mousedown', function(e) {
+        if (e.target.id !== 'vocabTooltip') {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    function saveSelectedVocab() {
+        if (!currentSelectionRange) return;
+        
+        const text = currentSelectionRange.toString().trim();
+        if (!text) return;
+
+        const lookupKey = text.toLowerCase().replace(/[.,]/g, ""); 
+        
+        let meaning = "";
+        if (builtInDict[lookupKey]) {
+            meaning = builtInDict[lookupKey];
+        } else if (lookupKey.endsWith('s') && builtInDict[lookupKey.slice(0, -1)]) {
+            meaning = builtInDict[lookupKey.slice(0, -1)];
+        }
+
+        const userMeaning = prompt(
+            meaning ? `Đã tìm thấy nghĩa tự động! Bạn có muốn lưu không?` : `Chưa tìm thấy nghĩa tự động cho "${text}". Vui lòng nhập:`, 
+            meaning || ""
+        );
+
+        if (userMeaning === null) return; 
+
+        userVocabCollection.push({ en: text, vi: userMeaning || "..." });
+
+        const span = document.createElement('span');
+        span.className = 'my-vocab-mark';
+        span.textContent = text;
+        span.title = userMeaning; 
+        
+        currentSelectionRange.deleteContents();
+        currentSelectionRange.insertNode(span);
+        
+        updateVocabPanel();
+        tooltip.style.display = 'none';
+        window.getSelection().removeAllRanges();
+        currentSelectionRange = null; 
+    }
+
+    function updateVocabPanel() {
+        const panel = document.getElementById('userVocabPanel');
+        const list = document.getElementById('userVocabList');
+        const count = document.getElementById('vocabCount');
+        
+        if (userVocabCollection.length > 0) panel.style.display = 'block';
+        else panel.style.display = 'none';
+
+        count.innerText = `(${userVocabCollection.length})`;
+        
+        list.innerHTML = userVocabCollection.map((v, index) => `
+            <div class="vocab-item-row">
+                <span><strong>${v.en}</strong>: ${v.vi}</span>
+                <span class="del-btn" onclick="removeVocab(${index})">×</span>
+            </div>
+        `).join('');
+    }
+
+    function removeVocab(index) {
+        userVocabCollection.splice(index, 1);
+        updateVocabPanel();
+    }
+
+    // --- SUBMIT ---
+    function submitQuiz() {
+        let correct = 0;
+        for(let k in userResults) if(userResults[k]) correct++;
+        
+        document.getElementById('scoreText').innerText = `${correct}/${quizData.length}`;
+        
+        const grid = document.getElementById('finalVocabGrid');
+        const msg = document.getElementById('noVocabMsg');
+        
+        if (userVocabCollection.length === 0) {
+            grid.innerHTML = '';
+            msg.style.display = 'block';
+        } else {
+            msg.style.display = 'none';
+            grid.innerHTML = userVocabCollection.map(v => `
+                <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">
+                    <div style="font-weight:bold; color:#14532d;">${v.en}</div>
+                    <div style="font-size:0.9rem; color:#64748b;">${v.vi}</div>
+                </div>
+            `).join('');
+        }
+        
+        document.getElementById('resultModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('resultModal').style.display = 'none';
+    }
+
+    init();
+</script>
+
+</body>
+</html>
