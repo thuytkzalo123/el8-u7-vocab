@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Đọc Hiểu: The Amazon Rainforest</title>
+    <style>
+        :root {
+            --primary-color: #047857; /* Xanh lá rừng Amazon */
+            --bg-color: #f0fdf4;
+            --text-color: #064e3b;
+            --highlight-yellow: #fde047;
+            --highlight-user: #fca5a5;
+            --correct-color: #16a34a;
+            --wrong-color: #dc2626;
+            --sidebar-width: 140px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; background-color: var(--bg-color);
+            height: 100vh; display: flex; flex-direction: column; color: var(--text-color);
+        }
+
+        .container { display: flex; flex: 1; height: 100%; overflow: hidden; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width); background: white; border-right: 1px solid #d1fae5;
+            display: flex; flex-direction: column; padding: 15px 10px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 20;
+        }
+        .q-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .q-btn {
+            width: 100%; padding: 12px 5px; border: 1px solid #d1fae5;
+            border-radius: 8px; cursor: pointer; background: white;
+            font-weight: 600; font-size: 0.9rem; color: #64748b; text-align: center;
+            transition: all 0.2s;
+        }
+        .q-btn:hover { background-color: #ecfdf5; border-color: #34d399; }
+        .q-btn.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 4px 6px -1px rgba(4, 120, 87, 0.4); }
+        .q-btn.completed { border-color: var(--correct-color); background-color: #dcfce7; color: var(--correct-color); }
+        
+        .submit-btn {
+            margin-top: 15px; padding: 12px; background: #d97706; color: white;
+            border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
+            text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px -1px rgba(217, 119, 6, 0.4);
+        }
+        .submit-btn:hover { background: #b45309; transform: translateY(-1px); }
+
+        /* READING CONTENT */
+        .reading-content {
+            flex: 1; background: white; padding: 40px 60px; overflow-y: auto;
+            border-right: 1px solid #d1fae5; line-height: 1.9; font-size: 1.15rem;
+            position: relative; scroll-behavior: smooth;
+        }
+        .reading-content h2 { color: #064e3b; margin-top: 0; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px; }
+        .reading-content p { margin-bottom: 25px; text-align: justify; }
+        
+        .system-highlight { 
+            background-color: var(--highlight-yellow); border-radius: 4px; 
+            box-shadow: 0 0 0 3px var(--highlight-yellow); transition: background 0.3s; 
+        }
+        
+        .my-vocab-mark {
+            background-color: var(--highlight-user); border-bottom: 2px solid #ef4444;
+            cursor: pointer; padding: 0 2px; border-radius: 3px; position: relative;
+        }
+        .my-vocab-mark:hover::after {
+            content: attr(title); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            background: #333; color: #fff; padding: 4px 8px; border-radius: 4px;
+            font-size: 0.8rem; white-space: nowrap; pointer-events: none; z-index: 10;
+        }
+
+        /* Tooltip */
+        .selection-tooltip {
+            position: absolute; display: none; background: #064e3b; color: white; 
+            padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); z-index: 100;
+            animation: fadeIn 0.2s; user-select: none;
+        }
+        .selection-tooltip:hover { background: #065f46; }
+        .selection-tooltip::after {
+            content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px;
+            border-width: 6px; border-style: solid; border-color: #064e3b transparent transparent transparent;
+        }
+
+        /* QUESTION PANEL */
+        .question-panel {
+            width: 420px; min-width: 380px; background: #f8fafc; padding: 25px;
+            display: flex; flex-direction: column; overflow-y: auto; border-left: 1px solid #e2e8f0;
+        }
+        .question-card { 
+            background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; 
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0;
+        }
+        .q-header { font-size: 0.85rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .q-text { font-weight: 600; font-size: 1.1rem; margin-bottom: 20px; color: #1e293b; }
+
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { 
+            padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; 
+            cursor: pointer; background: white; text-align: left; font-size: 1rem; color: #475569;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { background-color: #f0fdf4; border-color: #34d399; }
+        .option-btn.correct { background-color: #dcfce7; border-color: var(--correct-color); color: #15803d; font-weight: 700; }
+        .option-btn.wrong { background-color: #fee2e2; border-color: var(--wrong-color); color: #b91c1c; opacity: 0.8; }
+
+        /* Hints Steps */
+        .hint-container { display: flex; flex-direction: column; gap: 10px; }
+        .hint-step { background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        .hint-header { 
+            padding: 12px 15px; background: #fff; cursor: pointer; 
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 600; font-size: 0.95rem; color: #475569;
+        }
+        .hint-header:hover { background: #f8fafc; }
+        
+        .hint-step:nth-child(1) .hint-header { border-left: 4px solid #3b82f6; } /* Xanh */
+        .hint-step:nth-child(2) .hint-header { border-left: 4px solid #f59e0b; } /* Cam */
+        .hint-step:nth-child(3) .hint-header { border-left: 4px solid #8b5cf6; } /* Tím */
+        .hint-step:nth-child(4) .hint-header { border-left: 4px solid #10b981; } /* Xanh lá */
+
+        .hint-body { 
+            padding: 15px; display: none; border-top: 1px solid #f1f5f9; 
+            color: #334155; font-size: 0.95rem; background-color: #fcfcfc; line-height: 1.6;
+        }
+        .hint-step.active .hint-body { display: block; animation: slideDown 0.2s; }
+        .translate-box { margin-top: 10px; padding: 10px; background-color: #ecfdf5; border: 1px dashed #10b981; border-radius: 6px; color: #065f46; font-size: 0.95rem; }
+
+        /* User Vocab Panel */
+        .user-vocab-panel { margin-top: 20px; background: #fff1f2; border: 1px dashed #f43f5e; padding: 15px; border-radius: 12px; }
+        .vocab-item-row { display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px solid #ffe4e6; padding: 8px 0; }
+        .del-btn { color: #f43f5e; cursor: pointer; font-weight: bold; padding: 0 5px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); display: none;
+            justify-content: center; align-items: center; z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+        .modal-content {
+            background: white; width: 600px; max-height: 85vh; border-radius: 16px;
+            padding: 40px; overflow-y: auto; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="q-list" id="sidebarList"></div>
+        <button class="submit-btn" onclick="submitQuiz()">Nộp bài</button>
+    </div>
+
+    <div class="reading-content" id="readingText">
+        <div id="vocabTooltip" class="selection-tooltip" onmousedown="event.preventDefault()" onclick="saveSelectedVocab()">
+            ✨ Dịch & Lưu
+        </div>
+
+        <h2>The Amazon Rainforest</h2>
+        <p style="font-size: 0.9rem; color: #059669; font-style: italic; background: #ecfdf5; padding: 10px; border-radius: 6px;">
+            💡 <strong>Mẹo hay:</strong> Bôi đen từ vựng (ví dụ: "deforestation", "oxygen") để xem nghĩa tiếng Việt tự động.
+        </p>
+        
+        <p id="para1">
+            <span id="p1-main">The Amazon Rainforest is the largest tropical rainforest in the world, covering about 6.7 million square kilometers.</span> <span id="p1-it">It is often referred to as the "lungs of the Earth" because it produces around 20% of the world's oxygen.</span> The rainforest is home to an incredible variety of plants and animals. There are thousands of species of trees, including the Brazil nut tree and the giant kapok tree, which can grow up to 60 meters tall. The Amazon is also home to many animals such as jaguars, sloths, and countless types of birds.
+        </p>
+
+        <p id="para2">
+            The Amazon River, which runs through the rainforest, is the second-longest river in the world and is full of life, including piranhas, anacondas, and pink river dolphins. <span id="p2-crucial">The rainforest plays a <strong>crucial</strong> role in regulating the Earth's climate, but it is under threat due to deforestation.</span> <span id="p2-threat">This destruction is caused by activities like logging, mining, and agriculture.</span> <span id="p2-protect">Efforts are being made to <strong>protect</strong> this vital ecosystem, but much more needs to be done to ensure its survival.</span>
+        </p>
+    </div>
+
+    <div class="question-panel">
+        <div id="questionContainer"></div>
+        
+        <div class="user-vocab-panel" id="userVocabPanel" style="display:none;">
+            <h4 style="margin:0 0 10px 0; color:#be123c; display:flex; align-items:center; gap:5px;">
+                📒 Từ vựng của tôi <span style="font-size:0.8rem; font-weight:normal; color:#881337;" id="vocabCount">(0)</span>
+            </h4>
+            <div id="userVocabList" style="display: flex; flex-direction: column;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="resultModal">
+    <div class="modal-content">
+        <div style="text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 25px; margin-bottom: 25px;">
+            <h2 style="margin:0; color: var(--primary-color);">🎉 Tổng Kết Bài Làm</h2>
+            <div style="font-size: 3rem; font-weight: 800; color: var(--primary-color); margin: 10px 0;" id="scoreText">0/6</div>
+            <p style="color: #64748b;">Bạn đã hoàn thành bài luyện tập về Rừng mưa Amazon.</p>
+        </div>
+
+        <div>
+            <h3 style="background:#fff1f2; color:#be123c; padding:10px 15px; border-radius:8px; display:inline-block; margin-top:0;">
+                📒 Danh sách từ vựng bạn đã lưu
+            </h3>
+            <div id="finalVocabGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;"></div>
+            <p id="noVocabMsg" style="color:#64748b; font-style:italic; display:none; text-align:center;">Bạn chưa đánh dấu từ vựng nào.</p>
+        </div>
+
+        <button style="display:block; width:100%; margin-top:30px; padding:15px; background:var(--text-color); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:1rem;" onclick="closeModal()">
+            Đóng và Xem lại bài làm
+        </button>
+    </div>
+</div>
+
+<script>
+    // --- TỪ ĐIỂN TÍCH HỢP (BUILT-IN DICTIONARY) ---
+    const builtInDict = {
+        "rainforest": "Rừng mưa nhiệt đới",
+        "tropical": "Thuộc nhiệt đới",
+        "lungs": "Lá phổi",
+        "oxygen": "Khí oxy",
+        "variety": "Sự đa dạng",
+        "species": "Loài",
+        "jaguars": "Báo đốm Mỹ",
+        "sloths": "Con lười",
+        "river": "Dòng sông",
+        "second-longest": "Dài thứ hai",
+        "piranhas": "Cá hổ piranha",
+        "anacondas": "Trăn anaconda",
+        "crucial": "Cốt yếu / Quan trọng",
+        "regulating": "Điều hòa / Điều chỉnh",
+        "climate": "Khí hậu",
+        "threat": "Mối đe dọa",
+        "deforestation": "Nạn phá rừng",
+        "destruction": "Sự phá hủy",
+        "logging": "Khai thác gỗ",
+        "mining": "Khai thác mỏ",
+        "agriculture": "Nông nghiệp",
+        "efforts": "Những nỗ lực",
+        "protect": "Bảo vệ",
+        "vital": "Thiết yếu / Quan trọng sống còn",
+        "ecosystem": "Hệ sinh thái",
+        "survival": "Sự sống còn / Sự tồn tại"
+    };
+
+    // --- DỮ LIỆU CÂU HỎI (AMAZON RAINFOREST) ---
+    const quizData = [
+        {
+            id: 25,
+            questionText: "What is the passage mainly about?",
+            options: { A: "The World's Rivers", B: "Animals of the Amazon", C: "The Amazon Rainforest: The Lungs of the Earth", D: "The World's Tallest Trees" },
+            correct: "C",
+            relatedSentenceId: "p1-main", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Ý chính (Main Idea).<br><strong>Chiến thuật:</strong> Nên làm câu này cuối cùng.",
+                step2: "<strong>Định vị thông tin:</strong> Đọc nhan đề (Title) và câu đầu tiên của đoạn 1.<br><em>(Bấm vào để highlight)</em>",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Nhan đề bài viết là gì?<br>- Bài viết có *chỉ* nói về dòng sông, các loài động vật hay cây cối riêng lẻ không, hay nói về tổng thể khu rừng?<br>- Cụm từ biệt danh đặc biệt nào được nhắc đến ngay đoạn 1?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>C</strong>.<br>- Lý do: Bài viết nói về Rừng mưa Amazon và vai trò 'Lá phổi của Trái đất' (Lungs of the Earth).<br><div class='translate-box'><strong>Dịch:</strong> Rừng mưa Amazon là rừng mưa nhiệt đới lớn nhất thế giới... Nó thường được gọi là 'lá phổi của Trái đất'.</div>"
+            }
+        },
+        {
+            id: 26,
+            questionText: "The word \"it\" in paragraph 1 refers to",
+            options: { A: "The Earth", B: "The Amazon Rainforest", C: "The River", D: "Oxygen" },
+            correct: "B",
+            relatedSentenceId: "p1-it", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Quy chiếu (Reference).<br><strong>Từ khóa:</strong> \"it\" (nó - số ít).",
+                step2: "<strong>Định vị thông tin:</strong> Tìm từ \"It\" trong đoạn 1 và nhìn vào chủ ngữ của vế câu ngay trước đó.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Từ 'It' thay thế cho một danh từ số ít được nhắc đến trước đó.<br>- Cái gì lớn nhất thế giới và bao phủ 6.7 triệu km vuông?<br>- Cái gì được gọi là 'lá phổi'?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>B</strong>.<br>- Lý do: 'It' thay thế cho 'The Amazon Rainforest'.<br><div class='translate-box'><strong>Dịch:</strong> Nó (Rừng Amazon) thường được gọi là 'lá phổi của Trái đất' vì nó sản xuất khoảng 20% lượng oxy của thế giới.</div>"
+            }
+        },
+        {
+            id: 27,
+            questionText: "Why is the Amazon Rainforest under threat, according to the passage?",
+            options: { A: "Because of climate regulation", B: "Due to activities like logging and agriculture", C: "Because of its large size", D: "Due to the variety of species" },
+            correct: "B",
+            relatedSentenceId: "p2-threat", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Chi tiết (Detail - Nguyên nhân).<br><strong>Từ khóa:</strong> \"under threat\" (bị đe dọa), \"why\" (tại sao).",
+                step2: "<strong>Định vị thông tin:</strong> Tìm từ \"threat\" hoặc \"deforestation\" trong đoạn 2. Đọc câu giải thích nguyên nhân ngay sau đó.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Tìm câu chứa từ 'threat' và 'deforestation'.<br>- Nguyên nhân của sự phá hủy này (This destruction is caused by...) là do các hoạt động nào?<br>- So sánh các hoạt động tìm được với các phương án.",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>B</strong>.<br>- Lý do: Bài nhắc đến 'logging' (khai thác gỗ) và 'agriculture' (nông nghiệp).<br><div class='translate-box'><strong>Dịch:</strong> Sự phá hủy này gây ra bởi các hoạt động như khai thác gỗ, khai thác mỏ và nông nghiệp.</div>"
+            }
+        },
+        {
+            id: 28,
+            questionText: "The word \"crucial\" in paragraph 2 mostly means",
+            options: { A: "dangerous", B: "maintain", C: "important", D: "damage" },
+            correct: "C",
+            relatedSentenceId: "p2-crucial", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Từ vựng (Đồng nghĩa).<br><strong>Từ khóa:</strong> \"crucial\" (cốt yếu).",
+                step2: "<strong>Định vị thông tin:</strong> Tìm câu \"The rainforest plays a crucial role...\"",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Ngữ cảnh: Rừng đóng vai trò 'crucial' trong việc điều hòa khí hậu Trái đất.<br>- Vai trò này là lớn hay nhỏ? Là cần thiết hay nguy hiểm?<br>- Tìm từ đồng nghĩa với mức độ quan trọng rất cao (very necessary).",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>C (important)</strong>.<br>- Lý do: Crucial = Extremely important (Vô cùng quan trọng/Cốt yếu).<br><div class='translate-box'><strong>Dịch:</strong> Khu rừng đóng một vai trò cốt yếu trong việc điều hòa khí hậu của Trái đất.</div>"
+            }
+        },
+        {
+            id: 29,
+            questionText: "The word \"protect\" in paragraph 1 is OPPOSITE in meaning to",
+            options: { A: "preserve", B: "damage", C: "conserve", D: "accept" },
+            correct: "B",
+            relatedSentenceId: "p2-protect", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Từ vựng (Trái nghĩa).<br><strong>Từ khóa:</strong> \"protect\" (bảo vệ), \"OPPOSITE\" (ngược lại).",
+                step2: "<strong>Định vị thông tin:</strong> Tìm câu cuối cùng: \"Efforts are being made to protect...\"",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- 'Protect' nghĩa là giữ cho an toàn.<br>- Đề bài yêu cầu tìm từ TRÁI NGHĨA. Vậy ta cần tìm từ mang nghĩa 'làm hại' hoặc 'phá hủy'.<br>- Các từ như 'preserve' hay 'conserve' là đồng nghĩa hay trái nghĩa?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>B (damage)</strong>.<br>- Lý do: Damage (gây hại/phá hủy) ngược nghĩa với Protect (bảo vệ).<br><div class='translate-box'><strong>Dịch:</strong> Các nỗ lực đang được thực hiện để bảo vệ hệ sinh thái thiết yếu này...</div>"
+            }
+        },
+        {
+            id: 30,
+            questionText: "According to the passage, which of the following is TRUE?",
+            options: { A: "The Amazon is unsafe from deforestation.", B: "The rainforest produces most of the world's food.", C: "The Amazon is important for the Earth's climate.", D: "The Amazon River is the longest in the world." },
+            correct: "C",
+            relatedSentenceId: "p2-crucial", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Đúng/Sai (True/False).",
+                step2: "<strong>Định vị thông tin:</strong> Quét các từ khóa: 'food', 'climate', 'longest river'.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Kiểm tra ý về Sông Amazon: Bài viết nói nó là 'longest' (dài nhất) hay 'second-longest' (dài thứ hai)?<br>- Kiểm tra ý về 'Food': Bài viết có nhắc đến việc sản xuất thức ăn không, hay là sản xuất oxy?<br>- Kiểm tra ý về 'Climate': Tìm câu chứa từ 'regulate... climate'.",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>C</strong>.<br>- Lý do: Bài viết khẳng định rừng có vai trò cốt yếu trong điều hòa khí hậu (regulating climate).<br><div class='translate-box'><strong>Dịch:</strong> Khu rừng đóng một vai trò cốt yếu trong việc điều hòa khí hậu của Trái đất.</div>"
+            }
+        }
+    ];
+
+    // --- VARIABLES ---
+    let userVocabCollection = []; 
+    let currentSelectionRange = null; 
+    let currentQIndex = 0;
+    let userResults = {}; 
+
+    // --- INIT ---
+    function init() {
+        renderSidebar();
+        loadQuestion(0);
+    }
+
+    // --- SIDEBAR & QUESTION UI ---
+    function renderSidebar() {
+        const sidebarList = document.getElementById('sidebarList');
+        sidebarList.innerHTML = '';
+        quizData.forEach((q, index) => {
+            const btn = document.createElement('div');
+            btn.className = `q-btn ${index === 0 ? 'active' : ''}`;
+            btn.id = `q-btn-${index}`;
+            btn.innerText = `Câu ${q.id}`;
+            btn.onclick = () => loadQuestion(index);
+            sidebarList.appendChild(btn);
+        });
+    }
+
+    function loadQuestion(index) {
+        currentQIndex = index;
+        const q = quizData[index];
+        
+        document.querySelectorAll('.q-btn').forEach((b, i) => {
+            b.classList.remove('active');
+            if (i === index) b.classList.add('active');
+        });
+        
+        document.querySelectorAll('.system-highlight').forEach(el => el.classList.remove('system-highlight'));
+
+        const container = document.getElementById('questionContainer');
+        const isAnswered = userResults.hasOwnProperty(index);
+        
+        container.innerHTML = `
+            <div class="question-card">
+                <div class="q-header">Question ${q.id}</div>
+                <div class="q-text">${q.questionText}</div>
+                <div class="options-grid">
+                    ${Object.entries(q.options).map(([key, val]) => 
+                        `<button class="option-btn" onclick="checkAnswer('${key}')" id="opt-${key}">
+                            <strong>${key}.</strong> ${val}
+                        </button>`
+                    ).join('')}
+                </div>
+            </div>
+            
+            <div class="hint-container">
+                ${renderHintStep(1, "Bước 1: Phân tích & Phân loại", q.hints.step1)}
+                ${renderHintStep(2, "Bước 2: Định vị thông tin (Scanning)", q.hints.step2, true)}
+                ${renderHintStep(3, "Bước 3: Tư duy & Suy luận (Scaffolding)", q.hints.step3)}
+                ${renderHintStep(4, "Bước 4: Xác định thông tin & Kết luận", q.hints.step4)}
+            </div>
+        `;
+
+        if (isAnswered) {
+             const correctBtn = document.getElementById(`opt-${q.correct}`);
+             if(correctBtn) correctBtn.classList.add('correct');
+             document.querySelectorAll('.hint-step').forEach(el => el.classList.add('active'));
+        }
+    }
+
+    function renderHintStep(step, title, content, isHighlight=false) {
+        return `
+            <div class="hint-step">
+                <div class="hint-header" onclick="toggleHint(this, ${isHighlight})">
+                    <span>${title}</span>
+                    <span>▼</span>
+                </div>
+                <div class="hint-body">${content}</div>
+            </div>
+        `;
+    }
+
+    function toggleHint(header, isHighlight) {
+        const parent = header.parentElement;
+        parent.classList.toggle('active');
+        
+        if(isHighlight) {
+            const q = quizData[currentQIndex];
+            const ids = q.relatedSentenceId.split(','); 
+            ids.forEach(id => {
+                const el = document.getElementById(id.trim());
+                if(el) {
+                    if (parent.classList.contains('active')) {
+                        el.classList.add('system-highlight');
+                        if(ids.length === 1) el.scrollIntoView({behavior:'smooth', block:'center'});
+                    } else {
+                        el.classList.remove('system-highlight');
+                    }
+                }
+            });
+        }
+    }
+
+    function checkAnswer(choice) {
+        if(userResults.hasOwnProperty(currentQIndex)) return;
+        const q = quizData[currentQIndex];
+        const isCorrect = (choice === q.correct);
+        userResults[currentQIndex] = isCorrect;
+        
+        const userBtn = document.getElementById(`opt-${choice}`);
+        const correctBtn = document.getElementById(`opt-${q.correct}`);
+        
+        if (isCorrect) {
+            userBtn.classList.add('correct');
+        } else {
+            userBtn.classList.add('wrong');
+            correctBtn.classList.add('correct');
+        }
+        
+        document.getElementById(`q-btn-${currentQIndex}`).classList.add('completed');
+        const steps = document.querySelectorAll('.hint-step');
+        steps[3].classList.add('active'); 
+    }
+
+    // --- LOGIC XỬ LÝ TỪ VỰNG ---
+    const readingArea = document.getElementById('readingText');
+    const tooltip = document.getElementById('vocabTooltip');
+
+    readingArea.addEventListener('mouseup', function() {
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+        
+        if (text.length > 0 && text.length < 80) {
+            currentSelectionRange = selection.getRangeAt(0).cloneRange();
+            
+            const rect = currentSelectionRange.getBoundingClientRect();
+            const containerRect = readingArea.getBoundingClientRect();
+            
+            tooltip.style.left = (rect.left + rect.width/2 - 50 - containerRect.left + 60) + 'px'; 
+            tooltip.style.top = (rect.top - 45 - containerRect.top + 40) + 'px'; 
+            tooltip.style.display = 'block';
+        } else {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    document.addEventListener('mousedown', function(e) {
+        if (e.target.id !== 'vocabTooltip') {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    function saveSelectedVocab() {
+        if (!currentSelectionRange) return;
+        
+        const text = currentSelectionRange.toString().trim();
+        if (!text) return;
+
+        const lookupKey = text.toLowerCase().replace(/[.,]/g, ""); 
+        
+        let meaning = "";
+        if (builtInDict[lookupKey]) {
+            meaning = builtInDict[lookupKey];
+        } else if (lookupKey.endsWith('s') && builtInDict[lookupKey.slice(0, -1)]) {
+            meaning = builtInDict[lookupKey.slice(0, -1)];
+        }
+
+        const userMeaning = prompt(
+            meaning ? `Đã tìm thấy nghĩa tự động! Bạn có muốn lưu không?` : `Chưa tìm thấy nghĩa tự động cho "${text}". Vui lòng nhập:`, 
+            meaning || ""
+        );
+
+        if (userMeaning === null) return; 
+
+        userVocabCollection.push({ en: text, vi: userMeaning || "..." });
+
+        const span = document.createElement('span');
+        span.className = 'my-vocab-mark';
+        span.textContent = text;
+        span.title = userMeaning; 
+        
+        currentSelectionRange.deleteContents();
+        currentSelectionRange.insertNode(span);
+        
+        updateVocabPanel();
+        tooltip.style.display = 'none';
+        window.getSelection().removeAllRanges();
+        currentSelectionRange = null; 
+    }
+
+    function updateVocabPanel() {
+        const panel = document.getElementById('userVocabPanel');
+        const list = document.getElementById('userVocabList');
+        const count = document.getElementById('vocabCount');
+        
+        if (userVocabCollection.length > 0) panel.style.display = 'block';
+        else panel.style.display = 'none';
+
+        count.innerText = `(${userVocabCollection.length})`;
+        
+        list.innerHTML = userVocabCollection.map((v, index) => `
+            <div class="vocab-item-row">
+                <span><strong>${v.en}</strong>: ${v.vi}</span>
+                <span class="del-btn" onclick="removeVocab(${index})">×</span>
+            </div>
+        `).join('');
+    }
+
+    function removeVocab(index) {
+        userVocabCollection.splice(index, 1);
+        updateVocabPanel();
+    }
+
+    // --- SUBMIT ---
+    function submitQuiz() {
+        let correct = 0;
+        for(let k in userResults) if(userResults[k]) correct++;
+        
+        document.getElementById('scoreText').innerText = `${correct}/${quizData.length}`;
+        
+        const grid = document.getElementById('finalVocabGrid');
+        const msg = document.getElementById('noVocabMsg');
+        
+        if (userVocabCollection.length === 0) {
+            grid.innerHTML = '';
+            msg.style.display = 'block';
+        } else {
+            msg.style.display = 'none';
+            grid.innerHTML = userVocabCollection.map(v => `
+                <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">
+                    <div style="font-weight:bold; color:#064e3b;">${v.en}</div>
+                    <div style="font-size:0.9rem; color:#64748b;">${v.vi}</div>
+                </div>
+            `).join('');
+        }
+        
+        document.getElementById('resultModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('resultModal').style.display = 'none';
+    }
+
+    init();
+</script>
+
+</body>
+</html>
