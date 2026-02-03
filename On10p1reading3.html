@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Đọc Hiểu: Tourism (Tư Duy Sâu)</title>
+    <style>
+        :root {
+            --primary-color: #0369a1; /* Xanh biển đậm */
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --highlight-yellow: #fde047;
+            --highlight-user: #fca5a5;
+            --correct-color: #15803d;
+            --wrong-color: #b91c1c;
+            --sidebar-width: 140px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; background-color: var(--bg-color);
+            height: 100vh; display: flex; flex-direction: column; color: var(--text-color);
+        }
+
+        .container { display: flex; flex: 1; height: 100%; overflow: hidden; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width); background: white; border-right: 1px solid #e2e8f0;
+            display: flex; flex-direction: column; padding: 15px 10px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 20;
+        }
+        .q-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .q-btn {
+            width: 100%; padding: 12px 5px; border: 1px solid #e2e8f0;
+            border-radius: 8px; cursor: pointer; background: white;
+            font-weight: 600; font-size: 0.9rem; color: #64748b; text-align: center;
+            transition: all 0.2s;
+        }
+        .q-btn:hover { background-color: #f1f5f9; border-color: #94a3b8; }
+        .q-btn.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 4px 6px -1px rgba(3, 105, 161, 0.3); }
+        .q-btn.completed { border-color: var(--correct-color); background-color: #dcfce7; color: var(--correct-color); }
+        
+        .submit-btn {
+            margin-top: 15px; padding: 12px; background: #ea580c; color: white;
+            border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
+            text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px -1px rgba(234, 88, 12, 0.4);
+        }
+        .submit-btn:hover { background: #c2410c; transform: translateY(-1px); }
+
+        /* READING CONTENT */
+        .reading-content {
+            flex: 1; background: white; padding: 40px 60px; overflow-y: auto;
+            border-right: 1px solid #e2e8f0; line-height: 1.9; font-size: 1.15rem;
+            position: relative; scroll-behavior: smooth;
+        }
+        .reading-content h2 { color: #0f172a; margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; }
+        .reading-content p { margin-bottom: 25px; text-align: justify; }
+        
+        .system-highlight { 
+            background-color: var(--highlight-yellow); border-radius: 4px; 
+            box-shadow: 0 0 0 3px var(--highlight-yellow); transition: background 0.3s; 
+        }
+        
+        .my-vocab-mark {
+            background-color: var(--highlight-user); border-bottom: 2px solid #ef4444;
+            cursor: pointer; padding: 0 2px; border-radius: 3px; position: relative;
+        }
+        .my-vocab-mark:hover::after {
+            content: attr(title); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            background: #333; color: #fff; padding: 4px 8px; border-radius: 4px;
+            font-size: 0.8rem; white-space: nowrap; pointer-events: none; z-index: 10;
+        }
+
+        /* Tooltip */
+        .selection-tooltip {
+            position: absolute; display: none; background: #1e293b; color: white; 
+            padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); z-index: 100;
+            animation: fadeIn 0.2s; user-select: none;
+        }
+        .selection-tooltip:hover { background: #334155; }
+        .selection-tooltip::after {
+            content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px;
+            border-width: 6px; border-style: solid; border-color: #1e293b transparent transparent transparent;
+        }
+
+        /* QUESTION PANEL */
+        .question-panel {
+            width: 420px; min-width: 380px; background: #f8fafc; padding: 25px;
+            display: flex; flex-direction: column; overflow-y: auto; border-left: 1px solid #e2e8f0;
+        }
+        .question-card { 
+            background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; 
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0;
+        }
+        .q-header { font-size: 0.85rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .q-text { font-weight: 600; font-size: 1.1rem; margin-bottom: 20px; color: #1e293b; }
+
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { 
+            padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; 
+            cursor: pointer; background: white; text-align: left; font-size: 1rem; color: #475569;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { background-color: #f1f5f9; border-color: #64748b; }
+        .option-btn.correct { background-color: #dcfce7; border-color: var(--correct-color); color: #15803d; font-weight: 700; }
+        .option-btn.wrong { background-color: #fee2e2; border-color: var(--wrong-color); color: #b91c1c; opacity: 0.8; }
+
+        /* Hints Steps */
+        .hint-container { display: flex; flex-direction: column; gap: 10px; }
+        .hint-step { background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        .hint-header { 
+            padding: 12px 15px; background: #fff; cursor: pointer; 
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 600; font-size: 0.95rem; color: #475569;
+        }
+        .hint-header:hover { background: #f8fafc; }
+        
+        .hint-step:nth-child(1) .hint-header { border-left: 4px solid #3b82f6; } /* Xanh */
+        .hint-step:nth-child(2) .hint-header { border-left: 4px solid #f59e0b; } /* Cam */
+        .hint-step:nth-child(3) .hint-header { border-left: 4px solid #8b5cf6; } /* Tím */
+        .hint-step:nth-child(4) .hint-header { border-left: 4px solid #10b981; } /* Xanh lá */
+
+        .hint-body { 
+            padding: 15px; display: none; border-top: 1px solid #f1f5f9; 
+            color: #334155; font-size: 0.95rem; background-color: #fcfcfc; line-height: 1.6;
+        }
+        .hint-step.active .hint-body { display: block; animation: slideDown 0.2s; }
+        .translate-box { margin-top: 10px; padding: 10px; background-color: #ecfdf5; border: 1px dashed #10b981; border-radius: 6px; color: #065f46; font-size: 0.95rem; }
+
+        /* User Vocab Panel */
+        .user-vocab-panel { margin-top: 20px; background: #fff1f2; border: 1px dashed #f43f5e; padding: 15px; border-radius: 12px; }
+        .vocab-item-row { display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px solid #ffe4e6; padding: 8px 0; }
+        .del-btn { color: #f43f5e; cursor: pointer; font-weight: bold; padding: 0 5px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); display: none;
+            justify-content: center; align-items: center; z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+        .modal-content {
+            background: white; width: 600px; max-height: 85vh; border-radius: 16px;
+            padding: 40px; overflow-y: auto; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="q-list" id="sidebarList"></div>
+        <button class="submit-btn" onclick="submitQuiz()">Nộp bài</button>
+    </div>
+
+    <div class="reading-content" id="readingText">
+        <div id="vocabTooltip" class="selection-tooltip" onmousedown="event.preventDefault()" onclick="saveSelectedVocab()">
+            ✨ Dịch & Lưu
+        </div>
+
+        <h2>Tourism: A Fast-Growing Industry</h2>
+        <p style="font-size: 0.9rem; color: #64748b; font-style: italic; background: #f8fafc; padding: 10px; border-radius: 6px;">
+            💡 <strong>Mẹo hay:</strong> Bôi đen từ vựng để xem nghĩa tiếng Việt tự động.
+        </p>
+        
+        <p id="para1">
+            <span id="p1-main">Tourism is one of the fastest-growing industries in the world.</span> Millions of people travel every year to explore new places, learn about different cultures, or simply relax. There are many types of tourism, such as cultural tourism, eco-tourism, and adventure tourism. Each type offers unique experiences. <span id="p1-cultural">For example, <strong>cultural tourism</strong> involves visiting museums, temples, or historical sites to learn about a country's history and traditions.</span>
+        </p>
+
+        <p id="para2">
+            <span id="p2-intro">Many people also enjoy <strong>natural attractions</strong>, such as beaches, mountains, or national parks.</span> <span id="p2-these"><strong>These</strong> places allow tourists to relax and enjoy outdoor activities like swimming, hiking, or camping.</span> However, as more people visit these natural sites, problems such as pollution and overcrowding can occur. <span id="p2-eco">To address these issues, <strong>eco-tourism encourages</strong> people to travel in a way that protects the environment.</span> Eco-tourism focuses on small groups, respects nature, and supports local communities.
+        </p>
+
+        <p id="para3">
+            Tourism has a positive impact on local economies. It creates jobs in hotels, restaurants, and transportation services. Small businesses also benefit from tourists buying souvenirs and local products. <span id="p3-important">However, it is <strong>important</strong> to plan tourism carefully to avoid damaging local culture or natural environments.</span>
+        </p>
+
+        <p id="para4">
+            Planning a trip well can make a big difference. Before traveling, tourists often research the weather, costs, and the best activities to do. A good plan helps ensure a fun and safe experience for everyone.
+        </p>
+    </div>
+
+    <div class="question-panel">
+        <div id="questionContainer"></div>
+        
+        <div class="user-vocab-panel" id="userVocabPanel" style="display:none;">
+            <h4 style="margin:0 0 10px 0; color:#be123c; display:flex; align-items:center; gap:5px;">
+                📒 Từ vựng của tôi <span style="font-size:0.8rem; font-weight:normal; color:#881337;" id="vocabCount">(0)</span>
+            </h4>
+            <div id="userVocabList" style="display: flex; flex-direction: column;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="resultModal">
+    <div class="modal-content">
+        <div style="text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 25px; margin-bottom: 25px;">
+            <h2 style="margin:0; color: var(--primary-color);">🎉 Tổng Kết Bài Làm</h2>
+            <div style="font-size: 3rem; font-weight: 800; color: var(--primary-color); margin: 10px 0;" id="scoreText">0/6</div>
+            <p style="color: #64748b;">Bạn đã hoàn thành bài luyện tập.</p>
+        </div>
+
+        <div>
+            <h3 style="background:#fff1f2; color:#be123c; padding:10px 15px; border-radius:8px; display:inline-block; margin-top:0;">
+                📒 Danh sách từ vựng bạn đã lưu
+            </h3>
+            <div id="finalVocabGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;"></div>
+            <p id="noVocabMsg" style="color:#64748b; font-style:italic; display:none; text-align:center;">Bạn chưa đánh dấu từ vựng nào.</p>
+        </div>
+
+        <button style="display:block; width:100%; margin-top:30px; padding:15px; background:var(--text-color); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:1rem;" onclick="closeModal()">
+            Đóng và Xem lại bài làm
+        </button>
+    </div>
+</div>
+
+<script>
+    // --- TỪ ĐIỂN TÍCH HỢP (BUILT-IN DICTIONARY) ---
+    const builtInDict = {
+        "tourism": "Du lịch",
+        "fastest-growing": "Phát triển nhanh nhất",
+        "industry": "Ngành công nghiệp",
+        "industries": "Các ngành công nghiệp",
+        "explore": "Khám phá",
+        "cultures": "Các nền văn hóa",
+        "relax": "Thư giãn",
+        "cultural tourism": "Du lịch văn hóa",
+        "eco-tourism": "Du lịch sinh thái",
+        "adventure tourism": "Du lịch mạo hiểm",
+        "unique experiences": "Trải nghiệm độc đáo",
+        "museums": "Bảo tàng",
+        "temples": "Đền chùa",
+        "historical sites": "Di tích lịch sử",
+        "traditions": "Truyền thống",
+        "natural attractions": "Điểm du lịch tự nhiên",
+        "beaches": "Bãi biển",
+        "mountains": "Núi",
+        "national parks": "Công viên quốc gia",
+        "outdoor activities": "Hoạt động ngoài trời",
+        "hiking": "Đi bộ đường dài/Leo núi",
+        "camping": "Cắm trại",
+        "pollution": "Ô nhiễm",
+        "overcrowding": "Quá đông đúc",
+        "occur": "Xảy ra",
+        "address": "Giải quyết (vấn đề)",
+        "encourages": "Khuyến khích",
+        "protects": "Bảo vệ",
+        "environment": "Môi trường",
+        "local communities": "Cộng đồng địa phương",
+        "positive impact": "Tác động tích cực",
+        "local economies": "Kinh tế địa phương",
+        "transportation services": "Dịch vụ vận chuyển",
+        "benefit": "Hưởng lợi",
+        "souvenirs": "Quà lưu niệm",
+        "local products": "Sản phẩm địa phương",
+        "important": "Quan trọng",
+        "carefully": "Cẩn thận",
+        "damaging": "Gây hại",
+        "planning": "Lập kế hoạch",
+        "research": "Nghiên cứu/Tìm hiểu",
+        "weather": "Thời tiết",
+        "costs": "Chi phí",
+        "ensure": "Đảm bảo",
+        "safe experience": "Trải nghiệm an toàn"
+    };
+
+    // --- DỮ LIỆU CÂU HỎI (Cập nhật Tư Duy Sâu & Scaffolding) ---
+    const quizData = [
+        {
+            id: 25,
+            questionText: "What is the passage mainly about?",
+            options: { A: "How to plan a perfect trip.", B: "Different types of tourism and their impacts.", C: "The best tourist attractions in the world.", D: "The challenges of tourist" },
+            correct: "B",
+            relatedSentenceId: "p1-main", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Ý chính (Main Idea).<br><strong>Chiến thuật:</strong> Nên làm câu này cuối cùng sau khi đã hiểu sơ bộ bài đọc.",
+                step2: "<strong>Định vị thông tin:</strong> Hãy đọc câu mở đầu (Topic Sentence) của Đoạn 1, Đoạn 2 và Đoạn 3.<br><em>(Bấm vào đây để xem vị trí các câu này)</em>",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Đoạn 1 liệt kê các cái gì của du lịch? (Có nói đến eco, cultural... gọi chung là gì?)<br>- Đoạn 2 và 3 bàn về vấn đề gì liên quan đến môi trường và kinh tế? (Là điều tốt hay xấu, hay bao gồm cả hai?)<br>- Hãy thử xem xét phạm vi: Bài viết có chỉ nói riêng về việc 'lập kế hoạch' không? Hay chỉ nói về 'thử thách' thôi?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>B</strong>.<br>- Lý do: Bài viết bao quát cả các loại hình (types) ở đoạn 1 và tác động (impacts - tích cực và tiêu cực) ở đoạn 2, 3.<br><div class='translate-box'><strong>Dịch:</strong> Du lịch là một trong những ngành công nghiệp phát triển nhanh nhất thế giới... Du lịch có tác động tích cực đến kinh tế địa phương.</div>"
+            }
+        },
+        {
+            id: 26,
+            questionText: "What does the word \"these\" in paragraph 2 refer to?",
+            options: { A: "Museums and temples", B: "Natural attractions", C: "Local communities", D: "Tourist groups" },
+            correct: "B",
+            relatedSentenceId: "p2-intro", 
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Quy chiếu (Reference).<br><strong>Từ khóa:</strong> \"these\" (ở đoạn 2).",
+                step2: "<strong>Định vị thông tin:</strong> Tìm từ \"These\" trong đoạn 2. Sau đó nhìn vào câu nằm NGAY TRƯỚC nó.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Trong ngữ pháp, từ 'these' (những cái này) dùng để thay thế cho một danh từ số nhiều vừa được nhắc đến để tránh lặp từ.<br>- Hãy quan sát câu phía trước: Tác giả đang liệt kê những địa danh nào (biển, núi...)? Cụm danh từ nào bao quát các địa danh đó?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>B</strong>.<br>- Lý do: 'These places' thay thế cho 'Natural attractions' ở câu trước.<br><div class='translate-box'><strong>Dịch:</strong> Nhiều người cũng thích các điểm du lịch tự nhiên, như bãi biển, núi non hoặc các công viên quốc gia.</div>"
+            }
+        },
+        {
+            id: 27,
+            questionText: "The word \"encourages\" in paragraph 2 is CLOSEST in meaning to:",
+            options: { A: "teaches", B: "demands", C: "changes", D: "supports" },
+            correct: "D",
+            relatedSentenceId: "p2-eco",
+            hints: {
+                step1: "<strong>Phân loại:</strong> Từ vựng (Đồng nghĩa/Gần nghĩa).<br><strong>Từ khóa:</strong> \"encourages\".",
+                step2: "<strong>Định vị thông tin:</strong> Tìm câu chứa cụm \"eco-tourism encourages people...\" trong đoạn 2.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Hãy xét ngữ cảnh: Mục tiêu của du lịch sinh thái là bảo vệ môi trường.<br>- Hành động này mang sắc thái tích cực (động viên/tiếp sức) hay tiêu cực (bắt ép)?<br>- Trong các từ ngữ gợi ý, từ nào thể hiện việc đứng sau thúc đẩy hoặc ủng hộ một hành động tốt?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>D (supports)</strong>.<br>- Lý do: 'Encourage' (khuyến khích) mang nghĩa tương đồng với việc ủng hộ/hỗ trợ.<br><div class='translate-box'><strong>Dịch:</strong> Để giải quyết những vấn đề này, du lịch sinh thái khuyến khích mọi người đi du lịch theo cách bảo vệ môi trường.</div>"
+            }
+        },
+        {
+            id: 28,
+            questionText: "The word \"important\" in paragraph 3 OPPOSITE in meaning to:",
+            options: { A: "essential", B: "imperative", C: "insignificant", D: "weighty" },
+            correct: "C",
+            relatedSentenceId: "p3-important",
+            hints: {
+                step1: "<strong>Phân loại:</strong> Từ vựng (Trái nghĩa).<br><strong>Từ khóa:</strong> \"OPPOSITE\" (Ngược lại) và \"important\".",
+                step2: "<strong>Định vị thông tin:</strong> Tìm từ \"important\" trong đoạn 3.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Đề bài tìm từ TRÁI NGHĨA với 'quan trọng'. Tức là ta cần tìm một từ mang nghĩa 'không quan trọng' hoặc 'nhỏ nhặt'.<br>- Hãy quan sát cấu tạo từ (Word formation): Có từ nào chứa tiền tố phủ định (như <em>un-, in-, dis-</em>) mang nghĩa là 'không' hay không?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>C (insignificant)</strong>.<br>- Lý do: Tiền tố 'in-' tạo nghĩa phủ định cho từ significant (đáng kể/quan trọng).<br><div class='translate-box'><strong>Dịch:</strong> Tuy nhiên, việc lên kế hoạch du lịch cẩn thận để tránh làm tổn hại văn hóa địa phương là rất quan trọng.</div>"
+            }
+        },
+        {
+            id: 29,
+            questionText: "Which of the following is TRUE, according to the passage?",
+            options: { A: "All tourists prefer beaches to museums.", B: "Tourism always damages local culture.", C: "Eco-tourism focuses on protecting nature.", D: "Tourists rarely spend money on souvenirs." },
+            correct: "C",
+            relatedSentenceId: "p2-eco",
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Đúng/Sai (True/False).<br><strong>Chiến thuật:</strong> Cẩn trọng với các từ chỉ sự tuyệt đối (All, Always, Rarely).",
+                step2: "<strong>Định vị thông tin:</strong> Quét nhanh bài đọc để tìm các từ khóa liên quan đến 'Eco-tourism', 'Souvenirs', 'Culture'.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Logic loại trừ: Có bao giờ 'Tất cả' (All) du khách đều thích một thứ giống nhau không? Du lịch có 'Luôn luôn' (Always) gây hại không hay chỉ khi thiếu kế hoạch?<br>- Kiểm chứng thông tin: Đoạn văn nói mục đích chính của 'eco-tourism' là gì? Nó tập trung vào điều gì?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>C</strong>.<br>- Lý do: Khớp với thông tin trong bài về mục tiêu của du lịch sinh thái.<br><div class='translate-box'><strong>Dịch:</strong> Du lịch sinh thái tập trung vào các nhóm nhỏ, tôn trọng thiên nhiên và hỗ trợ cộng đồng địa phương.</div>"
+            }
+        },
+        {
+            id: 30,
+            questionText: "According to the passage, what is cultural tourism?",
+            options: { A: "Visiting places to learn about history and traditions.", B: "Traveling to enjoy outdoor activities.", C: "Protecting the environment while traveling.", D: "Buying local products from small businesses." },
+            correct: "A",
+            relatedSentenceId: "p1-cultural",
+            hints: {
+                step1: "<strong>Phân loại:</strong> Câu hỏi Chi tiết (Detail).<br><strong>Từ khóa:</strong> \"cultural tourism\".",
+                step2: "<strong>Định vị thông tin:</strong> Tìm chính xác cụm từ \"cultural tourism\" trong Đoạn 1.",
+                step3: "<strong>Tư duy & Suy luận:</strong><br>- Đọc phần định nghĩa đi ngay sau cụm từ đó (sau chữ 'involves').<br>- Tác giả liệt kê các hành động cụ thể nào? (thăm bảo tàng, đền chùa...).<br>- Mục đích của các hành động đó là để tìm hiểu về cái gì?",
+                step4: "<strong>Kết luận & Dịch:</strong><br>- Chọn đáp án <strong>A</strong>.<br>- Lý do: Khớp thông tin về 'learn about... history and traditions'.<br><div class='translate-box'><strong>Dịch:</strong> Ví dụ, du lịch văn hóa bao gồm việc thăm quan bảo tàng, đền chùa, hoặc di tích lịch sử để tìm hiểu về lịch sử và truyền thống của một quốc gia.</div>"
+            }
+        }
+    ];
+
+    // --- VARIABLES ---
+    let userVocabCollection = []; 
+    let currentSelectionRange = null; 
+    let currentQIndex = 0;
+    let userResults = {}; 
+
+    // --- INIT ---
+    function init() {
+        renderSidebar();
+        loadQuestion(0);
+    }
+
+    // --- SIDEBAR & QUESTION UI ---
+    function renderSidebar() {
+        const sidebarList = document.getElementById('sidebarList');
+        sidebarList.innerHTML = '';
+        quizData.forEach((q, index) => {
+            const btn = document.createElement('div');
+            btn.className = `q-btn ${index === 0 ? 'active' : ''}`;
+            btn.id = `q-btn-${index}`;
+            btn.innerText = `Câu ${q.id}`;
+            btn.onclick = () => loadQuestion(index);
+            sidebarList.appendChild(btn);
+        });
+    }
+
+    function loadQuestion(index) {
+        currentQIndex = index;
+        const q = quizData[index];
+        
+        document.querySelectorAll('.q-btn').forEach((b, i) => {
+            b.classList.remove('active');
+            if (i === index) b.classList.add('active');
+        });
+        
+        document.querySelectorAll('.system-highlight').forEach(el => el.classList.remove('system-highlight'));
+
+        const container = document.getElementById('questionContainer');
+        const isAnswered = userResults.hasOwnProperty(index);
+        
+        container.innerHTML = `
+            <div class="question-card">
+                <div class="q-header">Question ${q.id}</div>
+                <div class="q-text">${q.questionText}</div>
+                <div class="options-grid">
+                    ${Object.entries(q.options).map(([key, val]) => 
+                        `<button class="option-btn" onclick="checkAnswer('${key}')" id="opt-${key}">
+                            <strong>${key}.</strong> ${val}
+                        </button>`
+                    ).join('')}
+                </div>
+            </div>
+            
+            <div class="hint-container">
+                ${renderHintStep(1, "Bước 1: Phân tích & Phân loại", q.hints.step1)}
+                ${renderHintStep(2, "Bước 2: Định vị thông tin (Scanning)", q.hints.step2, true)}
+                ${renderHintStep(3, "Bước 3: Tư duy & Suy luận (Scaffolding)", q.hints.step3)}
+                ${renderHintStep(4, "Bước 4: Xác định thông tin & Kết luận", q.hints.step4)}
+            </div>
+        `;
+
+        if (isAnswered) {
+             const correctBtn = document.getElementById(`opt-${q.correct}`);
+             if(correctBtn) correctBtn.classList.add('correct');
+             document.querySelectorAll('.hint-step').forEach(el => el.classList.add('active'));
+        }
+    }
+
+    function renderHintStep(step, title, content, isHighlight=false) {
+        return `
+            <div class="hint-step">
+                <div class="hint-header" onclick="toggleHint(this, ${isHighlight})">
+                    <span>${title}</span>
+                    <span>▼</span>
+                </div>
+                <div class="hint-body">${content}</div>
+            </div>
+        `;
+    }
+
+    function toggleHint(header, isHighlight) {
+        const parent = header.parentElement;
+        parent.classList.toggle('active');
+        
+        if(isHighlight) {
+            const q = quizData[currentQIndex];
+            const ids = q.relatedSentenceId.split(','); 
+            ids.forEach(id => {
+                const el = document.getElementById(id.trim());
+                if(el) {
+                    if (parent.classList.contains('active')) {
+                        el.classList.add('system-highlight');
+                        if(ids.length === 1) el.scrollIntoView({behavior:'smooth', block:'center'});
+                    } else {
+                        el.classList.remove('system-highlight');
+                    }
+                }
+            });
+        }
+    }
+
+    function checkAnswer(choice) {
+        if(userResults.hasOwnProperty(currentQIndex)) return;
+        const q = quizData[currentQIndex];
+        const isCorrect = (choice === q.correct);
+        userResults[currentQIndex] = isCorrect;
+        
+        const userBtn = document.getElementById(`opt-${choice}`);
+        const correctBtn = document.getElementById(`opt-${q.correct}`);
+        
+        if (isCorrect) {
+            userBtn.classList.add('correct');
+        } else {
+            userBtn.classList.add('wrong');
+            correctBtn.classList.add('correct');
+        }
+        
+        document.getElementById(`q-btn-${currentQIndex}`).classList.add('completed');
+        const steps = document.querySelectorAll('.hint-step');
+        steps[3].classList.add('active'); 
+    }
+
+    // --- LOGIC XỬ LÝ TỪ VỰNG THÔNG MINH ---
+    const readingArea = document.getElementById('readingText');
+    const tooltip = document.getElementById('vocabTooltip');
+
+    readingArea.addEventListener('mouseup', function() {
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+        
+        if (text.length > 0 && text.length < 80) {
+            currentSelectionRange = selection.getRangeAt(0).cloneRange();
+            
+            const rect = currentSelectionRange.getBoundingClientRect();
+            const containerRect = readingArea.getBoundingClientRect();
+            
+            tooltip.style.left = (rect.left + rect.width/2 - 50 - containerRect.left + 60) + 'px'; 
+            tooltip.style.top = (rect.top - 45 - containerRect.top + 40) + 'px'; 
+            tooltip.style.display = 'block';
+        } else {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    document.addEventListener('mousedown', function(e) {
+        if (e.target.id !== 'vocabTooltip') {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    function saveSelectedVocab() {
+        if (!currentSelectionRange) return;
+        
+        const text = currentSelectionRange.toString().trim();
+        if (!text) return;
+
+        // 1. CHUẨN HÓA TỪ (để tra từ điển dễ hơn)
+        const lookupKey = text.toLowerCase().replace(/[.,]/g, ""); 
+        
+        // 2. TỰ ĐỘNG DỊCH
+        let meaning = "";
+        if (builtInDict[lookupKey]) {
+            meaning = builtInDict[lookupKey];
+        } else if (lookupKey.endsWith('s') && builtInDict[lookupKey.slice(0, -1)]) {
+            meaning = builtInDict[lookupKey.slice(0, -1)];
+        }
+
+        // 3. HỘP THOẠI
+        const userMeaning = prompt(
+            meaning ? `Đã tìm thấy nghĩa tự động! Bạn có muốn lưu không?` : `Chưa tìm thấy nghĩa tự động cho "${text}". Vui lòng nhập:`, 
+            meaning || ""
+        );
+
+        if (userMeaning === null) return; 
+
+        // 4. LƯU
+        userVocabCollection.push({ en: text, vi: userMeaning || "..." });
+
+        const span = document.createElement('span');
+        span.className = 'my-vocab-mark';
+        span.textContent = text;
+        span.title = userMeaning; 
+        
+        currentSelectionRange.deleteContents();
+        currentSelectionRange.insertNode(span);
+        
+        updateVocabPanel();
+        tooltip.style.display = 'none';
+        window.getSelection().removeAllRanges();
+        currentSelectionRange = null; 
+    }
+
+    function updateVocabPanel() {
+        const panel = document.getElementById('userVocabPanel');
+        const list = document.getElementById('userVocabList');
+        const count = document.getElementById('vocabCount');
+        
+        if (userVocabCollection.length > 0) panel.style.display = 'block';
+        else panel.style.display = 'none';
+
+        count.innerText = `(${userVocabCollection.length})`;
+        
+        list.innerHTML = userVocabCollection.map((v, index) => `
+            <div class="vocab-item-row">
+                <span><strong>${v.en}</strong>: ${v.vi}</span>
+                <span class="del-btn" onclick="removeVocab(${index})">×</span>
+            </div>
+        `).join('');
+    }
+
+    function removeVocab(index) {
+        userVocabCollection.splice(index, 1);
+        updateVocabPanel();
+    }
+
+    // --- SUBMIT ---
+    function submitQuiz() {
+        let correct = 0;
+        for(let k in userResults) if(userResults[k]) correct++;
+        
+        document.getElementById('scoreText').innerText = `${correct}/${quizData.length}`;
+        
+        const grid = document.getElementById('finalVocabGrid');
+        const msg = document.getElementById('noVocabMsg');
+        
+        if (userVocabCollection.length === 0) {
+            grid.innerHTML = '';
+            msg.style.display = 'block';
+        } else {
+            msg.style.display = 'none';
+            grid.innerHTML = userVocabCollection.map(v => `
+                <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">
+                    <div style="font-weight:bold; color:#334155;">${v.en}</div>
+                    <div style="font-size:0.9rem; color:#64748b;">${v.vi}</div>
+                </div>
+            `).join('');
+        }
+        
+        document.getElementById('resultModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('resultModal').style.display = 'none';
+    }
+
+    init();
+</script>
+
+</body>
+</html>
