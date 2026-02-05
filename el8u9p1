@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Question 91-140</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            overflow: auto; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: visible;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            position: sticky;
+            top: 80px;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Question 91-140</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">50</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">50</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+ { q: "There is too much water on the road. It is a __________.", qVi: "Có quá nhiều nước trên đường. Đó là một trận __________.", key: ["too much water", "road"], opts: ["fire", "flood", "wind", "drought"], optsVi: ["lửa/cháy", "lũ lụt", "gió", "hạn hán"], correct: 1, exp: "Nhiều nước ngập đường là <b>flood</b> (lũ lụt)." },
+            { q: "The ground is shaking! It is an __________.", qVi: "Mặt đất đang rung chuyển! Đó là một trận __________.", key: ["ground shaking"], opts: ["earthquake", "rain", "property", "whistle"], optsVi: ["động đất", "mưa", "tài sản", "cái còi"], correct: 0, exp: "Mặt đất rung lắc là <b>earthquake</b> (động đất)." },
+            { q: "A __________ is a very big wave from the ocean.", qVi: "Một __________ là một con sóng rất lớn từ đại dương.", key: ["big wave", "ocean"], opts: ["mud", "wind", "tsunami", "fire"], optsVi: ["bùn", "gió", "sóng thần", "lửa"], correct: 2, exp: "Sóng lớn từ đại dương là <b>tsunami</b> (sóng thần)." },
+            { q: "When there is an earthquake, you should __________ under a table.", qVi: "Khi có động đất, bạn nên __________ dưới gầm bàn.", key: ["earthquake", "under table"], opts: ["hide", "destroy", "erupt", "predict"], optsVi: ["trốn/núp", "phá hủy", "phun trào", "dự đoán"], correct: 0, exp: "Hành động an toàn khi động đất là <b>hide</b> (trốn) dưới bàn." },
+            { q: "The __________ blows very strongly and breaks the trees.", qVi: "__________ thổi rất mạnh và làm gãy cây cối.", key: ["blows strongly", "breaks trees"], opts: ["rain", "mud", "wind", "rock"], optsVi: ["mưa", "bùn", "gió", "đá"], correct: 2, exp: "Thổi mạnh (blows) là đặc điểm của <b>wind</b> (gió)." },
+            { q: "A __________ helps people who are in danger.", qVi: "Một __________ giúp đỡ những người đang gặp nguy hiểm.", key: ["helps people", "in danger"], opts: ["victim", "rescue worker", "storm", "property"], optsVi: ["nạn nhân", "nhân viên cứu hộ", "cơn bão", "tài sản"], correct: 1, exp: "Người cứu giúp người khác là <b>rescue worker</b>." },
+            { q: "It is very __________ to go out in a big storm.", qVi: "Rất __________ khi đi ra ngoài trong một cơn bão lớn.", key: ["go out", "big storm"], opts: ["safe", "happy", "nice", "dangerous"], optsVi: ["an toàn", "vui vẻ", "tốt đẹp", "nguy hiểm"], correct: 3, exp: "Ra ngoài khi bão thì rất <b>dangerous</b> (nguy hiểm)." },
+            { q: "Please stay inside your house to be __________.", qVi: "Làm ơn ở trong nhà để được __________.", key: ["stay inside", "purpose"], opts: ["safe", "missing", "violent", "awful"], optsVi: ["an toàn", "mất tích", "bạo lực/dữ dội", "tồi tệ"], correct: 0, exp: "Ở trong nhà để giữ <b>safe</b> (an toàn)." },
+            { q: "A tornado looks like a giant __________ made of wind.", qVi: "Một cơn lốc xoáy trông giống như một cái __________ khổng lồ làm bằng gió.", key: ["tornado looks like", "shape"], opts: ["ball", "funnel", "box", "rock"], optsVi: ["quả bóng", "cái phễu", "cái hộp", "tảng đá"], correct: 1, exp: "Lốc xoáy có hình dạng <b>funnel</b> (hình phễu)." },
+            { q: "Rocks and mud falling down a hill is called a __________.", qVi: "Đá và bùn rơi xuống đồi được gọi là __________.", key: ["rocks and mud", "falling down hill"], opts: ["flood", "drought", "landslide", "thunder"], optsVi: ["lũ lụt", "hạn hán", "sạt lở đất", "sấm sét"], correct: 2, exp: "Đất đá sạt lở xuống đồi là <b>landslide</b>." },
+            { q: "The volcano can __________ hot ash and gas.", qVi: "Núi lửa có thể __________ tro nóng và khí gas.", key: ["volcano", "ash and gas"], opts: ["sleep", "erupt", "hide", "rescue"], optsVi: ["ngủ", "phun trào", "trốn", "giải cứu"], correct: 1, exp: "Hoạt động của núi lửa là <b>erupt</b> (phun trào)." },
+            { q: "The big fire can __________ the whole house.", qVi: "Ngọn lửa lớn có thể __________ cả ngôi nhà.", key: ["big fire", "house"], opts: ["build", "save", "destroy", "predict"], optsVi: ["xây dựng", "cứu", "phá hủy/thiêu rụi", "dự đoán"], correct: 2, exp: "Lửa lớn sẽ <b>destroy</b> (phá hủy) ngôi nhà." },
+            { q: "I am very __________ of the loud thunder.", qVi: "Tôi rất __________ tiếng sấm lớn.", key: ["loud thunder", "feeling"], opts: ["happy", "afraid (fear)", "safe", "lucky"], optsVi: ["vui", "sợ hãi", "an toàn", "may mắn"], correct: 1, exp: "Cảm giác thường gặp với tiếng sấm là <b>afraid</b> (sợ)." },
+            { q: "We need food and water for our emergency __________.", qVi: "Chúng ta cần thức ăn và nước uống cho __________ khẩn cấp của mình.", key: ["emergency", "food and water"], opts: ["kit", "worker", "rain", "wind"], optsVi: ["bộ dụng cụ/túi đồ", "công nhân", "mưa", "gió"], correct: 0, exp: "Túi đồ khẩn cấp là emergency <b>kit</b>." },
+            { q: "Dark clouds help us __________ that it will rain soon.", qVi: "Mây đen giúp chúng ta __________ rằng trời sẽ mưa sớm.", key: ["dark clouds", "rain soon"], opts: ["damage", "hurt", "destroy", "predict"], optsVi: ["làm hại", "làm đau", "phá hủy", "dự đoán"], correct: 3, exp: "Nhìn mây để <b>predict</b> (dự đoán) thời tiết." },
+            { q: "A __________ is a person who is hurt or affected by the disaster.", qVi: "Một __________ là người bị thương hoặc bị ảnh hưởng bởi thảm họa.", key: ["person hurt", "disaster"], opts: ["rescue worker", "victim", "property", "tsunami"], optsVi: ["nhân viên cứu hộ", "nạn nhân", "tài sản", "sóng thần"], correct: 1, exp: "Người bị nạn là <b>victim</b>." },
+            { q: "The storm damaged his house and car. He lost much __________.", qVi: "Cơn bão đã làm hỏng nhà và xe của anh ấy. Anh ấy đã mất nhiều __________.", key: ["house and car", "lost"], opts: ["property", "wind", "rain", "gas"], optsVi: ["tài sản", "gió", "mưa", "khí gas"], correct: 0, exp: "Nhà và xe được gọi chung là <b>property</b> (tài sản)." },
+            { q: "Don't __________ of the house when the wind is strong.", qVi: "Đừng __________ khỏi nhà khi gió mạnh.", key: ["Don't", "house", "strong wind"], opts: ["run out", "hide", "sleep", "sit"], optsVi: ["chạy ra ngoài", "trốn", "ngủ", "ngồi"], correct: 0, exp: "Lời khuyên an toàn: Don't <b>run out</b> (không chạy ra ngoài)." },
+            { q: "Use a __________ to make a loud sound for help.", qVi: "Sử dụng một cái __________ để tạo ra âm thanh lớn cầu cứu.", key: ["loud sound", "for help"], opts: ["whistle", "rock", "table", "kit"], optsVi: ["cái còi", "hòn đá", "cái bàn", "bộ dụng cụ"], correct: 0, exp: "Vật dụng tạo tiếng to để cầu cứu là <b>whistle</b>." },
+            { q: "The weather is __________. It is raining and windy all day.", qVi: "Thời tiết thật __________. Trời mưa và gió cả ngày.", key: ["raining and windy", "bad"], opts: ["good", "awful", "sunny", "safe"], optsVi: ["tốt", "tồi tệ/khủng khiếp", "nắng", "an toàn"], correct: 1, exp: "Mưa gió cả ngày là thời tiết <b>awful</b>." },
+{ q: "A __________ is a scientist's statement about what will happen in the future, especially about the weather.", qVi: "Một __________ là tuyên bố của nhà khoa học về những gì sẽ xảy ra trong tương lai, đặc biệt là về thời tiết.", key: ["scientist's statement", "future", "weather"], opts: ["damage", "predict", "property", "whistle"], optsVi: ["thiệt hại", "dự đoán (động từ)", "tài sản", "cái còi"], correct: 1, exp: "Tuyên bố về tương lai là sự dự đoán. (Lưu ý: Danh từ đúng là 'prediction', nhưng trong bài chọn từ 'predict' theo đề)." },
+            { q: "When a volcano is active, it starts to __________ hot ash and gas into the air.", qVi: "Khi núi lửa hoạt động, nó bắt đầu __________ tro nóng và khí vào không khí.", key: ["volcano", "ash and gas"], opts: ["avoid", "hide", "erupt", "pull up"], optsVi: ["tránh", "trốn", "phun trào", "kéo lên"], correct: 2, exp: "Núi lửa phun trào -> <b>erupt</b>." },
+            { q: "During an earthquake, you should __________ to protect your head from falling objects.", qVi: "Trong trận động đất, bạn nên __________ để bảo vệ đầu khỏi các vật rơi.", key: ["protect head", "earthquake"], opts: ["run out of", "look out of", "hide under the table", "pour out"], optsVi: ["chạy hết", "nhìn ra ngoài", "trốn dưới gầm bàn", "đổ ra"], correct: 2, exp: "Hành động an toàn: <b>hide under the table</b>." },
+            { q: "After the storm, many people were reported __________ because their families could not find them.", qVi: "Sau cơn bão, nhiều người được báo cáo __________ vì gia đình không thể tìm thấy họ.", key: ["could not find", "reported"], opts: ["safe", "missing", "numerous", "violent"], optsVi: ["an toàn", "mất tích", "nhiều", "bạo lực"], correct: 1, exp: "Không tìm thấy -> <b>missing</b> (mất tích)." },
+            { q: "The hurricane was so __________ that it pulled up many big trees along the street.", qVi: "Cơn bão quá __________ đến nỗi nó nhổ bật nhiều cây to dọc đường.", key: ["pulled up trees", "so ... that"], opts: ["safe", "awful", "numerous", "violent"], optsVi: ["an toàn", "tệ hại", "nhiều", "dữ dội"], correct: 3, exp: "Bão mạnh, dữ dội -> <b>violent</b>." },
+            { q: "A __________ is a person who has been hurt or killed in an accident or a natural disaster.", qVi: "Một __________ là người bị thương hoặc thiệt mạng trong tai nạn hoặc thảm họa thiên nhiên.", key: ["person hurt/killed", "disaster"], opts: ["rescue worker", "victim", "property", "disaster"], optsVi: ["nhân viên cứu hộ", "nạn nhân", "tài sản", "thảm họa"], correct: 1, exp: "Người bị nạn -> <b>victim</b>." },
+            { q: "It is very __________ to stand under a tree during a thunderstorm with lightning.", qVi: "Rất __________ khi đứng dưới gốc cây trong cơn giông có sét.", key: ["stand under tree", "lightning"], opts: ["dangerous", "safe", "frightened", "missing"], optsVi: ["nguy hiểm", "an toàn", "sợ hãi", "mất tích"], correct: 0, exp: "Đứng dưới cây khi có sét là <b>dangerous</b>." },
+            { q: "The heavy rain caused a __________, and a lot of rock and mud came down the mountain.", qVi: "Mưa lớn gây ra __________, và rất nhiều đá và bùn đổ xuống núi.", key: ["rock and mud", "down mountain"], opts: ["tornado", "tsunami", "landslide", "volcanic eruption"], optsVi: ["lốc xoáy", "sóng thần", "sạt lở đất", "núi lửa phun"], correct: 2, exp: "Đất đá sạt lở -> <b>landslide</b>." },
+            { q: "We always keep an __________ in our house, containing a flashlight, some food, and water.", qVi: "Chúng tôi luôn giữ một __________ trong nhà, chứa đèn pin, ít thức ăn và nước.", key: ["flashlight, food", "keep"], opts: ["emergency kit", "ash and gas", "property", "rescue worker"], optsVi: ["bộ dụng cụ khẩn cấp", "tro và khí", "tài sản", "nhân viên cứu hộ"], correct: 0, exp: "Túi đồ dự phòng -> <b>emergency kit</b>." },
+            { q: "The flood caused a lot of __________ to the local farmers' crops and houses.", qVi: "Lũ lụt gây ra nhiều __________ cho mùa màng và nhà cửa của nông dân địa phương.", key: ["flood caused", "crops and houses"], opts: ["fear", "damage", "whistle", "funnel"], optsVi: ["nỗi sợ", "thiệt hại", "cái còi", "cái phễu"], correct: 1, exp: "Gây thiệt hại -> caused <b>damage</b>." },
+            { q: "The ground started __________ before the buildings began to collapse.", qVi: "Mặt đất bắt đầu __________ trước khi các tòa nhà bắt đầu sụp đổ.", key: ["ground started", "collapse"], opts: ["pouring out", "predicting", "trembling", "avoiding"], optsVi: ["đổ ra", "dự đoán", "rung chuyển", "tránh"], correct: 2, exp: "Động đất làm đất rung chuyển -> <b>trembling</b>." },
+            { q: "If you are in a building during a fire, you must __________ as fast as possible.", qVi: "Nếu bạn ở trong tòa nhà khi có hỏa hoạn, bạn phải __________ nhanh nhất có thể.", key: ["fire", "must"], opts: ["hide under the table", "run out of", "look out of", "come down"], optsVi: ["trốn dưới bàn", "chạy ra khỏi", "nhìn ra ngoài", "đi xuống/bị bệnh"], correct: 1, exp: "Gặp cháy phải chạy thoát -> <b>run out of</b>." },
+            { q: "A tornado is often described as a dark, __________-shaped cloud reaching down from the sky.", qVi: "Lốc xoáy thường được mô tả là một đám mây đen hình __________ vươn xuống từ bầu trời.", key: ["tornado shape", "cloud"], opts: ["rock", "mud", "funnel", "whistle"], optsVi: ["đá", "bùn", "cái phễu", "cái còi"], correct: 2, exp: "Hình dạng lốc xoáy -> <b>funnel</b>-shaped." },
+            { q: "Many houses and cars are considered private __________ that can be destroyed in a disaster.", qVi: "Nhiều ngôi nhà và xe hơi được coi là __________ riêng tư có thể bị phá hủy trong thảm họa.", key: ["houses and cars", "private"], opts: ["victims", "property", "rescue workers", "disasters"], optsVi: ["nạn nhân", "tài sản", "nhân viên cứu hộ", "thảm họa"], correct: 1, exp: "Nhà và xe là tài sản -> <b>property</b>." },
+            { q: "You should __________ the coastal areas when there is a warning about a coming tsunami.", qVi: "Bạn nên __________ các khu vực ven biển khi có cảnh báo về sóng thần sắp tới.", key: ["tsunami warning", "coastal areas"], opts: ["avoid", "hurt", "damage", "affect"], optsVi: ["tránh xa", "làm đau", "làm hại", "ảnh hưởng"], correct: 0, exp: "Sóng thần đến thì phải tránh xa bờ biển -> <b>avoid</b>." },
+{ q: "A __________ is a very bad event like a flood or an earthquake.", qVi: "Một __________ là một sự kiện rất tồi tệ như lũ lụt hoặc động đất.", key: ["very bad event", "flood, earthquake"], opts: ["whistle", "disaster", "property", "rain"], optsVi: ["cái còi", "thảm họa", "tài sản", "mưa"], correct: 1, exp: "Lũ lụt và động đất là các ví dụ của <b>disaster</b> (thảm họa)." },
+            { q: "There are __________ stars in the sky; you cannot count them all.", qVi: "Có __________ ngôi sao trên bầu trời; bạn không thể đếm hết chúng.", key: ["cannot count", "stars"], opts: ["missing", "numerous", "violent", "awful"], optsVi: ["mất tích", "vô số/rất nhiều", "dữ dội", "tồi tệ"], correct: 1, exp: "Không đếm xuể là <b>numerous</b> (rất nhiều)." },
+            { q: "The cat is very __________. It is hiding because of the loud noise.", qVi: "Con mèo đang rất __________. Nó đang trốn vì tiếng ồn lớn.", key: ["hiding", "loud noise"], opts: ["safe", "numerous", "frightened", "dangerous"], optsVi: ["an toàn", "nhiều", "hoảng sợ", "nguy hiểm"], correct: 2, exp: "Trốn vì sợ tiếng ồn -> <b>frightened</b>." },
+            { q: "Be careful! Don't __________ yourself with that broken glass.", qVi: "Cẩn thận! Đừng làm __________ bản thân với mảnh kính vỡ đó.", key: ["broken glass", "yourself"], opts: ["hurt", "predict", "avoid", "erupt"], optsVi: ["đau/tổn thương", "dự đoán", "tránh", "phun trào"], correct: 0, exp: "Kính vỡ gây thương tích -> <b>hurt</b>." },
+            { q: "During a storm, you should not __________ the window. It is not safe.", qVi: "Trong cơn bão, bạn không nên __________ cửa sổ. Nó không an toàn.", key: ["storm", "window"], opts: ["run out of", "look out of", "hide under", "come down"], optsVi: ["chạy hết", "nhìn ra ngoài", "trốn dưới", "đi xuống"], correct: 1, exp: "Lời khuyên an toàn: không nên <b>look out of</b> (nhìn ra ngoài) cửa sổ khi có bão." },
+            { q: "The weather today is __________. It is too cold and rainy.", qVi: "Thời tiết hôm nay thật __________. Trời quá lạnh và mưa.", key: ["cold and rainy", "bad"], opts: ["safe", "awful", "numerous", "missing"], optsVi: ["an toàn", "tồi tệ/khủng khiếp", "nhiều", "mất tích"], correct: 1, exp: "Thời tiết xấu -> <b>awful</b>." },
+            { q: "A __________ is a very strong storm that happens in tropical areas.", qVi: "Một __________ là cơn bão rất mạnh xảy ra ở các vùng nhiệt đới.", key: ["strong storm", "tropical areas"], opts: ["landslide", "tropical storm", "rock", "mud"], optsVi: ["sạt lở đất", "bão nhiệt đới", "đá", "bùn"], correct: 1, exp: "Bão ở vùng nhiệt đới -> <b>tropical storm</b>." },
+            { q: "The police __________ people that a big storm is coming.", qVi: "Cảnh sát __________ người dân rằng một cơn bão lớn đang đến.", key: ["police", "storm coming"], opts: ["damage", "warn", "erupt", "hurt"], optsVi: ["làm hại", "cảnh báo", "phun trào", "làm đau"], correct: 1, exp: "Cảnh báo nguy hiểm -> <b>warn</b>." },
+            { q: "When the volcano erupts, a lot of __________ comes out.", qVi: "Khi núi lửa phun trào, rất nhiều __________ thoát ra.", key: ["volcano erupts", "comes out"], opts: ["ash and gas", "rescue worker", "emergency kit", "whistle"], optsVi: ["tro và khí", "nhân viên cứu hộ", "bộ cứu thương", "cái còi"], correct: 0, exp: "Sản phẩm của núi lửa phun trào -> <b>ash and gas</b>." },
+            { q: "Many people were __________ by the flood. They lost their homes.", qVi: "Nhiều người đã bị __________ bởi trận lụt. Họ bị mất nhà cửa.", key: ["flood", "lost homes"], opts: ["predicted by", "avoided by", "affected by", "erupted by"], optsVi: ["được dự đoán", "được tránh", "bị ảnh hưởng", "bị phun trào"], correct: 2, exp: "Chịu tác động xấu từ lũ lụt -> <b>affected by</b>." },
+            { q: "The wind was so strong it could __________ a small tree.", qVi: "Gió mạnh đến nỗi nó có thể __________ một cái cây nhỏ.", key: ["strong wind", "tree"], opts: ["pull up", "hide under", "look out of", "trembling"], optsVi: ["nhổ bật lên", "trốn dưới", "nhìn ra ngoài", "rung chuyển"], correct: 0, exp: "Gió mạnh làm bật gốc cây -> <b>pull up</b>." },
+            { q: "After the earthquake, the old wall started to __________.", qVi: "Sau trận động đất, bức tường cũ bắt đầu __________.", key: ["earthquake", "wall"], opts: ["predict", "come down", "avoid", "whistle"], optsVi: ["dự đoán", "đổ sụp/rơi xuống", "tránh", "huýt sáo"], correct: 1, exp: "Tường đổ do động đất -> <b>come down</b>." },
+            { q: "I have a great __________ of fire. I never play with matches.", qVi: "Tôi có một nỗi __________ lớn với lửa. Tôi không bao giờ chơi với diêm.", key: ["fire", "never play"], opts: ["property", "victim", "fear", "funnel"], optsVi: ["tài sản", "nạn nhân", "sợ hãi", "cái phễu"], correct: 2, exp: "Sợ lửa -> <b>fear</b> of fire." },
+            { q: "Don't worry! The children are __________ in the house now.", qVi: "Đừng lo! Lũ trẻ đang __________ trong nhà bây giờ.", key: ["Don't worry", "in the house"], opts: ["dangerous", "missing", "safe", "awful"], optsVi: ["nguy hiểm", "mất tích", "an toàn", "tồi tệ"], correct: 2, exp: "Không cần lo lắng vì chúng <b>safe</b> (an toàn)." },
+            { q: "A __________ is a storm with a lot of loud noise and bright light.", qVi: "Một __________ là cơn bão có nhiều tiếng ồn lớn và ánh sáng chói.", key: ["loud noise", "bright light"], opts: ["thunderstorm", "landslide", "tsunami", "earthquake"], optsVi: ["dông bão (có sấm sét)", "sạt lở đất", "sóng thần", "động đất"], correct: 0, exp: "Bão có sấm (tiếng ồn) và sét (ánh sáng) -> <b>thunderstorm</b>." }
+
+           
+
+
+
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 91; // Bắt đầu từ câu 91
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            if(sidebar.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            for (let i = 0; i < 4; i++) {
+                const optTrans = document.getElementById(`trans-opt-${index}-${i}`);
+                if(optTrans) optTrans.classList.toggle('show');
+            }
+            
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
