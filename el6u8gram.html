@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Ngữ pháp: Tenses (50 Questions)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            overflow: auto; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: visible;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            position: sticky;
+            top: 80px;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Ngữ pháp: Tenses</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">50</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">50</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { q: "He often ______ football after school.", qVi: "Anh ấy thường chơi bóng đá sau giờ học.", key: ["often", "after school"], opts: ["play", "plays", "is playing", "played"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Dấu hiệu 'often' -> Thì Hiện tại đơn. Chủ ngữ 'He' -> động từ thêm 's'." },
+            { q: "They ______ basketball in the yard now.", qVi: "Bây giờ họ đang chơi bóng rổ trong sân.", key: ["now"], opts: ["play", "plays", "are playing", "played"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'now' -> Thì Hiện tại tiếp diễn (am/is/are + V-ing)." },
+            { q: "My brother ______ swimming every weekend.", qVi: "Anh trai tôi đi bơi mỗi cuối tuần.", key: ["every weekend"], opts: ["go", "goes", "is going", "went"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Dấu hiệu 'every weekend' -> Thì Hiện tại đơn. Chủ ngữ 'My brother' (số ít) -> goes." },
+            { q: "We ______ badminton yesterday afternoon.", qVi: "Chúng tôi đã chơi cầu lông chiều hôm qua.", key: ["yesterday afternoon"], opts: ["play", "plays", "are playing", "played"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'yesterday afternoon' -> Thì Quá khứ đơn (V-ed)." },
+            { q: "I ______ table tennis with my friend at the moment.", qVi: "Tôi đang chơi bóng bàn với bạn tôi vào lúc này.", key: ["at the moment"], opts: ["play", "plays", "am playing", "played"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'at the moment' -> Thì Hiện tại tiếp diễn." },
+            { q: "She ______ not like volleyball.", qVi: "Cô ấy không thích bóng chuyền.", key: ["not like", "general fact"], opts: ["do", "does", "is doing", "did"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Câu phủ định thì Hiện tại đơn với chủ ngữ 'She' -> dùng trợ động từ 'does'." },
+            { q: "They ______ soccer last Sunday.", qVi: "Họ đã chơi bóng đá Chủ nhật tuần trước.", key: ["last Sunday"], opts: ["play", "plays", "are playing", "played"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'last Sunday' -> Thì Quá khứ đơn." },
+            { q: "Look! The children ______ rope skipping.", qVi: "Nhìn kìa! Bọn trẻ đang nhảy dây.", key: ["Look!"], opts: ["skip", "skips", "are skipping", "skipped"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu câu mệnh lệnh 'Look!' -> Thì Hiện tại tiếp diễn." },
+            { q: "He ______ a good tennis player.", qVi: "Anh ấy là một tay vợt giỏi.", key: ["fact", "to be"], opts: ["be", "is", "is being", "was"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Sự thật hiển nhiên ở hiện tại -> Dùng 'is'." },
+            { q: "We ______ very excited about the match yesterday.", qVi: "Chúng tôi đã rất hào hứng về trận đấu hôm qua.", key: ["yesterday"], opts: ["are", "is", "are being", "were"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'yesterday' -> Thì Quá khứ đơn với to be (số nhiều) -> were." },
+            { q: "______ she playing badminton now?", qVi: "Bây giờ cô ấy có đang chơi cầu lông không?", key: ["now", "playing"], opts: ["Do", "Does", "Is", "Did"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Câu hỏi thì Hiện tại tiếp diễn (V-ing) -> Đảo 'Is' lên đầu." },
+            { q: "______ they play chess after school?", qVi: "Họ có chơi cờ vua sau giờ học không?", key: ["play", "after school"], opts: ["Do", "Does", "Are", "Did"], optsVi: ["...", "...", "...", "..."], correct: 0, exp: "Câu hỏi thì Hiện tại đơn với động từ thường, chủ ngữ 'they' -> Dùng 'Do'." },
+            { q: "He ______ not watching the football match now.", qVi: "Anh ấy đang không xem trận bóng đá bây giờ.", key: ["now", "watching"], opts: ["do", "does", "is", "did"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Câu phủ định thì Hiện tại tiếp diễn (not V-ing) -> Dùng 'is'." },
+            { q: "My team ______ the game last week.", qVi: "Đội của tôi đã thắng trận đấu tuần trước.", key: ["last week"], opts: ["win", "wins", "are winning", "won"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'last week' -> Thì Quá khứ đơn -> won." },
+            { q: "The boys ______ volleyball at the moment.", qVi: "Các cậu bé đang chơi bóng chuyền vào lúc này.", key: ["at the moment"], opts: ["play", "plays", "are playing", "played"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'at the moment' -> Thì Hiện tại tiếp diễn." },
+            { q: "______ he join the swimming competition yesterday?", qVi: "Anh ấy có tham gia cuộc thi bơi lội hôm qua không?", key: ["yesterday", "join"], opts: ["Do", "Does", "Is", "Did"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Câu hỏi thì Quá khứ đơn -> Dùng trợ động từ 'Did'." },
+            { q: "I usually ______ jogging in the morning.", qVi: "Tôi thường đi bộ vào buổi sáng.", key: ["usually"], opts: ["go", "goes", "am going", "went"], optsVi: ["...", "...", "...", "..."], correct: 0, exp: "Dấu hiệu 'usually' -> Thì Hiện tại đơn." },
+            { q: "They ______ not practicing basketball now.", qVi: "Họ đang không tập bóng rổ bây giờ.", key: ["now", "practicing"], opts: ["do", "does", "are", "did"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Câu phủ định thì Hiện tại tiếp diễn với 'they' -> Dùng 'are'." },
+            { q: "She ______ the best player in our class.", qVi: "Cô ấy là cầu thủ giỏi nhất trong lớp tôi.", key: ["fact"], opts: ["am", "is", "is being", "was"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Sự thật ở hiện tại -> Dùng 'is'." },
+            { q: "We ______ a football match last Saturday.", qVi: "Chúng tôi đã xem một trận bóng đá thứ Bảy tuần trước.", key: ["last Saturday"], opts: ["watch", "watches", "are watching", "watched"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'last Saturday' -> Thì Quá khứ đơn." },
+            { q: "My father usually _______ coffee in the morning.", qVi: "Bố tôi thường uống cà phê vào buổi sáng.", key: ["usually"], opts: ["drink", "drinks", "is drinking", "drank"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Dấu hiệu 'usually' -> Thì Hiện tại đơn. Chủ ngữ số ít -> drinks." },
+            { q: "Look! The bus _______. We should hurry up.", qVi: "Nhìn kìa! Xe buýt đang đến. Chúng ta nên nhanh lên.", key: ["Look!"], opts: ["come", "comes", "is coming", "came"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'Look!' -> Thì Hiện tại tiếp diễn." },
+            { q: "We _______ at home last night because we were tired.", qVi: "Chúng tôi đã ở nhà tối qua vì chúng tôi mệt.", key: ["last night"], opts: ["stay", "stays", "are staying", "stayed"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'last night' -> Thì Quá khứ đơn." },
+            { q: "Listen! Someone _______ the piano in the next room.", qVi: "Nghe kìa! Ai đó đang chơi piano ở phòng bên.", key: ["Listen!"], opts: ["play", "plays", "is playing", "played"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'Listen!' -> Thì Hiện tại tiếp diễn." },
+            { q: "She _______ a famous teacher ten years ago.", qVi: "Cô ấy là một giáo viên nổi tiếng mười năm trước.", key: ["ten years ago"], opts: ["be", "is", "being", "was"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'ago' -> Thì Quá khứ đơn với to be -> was." },
+            { q: "I _______ my homework at the moment.", qVi: "Tôi đang làm bài tập về nhà vào lúc này.", key: ["at the moment"], opts: ["do", "does", "am doing", "did"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'at the moment' -> Thì Hiện tại tiếp diễn." },
+            { q: "They _______ go to the cinema every Sunday.", qVi: "Họ không đi xem phim vào mỗi Chủ nhật.", key: ["every Sunday", "negative"], opts: ["don't", "doesn't", "aren't", "didn't"], optsVi: ["...", "...", "...", "..."], correct: 0, exp: "Phủ định thì Hiện tại đơn với 'they' -> don't." },
+            { q: "_______ you see that beautiful bird a minute ago?", qVi: "Bạn có thấy con chim đẹp đó một phút trước không?", key: ["a minute ago"], opts: ["Do", "Does", "Are", "Did"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'ago' -> Thì Quá khứ đơn -> Did." },
+            { q: "Every day, the sun _______ in the East.", qVi: "Mỗi ngày, mặt trời mọc ở hướng Đông.", key: ["Every day", "fact"], opts: ["rise", "rises", "is rising", "rose"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Sự thật hiển nhiên -> Thì Hiện tại đơn." },
+            { q: "Why _______ you crying right now?", qVi: "Tại sao bạn đang khóc ngay bây giờ?", key: ["right now", "crying"], opts: ["do", "does", "are", "did"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Câu hỏi với V-ing -> Dùng to be 'are'." },
+            { q: "I _______ very happy when I was a child.", qVi: "Tôi đã rất hạnh phúc khi tôi còn nhỏ.", key: ["when I was a child"], opts: ["am", "is", "was", "were"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Kể về quá khứ -> Dùng 'was'." },
+            { q: "My brother _______ a new car yesterday.", qVi: "Anh trai tôi đã mua một chiếc xe mới hôm qua.", key: ["yesterday"], opts: ["buy", "buys", "is buying", "bought"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'yesterday' -> Thì Quá khứ đơn -> bought." },
+            { q: "At present, we _______ English with a native teacher.", qVi: "Hiện tại, chúng tôi đang học tiếng Anh với giáo viên bản ngữ.", key: ["At present"], opts: ["learn", "learns", "are learning", "learned"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'At present' -> Thì Hiện tại tiếp diễn." },
+            { q: "Water _______ at 100 degrees Celsius.", qVi: "Nước sôi ở 100 độ C.", key: ["fact"], opts: ["boil", "boils", "is boiling", "boiled"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Sự thật khoa học -> Thì Hiện tại đơn." },
+            { q: "They _______ in London in 2010.", qVi: "Họ đã sống ở London vào năm 2010.", key: ["in 2010"], opts: ["live", "lives", "are living", "lived"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Mốc thời gian trong quá khứ -> Thì Quá khứ đơn." },
+            { q: "_______ he often watch TV in the evening?", qVi: "Anh ấy có thường xem TV vào buổi tối không?", key: ["often"], opts: ["Do", "Does", "Is", "Did"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Câu hỏi thì Hiện tại đơn với 'he' -> Does." },
+            { q: "Last week, she _______ not go to work because she was sick.", qVi: "Tuần trước, cô ấy đã không đi làm vì bị ốm.", key: ["Last week"], opts: ["do", "does", "is", "did"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Phủ định thì Quá khứ đơn -> did not." },
+            { q: "Where _______ your parents now?", qVi: "Bố mẹ bạn đang ở đâu?", key: ["now"], opts: ["be", "are", "being", "were"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Hiện tại với chủ ngữ số nhiều -> are." },
+            { q: "Be quiet! The baby _______.", qVi: "Im lặng nào! Em bé đang ngủ.", key: ["Be quiet!"], opts: ["sleep", "sleeps", "is sleeping", "slept"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'Be quiet!' -> Thì Hiện tại tiếp diễn." },
+            { q: "Two days ago, I _______ my old friend in the park.", qVi: "Hai ngày trước, tôi đã gặp người bạn cũ trong công viên.", key: ["Two days ago"], opts: ["meet", "meets", "is meeting", "met"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'ago' -> Thì Quá khứ đơn -> met." },
+            { q: "Pelé _______ a famous sport star many years ago.", qVi: "Pelé là một ngôi sao thể thao nổi tiếng nhiều năm trước.", key: ["many years ago"], opts: ["be", "is", "being", "was"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'ago' -> Thì Quá khứ đơn -> was." },
+            { q: "We usually _______ volleyball at the playground after school.", qVi: "Chúng tôi thường chơi bóng chuyền ở sân chơi sau giờ học.", key: ["usually"], opts: ["play", "plays", "are playing", "played"], optsVi: ["...", "...", "...", "..."], correct: 0, exp: "Dấu hiệu 'usually' -> Thì Hiện tại đơn." },
+            { q: "My father _______ his bicycle to the gym at the moment.", qVi: "Bố tôi đang đạp xe đến phòng tập ngay lúc này.", key: ["at the moment"], opts: ["ride", "rides", "is riding", "rode"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'at the moment' -> Thì Hiện tại tiếp diễn." },
+            { q: "Last Sunday, they _______ in a marathon and felt very tired.", qVi: "Chủ nhật tuần trước, họ đã chạy marathon và cảm thấy rất mệt.", key: ["Last Sunday"], opts: ["run", "runs", "are running", "ran"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'Last Sunday' -> Thì Quá khứ đơn -> ran." },
+            { q: "Look! The girls _______ in the yard. They look so happy.", qVi: "Nhìn kìa! Các cô gái đang nhảy dây trong sân.", key: ["Look!"], opts: ["skip", "skips", "are skipping", "skipped"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Dấu hiệu 'Look!' -> Thì Hiện tại tiếp diễn." },
+            { q: "The football competition often _______ at the national stadium.", qVi: "Giải bóng đá thường diễn ra tại sân vận động quốc gia.", key: ["often"], opts: ["take place", "takes place", "is taking place", "took place"], optsVi: ["...", "...", "...", "..."], correct: 1, exp: "Dấu hiệu 'often', chủ ngữ số ít -> takes place." },
+            { q: "She _______ not do aerobics yesterday because she was busy.", qVi: "Cô ấy đã không tập thể dục nhịp điệu hôm qua vì bận.", key: ["yesterday", "negative"], opts: ["do", "does", "is", "did"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Phủ định thì Quá khứ đơn -> did not." },
+            { q: "I _______ karate with my friends in the club yesterday afternoon.", qVi: "Tôi đã tập karate với bạn bè tại câu lạc bộ chiều hôm qua.", key: ["yesterday afternoon"], opts: ["practice", "practices", "am practicing", "practiced"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'yesterday' -> Thì Quá khứ đơn." },
+            { q: "_______ you taking part in the swimming match right now?", qVi: "Bạn có đang tham gia trận đấu bơi lội ngay bây giờ không?", key: ["right now", "taking"], opts: ["Do", "Does", "Are", "Did"], optsVi: ["...", "...", "...", "..."], correct: 2, exp: "Câu hỏi thì Hiện tại tiếp diễn (V-ing) -> Are." },
+            { q: "We _______ fishing with our grandfather two days ago.", qVi: "Chúng tôi đã đi câu cá với ông hai ngày trước.", key: ["two days ago"], opts: ["go", "goes", "are going", "went"], optsVi: ["...", "...", "...", "..."], correct: 3, exp: "Dấu hiệu 'ago' -> Thì Quá khứ đơn -> went." }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1;
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            if(sidebar.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            for (let i = 4; i < 8; i++) { // opts 0-3 correspond to A-D
+                 // Logic to toggle translation visibility. 
+                 // Since buttons are generated dynamically, we target the span inside.
+                 // Actually easier to just toggle class on all trans-text inside this card
+            }
+            
+            // Re-implementing simpler toggle logic for translations inside the specific card
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
