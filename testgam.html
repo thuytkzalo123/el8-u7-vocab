@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chấm Bài AI - Bộ Lọc Thông Minh</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; }
+        .form-group { margin-bottom: 15px; background: #fdfefe; padding: 15px; border-radius: 5px; border: 1px solid #ecf0f1;}
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #34495e; }
+        input[type="text"], input[type="password"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit;}
+        button { background-color: #27ae60; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; margin-top: 10px;}
+        button:hover { background-color: #2ecc71; }
+        button:disabled { background-color: #95a5a6; cursor: not-allowed; }
+        
+        .btn-secondary { background-color: #3498db; width: auto; padding: 10px 15px; font-size: 14px; margin-top: 5px;}
+        .btn-secondary:hover { background-color: #2980b9; }
+
+        /* Css cho bộ lọc đa cấp */
+        .filter-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .filter-row select { flex: 1; }
+
+        .upload-area { border: 2px dashed #3498db; padding: 15px; background-color: #ebf5fb; border-radius: 5px; text-align: center; margin-bottom: 15px; transition: 0.3s;}
+        .upload-area:hover { background-color: #d6eaf8; }
+        
+        #canvas-container { margin-top: 20px; text-align: center; border: 2px solid #bdc3c7; padding: 10px; background: #ecf0f1; border-radius: 5px; overflow: auto; min-height: 150px;}
+        canvas { max-width: 100%; height: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        #result-text { margin-top: 20px; padding: 15px; background: #e8f8f5; border-left: 5px solid #1abc9c; border-radius: 5px; }
+        .loading { text-align: center; font-style: italic; color: #e67e22; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 Ứng dụng Chấm Bài AI</h1>
+    
+    <div class="form-group">
+        <label>1. Nhập API Key (Gemini):</label>
+        <input type="password" id="apiKey" placeholder="Dán API Key vào đây...">
+    </div>
+
+    <div class="form-group" style="border-left: 4px solid #3498db;">
+        <label>2. Dữ liệu từ Google Sheets (Link CSV):</label>
+        <input type="text" id="csvLink" placeholder="Dán link CSV đã xuất bản từ Google Sheets vào đây...">
+        <button class="btn-secondary" onclick="loadGoogleSheet()">📥 Tải dữ liệu môn học</button>
+        
+        <div id="filterContainer" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #bdc3c7;">
+            <label>👉 Chọn Bài Tập Cần Nộp (Bắt buộc):</label>
+            
+            <div class="filter-row">
+                <select id="classDropdown" onchange="filterSubjects()">
+                    <option value="">-- Chọn Lớp --</option>
+                </select>
+                <select id="subjectDropdown" onchange="filterTopics()">
+                    <option value="">-- Chọn Môn --</option>
+                </select>
+                <select id="topicDropdown" onchange="filterLessons()">
+                    <option value="">-- Chọn Chủ đề --</option>
+                </select>
+            </div>
+
+            <select id="lessonDropdown" onchange="autoFillData()">
+                <option value="">-- Chọn Bài tập cần nộp --</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group" style="display: none;" id="dataContainer">
+        <label>Đề bài & Đáp án mẫu (Hệ thống tự điền):</label>
+        <textarea id="qaData" rows="3" readonly style="background: #f4f6f7;"></textarea>
+        
+        <label style="margin-top: 10px;">Barem & Tiêu chí chấm (Hệ thống tự điền):</label>
+        <textarea id="rubricData" rows="2" readonly style="background: #f4f6f7;"></textarea>
+    </div>
+
+    <div class="upload-area">
+        <label style="color: #2980b9; font-size: 1.1em;">3. Tải ảnh lên HOẶC nhấn Ctrl+V để dán ảnh bài làm</label>
+        <input type="file" id="imageInput" accept="image/png, image/jpeg">
+    </div>
+
+    <button id="btnGrade" onclick="startGrading()">🤖 Bắt đầu chấm bài</button>
+    <div id="loadingStatus" class="loading">⏳ AI đang phân tích và chấm bài. Vui lòng đợi...</div>
+
+    <div id="canvas-container">
+        <p id="placeholder-text" style="color: #7f8c8d; margin-top: 50px;">Ảnh bài làm sẽ hiển thị ở đây</p>
+        <canvas id="myCanvas"></canvas>
+    </div>
+
+    <div id="result-text" style="display: none;"></div>
+</div>
+
+<script type="module">
+    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+    
+    let base64Image = "";
+    let originalImageWidth = 0;
+    let originalImageHeight = 0;
+    let globalSheetData = [];
+
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    const imageInput = document.getElementById('imageInput');
+    const placeholderText = document.getElementById('placeholder-text');
+
+    // --- HÀM TIỆN ÍCH CHO BỘ LỌC ---
+    function resetDropdown(id, placeholder) {
+        document.getElementById(id).innerHTML = `<option value="">${placeholder}</option>`;
+    }
+
+    function getUniqueValues(data, key) {
+        return [...new Set(data.map(item => item[key]).filter(Boolean))];
+    }
+
+    // --- BƯỚC 1: TẢI DỮ LIỆU & TẠO DANH SÁCH LỚP ---
+    window.loadGoogleSheet = function() {
+        const csvUrl = document.getElementById('csvLink').value;
+        if (!csvUrl) { alert("Vui lòng dán link CSV từ Google Sheets!"); return; }
+
+        const btnLoad = document.querySelector('.btn-secondary');
+        btnLoad.innerText = "⏳ Đang tải..."; btnLoad.disabled = true;
+
+        Papa.parse(csvUrl, {
+            download: true,
+            header: true, 
+            complete: function(results) {
+                globalSheetData = results.data.filter(row => row['TenBai']); // Bỏ dòng trống
+                
+                // Lấy danh sách Lớp duy nhất
+                const classes = getUniqueValues(globalSheetData, 'Lop');
+                const classDropdown = document.getElementById('classDropdown');
+                classDropdown.innerHTML = '<option value="">-- Chọn Lớp --</option>';
+                classes.forEach(c => classDropdown.innerHTML += `<option value="${c}">${c}</option>`);
+
+                document.getElementById('filterContainer').style.display = 'block';
+                resetDropdown('subjectDropdown', '-- Chọn Môn --');
+                resetDropdown('topicDropdown', '-- Chọn Chủ đề --');
+                resetDropdown('lessonDropdown', '-- Chọn Bài tập cần nộp --');
+                document.getElementById('dataContainer').style.display = 'none';
+
+                btnLoad.innerText = "✅ Đã tải xong"; btnLoad.disabled = false;
+                alert("Tải dữ liệu thành công! Hãy chọn Lớp để bắt đầu.");
+            },
+            error: function(err) {
+                alert("Lỗi khi tải CSV. Kiểm tra lại link Google Sheets.");
+                btnLoad.innerText = "📥 Tải dữ liệu môn học"; btnLoad.disabled = false;
+            }
+        });
+    }
+
+    // --- BƯỚC 2: CHỌN LỚP -> HIỂN THỊ MÔN ---
+    window.filterSubjects = function() {
+        const selectedClass = document.getElementById('classDropdown').value;
+        const filteredData = globalSheetData.filter(item => item['Lop'] === selectedClass);
+        
+        const subjects = getUniqueValues(filteredData, 'Mon');
+        const subjectDropdown = document.getElementById('subjectDropdown');
+        subjectDropdown.innerHTML = '<option value="">-- Chọn Môn --</option>';
+        subjects.forEach(s => subjectDropdown.innerHTML += `<option value="${s}">${s}</option>`);
+
+        resetDropdown('topicDropdown', '-- Chọn Chủ đề --');
+        resetDropdown('lessonDropdown', '-- Chọn Bài tập cần nộp --');
+        document.getElementById('dataContainer').style.display = 'none';
+    }
+
+    // --- BƯỚC 3: CHỌN MÔN -> HIỂN THỊ CHỦ ĐỀ ---
+    window.filterTopics = function() {
+        const selectedClass = document.getElementById('classDropdown').value;
+        const selectedSubject = document.getElementById('subjectDropdown').value;
+        const filteredData = globalSheetData.filter(item => item['Lop'] === selectedClass && item['Mon'] === selectedSubject);
+        
+        const topics = getUniqueValues(filteredData, 'ChuDe');
+        const topicDropdown = document.getElementById('topicDropdown');
+        topicDropdown.innerHTML = '<option value="">-- Chọn Chủ đề --</option>';
+        topics.forEach(t => topicDropdown.innerHTML += `<option value="${t}">${t}</option>`);
+
+        resetDropdown('lessonDropdown', '-- Chọn Bài tập cần nộp --');
+        document.getElementById('dataContainer').style.display = 'none';
+    }
+
+    // --- BƯỚC 4: CHỌN CHỦ ĐỀ -> HIỂN THỊ BÀI TẬP ---
+    window.filterLessons = function() {
+        const selectedClass = document.getElementById('classDropdown').value;
+        const selectedSubject = document.getElementById('subjectDropdown').value;
+        const selectedTopic = document.getElementById('topicDropdown').value;
+        
+        const filteredData = globalSheetData.filter(item => 
+            item['Lop'] === selectedClass && 
+            item['Mon'] === selectedSubject && 
+            item['ChuDe'] === selectedTopic
+        );
+        
+        const lessonDropdown = document.getElementById('lessonDropdown');
+        lessonDropdown.innerHTML = '<option value="">-- Chọn Bài tập cần nộp --</option>';
+        
+        // Lưu index thực sự của dòng dữ liệu trong mảng gốc để lấy Data cho chuẩn
+        filteredData.forEach(row => {
+            const originalIndex = globalSheetData.indexOf(row);
+            lessonDropdown.innerHTML += `<option value="${originalIndex}">${row['TenBai']}</option>`;
+        });
+        document.getElementById('dataContainer').style.display = 'none';
+    }
+
+    // --- BƯỚC 5: CHỌN BÀI TẬP -> ĐIỀN DATA CHO AI ---
+    window.autoFillData = function() {
+        const selectedIndex = document.getElementById('lessonDropdown').value;
+        const dataContainer = document.getElementById('dataContainer');
+        const qaDataArea = document.getElementById('qaData');
+        const rubricDataArea = document.getElementById('rubricData');
+
+        if (selectedIndex === "") {
+            dataContainer.style.display = 'none';
+            qaDataArea.value = ""; rubricDataArea.value = "";
+            return;
+        }
+
+        const selectedRow = globalSheetData[selectedIndex];
+        
+        let combinedQA = `Đề bài: ${selectedRow['NoiDungDe'] || ''}\n`;
+        combinedQA += `Đáp án mẫu: ${selectedRow['DapAnMau'] || ''}`;
+        qaDataArea.value = combinedQA;
+        rubricDataArea.value = selectedRow['Barem'] || '';
+        
+        dataContainer.style.display = 'block';
+    }
+
+    // --- XỬ LÝ ẢNH (GIỮ NGUYÊN) ---
+    function processImageFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                canvas.width = img.width; canvas.height = img.height;
+                originalImageWidth = img.width; originalImageHeight = img.height;
+                ctx.drawImage(img, 0, 0);
+                base64Image = event.target.result.split(',')[1];
+                placeholderText.style.display = 'none';
+            }
+            img.src = event.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+
+    imageInput.addEventListener('change', e => processImageFile(e.target.files[0]));
+    document.addEventListener('paste', e => {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf("image") === 0) {
+                processImageFile(items[i].getAsFile());
+                e.preventDefault(); break;
+            }
+        }
+    });
+
+    // --- HÀM GỌI AI CHẤM BÀI (GIỮ NGUYÊN) ---
+    window.startGrading = async function() {
+        const apiKey = document.getElementById('apiKey').value;
+        const qaData = document.getElementById('qaData').value;
+        const rubricData = document.getElementById('rubricData').value;
+        const btn = document.getElementById('btnGrade');
+        const loading = document.getElementById('loadingStatus');
+        const resultDiv = document.getElementById('result-text');
+
+        if (!apiKey || !base64Image) { alert("Vui lòng nhập API Key và tải ảnh bài làm lên!"); return; }
+        if (qaData.trim() === "") { alert("CẢNH BÁO: Vui lòng chọn một Bài tập từ danh sách trước khi nộp bài!"); return; }
+
+        btn.disabled = true; loading.style.display = "block"; resultDiv.style.display = "none";
+
+        try {
+            const genAI = new GoogleGenerativeAI(apiKey);
+            
+            const systemInstruction = `Bạn là một hệ thống chấm thi nghiêm ngặt.
+Quy tắc tối thượng:
+1. BẠN CHỈ ĐƯỢC PHÉP CHẤM BÀI DỰA TRÊN ĐỀ BÀI VÀ ĐÁP ÁN MẪU ĐƯỢC CUNG CẤP.
+2. Kiểm tra tính hợp lệ: Nếu ảnh học sinh tải lên KHÔNG KHỚP với "Đề bài", lập tức trả về is_correct: false và feedback: "Ảnh bài làm không khớp với đề bài đã chọn."
+3. Tiêu chí chấm: Chấm điểm và so sánh với đáp án khắt khe. Bài toán lời văn thiếu đơn vị bị đánh is_correct: false.
+4. Bắt buộc trả về MẢNG JSON nguyên bản chứa: "question_id", "is_correct", "feedback", "location" ([ymin, xmin, ymax, xmax] theo thang 0-1000).`;
+
+            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", systemInstruction: systemInstruction });
+
+            let promptText = "Danh sách Đề bài và Đáp án mẫu BẮT BUỘC PHẢI TUÂN THEO:\n" + qaData + "\n";
+            if (rubricData.trim() !== "") { promptText += "\nBAREM VÀ QUY TẮC CHẤM RIÊNG:\n" + rubricData; }
+
+            const imagePart = { inlineData: { data: base64Image, mimeType: "image/jpeg" } };
+            const result = await model.generateContent([promptText, imagePart]);
+            let responseText = result.response.text();
+            
+            const firstBracket = responseText.indexOf('[');
+            const lastBracket = responseText.lastIndexOf(']');
+            if (firstBracket !== -1 && lastBracket !== -1) { responseText = responseText.substring(firstBracket, lastBracket + 1); } 
+            else { throw new Error("Lỗi định dạng JSON."); }
+
+            const gradingData = JSON.parse(responseText);
+            
+            let resultHTML = "<h3 style='margin-top:0; color:#2c3e50;'>Chi tiết kết quả chấm:</h3><ul style='list-style:none; padding:0;'>";
+            gradingData.forEach(item => {
+                const icon = item.is_correct ? "✅" : "❌";
+                const color = item.is_correct ? "#27ae60" : "#e74c3c";
+                const textResult = item.is_correct ? "Đúng" : "Sai";
+                const feedbackText = item.feedback ? `<div style="margin-top: 5px; color: #555; font-style: italic;">💡 Nhận xét: ${item.feedback}</div>` : "";
+                
+                resultHTML += `
+                    <li style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #bdc3c7;">
+                        <div style="font-weight: bold; color: #34495e;">Bài/Câu: ${item.question_id}</div>
+                        <div style="color: ${color}; font-weight: bold; margin-top: 5px;">${icon} ${textResult}</div>
+                        ${feedbackText}
+                    </li>`;
+            });
+            resultHTML += "</ul>";
+            resultDiv.innerHTML = resultHTML; resultDiv.style.display = "block";
+
+            drawMarksOnCanvas(gradingData);
+
+        } catch (error) {
+            alert("Lỗi khi chấm bài! Vui lòng ấn F12 xem Console."); console.error(error);
+        } finally {
+            btn.disabled = false; loading.style.display = "none";
+        }
+    }
+
+    function drawMarksOnCanvas(data) {
+        const img = new Image();
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            const fontSize = Math.max(30, Math.floor(originalImageWidth * 0.05)); 
+            ctx.font = `bold ${fontSize}px Arial`;
+            
+            data.forEach(item => {
+                if(item.location && item.location.length === 4) {
+                    const y_min = (item.location[0] / 1000) * originalImageHeight;
+                    const x_min = (item.location[1] / 1000) * originalImageWidth;
+                    
+                    ctx.strokeStyle = "white"; ctx.lineWidth = Math.max(2, fontSize / 10);
+                    ctx.fillStyle = item.is_correct ? "#27ae60" : "#e74c3c"; 
+                    const symbol = item.is_correct ? "✓" : "✗";
+                    
+                    ctx.strokeText(symbol, x_min, y_min); ctx.fillText(symbol, x_min, y_min); 
+                }
+            });
+        }
+        img.src = "data:image/jpeg;base64," + base64Image;
+    }
+</script>
+
+</body>
+</html>
