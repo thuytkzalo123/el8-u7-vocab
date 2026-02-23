@@ -31,7 +31,7 @@
         .sidebar-header select { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; font-weight: bold;}
         .sidebar-content { flex: 1; overflow-y: auto; padding: 10px 0; }
         
-        /* Hiển thị danh sách bài học giống ảnh mẫu */
+        /* Hiển thị danh sách bài học */
         .topic-group { margin-bottom: 15px; }
         .topic-title { padding: 8px 15px; font-weight: bold; color: #7f8c8d; font-size: 14px; text-transform: uppercase; display: flex; align-items: center;}
         .topic-title::before { content: '⭐'; margin-right: 8px; font-size: 12px;}
@@ -46,6 +46,9 @@
         .lesson-container { display: none; max-width: 800px; margin: 0 auto; }
         .lesson-title { font-size: 24px; font-weight: bold; margin-top: 0; padding-bottom: 15px; border-bottom: 2px solid #eee; color: var(--primary-color);}
         
+        /* KHUNG HIỂN THỊ NỘI DUNG ĐỀ BÀI (MỚI) */
+        .lesson-content { background-color: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 20px; margin-bottom: 20px; border-radius: 0 5px 5px 0; font-size: 16px; line-height: 1.6; white-space: pre-wrap; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
         /* Khu vực tải ảnh */
         .upload-area { border: 2px dashed #3498db; padding: 30px; background-color: #f4f9fd; border-radius: 10px; text-align: center; margin: 20px 0; cursor: pointer;}
         .upload-area:hover { background-color: #eaf4fc; }
@@ -62,7 +65,6 @@
         /* Khu vực Kết quả & Đáp án */
         .result-section { margin-top: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; display: none; }
         .result-section h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .score-box { font-size: 18px; margin-bottom: 15px; }
         
         .answer-section { margin-top: 20px; padding: 20px; background-color: #fff9e6; border-left: 4px solid #f1c40f; border-radius: 5px; display: none; }
         .answer-section h3 { margin-top: 0; color: #d35400; font-size: 16px;}
@@ -108,9 +110,13 @@
         <div id="lessonContainer" class="lesson-container">
             <h1 id="displayLessonTitle" class="lesson-title">Tên bài học</h1>
             
+            <div id="displayLessonContent" class="lesson-content">
+                Nội dung câu hỏi sẽ hiển thị ở đây...
+            </div>
+            
             <div class="upload-area" onclick="document.getElementById('imageInput').click()">
                 <p>📸 Nhấp vào đây để tải ảnh bài làm</p>
-                <span style="font-size: 13px; color: #7f8c8d;">HOẶC BẤM CTRL + V ĐỂ DÁN ẢNH</span>
+                <span style="font-size: 13px; color: #7f8c8d;">HOẶC BẤM CTRL + V ĐỂ DÁN ẢNH TỪ KHAY NHỚ TẠM</span>
                 <input type="file" id="imageInput" accept="image/png, image/jpeg">
                 <img id="imagePreview" alt="Bản xem trước bài làm">
             </div>
@@ -137,7 +143,7 @@
     // Biến toàn cục
     let base64Image = "";
     let globalSheetData = [];
-    let currentLessonData = null; // Lưu dữ liệu bài học hiện tại đang chọn
+    let currentLessonData = null;
 
     // --- LOGIC XỬ LÝ GOOGLE SHEETS & SIDEBAR ---
     function getUniqueValues(data, key) {
@@ -174,10 +180,10 @@
         subjectDropdown.innerHTML = '<option value="">-- Chọn Môn --</option>';
         subjects.forEach(s => subjectDropdown.innerHTML += `<option value="${s}">${s}</option>`);
         
-        document.getElementById('lessonMenu').innerHTML = ''; // Xóa menu cũ
+        document.getElementById('lessonMenu').innerHTML = '';
     }
 
-    // XÂY DỰNG MENU DẠNG CÂY (Chủ đề -> Bài học)
+    // XÂY DỰNG MENU DẠNG CÂY
     window.buildLessonMenu = function() {
         const selectedClass = document.getElementById('classDropdown').value;
         const selectedSubject = document.getElementById('subjectDropdown').value;
@@ -186,26 +192,21 @@
 
         if(!selectedSubject) return;
 
-        // Lọc data theo lớp và môn
         const currentData = globalSheetData.filter(item => item['Lop'] === selectedClass && item['Mon'] === selectedSubject);
         const topics = getUniqueValues(currentData, 'ChuDe');
 
         topics.forEach(topic => {
-            // Tạo tiêu đề Chủ đề
             const topicGroup = document.createElement('div');
             topicGroup.className = 'topic-group';
             topicGroup.innerHTML = `<div class="topic-title">${topic}</div>`;
             
-            // Tìm các bài thuộc Chủ đề này
             const lessonsInTopic = currentData.filter(item => item['ChuDe'] === topic);
             lessonsInTopic.forEach(lesson => {
                 const lessonItem = document.createElement('div');
                 lessonItem.className = 'lesson-item';
                 lessonItem.innerText = lesson['TenBai'];
                 
-                // Sự kiện khi học sinh click chọn bài
                 lessonItem.onclick = () => {
-                    // Xóa class active cũ
                     document.querySelectorAll('.lesson-item').forEach(el => el.classList.remove('active'));
                     lessonItem.classList.add('active');
                     openLesson(lesson);
@@ -217,7 +218,7 @@
         });
     }
 
-    // --- LOGIC MỞ BÀI HỌC BÊN CỘT PHẢI ---
+    // --- LOGIC MỞ BÀI HỌC ---
     function openLesson(lessonObj) {
         currentLessonData = lessonObj;
         
@@ -225,16 +226,21 @@
         document.getElementById('welcomeScreen').style.display = 'none';
         document.getElementById('lessonContainer').style.display = 'block';
         
-        // Reset giao diện bài mới
+        // Cập nhật thông tin bài học
         document.getElementById('displayLessonTitle').innerText = lessonObj['TenBai'];
+        
+        // ĐỔ DỮ LIỆU ĐỀ BÀI VÀO KHUNG HIỂN THỊ
+        document.getElementById('displayLessonContent').innerText = lessonObj['NoiDungDe'] || "Chưa có nội dung đề bài được cung cấp trong dữ liệu.";
+        
+        // Reset hình ảnh & kết quả
         document.getElementById('imagePreview').style.display = 'none';
         document.getElementById('imagePreview').src = '';
         base64Image = '';
         document.getElementById('resultSection').style.display = 'none';
-        document.getElementById('answerSection').style.display = 'none'; // Giấu đáp án
+        document.getElementById('answerSection').style.display = 'none'; 
     }
 
-    // --- XỬ LÝ ẢNH (Bỏ Canvas, dùng thẻ IMG) ---
+    // --- XỬ LÝ ẢNH ---
     function processImageFile(file) {
         if (!file) return;
         const reader = new FileReader();
@@ -245,7 +251,6 @@
             
             base64Image = event.target.result.split(',')[1];
             
-            // Ẩn kết quả cũ nếu tải ảnh mới
             document.getElementById('resultSection').style.display = 'none';
             document.getElementById('answerSection').style.display = 'none';
         }
@@ -254,7 +259,6 @@
 
     document.getElementById('imageInput').addEventListener('change', e => processImageFile(e.target.files[0]));
     document.addEventListener('paste', e => {
-        // Chỉ nhận paste nếu đang mở một bài học
         if (!currentLessonData) return; 
         const items = (e.clipboardData || e.originalEvent.clipboardData).items;
         for (let i = 0; i < items.length; i++) {
@@ -284,7 +288,6 @@
         try {
             const genAI = new GoogleGenerativeAI(apiKey);
             
-            // Rút gọn Prompt (Bỏ yêu cầu lấy Tọa độ Location)
             const systemInstruction = `Bạn là một hệ thống chấm thi nghiêm ngặt.
 Quy tắc:
 1. BẠN CHỈ ĐƯỢC PHÉP CHẤM BÀI DỰA TRÊN ĐỀ BÀI VÀ ĐÁP ÁN MẪU ĐƯỢC CUNG CẤP.
@@ -294,7 +297,6 @@ Quy tắc:
 
             const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", systemInstruction: systemInstruction });
 
-            // Lấy ngầm dữ liệu để gửi đi
             let promptText = `ĐỀ BÀI: ${currentLessonData['NoiDungDe']}\nĐÁP ÁN CHUẨN: ${currentLessonData['DapAnMau']}\n`;
             if (currentLessonData['Barem']) { promptText += `BAREM: ${currentLessonData['Barem']}`; }
 
@@ -302,7 +304,6 @@ Quy tắc:
             const result = await model.generateContent([promptText, imagePart]);
             let responseText = result.response.text();
             
-            // Trích xuất JSON
             const firstBracket = responseText.indexOf('[');
             const lastBracket = responseText.lastIndexOf(']');
             if (firstBracket !== -1 && lastBracket !== -1) { responseText = responseText.substring(firstBracket, lastBracket + 1); } 
@@ -310,7 +311,6 @@ Quy tắc:
 
             const gradingData = JSON.parse(responseText);
             
-            // Render Kết quả (Chỉ text)
             let resultHTML = "<ul style='list-style:none; padding:0;'>";
             gradingData.forEach(item => {
                 const icon = item.is_correct ? "✅" : "❌";
@@ -327,11 +327,10 @@ Quy tắc:
             });
             resultHTML += "</ul>";
             
-            // Hiển thị kết quả chấm
             resultContent.innerHTML = resultHTML;
             resultSection.style.display = "block";
 
-            // MỞ KHÓA ĐÁP ÁN MẪU
+            // Hiển thị đáp án mẫu
             document.getElementById('displayModelAnswer').innerText = currentLessonData['DapAnMau'] || "Không có đáp án mẫu được cung cấp.";
             answerSection.style.display = "block";
 
