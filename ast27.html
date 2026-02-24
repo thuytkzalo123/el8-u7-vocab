@@ -373,6 +373,7 @@
                 qCard.className = 'question-card';
                 qCard.id = `q${i}`;
 
+                // Thay đổi "checked" vào lựa chọn "chọn bừa"
                 qCard.innerHTML = `
                     <div class="question-title">Question ${i}</div>
                     
@@ -386,9 +387,9 @@
                     <div class="confidence-section">
                         <span class="confidence-title">Mức độ tự tin:</span>
                         <div class="confidence-group">
-                            <label><input type="radio" name="conf_${i}" value="chắc chắn" checked> Chắc chắn</label>
+                            <label><input type="radio" name="conf_${i}" value="chắc chắn"> Chắc chắn</label>
                             <label><input type="radio" name="conf_${i}" value="không chắc"> Không chắc</label>
-                            <label><input type="radio" name="conf_${i}" value="chọn bừa"> Chọn bừa</label>
+                            <label><input type="radio" name="conf_${i}" value="chọn bừa" checked> Chọn bừa</label>
                         </div>
                     </div>
                 `;
