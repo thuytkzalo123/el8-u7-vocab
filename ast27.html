@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phiếu Trả Lời Trắc Nghiệm</title>
+    <title>Phiếu Trả Lời Trắc Nghiệm Tự Động</title>
     <style>
         :root {
             --bg-body: #f4f7f6;
@@ -98,12 +98,58 @@
             color: var(--primary);
         }
 
-        /* Trạng thái khi câu hỏi ĐÃ được làm */
+        /* Trạng thái khi ĐANG LÀM bài (đã chọn đáp án) */
         .question-nav a.answered {
             background-color: #e6f7ff;
             border-color: #1890ff;
             color: #1890ff;
             font-weight: bold;
+        }
+
+        /* ----- MÀU SẮC KẾT QUẢ SAU KHI NỘP BÀI ----- */
+        .question-nav a.wrong {
+            background-color: #9e9e9e !important; /* Màu xám */
+            border-color: #7f8c8d !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        .question-nav a.correct-certain {
+            background-color: #27ae60 !important; /* Xanh lá */
+            border-color: #2ecc71 !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        .question-nav a.correct-uncertain {
+            background-color: #2980b9 !important; /* Xanh biển */
+            border-color: #3498db !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        .question-nav a.correct-guess {
+            background-color: #e74c3c !important; /* Màu đỏ */
+            border-color: #c0392b !important;
+            color: white !important;
+            font-weight: bold;
+        }
+
+        /* Chú thích màu sắc dưới sidebar */
+        .legend-box {
+            display: none; /* Chỉ hiện sau khi nộp bài */
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            background: #fafafa;
+            font-size: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
         }
 
         /* ----- MAIN CONTENT (Nội dung câu hỏi) ----- */
@@ -241,30 +287,19 @@
 
         /* ----- RESPONSIVE (Điện thoại) ----- */
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
+            body { flex-direction: column; }
             .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
+                width: 100%; height: auto; position: relative;
+                border-right: none; border-bottom: 1px solid var(--border-color);
             }
             .question-nav-container {
-                max-height: 200px; /* Giới hạn chiều cao để có thể cuộn trên mobile */
-                padding: 10px 20px;
+                max-height: 200px; padding: 10px 20px;
             }
             .question-nav {
                 grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
             }
-            .main-content {
-                margin-left: 0;
-                padding: 15px;
-            }
-            .options-group {
-                grid-template-columns: 1fr; /* Xếp dọc đáp án trên mobile */
-            }
+            .main-content { margin-left: 0; padding: 15px; }
+            .options-group { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -273,11 +308,19 @@
     <aside class="sidebar">
         <div class="user-info">
             <h2>Tên: Học sinh Test</h2>
-            <span class="change-name">[Đổi tên]</span>
+            <span class="change-name" onclick="renameUser()">[Đổi tên]</span>
         </div>
         <div class="sidebar-title">Danh sách câu hỏi</div>
         <div class="question-nav-container">
             <div class="question-nav" id="sidebar-nav"></div>
+        </div>
+        
+        <div class="legend-box" id="legendBox">
+            <strong>Chú thích:</strong>
+            <div class="legend-item" style="margin-top:8px"><div class="legend-color" style="background:#27ae60"></div> Đúng + Chắc chắn</div>
+            <div class="legend-item"><div class="legend-color" style="background:#2980b9"></div> Đúng + Không chắc</div>
+            <div class="legend-item"><div class="legend-color" style="background:#e74c3c"></div> Đúng + Chọn bừa</div>
+            <div class="legend-item"><div class="legend-color" style="background:#9e9e9e"></div> Sai / Chưa làm</div>
         </div>
     </aside>
 
@@ -293,8 +336,8 @@
             <h2>Kết Quả Đánh Giá</h2>
             <div class="result-item"><span>Tổng số câu đúng:</span> <span id="res-total" class="highlight">0</span></div>
             <div class="result-item"><span>Đúng do (Chắc chắn):</span> <span id="res-certain" style="color: #27ae60; font-weight:bold;">0</span></div>
-            <div class="result-item"><span>Đúng do (Không chắc):</span> <span id="res-uncertain" style="color: #f39c12; font-weight:bold;">0</span></div>
-            <div class="result-item"><span>Đúng do (Chọn bừa):</span> <span id="res-guess" style="color: #e67e22; font-weight:bold;">0</span></div>
+            <div class="result-item"><span>Đúng do (Không chắc):</span> <span id="res-uncertain" style="color: #2980b9; font-weight:bold;">0</span></div>
+            <div class="result-item"><span>Đúng do (Chọn bừa):</span> <span id="res-guess" style="color: #e74c3c; font-weight:bold;">0</span></div>
         </div>
     </div>
 
@@ -309,20 +352,27 @@
 
         const totalQuestions = 40;
 
+        function renameUser() {
+            let newName = prompt("Nhập tên của bạn:");
+            if (newName) {
+                document.querySelector('.user-info h2').textContent = "Tên: " + newName;
+            }
+        }
+
         // Hàm tự động tạo giao diện
         function generateUI() {
             const sidebarNav = document.getElementById('sidebar-nav');
             const container = document.getElementById('questions-container');
 
             for (let i = 1; i <= totalQuestions; i++) {
-                // 1. Tạo nút trên Sidebar
+                // Tạo nút trên Sidebar
                 const link = document.createElement('a');
                 link.href = `#q${i}`;
                 link.textContent = i;
                 link.id = `nav-q${i}`;
                 sidebarNav.appendChild(link);
 
-                // 2. Tạo Khung câu hỏi
+                // Tạo Khung câu hỏi
                 const qCard = document.createElement('div');
                 qCard.className = 'question-card';
                 qCard.id = `q${i}`;
@@ -350,10 +400,11 @@
             }
         }
 
-        // Hàm đổi màu sidebar khi học sinh đã chọn đáp án A, B, C hoặc D
+        // Đánh dấu đã trả lời khi làm bài
         function markAnswered(qNumber) {
             const navItem = document.getElementById(`nav-q${qNumber}`);
-            if (navItem) {
+            if (navItem && !navItem.classList.contains('wrong') && !navItem.classList.contains('correct-certain')) {
+                // Chỉ gán class "answered" nếu chưa nộp bài
                 navItem.classList.add('answered');
             }
         }
@@ -372,16 +423,28 @@
                 const studentAns = ansElement ? ansElement.value : null;
                 const studentConf = confElement ? confElement.value : "không chọn";
 
+                // Lấy phần tử hình tròn trên sidebar để đổi màu
+                const navItem = document.getElementById(`nav-q${i}`);
+                
+                // Reset trạng thái màu cũ (nếu học sinh bấm nộp bài nhiều lần)
+                navItem.classList.remove('answered', 'wrong', 'correct-certain', 'correct-uncertain', 'correct-guess');
+
                 if (studentAns === answerKey[i]) {
                     totalCorrect++;
                     
                     if (studentConf === "chắc chắn") {
                         correctCertain++;
+                        navItem.classList.add('correct-certain');
                     } else if (studentConf === "không chắc") {
                         correctUncertain++;
+                        navItem.classList.add('correct-uncertain');
                     } else if (studentConf === "chọn bừa") {
                         correctGuess++;
+                        navItem.classList.add('correct-guess');
                     }
+                } else {
+                    // Trả lời sai HOẶC chưa làm bài -> Chuyển màu xám
+                    navItem.classList.add('wrong');
                 }
             }
 
@@ -391,12 +454,16 @@
             document.getElementById('res-uncertain').textContent = correctUncertain;
             document.getElementById('res-guess').textContent = correctGuess;
             
+            // Hiển thị khung Kết quả và Bảng chú thích màu
             const resultBox = document.getElementById('resultBox');
             resultBox.style.display = 'block';
+            document.getElementById('legendBox').style.display = 'block';
+
+            // Cuộn xuống xem kết quả
             resultBox.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Khởi chạy
+        // Khởi chạy khi tải trang
         window.onload = generateUI;
     </script>
 </body>
