@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Sentence Transformation (40 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Sentence Transformation</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">40</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">40</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "\"I enjoy the variety of food the city offers,\" said Maria.",
+                qVi: "\"Tôi thích sự đa dạng của các món ăn mà thành phố cung cấp,\" Maria nói.",
+                key: ["Reported speech", "lùi thì"],
+                opts: [
+                    "Maria said she enjoys the variety of food the city offers.",
+                    "Maria said she enjoyed the variety of food the city offered.",
+                    "Maria said she will enjoy the variety of food the city offers.",
+                    "Maria asked if she enjoys the variety of food the city offers."
+                ],
+                optsVi: [
+                    "Maria nói cô ấy thích sự đa dạng của thức ăn (sai vì chưa lùi thì).",
+                    "Maria nói cô ấy đã thích sự đa dạng của thức ăn mà thành phố đã cung cấp.",
+                    "Maria nói cô ấy sẽ thích (sai thì).",
+                    "Maria hỏi liệu cô ấy có thích (sai cấu trúc hỏi)."
+                ],
+                correct: 1,
+                exp: "Trong câu gián tiếp (Reported Speech), khi động từ tường thuật ở quá khứ (said), ta phải lùi thì của động từ trong ngoặc kép. Hiện tại đơn (enjoy, offers) lùi thành Quá khứ đơn (enjoyed, offered). Do đó chọn <b>B</b>."
+            },
+            {
+                q: "What a pity my children don't have free time to pursue their hobbies and interest.",
+                qVi: "Thật đáng tiếc khi các con tôi không có thời gian rảnh để theo đuổi sở thích và đam mê của chúng.",
+                key: ["Wish clause", "trái với hiện tại"],
+                opts: [
+                    "I wish my children have free time to pursue their hobbies and interest.",
+                    "I wish my children didn't have free time to pursue their hobbies and interest.",
+                    "I wish my children can have free time to pursue their hobbies and interest.",
+                    "I wish my children had free time to pursue their hobbies and interest."
+                ],
+                optsVi: [
+                    "Tôi ước các con tôi có thời gian rảnh (sai ngữ pháp câu ước).",
+                    "Tôi ước các con tôi không có thời gian rảnh (sai nghĩa).",
+                    "Tôi ước các con tôi có thể có thời gian rảnh (sai vì 'can' chưa lùi thành 'could').",
+                    "Tôi ước các con tôi có thời gian rảnh để theo đuổi sở thích và đam mê của chúng."
+                ],
+                correct: 3,
+                exp: "Câu gốc chia ở hiện tại (don't have). Câu ước trái với thực tế ở hiện tại: S + wish(es) + S + V(quá khứ đơn). Từ 'don't have' chuyển thành khẳng định ở quá khứ là 'had'. Chọn <b>D</b>."
+            },
+            {
+                q: "Finish your homework or you can't go out with your friend.",
+                qVi: "Hoàn thành bài tập về nhà hoặc bạn không thể đi chơi với bạn của mình.",
+                key: ["Conditional sentences", "If / Unless"],
+                opts: [
+                    "If you don't finish your homework, you can't go out with your friend.",
+                    "If you finish your homework, you can't go out with your friend.",
+                    "If you don't finish your homework, you can go out with your friend.",
+                    "Unless you finish your homework, you can go out with your friend."
+                ],
+                optsVi: [
+                    "Nếu bạn không hoàn thành bài tập về nhà, bạn không thể đi chơi với bạn.",
+                    "Nếu bạn hoàn thành bài tập, bạn không thể đi chơi (sai nghĩa).",
+                    "Nếu bạn không hoàn thành bài tập, bạn có thể đi chơi (sai nghĩa).",
+                    "Trừ khi bạn hoàn thành bài tập, bạn có thể đi chơi (sai nghĩa)."
+                ],
+                correct: 0,
+                exp: "Cấu trúc 'V-inf + or + clause' tương đương với 'If you don't + V-inf, clause'. Nghĩa là: Nếu không làm việc này thì kết quả kia sẽ xảy ra. Chọn <b>A</b>."
+            },
+            {
+                q: "Peter caught a cold after playing football in the rain.",
+                qVi: "Peter bị cảm lạnh sau khi chơi bóng đá dưới mưa.",
+                key: ["come down with", "because"],
+                opts: [
+                    "Peter felt cold because he had to play football in the rain.",
+                    "The rain was cold, so Peter tried to play football as quickly as possible.",
+                    "The heavier the rain, the more quickly Peter played football.",
+                    "Peter came down with a cold because he played football in rainy weather."
+                ],
+                optsVi: [
+                    "Peter cảm thấy lạnh vì anh ấy phải chơi bóng (sai nghĩa, caught a cold là bị bệnh).",
+                    "Trời mưa lạnh nên Peter cố gắng chơi thật nhanh (sai nghĩa).",
+                    "Mưa càng to, Peter chơi càng nhanh (sai nghĩa).",
+                    "Peter bị cảm lạnh bởi vì anh ấy đã chơi bóng đá dưới thời tiết mưa."
+                ],
+                correct: 3,
+                exp: "Thành ngữ 'catch a cold' (bị cảm lạnh) đồng nghĩa với Phrasal verb 'come down with a cold'. 'after playing' chuyển thành mệnh đề nguyên nhân 'because he played'. Chọn <b>D</b>."
+            },
+            {
+                q: "They have watched the movie. They will discuss their favorite scenes.",
+                qVi: "Họ đã xem bộ phim. Họ sẽ thảo luận về các cảnh yêu thích của họ.",
+                key: ["Time clauses", "After"],
+                opts: [
+                    "After they have watched the movie, they will discuss their favorite scenes.",
+                    "They have watched the movie as soon as they will discuss their favorite scenes.",
+                    "Before they have watched the movie, they will discuss their favorite scenes.",
+                    "While they have watched the movie, they will discuss their favorite scenes."
+                ],
+                optsVi: [
+                    "Sau khi xem xong bộ phim, họ sẽ thảo luận về những cảnh yêu thích.",
+                    "Họ đã xem phim ngay khi họ sẽ thảo luận (sai ngữ pháp).",
+                    "Trước khi họ đã xem phim, họ sẽ thảo luận (sai logic).",
+                    "Trong khi họ đã xem phim, họ sẽ thảo luận (sai logic)."
+                ],
+                correct: 0,
+                exp: "Hai hành động xảy ra theo thứ tự. Hành động xem phim xong trước rồi mới thảo luận. Cấu trúc chuẩn: After + S + V(Hiện tại hoàn thành), S + V(Tương lai đơn). Chọn <b>A</b>."
+            },
+            {
+                q: "She started learning English five years ago.",
+                qVi: "Cô ấy đã bắt đầu học tiếng Anh cách đây 5 năm.",
+                key: ["Present Perfect", "for / since"],
+                opts: [
+                    "She has been learning English since five years.",
+                    "She has learned English for five years.",
+                    "She had learned English for five years.",
+                    "She learns English for five years."
+                ],
+                optsVi: [
+                    "Cô ấy đã học tiếng Anh từ 5 năm (sai vì 'since' + mốc thời gian, không đi với khoảng thời gian).",
+                    "Cô ấy đã học tiếng Anh được 5 năm.",
+                    "Cô ấy đã học tiếng Anh được 5 năm (chia Quá khứ hoàn thành - sai thì).",
+                    "Cô ấy học tiếng Anh được 5 năm (chia Hiện tại đơn - sai thì)."
+                ],
+                correct: 1,
+                exp: "Viết lại câu từ Quá khứ đơn (started + V-ing + thời gian + ago) sang Hiện tại hoàn thành (have/has + V3/ed + for + khoảng thời gian). Chọn <b>B</b>."
+            },
+            {
+                q: "\"How about going to the beach this weekend?\" said Tom",
+                qVi: "\"Hay là đi biển cuối tuần này nhé?\" Tom nói.",
+                key: ["Suggest + V-ing", "Reported speech"],
+                opts: [
+                    "Tom invited me to go to the beach this weekend.",
+                    "Tom suggested going to the beach that weekend.",
+                    "Tom wanted to know if we went to the beach this weekend.",
+                    "Tom asked me how about going to the beach this weekend."
+                ],
+                optsVi: [
+                    "Tom mời tôi đi biển cuối tuần này (chưa lùi 'this' thành 'that').",
+                    "Tom gợi ý đi biển vào cuối tuần đó.",
+                    "Tom muốn biết liệu chúng tôi có đi biển không (sai cấu trúc gợi ý).",
+                    "Tom hỏi tôi hay là đi biển (sai cấu trúc)."
+                ],
+                correct: 1,
+                exp: "'How about + V-ing?' là lời gợi ý. Chuyển sang gián tiếp dùng 'suggested + V-ing'. Trạng từ 'this weekend' lùi thành 'that weekend'. Chọn <b>B</b>."
+            },
+            {
+                q: "You must finish your homework before you go out.",
+                qVi: "Bạn phải hoàn thành bài tập về nhà trước khi đi chơi.",
+                key: ["not... until", "Time connectives"],
+                opts: [
+                    "Your homework must be finished before you go out.",
+                    "You are allowed to go out after you finish your homework.",
+                    "Your homework should be finished before you go out.",
+                    "You can't go out until you finish your homework."
+                ],
+                optsVi: [
+                    "Bài tập của bạn phải được hoàn thành trước khi bạn ra ngoài. (Bị động, đúng ngữ pháp nhưng D là cách viết lại phổ biến nhất cho cấu trúc này).",
+                    "Bạn được phép ra ngoài sau khi hoàn thành bài tập.",
+                    "Bài tập của bạn nên được hoàn thành (sai nghĩa 'must').",
+                    "Bạn không thể đi chơi cho đến khi bạn hoàn thành bài tập về nhà."
+                ],
+                correct: 3,
+                exp: "Ý nghĩa của câu gốc là sự bắt buộc điều kiện trước - sau. Cấu trúc S + can't / mustn't + V + until + Clause mang nghĩa tương đương hoàn toàn và tự nhiên nhất. Chọn <b>D</b>."
+            },
+            {
+                q: "Nobody has cleaned the house for weeks.",
+                qVi: "Không ai dọn dẹp ngôi nhà trong nhiều tuần.",
+                key: ["Passive voice", "Present Perfect"],
+                opts: [
+                    "The house has not been cleaned for weeks.",
+                    "They haven't cleaned the house for weeks.",
+                    "The house was not cleaned for weeks.",
+                    "The house had not been cleaned for weeks."
+                ],
+                optsVi: [
+                    "Ngôi nhà đã không được dọn dẹp trong nhiều tuần.",
+                    "Họ đã không dọn nhà (chủ ngữ 'Nobody' không đổi thành 'They').",
+                    "Ngôi nhà đã không được dọn (sai thì QKĐ).",
+                    "Ngôi nhà đã không được dọn (sai thì QKHT)."
+                ],
+                correct: 0,
+                exp: "Chuyển câu chủ động sang bị động thì Hiện tại hoàn thành: 'has/have + been + V3/ed'. Vì chủ ngữ gốc là 'Nobody' (mang nghĩa phủ định) nên câu bị động phải thêm 'not'. Chọn <b>A</b>."
+            },
+            {
+                q: "It's a pity I can't speak French fluently.",
+                qVi: "Thật tiếc là tôi không thể nói tiếng Pháp trôi chảy.",
+                key: ["Wish clause", "can -> could"],
+                opts: [
+                    "I am sorry that I can't speak French fluently.",
+                    "I wish I could speak French fluently.",
+                    "I regret not speaking French fluently.",
+                    "I should have spoken French fluently."
+                ],
+                optsVi: [
+                    "Tôi rất tiếc vì tôi không thể nói tiếng Pháp trôi chảy (Đúng nghĩa nhưng thường dạng bài này ưu tiên câu ước).",
+                    "Tôi ước tôi có thể nói tiếng Pháp trôi chảy.",
+                    "Tôi hối hận vì không nói (dùng cho quá khứ).",
+                    "Lẽ ra tôi nên nói tiếng Pháp (chỉ trích trong quá khứ)."
+                ],
+                correct: 1,
+                exp: "Mẫu câu 'It's a pity' (Thật đáng tiếc) thường được viết lại bằng cấu trúc câu ước 'I wish'. Trái với hiện tại 'can't' -> chuyển thành 'could'. Chọn <b>B</b>."
+            },
+            {
+                q: "\"I am reading a book about Vietnamese history,\" said Lan.",
+                qVi: "\"Tôi đang đọc một cuốn sách về lịch sử Việt Nam,\" Lan nói.",
+                key: ["Reported speech", "Present Continuous to Past Continuous"],
+                opts: [
+                    "Lan said she was reading a book about Vietnamese history.",
+                    "Lan said she is reading a book about Vietnamese history.",
+                    "Lan said she had read a book about Vietnamese history.",
+                    "Lan said she has read a book about Vietnamese history."
+                ],
+                optsVi: [
+                    "Lan nói cô ấy đang đọc (was reading - đúng lùi thì).",
+                    "Lan nói cô ấy đang đọc (is reading - chưa lùi thì).",
+                    "Lan nói cô ấy đã đọc (sai thì).",
+                    "Lan nói cô ấy đã đọc (sai thì)."
+                ],
+                correct: 0,
+                exp: "Câu trực tiếp ở thì Hiện tại tiếp diễn (am reading). Chuyển sang câu gián tiếp, động từ lùi một thì thành Quá khứ tiếp diễn (was reading). Đổi đại từ 'I' thành 'she'. Chọn <b>A</b>."
+            },
+            {
+                q: "I don't have a map, so I can't find the way to the museum.",
+                qVi: "Tôi không có bản đồ, nên tôi không thể tìm đường đến bảo tàng.",
+                key: ["Conditional sentence Type 2", "unreal present"],
+                opts: [
+                    "If I have a map, I can find the way to the museum.",
+                    "If I had a map, I could find the way to the museum.",
+                    "If I didn't have a map, I couldn't find the way to the museum.",
+                    "If I had had a map, I could have found the way to the museum."
+                ],
+                optsVi: [
+                    "Nếu tôi có bản đồ, tôi có thể tìm đường (Câu đk loại 1 - sai).",
+                    "Nếu tôi có bản đồ, tôi đã có thể tìm được đường đến bảo tàng.",
+                    "Nếu tôi không có bản đồ, tôi không thể tìm đường (sai logic).",
+                    "Nếu tôi đã có bản đồ, tôi đã có thể tìm đường (Câu đk loại 3 - sai vì sự việc đang ở hiện tại)."
+                ],
+                correct: 1,
+                exp: "Sự thật ở hiện tại là 'không có bản đồ'. Câu điều kiện trái với hiện tại dùng câu điều kiện loại 2: If + S + V(QKĐ), S + would/could + V-inf. Dạng phủ định chuyển thành khẳng định. Chọn <b>B</b>."
+            },
+            {
+                q: "They have built a new bridge across the river.",
+                qVi: "Họ đã xây một cây cầu mới bắc qua sông.",
+                key: ["Passive voice", "Present Perfect"],
+                opts: [
+                    "A new bridge has built across the river.",
+                    "A new bridge have been built across the river.",
+                    "A new bridge has been built across the river.",
+                    "A new bridge was built across the river."
+                ],
+                optsVi: [
+                    "Một cây cầu mới đã xây (thiếu been).",
+                    "Một cây cầu mới đã được xây (bridge là số ít, không dùng have).",
+                    "Một cây cầu mới đã được xây dựng bắc qua sông.",
+                    "Một cây cầu mới đã được xây (chia ở QKĐ - sai thì)."
+                ],
+                correct: 2,
+                exp: "Bị động thì Hiện tại hoàn thành: S + has/have + been + V3/ed. 'A new bridge' là số ít nên dùng 'has been built'. Chọn <b>C</b>."
+            },
+            {
+                q: "Although it rained heavily, they went to the concert.",
+                qVi: "Mặc dù trời mưa to, họ vẫn đến buổi hòa nhạc.",
+                key: ["In spite of", "Noun phrase"],
+                opts: [
+                    "Despite it rained heavily, they went to the concert.",
+                    "In spite of the heavy rain, they went to the concert.",
+                    "Because it rained heavily, they went to the concert.",
+                    "Even though the rain was heavy, but they went to the concert."
+                ],
+                optsVi: [
+                    "Despite + mệnh đề (sai ngữ pháp).",
+                    "Bất chấp cơn mưa lớn, họ vẫn đến buổi hòa nhạc.",
+                    "Bởi vì trời mưa to, họ đến buổi hòa nhạc (sai nghĩa).",
+                    "Mặc dù... nhưng... (trong Tiếng Anh không dùng 'Even though' đi kèm 'but')."
+                ],
+                correct: 1,
+                exp: "Although + Mệnh đề (S + V) = In spite of / Despite + Cụm danh từ (Noun phrase). 'it rained heavily' chuyển thành cụm danh từ 'the heavy rain'. Chọn <b>B</b>."
+            },
+            {
+                q: "It takes him 30 minutes to drive to work every day.",
+                qVi: "Anh ấy mất 30 phút để lái xe đến chỗ làm mỗi ngày.",
+                key: ["spend time doing", "take time to do"],
+                opts: [
+                    "He spends 30 minutes driving to work every day.",
+                    "He spends 30 minutes to drive to work every day.",
+                    "He used to drive to work in 30 minutes.",
+                    "He takes 30 minutes driving to work every day."
+                ],
+                optsVi: [
+                    "Anh ấy dành 30 phút để lái xe đi làm mỗi ngày.",
+                    "spend + to V (sai ngữ pháp).",
+                    "Anh ấy đã từng lái xe... (sai nghĩa).",
+                    "takes + người + to V, không dùng V-ing (sai ngữ pháp)."
+                ],
+                correct: 0,
+                exp: "Cấu trúc tương đương: It takes (sb) + time + to V = S + spend(s) + time + V-ing. Chọn <b>A</b>."
+            },
+            {
+                q: "It is important to protect the environment for future generations.",
+                qVi: "Việc bảo vệ môi trường cho các thế hệ tương lai là rất quan trọng.",
+                key: ["Modal verbs", "should"],
+                opts: [
+                    "We should protect the environment for future generations.",
+                    "Protecting the environment is not necessary for future generations.",
+                    "Future generations must protect the environment.",
+                    "It is useless to protect the environment for future generations."
+                ],
+                optsVi: [
+                    "Chúng ta nên bảo vệ môi trường cho các thế hệ tương lai.",
+                    "Bảo vệ môi trường là không cần thiết (sai nghĩa).",
+                    "Thế hệ tương lai phải bảo vệ (sai chủ thể).",
+                    "Thật vô ích khi bảo vệ (sai nghĩa)."
+                ],
+                correct: 0,
+                exp: "Cấu trúc 'It is important to V' mang tính khuyên bảo, tương đương với 'We should + V' (Chúng ta nên làm gì). Chọn <b>A</b>."
+            },
+            {
+                q: "\"I am going to visit the Eiffel Tower next week,\" said Mary.",
+                qVi: "\"Tôi dự định đi thăm Tháp Eiffel tuần tới,\" Mary nói.",
+                key: ["Reported speech", "next week -> the following week"],
+                opts: [
+                    "Mary said she is going to visit the Eiffel Tower next week.",
+                    "Mary said she was going to visit the Eiffel Tower the following week.",
+                    "Mary said she went to visit the Eiffel Tower the following week.",
+                    "Mary said she had visited the Eiffel Tower the previous week."
+                ],
+                optsVi: [
+                    "Chưa lùi thì và chưa đổi trạng từ thời gian.",
+                    "Mary nói rằng cô ấy dự định sẽ đi thăm Tháp Eiffel vào tuần tiếp theo.",
+                    "went to visit (sai nghĩa dự định của 'am going to').",
+                    "had visited (sai thì)."
+                ],
+                correct: 1,
+                exp: "Trong câu gián tiếp, 'am going to' lùi thành 'was going to'. 'next week' đổi thành 'the following week' hoặc 'the next week'. Chọn <b>B</b>."
+            },
+            {
+                q: "This is the first time I have seen such a beautiful sunset.",
+                qVi: "Đây là lần đầu tiên tôi thấy một cảnh hoàng hôn đẹp như vậy.",
+                key: ["Present Perfect", "never... before"],
+                opts: [
+                    "I have never seen such a beautiful sunset before.",
+                    "I saw such a beautiful sunset once before.",
+                    "I have seen many beautiful sunsets before.",
+                    "I didn't see such a beautiful sunset before."
+                ],
+                optsVi: [
+                    "Tôi chưa bao giờ thấy một cảnh hoàng hôn đẹp như vậy trước đây.",
+                    "Tôi đã thấy... một lần trước đây (sai nghĩa).",
+                    "Tôi đã thấy nhiều cảnh hoàng hôn đẹp trước đây (sai nghĩa).",
+                    "Tôi đã không thấy... (sai vì phải dùng HTHT 'have never seen')."
+                ],
+                correct: 0,
+                exp: "Cấu trúc 'This is the first time + S + have/has + V3/ed' tương đương với 'S + have/has + never + V3/ed + before'. Chọn <b>A</b>."
+            },
+            {
+                q: "The teacher didn't allow us to use our phones in class.",
+                qVi: "Giáo viên không cho phép chúng tôi sử dụng điện thoại trong lớp.",
+                key: ["Passive voice", "allow"],
+                opts: [
+                    "We were allowed to use our phones in class.",
+                    "We were not allowed to use our phones in class.",
+                    "The teacher let us use our phones in class.",
+                    "The teacher made us use our phones in class."
+                ],
+                optsVi: [
+                    "Chúng tôi được phép sử dụng điện thoại (sai nghĩa).",
+                    "Chúng tôi không được phép sử dụng điện thoại trong lớp.",
+                    "Giáo viên để chúng tôi sử dụng điện thoại (sai nghĩa).",
+                    "Giáo viên bắt chúng tôi sử dụng điện thoại (sai nghĩa)."
+                ],
+                correct: 1,
+                exp: "Câu chủ động 'S + allow + sb + to V'. Chuyển sang bị động: 'Sb + be + allowed + to V'. Dạng phủ định là 'were not allowed'. Chọn <b>B</b>."
+            },
+            {
+                q: "Although the weather was bad, they went for a picnic.",
+                qVi: "Mặc dù thời tiết xấu, họ vẫn đi dã ngoại.",
+                key: ["In spite of", "Although"],
+                opts: [
+                    "In spite of the bad weather, they went for a picnic.",
+                    "Because the weather was bad, they went for a picnic.",
+                    "The weather was bad, so they went for a picnic.",
+                    "They went for a picnic because of the bad weather."
+                ],
+                optsVi: [
+                    "Bất chấp thời tiết xấu, họ vẫn đi dã ngoại.",
+                    "Bởi vì thời tiết xấu... (sai nghĩa).",
+                    "Thời tiết xấu, nên họ đi... (sai logic).",
+                    "Họ đi dã ngoại vì thời tiết xấu (sai logic)."
+                ],
+                correct: 0,
+                exp: "Although + Clause (S + V) = In spite of / Despite + Noun phrase. 'the weather was bad' chuyển thành cụm danh từ 'the bad weather'. Chọn <b>A</b>."
+            },
+            {
+                q: "\"Where are you going on your vacation?\" asked my friend.",
+                qVi: "\"Bạn định đi đâu vào kỳ nghỉ?\" bạn tôi hỏi.",
+                key: ["Reported question", "Wh-word"],
+                opts: [
+                    "My friend asked me where I was going on my vacation.",
+                    "My friend asked me where was I going on my vacation.",
+                    "My friend asked me where am I going on my vacation.",
+                    "My friend asked me where I am going on my vacation."
+                ],
+                optsVi: [
+                    "Bạn tôi hỏi tôi định đi đâu vào kỳ nghỉ. (Đúng quy tắc lùi thì và trật tự từ).",
+                    "Sai vì vẫn giữ trật tự câu hỏi (was I).",
+                    "Sai vì chưa lùi thì và giữ trật tự câu hỏi.",
+                    "Sai vì chưa lùi thì (am going -> was going)."
+                ],
+                correct: 0,
+                exp: "Trong câu tường thuật dạng câu hỏi có từ để hỏi (Wh-questions): S + asked + (O) + Wh-word + S + V (lùi thì). 'are you going' -> 'I was going'. Chọn <b>A</b>."
+            },
+            {
+                q: "I haven't seen him since we left school.",
+                qVi: "Tôi đã không gặp anh ấy kể từ khi chúng tôi rời trường.",
+                key: ["The last time", "Present Perfect"],
+                opts: [
+                    "The last time I saw him was when we left school.",
+                    "I last saw him since we left school.",
+                    "I have seen him after we left school.",
+                    "I didn't see him when we left school."
+                ],
+                optsVi: [
+                    "Lần cuối cùng tôi gặp anh ấy là khi chúng tôi rời trường.",
+                    "last saw + since (sai ngữ pháp, phải là last saw + in/on/at/when).",
+                    "Tôi đã gặp anh ấy sau khi rời trường (sai nghĩa).",
+                    "Tôi đã không gặp anh ấy khi chúng tôi rời trường (sai nghĩa)."
+                ],
+                correct: 0,
+                exp: "Cấu trúc S + haven't/hasn't + V3/ed + since + mốc thời gian = The last time S + V(Quá khứ đơn) + was + mốc thời gian / when clause. Chọn <b>A</b>."
+            },
+            {
+                q: "We should plant more trees to protect the environment.",
+                qVi: "Chúng ta nên trồng nhiều cây hơn để bảo vệ môi trường.",
+                key: ["Passive voice", "should be"],
+                opts: [
+                    "Planting more trees is bad for the environment.",
+                    "More trees should be planted to protect the environment.",
+                    "We ought to not plant more trees to protect the environment.",
+                    "We must cut down trees to protect the environment."
+                ],
+                optsVi: [
+                    "Trồng nhiều cây là xấu cho môi trường (sai nghĩa).",
+                    "Nhiều cây hơn nên được trồng để bảo vệ môi trường.",
+                    "Chúng ta không nên trồng... (sai nghĩa).",
+                    "Chúng ta phải chặt cây... (sai nghĩa)."
+                ],
+                correct: 1,
+                exp: "Chuyển sang bị động với động từ khuyết thiếu: S + modal verb (should) + be + V3/ed. Chọn <b>B</b>."
+            },
+            {
+                q: "The book is so interesting that I can't put it down.",
+                qVi: "Cuốn sách thú vị đến mức tôi không thể đặt nó xuống.",
+                key: ["so... that", "such... that"],
+                opts: [
+                    "It is such an interesting book that I can't put it down.",
+                    "It is so an interesting book that I can't put it down.",
+                    "The book is too interesting for me to put it down.",
+                    "The book is not interesting enough for me to put it down."
+                ],
+                optsVi: [
+                    "Nó là một cuốn sách thú vị đến nỗi tôi không thể đặt nó xuống.",
+                    "so an interesting book (sai ngữ pháp, phải là so interesting a book hoặc such an interesting book).",
+                    "too... to (mang nghĩa quá... không thể, không hợp lý về mặt logic).",
+                    "không đủ thú vị... (sai nghĩa)."
+                ],
+                correct: 0,
+                exp: "S + be + so + adj + that + clause = It + is/was + such + (a/an) + adj + N + that + clause. Chọn <b>A</b>."
+            },
+            {
+                q: "Unless you study harder, you will fail the exam.",
+                qVi: "Trừ khi bạn học chăm chỉ hơn, nếu không bạn sẽ trượt kỳ thi.",
+                key: ["Unless", "If... not"],
+                opts: [
+                    "If you study harder, you will fail the exam.",
+                    "If you don't study harder, you will fail the exam.",
+                    "If you didn't study harder, you would fail the exam.",
+                    "If you study harder, you won't fail the exam."
+                ],
+                optsVi: [
+                    "Nếu bạn học chăm chỉ hơn, bạn sẽ trượt kỳ thi (sai nghĩa).",
+                    "Nếu bạn không học chăm chỉ hơn, bạn sẽ trượt kỳ thi.",
+                    "Nếu bạn đã không học chăm (câu đk loại 2 - sai thì so với câu gốc).",
+                    "Nếu bạn học chăm hơn, bạn sẽ không trượt (đúng nghĩa nhưng B bám sát cấu trúc tương đương nhất của Unless)."
+                ],
+                correct: 1,
+                exp: "Unless = If ... not (Nếu ... không). Unless you study = If you don't study. Chọn <b>B</b>."
+            },
+            {
+                q: "\"I will help you with your project,\" said the teacher.",
+                qVi: "\"Cô sẽ giúp em với dự án của em,\" giáo viên nói.",
+                key: ["Reported speech", "will -> would"],
+                opts: [
+                    "The teacher said she would help me with my project.",
+                    "The teacher said she will help me with my project.",
+                    "The teacher said she helped me with my project.",
+                    "The teacher said she helps me with my project."
+                ],
+                optsVi: [
+                    "Giáo viên nói rằng cô ấy sẽ giúp tôi với dự án của tôi. (Lùi will -> would).",
+                    "Chưa lùi thì (will).",
+                    "Lùi sai thì (helped - QKĐ).",
+                    "Lùi sai thì (helps - HTĐ)."
+                ],
+                correct: 0,
+                exp: "Tường thuật câu ở thì Tương lai đơn: 'will' lùi thành 'would'. Các đại từ 'I', 'you', 'your' đổi tương ứng thành 'she', 'me', 'my'. Chọn <b>A</b>."
+            },
+            {
+                q: "It's a pity I don't know how to swim.",
+                qVi: "Thật tiếc là tôi không biết bơi.",
+                key: ["Wish clause", "present unreal"],
+                opts: [
+                    "I wish I know how to swim.",
+                    "I wish I knew how to swim.",
+                    "I wish I had known how to swim.",
+                    "I wish I will know how to swim."
+                ],
+                optsVi: [
+                    "Dùng thì HTĐ (sai cấu trúc câu ước).",
+                    "Tôi ước tôi biết bơi (dùng QKĐ cho câu ước ở hiện tại).",
+                    "Dùng QKHT (câu ước trong quá khứ - sai).",
+                    "Dùng Tương lai đơn (sai cấu trúc)."
+                ],
+                correct: 1,
+                exp: "Mẫu câu 'It's a pity' viết lại với 'I wish'. Sự việc ở hiện tại ('don't know') -> Câu ước lùi về Quá khứ đơn thành khẳng định ('knew'). Chọn <b>B</b>."
+            },
+            {
+                q: "People believe that the house is haunted.",
+                qVi: "Người ta tin rằng ngôi nhà bị ma ám.",
+                key: ["Impersonal Passive", "It is believed"],
+                opts: [
+                    "It is believed that the house is haunted.",
+                    "The house is believed to be haunted.",
+                    "Both A and B are correct.",
+                    "Neither A nor B is correct."
+                ],
+                optsVi: [
+                    "Người ta tin rằng ngôi nhà bị ma ám (Cách 1).",
+                    "Ngôi nhà được tin là bị ma ám (Cách 2).",
+                    "Cả A và B đều đúng.",
+                    "Cả A và B đều sai."
+                ],
+                correct: 2,
+                exp: "Cấu trúc bị động khách quan có 2 cách: (1) It + be + V3(believe) + that + clause. (2) S(clause) + be + V3(believe) + to V. Ở đây cả hai cách A và B đều được dùng đúng. Chọn <b>C</b>."
+            },
+            {
+                q: "She is the most intelligent student in my class.",
+                qVi: "Cô ấy là học sinh thông minh nhất lớp tôi.",
+                key: ["Superlative", "Comparative"],
+                opts: [
+                    "No student in my class is as intelligent as her.",
+                    "Every student in my class is less intelligent than her.",
+                    "She is more intelligent than any other student in my class.",
+                    "All are correct."
+                ],
+                optsVi: [
+                    "Không có học sinh nào trong lớp tôi thông minh bằng cô ấy.",
+                    "Mọi học sinh trong lớp tôi đều kém thông minh hơn cô ấy.",
+                    "Cô ấy thông minh hơn bất kỳ học sinh nào khác trong lớp tôi.",
+                    "Tất cả đều đúng."
+                ],
+                correct: 3,
+                exp: "Câu so sánh nhất có thể viết lại bằng: So sánh bằng với chủ ngữ phủ định (A), So sánh kém (B), hoặc So sánh hơn với 'any other' (C). Tất cả các câu đều đồng nghĩa. Chọn <b>D</b>."
+            },
+            {
+                q: "I started working here two years ago.",
+                qVi: "Tôi bắt đầu làm việc ở đây 2 năm trước.",
+                key: ["started + V-ing", "Present Perfect"],
+                opts: [
+                    "I have worked here for two years.",
+                    "I worked here for two years.",
+                    "I have started working here for two years.",
+                    "I didn't work here two years ago."
+                ],
+                optsVi: [
+                    "Tôi đã làm việc ở đây được 2 năm.",
+                    "Tôi đã làm việc ở đây 2 năm (sau đó nghỉ - sai nghĩa).",
+                    "Cấu trúc sai (không dùng start ở HTHT đi với for).",
+                    "Tôi đã không làm việc ở đây 2 năm trước (sai nghĩa)."
+                ],
+                correct: 0,
+                exp: "S + started / began + V-ing + time + ago = S + have/has + V3/ed + for + time. Chọn <b>A</b>."
+            },
+            {
+                q: "They built this school in 1990.",
+                qVi: "Họ đã xây ngôi trường này năm 1990.",
+                key: ["Passive voice", "Past Simple"],
+                opts: [
+                    "This school was built in 1990.",
+                    "This school is built in 1990.",
+                    "This school has been built in 1990.",
+                    "This school built in 1990."
+                ],
+                optsVi: [
+                    "Ngôi trường này đã được xây dựng năm 1990.",
+                    "Ngôi trường này được xây (chia HTĐ - sai thì).",
+                    "Ngôi trường này đã được xây (chia HTHT - sai do có mốc thời gian rõ ràng in 1990).",
+                    "Ngôi trường này xây... (chủ động - sai nghĩa)."
+                ],
+                correct: 0,
+                exp: "Chủ động ở Quá khứ đơn (built). Đổi sang bị động: S + was/were + V3/ed. Chọn <b>A</b>."
+            },
+            {
+                q: "\"Don't forget to lock the door,\" said my mother.",
+                qVi: "\"Đừng quên khóa cửa nhé,\" mẹ tôi nói.",
+                key: ["remind", "to infinitive"],
+                opts: [
+                    "My mother told me don't forget to lock the door.",
+                    "My mother reminded me to lock the door.",
+                    "My mother said to me don't forget to lock the door.",
+                    "My mother asked me not forget to lock the door."
+                ],
+                optsVi: [
+                    "told sb not to do sth (chứ không dùng don't forget).",
+                    "Mẹ tôi nhắc tôi khóa cửa.",
+                    "said to me don't (sai ngữ pháp gián tiếp).",
+                    "asked me not forget (thiếu 'to')."
+                ],
+                correct: 1,
+                exp: "Cấu trúc 'Don't forget to V' (Đừng quên làm gì) mang tính nhắc nhở, thường được tường thuật lại bằng động từ 'remind': S + reminded + sb + to V. Chọn <b>B</b>."
+            },
+            {
+                q: "I don't have enough money to buy a new car.",
+                qVi: "Tôi không có đủ tiền để mua một chiếc ô tô mới.",
+                key: ["Conditional Type 2", "Unreal present"],
+                opts: [
+                    "If I have enough money, I will buy a new car.",
+                    "If I had enough money, I would buy a new car.",
+                    "If I had had enough money, I would have bought a new car.",
+                    "Unless I have enough money, I won't buy a new car."
+                ],
+                optsVi: [
+                    "Câu điều kiện loại 1 (sai vì sự thật hiện tại là không có tiền).",
+                    "Nếu tôi có đủ tiền, tôi sẽ mua một chiếc ô tô mới.",
+                    "Câu điều kiện loại 3 (dùng cho quá khứ - sai).",
+                    "Câu điều kiện loại 1 (sai giống A)."
+                ],
+                correct: 1,
+                exp: "Giả định một điều trái ngược với hiện tại, ta dùng Câu điều kiện loại 2: If + S + V(QKĐ), S + would + V-inf. Chọn <b>B</b>."
+            },
+            {
+                q: "The weather was so cold that we couldn't go out.",
+                qVi: "Thời tiết quá lạnh đến nỗi chúng tôi không thể ra ngoài.",
+                key: ["such... that", "too... to"],
+                opts: [
+                    "It was such cold weather that we couldn't go out.",
+                    "It was so cold weather that we couldn't go out.",
+                    "The weather was too cold for us to go out.",
+                    "Both A and C are correct."
+                ],
+                optsVi: [
+                    "Đó là thời tiết quá lạnh đến nỗi chúng tôi không thể ra ngoài.",
+                    "so + adj + N (sai ngữ pháp, phải là such + adj + N).",
+                    "Thời tiết quá lạnh để chúng tôi ra ngoài.",
+                    "Cả A và C đều đúng."
+                ],
+                correct: 3,
+                exp: "Cấu trúc S + be + so + adj + that = It + is/was + such + adj + N + that. Ngoài ra còn tương đương với S + be + too + adj + (for sb) + to V. Do đó cả A và C đều đúng. Chọn <b>D</b>."
+            },
+            {
+                q: "He prefers playing football to watching TV.",
+                qVi: "Anh ấy thích chơi bóng đá hơn là xem TV.",
+                key: ["prefer", "would rather"],
+                opts: [
+                    "He likes playing football more than watching TV.",
+                    "He likes watching TV more than playing football.",
+                    "He would rather play football than watch TV.",
+                    "Both A and C are correct."
+                ],
+                optsVi: [
+                    "Anh ấy thích chơi bóng đá nhiều hơn xem TV.",
+                    "Anh ấy thích xem TV nhiều hơn (sai nghĩa).",
+                    "Anh ấy thà chơi bóng đá còn hơn xem TV.",
+                    "Cả A và C đều đúng."
+                ],
+                correct: 3,
+                exp: "Cấu trúc: prefer V-ing to V-ing = like V-ing better/more than V-ing = would rather V-inf than V-inf. Cả A và C đều mang nghĩa chính xác. Chọn <b>D</b>."
+            },
+            {
+                q: "\"Why don't we go to the cinema tonight?\" said Tom.",
+                qVi: "\"Tại sao chúng ta không đi xem phim tối nay nhỉ?\" Tom nói.",
+                key: ["suggest + V-ing", "invitation"],
+                opts: [
+                    "Tom suggested going to the cinema that night.",
+                    "Tom asked why they didn't go to the cinema that night.",
+                    "Tom invited us to go to the cinema that night.",
+                    "Tom wanted to know why we didn't go to the cinema."
+                ],
+                optsVi: [
+                    "Tom gợi ý đi xem phim vào tối hôm đó.",
+                    "Tom hỏi tại sao họ không đi... (dịch máy móc từ why don't, làm mất đi ý nghĩa gợi ý).",
+                    "Tom mời chúng tôi... (invite thường dùng cho Do you want / Would you like).",
+                    "Tom muốn biết tại sao... (sai mục đích câu nói)."
+                ],
+                correct: 0,
+                exp: "'Why don't we + V' là một lời đề nghị, gợi ý. Khi tường thuật lại dùng động từ 'suggest' + V-ing. 'Tonight' đổi thành 'that night'. Chọn <b>A</b>."
+            },
+            {
+                q: "It is expected that the price of oil will increase.",
+                qVi: "Người ta dự kiến rằng giá dầu sẽ tăng.",
+                key: ["Impersonal Passive", "Infinitive"],
+                opts: [
+                    "The price of oil is expected to increase.",
+                    "It is expected for the price of oil to increase.",
+                    "The price of oil is expected that it will increase.",
+                    "Increasing the price of oil is expected."
+                ],
+                optsVi: [
+                    "Giá dầu được dự kiến sẽ tăng.",
+                    "Cấu trúc sai.",
+                    "Cấu trúc sai (không dùng that it will sau expected khi đưa chủ ngữ lên).",
+                    "Việc tăng giá dầu được dự đoán (không sát cấu trúc chuẩn)."
+                ],
+                correct: 0,
+                exp: "Bị động đặc biệt: It is + V3 (expected) + that + S2 + V2 -> Đưa S2 lên làm chủ ngữ: S2 + be + expected + to V2. Chọn <b>A</b>."
+            },
+            {
+                q: "My sister has never eaten sushi before.",
+                qVi: "Chị gái tôi chưa bao giờ ăn sushi trước đây.",
+                key: ["Present Perfect", "The first time"],
+                opts: [
+                    "This is the first time my sister has eaten sushi.",
+                    "My sister used to eat sushi before.",
+                    "My sister didn't eat sushi before.",
+                    "My sister eats sushi for the first time."
+                ],
+                optsVi: [
+                    "Đây là lần đầu tiên chị gái tôi ăn sushi.",
+                    "Chị gái tôi từng ăn sushi trước đây (sai nghĩa).",
+                    "Chị tôi đã không ăn sushi trước đây (sai thì QKĐ).",
+                    "Chị tôi ăn sushi lần đầu (không dùng HTĐ cho cấu trúc này)."
+                ],
+                correct: 0,
+                exp: "Cấu trúc S + have/has + never + V3/ed + before = This is the first time + S + have/has + V3/ed. Chọn <b>A</b>."
+            },
+            {
+                q: "If you don't hurry, you will miss the bus.",
+                qVi: "Nếu bạn không nhanh lên, bạn sẽ lỡ xe buýt.",
+                key: ["Unless", "If... not"],
+                opts: [
+                    "Unless you hurry, you will miss the bus.",
+                    "If you hurry, you will miss the bus.",
+                    "Unless you don't hurry, you will miss the bus.",
+                    "Hurry or you won't miss the bus."
+                ],
+                optsVi: [
+                    "Trừ khi bạn nhanh lên, nếu không bạn sẽ lỡ xe buýt.",
+                    "Nếu bạn nhanh lên, bạn sẽ lỡ xe buýt (sai nghĩa).",
+                    "Unless đi với phủ định là sai ngữ pháp (Unless đã mang nghĩa phủ định).",
+                    "Nhanh lên hoặc bạn sẽ không lỡ (sai nghĩa)."
+                ],
+                correct: 0,
+                exp: "Unless = If ... not (Trừ khi, Nếu không). If you don't hurry = Unless you hurry. Chọn <b>A</b>."
+            },
+            {
+                q: "The children are too young to see this horror film.",
+                qVi: "Bọn trẻ còn quá nhỏ để xem bộ phim kinh dị này.",
+                key: ["too... to", "not... enough to"],
+                opts: [
+                    "The children are so young that they can see this horror film.",
+                    "The children are not old enough to see this horror film.",
+                    "The children are such young that they can see this horror film.",
+                    "It is such a horror film that the children can see it."
+                ],
+                optsVi: [
+                    "Bọn trẻ quá nhỏ đến nỗi chúng có thể xem phim (sai nghĩa).",
+                    "Bọn trẻ chưa đủ lớn để xem bộ phim kinh dị này.",
+                    "Such đi với tính từ (sai ngữ pháp).",
+                    "Đó là một bộ phim kinh dị đến mức bọn trẻ có thể xem (sai nghĩa)."
+                ],
+                correct: 1,
+                exp: "Cấu trúc S + be + too + adj + to V (Quá... không thể) = S + be + not + tính từ ngược nghĩa + enough + to V (Không đủ... để). 'too young' = 'not old enough'. Chọn <b>B</b>."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1;
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                // Sidebar nav item
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            for (let i = 0; i < 4; i++) {
+                const optTrans = document.getElementById(`trans-opt-${index}-${i}`);
+                if(optTrans) optTrans.classList.toggle('show');
+            }
+            
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
