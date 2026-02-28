@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Pronouns & Possessive Adjectives (60 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập: Đại từ & Tính từ sở hữu (60 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">60</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">60</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu đã được trộn (shuffle) đan xen giữa 3 dạng bài để luyện phản xạ
+        const quizData = [
+            {
+                q: "My father is an engineer. _________ works for a construction company.",
+                qVi: "Bố tôi là kỹ sư. _________ làm việc cho một công ty xây dựng.",
+                key: ["Subject pronoun", "Male"],
+                opts: ["He", "Him", "His", "He’s"],
+                optsVi: ["Ông ấy (Chủ ngữ)", "Ông ấy (Tân ngữ)", "Của ông ấy (Tính từ sở hữu)", "Ông ấy là"],
+                correct: 0,
+                exp: "Chỗ trống đứng đầu câu, đóng vai trò làm Chủ ngữ chỉ người nam (thay thế cho 'My father'). Ta dùng đại từ nhân xưng chủ ngữ <b>He</b>."
+            },
+            {
+                q: "I have a pen. _________ pen is blue.",
+                qVi: "Tôi có một cây bút. Bút _________ màu xanh.",
+                key: ["Possessive adjective", "I"],
+                opts: ["I", "Me", "My", "Mine"],
+                optsVi: ["Tôi (Chủ ngữ)", "Tôi (Tân ngữ)", "Của tôi (Tính từ sở hữu)", "Cái của tôi (Đại từ sở hữu)"],
+                correct: 2,
+                exp: "Phía sau chỗ trống là danh từ 'pen', do đó ta cần một Tính từ sở hữu để bổ nghĩa. Tính từ sở hữu của 'I' là <b>My</b>."
+            },
+            {
+                q: "I have a new laptop. This laptop is _________.",
+                qVi: "Tôi có một máy tính xách tay mới. Chiếc máy tính này là _________.",
+                key: ["Possessive pronoun", "I"],
+                opts: ["me", "my", "mine", "I"],
+                optsVi: ["Tôi (Tân ngữ)", "Của tôi (Tính từ sở hữu)", "Cái của tôi (Đại từ sở hữu)", "Tôi (Chủ ngữ)"],
+                correct: 2,
+                exp: "Chỗ trống đứng cuối câu, không có danh từ theo sau. Ta dùng Đại từ sở hữu <b>mine</b> để thay thế cho cụm 'my laptop'."
+            },
+            {
+                q: "This is a great book. I bought _________ yesterday.",
+                qVi: "Đây là một cuốn sách hay. Tôi đã mua _________ hôm qua.",
+                key: ["Object pronoun", "Singular thing"],
+                opts: ["its", "it", "they", "him"],
+                optsVi: ["Của nó (Tính từ sở hữu)", "Nó (Tân ngữ)", "Chúng (Chủ ngữ)", "Anh ấy (Tân ngữ)"],
+                correct: 1,
+                exp: "Động từ 'bought' cần một tân ngữ theo sau để thay thế cho 'a great book' (vật số ít). Ta dùng tân ngữ <b>it</b>."
+            },
+            {
+                q: "My brother has a car. _________ car is very fast.",
+                qVi: "Anh trai tôi có một chiếc xe hơi. Xe của _________ rất nhanh.",
+                key: ["Possessive adjective", "Male"],
+                opts: ["He", "Him", "His", "He’s"],
+                optsVi: ["Anh ấy (Chủ ngữ)", "Anh ấy (Tân ngữ)", "Của anh ấy (Tính từ sở hữu)", "Anh ấy là"],
+                correct: 2,
+                exp: "Chỗ trống đứng trước danh từ 'car', cần Tính từ sở hữu thay thế cho 'My brother'. Đáp án đúng là <b>His</b>."
+            },
+            {
+                q: "You have a beautiful house. Is it _________?",
+                qVi: "Bạn có một ngôi nhà đẹp. Nó có phải là _________ không?",
+                key: ["Possessive pronoun", "You"],
+                opts: ["you", "your", "yours", "yours’"],
+                optsVi: ["Bạn (Chủ ngữ/Tân ngữ)", "Của bạn (Tính từ sở hữu)", "Cái của bạn (Đại từ sở hữu)", "Sai chính tả"],
+                correct: 2,
+                exp: "Đứng cuối câu, thay thế cho 'your house' và không có danh từ đi kèm. Ta dùng Đại từ sở hữu <b>yours</b>."
+            },
+            {
+                q: "Mary is in the kitchen. Can you go and help _________?",
+                qVi: "Mary đang ở trong bếp. Bạn có thể đến và giúp _________ không?",
+                key: ["Object pronoun", "Female"],
+                opts: ["she", "her", "hers", "his"],
+                optsVi: ["Cô ấy (Chủ ngữ)", "Cô ấy (Tân ngữ)", "Cái của cô ấy (Đại từ sở hữu)", "Của anh ấy"],
+                correct: 1,
+                exp: "Sau động từ 'help' cần một tân ngữ chỉ người nữ (Mary). Đáp án đúng là <b>her</b>."
+            },
+            {
+                q: "Mary is wearing a dress. _________ dress is beautiful.",
+                qVi: "Mary đang mặc một chiếc váy. Chiếc váy _________ thật đẹp.",
+                key: ["Possessive adjective", "Female"],
+                opts: ["She", "Her", "Hers", "She’s"],
+                optsVi: ["Cô ấy (Chủ ngữ)", "Của cô ấy (Tính từ sở hữu)", "Cái của cô ấy (Đại từ sở hữu)", "Cô ấy là"],
+                correct: 1,
+                exp: "Chỗ trống đứng trước danh từ 'dress', cần tính từ sở hữu chỉ nữ (Mary). Đáp án là <b>Her</b>."
+            },
+            {
+                q: "That is Mary’s umbrella. It is _________.",
+                qVi: "Đó là chiếc ô của Mary. Nó là _________.",
+                key: ["Possessive pronoun", "Female"],
+                opts: ["she", "her", "hers", "she’s"],
+                optsVi: ["Cô ấy (Chủ ngữ)", "Của cô ấy (TTSH)", "Cái của cô ấy (Đại từ sở hữu)", "Cô ấy là"],
+                correct: 2,
+                exp: "Không có danh từ phía sau, thay thế cho 'Mary's umbrella' (her umbrella). Ta dùng Đại từ sở hữu <b>hers</b>."
+            },
+            {
+                q: "My grandparents are very old, so I often visit _________ at the weekend.",
+                qVi: "Ông bà tôi đã rất già, vì vậy tôi thường đến thăm _________ vào cuối tuần.",
+                key: ["Object pronoun", "Plural"],
+                opts: ["they", "their", "them", "theirs"],
+                optsVi: ["Họ (Chủ ngữ)", "Của họ (TTSH)", "Họ (Tân ngữ)", "Cái của họ (ĐTSH)"],
+                correct: 2,
+                exp: "Sau động từ 'visit' cần một tân ngữ số nhiều (thay thế cho My grandparents). Đáp án đúng là <b>them</b>."
+            },
+            {
+                q: "The dog is wagging _________ tail.",
+                qVi: "Con chó đang vẫy đuôi của _________.",
+                key: ["Possessive adjective", "Animal"],
+                opts: ["it", "its", "it’s", "its’"],
+                optsVi: ["Nó (CN/TN)", "Của nó (TTSH)", "Nó là (it is)", "Sai chính tả"],
+                correct: 1,
+                exp: "Đứng trước danh từ 'tail', cần Tính từ sở hữu chỉ động vật/đồ vật. Đáp án là <b>its</b> (lưu ý không có dấu phẩy trên)."
+            },
+            {
+                q: "My brother has a bike. That bike is _________.",
+                qVi: "Anh trai tôi có một chiếc xe đạp. Chiếc xe đạp đó là _________.",
+                key: ["Possessive pronoun", "Male"],
+                opts: ["he", "him", "his", "he’s"],
+                optsVi: ["Anh ấy (CN)", "Anh ấy (TN)", "Của anh ấy (TTSH / ĐTSH)", "Anh ấy là"],
+                correct: 2,
+                exp: "Cuối câu không có danh từ, thay thế cho 'his bike'. Đối với ngôi thứ 3 số ít nam, Tính từ sở hữu và Đại từ sở hữu đều viết là <b>his</b>."
+            },
+            {
+                q: "Tom and I are going to the park. _________ want to play football.",
+                qVi: "Tom và tôi đang đi đến công viên. _________ muốn chơi bóng đá.",
+                key: ["Subject pronoun", "Plural first person"],
+                opts: ["We", "Us", "Our", "Ours"],
+                optsVi: ["Chúng tôi (Chủ ngữ)", "Chúng tôi (Tân ngữ)", "Của chúng tôi (TTSH)", "Cái của chúng tôi (ĐTSH)"],
+                correct: 0,
+                exp: "Đóng vai trò Chủ ngữ, thay thế cho 'Tom and I' (nhóm người bao gồm cả người nói). Ta dùng <b>We</b>."
+            },
+            {
+                q: "We live in a small house. _________ house is near the park.",
+                qVi: "Chúng tôi sống trong một ngôi nhà nhỏ. Ngôi nhà _________ nằm gần công viên.",
+                key: ["Possessive adjective", "We"],
+                opts: ["We", "Us", "Our", "Ours"],
+                optsVi: ["Chúng tôi (CN)", "Chúng tôi (TN)", "Của chúng tôi (TTSH)", "Cái của chúng tôi (ĐTSH)"],
+                correct: 2,
+                exp: "Đứng trước danh từ 'house', cần Tính từ sở hữu của 'We'. Đáp án là <b>Our</b>."
+            },
+            {
+                q: "This is our classroom. The one next door isn't _________.",
+                qVi: "Đây là lớp học của chúng tôi. Lớp bên cạnh không phải là _________.",
+                key: ["Possessive pronoun", "We"],
+                opts: ["we", "our", "ours", "us"],
+                optsVi: ["Chúng tôi (CN)", "Của chúng tôi (TTSH)", "Cái của chúng tôi (ĐTSH)", "Chúng tôi (TN)"],
+                correct: 2,
+                exp: "Không có danh từ đi kèm phía sau, thay thế cho 'our classroom'. Dùng Đại từ sở hữu <b>ours</b>."
+            },
+            {
+                q: "\"Where are my glasses?\" - \"I saw _________ on the table.\"",
+                qVi: "\"Kính của tôi ở đâu?\" - \"Tôi thấy _________ trên bàn.\"",
+                key: ["Object pronoun", "Plural things"],
+                opts: ["they", "their", "them", "it"],
+                optsVi: ["Chúng (CN)", "Của chúng (TTSH)", "Chúng (Tân ngữ)", "Nó (TN số ít)"],
+                correct: 2,
+                exp: "'glasses' (kính mắt) luôn là danh từ số nhiều. Tân ngữ thay thế cho nó là <b>them</b>."
+            },
+            {
+                q: "They have two children. _________ children are at school now.",
+                qVi: "Họ có hai đứa con. Các con _________ bây giờ đang ở trường.",
+                key: ["Possessive adjective", "They"],
+                opts: ["They", "Them", "Their", "Theirs"],
+                optsVi: ["Họ (CN)", "Họ (TN)", "Của họ (TTSH)", "Cái của họ (ĐTSH)"],
+                correct: 2,
+                exp: "Đứng trước danh từ 'children', cần Tính từ sở hữu của 'They'. Đáp án là <b>Their</b>."
+            },
+            {
+                q: "They have two dogs. Those dogs are _________.",
+                qVi: "Họ có hai con chó. Những con chó đó là _________.",
+                key: ["Possessive pronoun", "They"],
+                opts: ["they", "them", "their", "theirs"],
+                optsVi: ["Họ (CN)", "Họ (TN)", "Của họ (TTSH)", "Cái của họ (ĐTSH)"],
+                correct: 3,
+                exp: "Đứng cuối câu, thay thế cho 'their dogs'. Cần dùng Đại từ sở hữu <b>theirs</b>."
+            },
+            {
+                q: "Look at that man. Do you know _________?",
+                qVi: "Nhìn người đàn ông kia kìa. Bạn có biết _________ không?",
+                key: ["Object pronoun", "Male"],
+                opts: ["he", "his", "him", "he’s"],
+                optsVi: ["Anh ấy (CN)", "Của anh ấy (TTSH)", "Anh ấy (Tân ngữ)", "Anh ấy là"],
+                correct: 2,
+                exp: "Sau động từ 'know' cần Tân ngữ chỉ người nam ('that man'). Đáp án đúng là <b>him</b>."
+            },
+            {
+                q: "You are wearing a nice watch. Is _________ watch expensive?",
+                qVi: "Bạn đang đeo một chiếc đồng hồ đẹp. Đồng hồ _________ có đắt không?",
+                key: ["Possessive adjective", "You"],
+                opts: ["you", "your", "yours", "yours’"],
+                optsVi: ["Bạn (CN/TN)", "Của bạn (TTSH)", "Cái của bạn (ĐTSH)", "Sai chính tả"],
+                correct: 1,
+                exp: "Đứng trước danh từ 'watch', cần Tính từ sở hữu của 'You'. Đáp án là <b>your</b>."
+            },
+            {
+                q: "I’ve lost my pen. Can I borrow _________? (của bạn)",
+                qVi: "Tôi làm mất bút rồi. Tôi có thể mượn _________ không?",
+                key: ["Possessive pronoun", "You"],
+                opts: ["you", "your", "yours", "you’re"],
+                optsVi: ["Bạn", "Của bạn (TTSH)", "Cái của bạn (ĐTSH)", "Bạn là"],
+                correct: 2,
+                exp: "Đứng cuối câu thay cho 'your pen'. Dùng Đại từ sở hữu <b>yours</b>."
+            },
+            {
+                q: "My sister has a new job. _________ is very happy about it.",
+                qVi: "Chị gái tôi có công việc mới. _________ rất vui về điều đó.",
+                key: ["Subject pronoun", "Female"],
+                opts: ["Her", "She", "Hers", "She’s"],
+                optsVi: ["Của cô ấy/Tân ngữ", "Cô ấy (Chủ ngữ)", "Cái của cô ấy", "Cô ấy là (Thừa 'is' vì câu đã có 'is')"],
+                correct: 1,
+                exp: "Đứng đầu câu làm Chủ ngữ chỉ người nữ thay cho 'My sister'. Dùng <b>She</b>."
+            },
+            {
+                q: "Peter and Jane are married. _________ wedding was last year.",
+                qVi: "Peter và Jane đã kết hôn. Đám cưới _________ là vào năm ngoái.",
+                key: ["Possessive adjective", "Plural"],
+                opts: ["They", "Them", "Their", "Theirs"],
+                optsVi: ["Họ (CN)", "Họ (TN)", "Của họ (TTSH)", "Cái của họ (ĐTSH)"],
+                correct: 2,
+                exp: "Đứng trước danh từ 'wedding', cần Tính từ sở hữu chỉ số nhiều (Peter và Jane). Đáp án là <b>Their</b>."
+            },
+            {
+                q: "Your shoes are black, but _________ are brown. (của tôi)",
+                qVi: "Giày của bạn màu đen, nhưng _________ thì màu nâu.",
+                key: ["Possessive pronoun", "First person"],
+                opts: ["I", "me", "my", "mine"],
+                optsVi: ["Tôi (CN)", "Tôi (TN)", "Của tôi (TTSH)", "Cái của tôi (ĐTSH)"],
+                correct: 3,
+                exp: "Đóng vai trò chủ ngữ thay thế cho 'my shoes'. Không có danh từ đi kèm nên phải dùng Đại từ sở hữu <b>mine</b>."
+            },
+            {
+                q: "If you see the students, please give _________ these notebooks.",
+                qVi: "Nếu bạn gặp các học sinh, vui lòng đưa cho _________ những cuốn vở này.",
+                key: ["Object pronoun", "Plural"],
+                opts: ["they", "their", "them", "theirs"],
+                optsVi: ["Họ (CN)", "Của họ (TTSH)", "Họ (Tân ngữ)", "Cái của họ (ĐTSH)"],
+                correct: 2,
+                exp: "Sau động từ 'give' cần Tân ngữ chỉ số nhiều (the students). Đáp án là <b>them</b>."
+            },
+            {
+                q: "My mother is a teacher. _________ students are very hardworking.",
+                qVi: "Mẹ tôi là giáo viên. Học sinh _________ rất chăm chỉ.",
+                key: ["Possessive adjective", "Female"],
+                opts: ["She", "Her", "Hers", "She’s"],
+                optsVi: ["Cô ấy (CN)", "Của cô ấy (TTSH)", "Cái của cô ấy (ĐTSH)", "Cô ấy là"],
+                correct: 1,
+                exp: "Trước danh từ 'students' cần Tính từ sở hữu của người nữ (My mother). Đáp án là <b>Her</b>."
+            },
+            {
+                q: "We have our tickets. Do they have _________? (của họ)",
+                qVi: "Chúng tôi có vé của chúng tôi. Họ có _________ chưa?",
+                key: ["Possessive pronoun", "Plural"],
+                opts: ["they", "them", "their", "theirs"],
+                optsVi: ["Họ (CN)", "Họ (TN)", "Của họ (TTSH)", "Cái của họ (ĐTSH)"],
+                correct: 3,
+                exp: "Đứng cuối câu thay cho 'their tickets'. Cần Đại từ sở hữu <b>theirs</b>."
+            },
+            {
+                q: "We are lost. Can you help _________ find the way home?",
+                qVi: "Chúng tôi bị lạc. Bạn có thể giúp _________ tìm đường về nhà không?",
+                key: ["Object pronoun", "Plural first person"],
+                opts: ["we", "our", "us", "ours"],
+                optsVi: ["Chúng tôi (CN)", "Của chúng tôi (TTSH)", "Chúng tôi (Tân ngữ)", "Cái của chúng tôi (ĐTSH)"],
+                correct: 2,
+                exp: "Sau động từ 'help' cần Tân ngữ. 'We' chuyển thành tân ngữ là <b>us</b>."
+            },
+            {
+                q: "The tree is losing _________ leaves in autumn.",
+                qVi: "Cây đang rụng những chiếc lá _________ vào mùa thu.",
+                key: ["Possessive adjective", "Singular thing"],
+                opts: ["it", "its", "it’s", "their"],
+                optsVi: ["Nó (CN/TN)", "Của nó (TTSH)", "Nó là", "Của chúng (TTSH số nhiều)"],
+                correct: 1,
+                exp: "Trước danh từ 'leaves' cần Tính từ sở hữu của 'The tree' (vật số ít). Đáp án là <b>its</b>."
+            },
+            {
+                q: "This isn't my coat. Is it _________? (của anh ấy)",
+                qVi: "Đây không phải là áo khoác của tôi. Nó là _________ phải không?",
+                key: ["Possessive pronoun", "Male"],
+                opts: ["he", "him", "his", "he’s"],
+                optsVi: ["Anh ấy (CN)", "Anh ấy (TN)", "Của anh ấy (TTSH / ĐTSH)", "Anh ấy là"],
+                correct: 2,
+                exp: "Thay thế cho 'his coat'. Đại từ sở hữu của anh ấy viết giống tính từ sở hữu là <b>his</b>."
+            },
+            {
+                q: "The cat is thirsty. Give _________ some milk, please.",
+                qVi: "Con mèo đang khát. Làm ơn cho _________ chút sữa.",
+                key: ["Object pronoun", "Animal"],
+                opts: ["its", "it", "it’s", "they"],
+                optsVi: ["Của nó (TTSH)", "Nó (Tân ngữ)", "Nó là", "Chúng (CN)"],
+                correct: 1,
+                exp: "Sau động từ 'Give' cần Tân ngữ chỉ con vật số ít. Đáp án là <b>it</b>."
+            },
+            {
+                q: "Jack and I are in the same class. _________ classroom is on the second floor.",
+                qVi: "Jack và tôi học cùng lớp. Phòng học _________ ở tầng hai.",
+                key: ["Possessive adjective", "Plural first person"],
+                opts: ["We", "Us", "Our", "Ours"],
+                optsVi: ["Chúng tôi (CN)", "Chúng tôi (TN)", "Của chúng tôi (TTSH)", "Cái của chúng tôi (ĐTSH)"],
+                correct: 2,
+                exp: "Trước danh từ 'classroom' cần Tính từ sở hữu thay cho 'Jack and I' (We). Đáp án là <b>Our</b>."
+            },
+            {
+                q: "My phone is broken. Can I use _________? (của cô ấy)",
+                qVi: "Điện thoại của tôi bị hỏng. Tôi có thể dùng _________ không?",
+                key: ["Possessive pronoun", "Female"],
+                opts: ["she", "her", "hers", "she’s"],
+                optsVi: ["Cô ấy (CN)", "Cô ấy (TN)/Của cô ấy (TTSH)", "Cái của cô ấy (Đại từ sở hữu)", "Cô ấy là"],
+                correct: 2,
+                exp: "Thay thế cho 'her phone'. Dùng Đại từ sở hữu <b>hers</b>."
+            },
+            {
+                q: "\"Is this Peter’s phone?\" - \"No, _________ left it at home.\"",
+                qVi: "\"Đây có phải điện thoại của Peter không?\" - \"Không, _________ đã để nó ở nhà.\"",
+                key: ["Subject pronoun", "Male"],
+                opts: ["him", "his", "he", "he’s"],
+                optsVi: ["Anh ấy (TN)", "Của anh ấy (TTSH)", "Anh ấy (Chủ ngữ)", "Anh ấy là"],
+                correct: 2,
+                exp: "Chỗ trống làm Chủ ngữ chỉ người nam (Peter). Dùng <b>he</b>."
+            },
+            {
+                q: "\"Where is _________ phone, Linda?\" - \"I think I left it in the car.\"",
+                qVi: "\"Điện thoại _________ ở đâu, Linda?\" - \"Tôi nghĩ tôi đã để nó trong ô tô.\"",
+                key: ["Possessive adjective", "Second person"],
+                opts: ["you", "your", "yours", "you’re"],
+                optsVi: ["Bạn (CN/TN)", "Của bạn (Tính từ sở hữu)", "Cái của bạn (ĐTSH)", "Bạn là"],
+                correct: 1,
+                exp: "Người nói đang hỏi trực tiếp Linda. Trước danh từ 'phone' cần tính từ sở hữu <b>your</b>."
+            },
+            {
+                q: "This cat belongs to my neighbors. It is _________.",
+                qVi: "Con mèo này thuộc về hàng xóm của tôi. Nó là _________.",
+                key: ["Possessive pronoun", "Plural"],
+                opts: ["they", "them", "their", "theirs"],
+                optsVi: ["Họ (CN)", "Họ (TN)", "Của họ (TTSH)", "Cái của họ (Đại từ sở hữu)"],
+                correct: 3,
+                exp: "Thay thế cho 'their cat' (sở hữu của 'neighbors' - số nhiều). Dùng Đại từ sở hữu <b>theirs</b>."
+            },
+            {
+                q: "I am talking to you! Please listen to _________.",
+                qVi: "Tôi đang nói chuyện với bạn! Làm ơn hãy nghe _________ nói.",
+                key: ["Object pronoun", "First person"],
+                opts: ["I", "me", "my", "mine"],
+                optsVi: ["Tôi (CN)", "Tôi (Tân ngữ)", "Của tôi (TTSH)", "Cái của tôi (ĐTSH)"],
+                correct: 1,
+                exp: "Sau giới từ 'to' cần một Tân ngữ tương ứng với chủ ngữ 'I'. Đáp án là <b>me</b>."
+            },
+            {
+                q: "I am doing _________ homework right now.",
+                qVi: "Tôi đang làm bài tập về nhà _________ ngay lúc này.",
+                key: ["Possessive adjective", "First person"],
+                opts: ["I", "me", "my", "mine"],
+                optsVi: ["Tôi (CN)", "Tôi (TN)", "Của tôi (Tính từ sở hữu)", "Cái của tôi (ĐTSH)"],
+                correct: 2,
+                exp: "Trước danh từ 'homework' cần Tính từ sở hữu của 'I'. Đáp án là <b>my</b>."
+            },
+            {
+                q: "That car belongs to us. It is _________.",
+                qVi: "Chiếc xe đó thuộc về chúng tôi. Nó là _________.",
+                key: ["Possessive pronoun", "Plural first person"],
+                opts: ["we", "us", "our", "ours"],
+                optsVi: ["Chúng tôi (CN)", "Chúng tôi (TN)", "Của chúng tôi (TTSH)", "Cái của chúng tôi (Đại từ sở hữu)"],
+                correct: 3,
+                exp: "Thay thế cho 'our car'. Dùng Đại từ sở hữu <b>ours</b>."
+            },
+            {
+                q: "These apples are rotten. Don't eat _________.",
+                qVi: "Những quả táo này đã bị hỏng. Đừng ăn _________.",
+                key: ["Object pronoun", "Plural things"],
+                opts: ["they", "their", "them", "it"],
+                optsVi: ["Chúng (CN)", "Của chúng (TTSH)", "Chúng (Tân ngữ)", "Nó (TN số ít)"],
+                correct: 2,
+                exp: "Sau động từ 'eat' cần Tân ngữ số nhiều thay cho 'These apples'. Đáp án là <b>them</b>."
+            },
+            {
+                q: "The city is famous for _________ ancient buildings.",
+                qVi: "Thành phố nổi tiếng với những tòa nhà cổ của _________.",
+                key: ["Possessive adjective", "Singular thing"],
+                opts: ["its", "it’s", "it", "his"],
+                optsVi: ["Của nó (Tính từ sở hữu)", "Nó là", "Nó (CN/TN)", "Của anh ấy"],
+                correct: 0,
+                exp: "Trước cụm danh từ 'ancient buildings' cần tính từ sở hữu của 'The city' (vật số ít). Đáp án là <b>its</b> (không có phẩy trên)."
+            },
+            {
+                q: "Is this your bag or _________? (của tôi)",
+                qVi: "Đây là túi của bạn hay là _________?",
+                key: ["Possessive pronoun", "First person"],
+                opts: ["I", "me", "my", "mine"],
+                optsVi: ["Tôi (CN)", "Tôi (TN)", "Của tôi (TTSH)", "Cái của tôi (Đại từ sở hữu)"],
+                correct: 3,
+                exp: "Đứng sau liên từ 'or' thay thế cho 'my bag'. Cần dùng Đại từ sở hữu <b>mine</b>."
+            },
+            {
+                q: "Sarah is a nice girl. I really like _________.",
+                qVi: "Sarah là một cô gái tốt. Tôi thực sự rất thích _________.",
+                key: ["Object pronoun", "Female"],
+                opts: ["she", "hers", "her", "him"],
+                optsVi: ["Cô ấy (CN)", "Cái của cô ấy (ĐTSH)", "Cô ấy (Tân ngữ)", "Anh ấy (TN)"],
+                correct: 2,
+                exp: "Sau động từ 'like' cần Tân ngữ chỉ người nữ (Sarah). Đáp án là <b>her</b>."
+            },
+            {
+                q: "My father is washing _________ hands before dinner.",
+                qVi: "Bố tôi đang rửa tay _________ trước bữa tối.",
+                key: ["Possessive adjective", "Male"],
+                opts: ["he", "him", "his", "he’s"],
+                optsVi: ["Anh ấy (CN)", "Anh ấy (TN)", "Của anh ấy (Tính từ sở hữu)", "Anh ấy là"],
+                correct: 2,
+                exp: "Trước danh từ 'hands' cần Tính từ sở hữu chỉ người nam (My father). Đáp án là <b>his</b>."
+            },
+            {
+                q: "I found a hat. I think it is _________. (của bạn)",
+                qVi: "Tôi tìm thấy một chiếc mũ. Tôi nghĩ nó là _________.",
+                key: ["Possessive pronoun", "Second person"],
+                opts: ["you", "your", "yours", "you’re"],
+                optsVi: ["Bạn (CN/TN)", "Của bạn (TTSH)", "Cái của bạn (Đại từ sở hữu)", "Bạn là"],
+                correct: 2,
+                exp: "Thay thế cho 'your hat' ở cuối câu. Dùng Đại từ sở hữu <b>yours</b>."
+            },
+            {
+                q: "My brother and I love pizza. _________ eat it every Friday.",
+                qVi: "Anh trai tôi và tôi rất thích pizza. _________ ăn nó vào mỗi thứ Sáu.",
+                key: ["Subject pronoun", "Plural first person"],
+                opts: ["We", "Us", "Our", "They"],
+                optsVi: ["Chúng tôi (Chủ ngữ)", "Chúng tôi (TN)", "Của chúng tôi (TTSH)", "Họ (CN)"],
+                correct: 0,
+                exp: "Chỗ trống làm Chủ ngữ số nhiều thay cho 'My brother and I' (có chứa ngôi thứ nhất). Dùng <b>We</b>."
+            },
+            {
+                q: "The students are opening _________ books to page 10.",
+                qVi: "Các học sinh đang mở sách _________ ra trang 10.",
+                key: ["Possessive adjective", "Plural"],
+                opts: ["they", "them", "their", "theirs"],
+                optsVi: ["Họ (CN)", "Họ (TN)", "Của họ (Tính từ sở hữu)", "Cái của họ (ĐTSH)"],
+                correct: 2,
+                exp: "Trước danh từ 'books' cần Tính từ sở hữu số nhiều (The students). Đáp án là <b>their</b>."
+            },
+            {
+                q: "Her hair is long, but _________ is short. (của tôi)",
+                qVi: "Tóc cô ấy dài, nhưng _________ thì ngắn.",
+                key: ["Possessive pronoun", "First person"],
+                opts: ["I", "me", "my", "mine"],
+                optsVi: ["Tôi (CN)", "Tôi (TN)", "Của tôi (TTSH)", "Cái của tôi (Đại từ sở hữu)"],
+                correct: 3,
+                exp: "Làm chủ ngữ trong vế thứ hai, thay thế cho 'my hair'. Dùng Đại từ sở hữu <b>mine</b>."
+            },
+            {
+                q: "Mr. Brown is our teacher. He teaches _________ English.",
+                qVi: "Thầy Brown là giáo viên của chúng tôi. Thầy dạy _________ tiếng Anh.",
+                key: ["Object pronoun", "Plural first person"],
+                opts: ["we", "our", "us", "ours"],
+                optsVi: ["Chúng tôi (CN)", "Của chúng tôi (TTSH)", "Chúng tôi (Tân ngữ)", "Cái của chúng tôi (ĐTSH)"],
+                correct: 2,
+                exp: "Sau động từ 'teaches' cần Tân ngữ chỉ người học (our teacher -> us). Đáp án là <b>us</b>."
+            },
+            {
+                q: "Look at that bird! _________ feathers are colorful.",
+                qVi: "Nhìn con chim kia kìa! Lông _________ rất nhiều màu sắc.",
+                key: ["Possessive adjective", "Animal"],
+                opts: ["It", "Its", "It’s", "Their"],
+                optsVi: ["Nó (CN/TN)", "Của nó (Tính từ sở hữu)", "Nó là", "Của chúng (TTSH số nhiều)"],
+                correct: 1,
+                exp: "Trước danh từ 'feathers' cần Tính từ sở hữu chỉ động vật số ít (that bird). Đáp án là <b>Its</b>."
+            },
+            {
+                q: "Their garden is big, but _________ is small. (của chúng tôi)",
+                qVi: "Vườn của họ lớn, nhưng _________ thì nhỏ.",
+                key: ["Possessive pronoun", "Plural first person"],
+                opts: ["we", "us", "our", "ours"],
+                optsVi: ["Chúng tôi (CN)", "Chúng tôi (TN)", "Của chúng tôi (TTSH)", "Cái của chúng tôi (Đại từ sở hữu)"],
+                correct: 3,
+                exp: "Làm chủ ngữ thay thế cho 'our garden'. Dùng Đại từ sở hữu <b>ours</b>."
+            },
+            {
+                q: "\"Who are those people?\" - \"I don't know _________.\"",
+                qVi: "\"Những người kia là ai?\" - \"Tôi không biết _________.\"",
+                key: ["Object pronoun", "Plural"],
+                opts: ["they", "them", "their", "theirs"],
+                optsVi: ["Họ (CN)", "Họ (Tân ngữ)", "Của họ (TTSH)", "Cái của họ (ĐTSH)"],
+                correct: 1,
+                exp: "Sau động từ 'know' cần Tân ngữ số nhiều thay cho 'those people'. Đáp án là <b>them</b>."
+            },
+            {
+                q: "We love _________ country very much.",
+                qVi: "Chúng tôi rất yêu đất nước _________.",
+                key: ["Possessive adjective", "Plural first person"],
+                opts: ["we", "us", "our", "ours"],
+                optsVi: ["Chúng tôi (CN)", "Chúng tôi (TN)", "Của chúng tôi (Tính từ sở hữu)", "Cái của chúng tôi (ĐTSH)"],
+                correct: 2,
+                exp: "Trước danh từ 'country' cần Tính từ sở hữu tương ứng với 'We'. Đáp án là <b>our</b>."
+            },
+            {
+                q: "These aren't my keys. I gave _________ to the manager. (những chiếc của tôi)",
+                qVi: "Đây không phải chìa khóa của tôi. Tôi đã đưa _________ cho người quản lý.",
+                key: ["Possessive pronoun", "Object position"],
+                opts: ["I", "me", "my", "mine"],
+                optsVi: ["Tôi (CN)", "Tôi (TN)", "Của tôi (TTSH)", "Cái của tôi (Đại từ sở hữu)"],
+                correct: 3,
+                exp: "Đóng vai trò tân ngữ thay thế cho 'my keys'. Cần dùng Đại từ sở hữu <b>mine</b>."
+            },
+            {
+                q: "My computer is too slow. I need to upgrade _________.",
+                qVi: "Máy tính của tôi quá chậm. Tôi cần nâng cấp _________.",
+                key: ["Object pronoun", "Singular thing"],
+                opts: ["it", "its", "it’s", "they"],
+                optsVi: ["Nó (Tân ngữ)", "Của nó (TTSH)", "Nó là", "Chúng (CN)"],
+                correct: 0,
+                exp: "Sau động từ 'upgrade' cần Tân ngữ thay thế cho vật số ít (My computer). Đáp án là <b>it</b>."
+            },
+            {
+                q: "He is a doctor. _________ name is Dr. Smith.",
+                qVi: "Anh ấy là bác sĩ. Tên _________ là Bác sĩ Smith.",
+                key: ["Possessive adjective", "Male"],
+                opts: ["He", "Him", "His", "He’s"],
+                optsVi: ["Anh ấy (CN)", "Anh ấy (TN)", "Của anh ấy (Tính từ sở hữu)", "Anh ấy là"],
+                correct: 2,
+                exp: "Trước danh từ 'name' cần Tính từ sở hữu tương ứng với 'He'. Đáp án là <b>His</b>."
+            },
+            {
+                q: "This seat is _________, and that one is yours. (của tôi)",
+                qVi: "Chỗ ngồi này là _________, và chỗ kia là của bạn.",
+                key: ["Possessive pronoun", "First person"],
+                opts: ["I", "me", "my", "mine"],
+                optsVi: ["Tôi (CN)", "Tôi (TN)", "Của tôi (TTSH)", "Cái của tôi (Đại từ sở hữu)"],
+                correct: 3,
+                exp: "Thay thế cho 'my seat'. Không có danh từ theo sau nên dùng Đại từ sở hữu <b>mine</b>."
+            },
+            {
+                q: "Please don't wait for Jack and me. _________ will arrive late.",
+                qVi: "Xin đừng đợi Jack và tôi. _________ sẽ đến muộn.",
+                key: ["Subject pronoun", "Plural first person"],
+                opts: ["We", "Us", "Our", "They"],
+                optsVi: ["Chúng tôi (Chủ ngữ)", "Chúng tôi (TN)", "Của chúng tôi (TTSH)", "Họ (CN)"],
+                correct: 0,
+                exp: "Làm Chủ ngữ thay thế cho nhóm người có chứa người nói 'Jack and me'. Đáp án là <b>We</b>."
+            },
+            {
+                q: "Does she like _________ new job?",
+                qVi: "Cô ấy có thích công việc mới _________ không?",
+                key: ["Possessive adjective", "Female"],
+                opts: ["she", "her", "hers", "she’s"],
+                optsVi: ["Cô ấy (CN)", "Của cô ấy (Tính từ sở hữu)", "Cái của cô ấy (ĐTSH)", "Cô ấy là"],
+                correct: 1,
+                exp: "Trước cụm danh từ 'new job' cần Tính từ sở hữu của 'she'. Đáp án là <b>her</b>."
+            },
+            {
+                q: "He doesn't have a camera, so he borrowed _________. (của chúng tôi)",
+                qVi: "Anh ấy không có máy ảnh, vì vậy anh ấy đã mượn _________.",
+                key: ["Possessive pronoun", "Plural first person"],
+                opts: ["we", "us", "our", "ours"],
+                optsVi: ["Chúng tôi (CN)", "Chúng tôi (TN)", "Của chúng tôi (TTSH)", "Cái của chúng tôi (Đại từ sở hữu)"],
+                correct: 3,
+                exp: "Làm tân ngữ thay thế cho 'our camera'. Không có danh từ đi kèm nên dùng Đại từ sở hữu <b>ours</b>."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1;
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                // Thêm vào sidebar
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            // Hiện dịch nghĩa cho từng nút lựa chọn
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+            
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Bật nút Dịch Nghĩa
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
