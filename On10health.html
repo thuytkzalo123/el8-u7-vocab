@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cloze Test: Technology</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-main: #202124;
+            --border: #dadce0;
+            --orange: #f59e0b;
+            --green: #1e8e3e;
+            --red: #d93025;
+            --header-height: 60px;
+            --panel-height: 50vh; 
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--secondary-bg);
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden; 
+        }
+
+        /* --- HEADER MOBILE --- */
+        .mobile-header {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .menu-btn { font-size: 1.4rem; color: #555; padding: 5px 10px; cursor: pointer; }
+        .mobile-score { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 300px;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            height: 100%; flex-shrink: 0;
+            z-index: 200; 
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header h3 { margin: 0; color: var(--primary); }
+        .close-sidebar-btn { display: none; font-size: 1.2rem; cursor: pointer; }
+        .stats-area { padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid var(--border); }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .stat-value { font-weight: 800; color: var(--primary); }
+        .question-grid-container { flex: 1; padding: 20px; overflow-y: auto; }
+        .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .q-cell {
+            aspect-ratio: 1; background: var(--white); border: 1px solid var(--border);
+            border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-weight: 600; color: #666; transition: 0.2s;
+        }
+        .q-cell.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-cell.done { background: #e6f4ea; color: var(--green); border-color: var(--green); }
+        .q-cell.wrong { background: #fce8e6; color: var(--red); border-color: var(--red); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            display: flex; justify-content: center;
+            position: relative;
+            scroll-behavior: smooth; 
+        }
+        .content-wrapper { display: flex; width: 100%; max-width: 1200px; gap: 25px; }
+
+        /* TEXT PANEL */
+        .text-panel {
+            flex: 2;
+            background: var(--white); border-radius: 12px; padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            height: fit-content;
+            line-height: 2.0; font-size: 1.15rem; color: #333;
+        }
+        
+        .gap {
+            display: inline-block; min-width: 40px; border-bottom: 2px solid #ccc;
+            color: var(--primary); font-weight: 700; text-align: center;
+            cursor: pointer; padding: 2px 6px; transition: 0.2s; border-radius: 4px;
+        }
+        .gap.active-gap { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .gap.correct { color: var(--green); border-bottom-color: var(--green); }
+        .gap.wrong { color: var(--red); border-bottom-color: var(--red); } 
+        .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
+
+        /* QUESTION PANEL */
+        .question-panel {
+            flex: 1; min-width: 350px;
+            position: sticky; top: 0; height: fit-content;
+        }
+        .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        /* 1. OPTIONS (TOP) */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .option-btn {
+            padding: 12px 15px; border: 1px solid var(--border); background: white;
+            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .option-label { font-weight: bold; color: #555; min-width: 25px; } 
+        .option-text { flex: 1; } 
+        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
+        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+
+        /* 2. HINTS (MIDDLE) */
+        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #eee; }
+        .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
+        .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+        .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
+        .hint-content.show { display: block; }
+
+        /* 3. TRANSLATION (BOTTOM) */
+        .trans-toggle-btn {
+            width: 100%; margin-top: 5px; padding: 10px;
+            background-color: #f8f9fa; border: 1px dashed var(--primary);
+            color: var(--primary); border-radius: 8px; font-weight: 600;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .trans-toggle-btn:hover { background-color: #e8f0fe; }
+        .trans-box {
+            margin-top: 10px; padding: 12px;
+            background-color: #eef7ff; border-left: 4px solid var(--primary);
+            border-radius: 4px; color: #333; font-style: italic; font-size: 0.95rem;
+            line-height: 1.5; display: none; animation: fadeIn 0.3s ease;
+        }
+        .trans-box.show { display: block; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; padding-top: var(--header-height); }
+            .mobile-header { display: flex; }
+
+            .sidebar {
+                position: fixed; left: 0; top: 0; bottom: 0;
+                width: 85%; max-width: 320px;
+                transform: translateX(-100%);
+                box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .close-sidebar-btn { display: block; }
+
+            .main-content {
+                display: block; width: 100%; padding: 0;
+                height: calc(100vh - var(--header-height)); 
+            }
+            .content-wrapper { flex-direction: column; width: 100%; }
+            
+            .text-panel { 
+                width: 100%; border-radius: 0; box-shadow: none; 
+                padding: 20px; 
+                padding-bottom: 80vh !important; 
+            }
+
+            .question-panel {
+                position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+                width: 100%; z-index: 150;
+                transform: translateY(120%);
+                transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
+            }
+            .question-panel.active { transform: translateY(0); }
+
+            .q-card {
+                border-radius: 20px 20px 0 0; 
+                padding: 15px 20px 20px 20px;
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+                height: var(--panel-height); 
+                max-height: var(--panel-height);
+                overflow-y: auto;
+                border-top: 1px solid #ddd;
+                position: relative;
+            }
+
+            .drag-handle {
+                width: 40px; height: 5px; background: #e0e0e0;
+                border-radius: 10px; margin: 0 auto 10px auto;
+            }
+
+            .mobile-collapse-btn {
+                display: flex !important; justify-content: center; align-items: center;
+                width: 28px; height: 28px; background: #f1f3f4; border-radius: 50%;
+                position: absolute; right: 15px; top: 12px;
+                cursor: pointer; color: #555;
+            }
+
+            #empty-state { display: none !important; }
+        }
+
+        .mobile-collapse-btn { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <div class="menu-btn" onclick="app.toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="mobile-score">
+            <span id="m-score">0</span> / <span id="m-max">0</span>
+        </div>
+        <div class="menu-btn" onclick="app.scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" onclick="app.toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-book-open"></i> Cloze Test</h3>
+            <i class="fas fa-times close-sidebar-btn" onclick="app.toggleSidebar()"></i>
+        </div>
+        <div class="stats-area">
+            <div class="stat-row">
+                <span>Điểm số:</span>
+                <span class="stat-value"><span id="current-score">0</span> / <span id="max-score">0</span></span>
+            </div>
+            <div style="font-size: 0.85rem; color: #666; margin-top:5px;">
+                * 5đ/câu. Trừ 1đ/gợi ý.
+            </div>
+        </div>
+        <div class="question-grid-container">
+            <div style="font-weight:bold; margin-bottom:10px;">Câu hỏi</div>
+            <div id="sidebar-grid" class="q-grid"></div>
+        </div>
+        <div style="padding: 20px; border-top:1px solid #eee;">
+            <button onclick="app.nextExercise()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">
+                Bài tiếp theo <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="text-panel">
+                <h2 id="ex-title" style="margin-top:0; color:var(--primary); font-size:1.3rem; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">Loading...</h2>
+                <div id="ex-content"></div>
+            </div>
+
+            <div class="question-panel" id="question-panel">
+                <div class="q-card" id="q-card-area">
+                    <div class="drag-handle"></div>
+                    <div class="mobile-collapse-btn" onclick="app.closeQuestionPanel()">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-right: 40px;">
+                        <h3 style="margin:0; font-size:1.1rem;">Câu <span id="q-number">...</span></h3>
+                        <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">5 Points</span>
+                    </div>
+
+                    <div class="options-grid" id="options-container"></div>
+
+                    <div class="hints-list" id="hints-container"></div>
+
+                    <div id="translation-section">
+                        <button class="trans-toggle-btn" onclick="app.toggleTranslation()">
+                            <i class="fas fa-language"></i> Dịch câu này
+                        </button>
+                        <div id="trans-content" class="trans-box"></div>
+                    </div>
+
+                </div>
+
+                <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
+                    <i class="fas fa-mouse-pointer" style="font-size:2rem; margin-bottom:10px;"></i>
+                    <p>Chọn ô trống để bắt đầu</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- DỮ LIỆU BÀI TẬP ĐÃ CẬP NHẬT (THINKING LOGIC) ---
+// --- DỮ LIỆU CẬP NHẬT: 6 BÀI CLOZE TEST MỚI NHẤT ---
+        const exercises = [
+            {
+                id: 1,
+                title: "Healthy Living for Teens",
+                content: `
+                    <h3 style="margin-top:0">Healthy Living for Teens</h3>
+                    <p>Dear students, Our English Club is going to organize a special event called "Healthy Living for Teens" this Saturday morning at the school hall.</p>
+                    <p><span id="gap-1-17" class="gap" onclick="app.selectQuestion(1, 17)">(17) ______</span> 
+                    event is designed to help students understand the importance of healthy 
+                    <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
+                    in daily life. There will be short talks, exciting games, a quiz about health, and a "Healthy Recipe" contest.</p>
+                    <p>All students are encouraged to take part, share your creative ideas, and enjoy learning English in a fun way. Let's stay active, positive, and live 
+                    <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span> 
+                    together!</p>
+                `,
+                questions: [
+                    { 
+                        id: 17, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "... sự kiện này được thiết kế để giúp học sinh hiểu tầm quan trọng...", 
+                        options: [
+                            {id: "A", text: "An"}, 
+                            {id: "B", text: "A"}, 
+                            {id: "C", text: "The"}, 
+                            {id: "D", text: "No article"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Articles (Mạo từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'a special event' (câu trước) -> '... event' (câu này).", 
+                            "<strong>Logic (Tư duy):</strong> Khi danh từ 'event' được nhắc đến lần thứ hai và đã xác định rõ ràng, ta dùng mạo từ nào?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. một (trước nguyên âm)<br>B. một (trước phụ âm)<br>C. cái/sự kiện đó (xác định)<br>D. không dùng mạo từ"
+                        ] 
+                    },
+                    { 
+                        id: 18, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "...hiểu được tầm quan trọng của những ... lành mạnh trong cuộc sống hàng ngày.", 
+                        options: [
+                            {id: "A", text: "hobbies"}, 
+                            {id: "B", text: "interests"}, 
+                            {id: "C", text: "habits"}, 
+                            {id: "D", text: "practices"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation (Kết hợp từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'healthy ...', 'in daily life'.", 
+                            "<strong>Logic (Tư duy):</strong> Danh từ nào thường ghép với 'healthy' để chỉ những nếp sống, lặp đi lặp lại trong 'daily life' mang lại lợi ích cho sức khỏe?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. sở thích<br>B. mối quan tâm<br>C. thói quen<br>D. thực tiễn/hoạt động"
+                        ] 
+                    },
+                    { 
+                        id: 19, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Hãy sống năng động, tích cực và sống ... cùng nhau!", 
+                        options: [
+                            {id: "A", text: "healthily"}, 
+                            {id: "B", text: "unhealthy"}, 
+                            {id: "C", text: "healthy"}, 
+                            {id: "D", text: "unhealthily"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Word Form (Từ loại).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'live' (Động từ thường).", 
+                            "<strong>Logic (Tư duy):</strong> Từ loại nào (Tính từ hay Trạng từ) được dùng để bổ nghĩa trực tiếp cho động từ hành động 'live'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. một cách lành mạnh (Adv)<br>B. không khỏe mạnh (Adj)<br>C. khỏe mạnh (Adj)<br>D. một cách không lành mạnh (Adv)"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Competitive World & Stress",
+                content: `
+                    <h3 style="margin-top:0">Competitive World & Stress</h3>
+                    <p>Teenagers today live in a very competitive world. It is more important than ever to succeed at school if you hope to 
+                    <span id="gap-2-20" class="gap" onclick="app.selectQuestion(2, 20)">(20) ______</span> 
+                    a chance in the job market afterwards.</p>
+                    <p>It's no wonder that many young people worry 
+                    <span id="gap-2-21" class="gap" onclick="app.selectQuestion(2, 21)">(21) ______</span> 
+                    letting down their parents, their peers and themselves... The result is that young people 
+                    <span id="gap-2-22" class="gap" onclick="app.selectQuestion(2, 22)">(22) ______</span> 
+                    from stress.</p>
+                    <p>There are different ways of dealing with stress... There are better ways to deal with stress: physical exercise is a good release for stress 
+                    <span id="gap-2-23" class="gap" onclick="app.selectQuestion(2, 23)">(23) ______</span> 
+                    it increases certain chemicals in the brain which calm you down. You have to get enough sleep to avoid stress and to stay healthy and full of 
+                    <span id="gap-2-24" class="gap" onclick="app.selectQuestion(2, 24)">(24) ______</span>.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "...nếu bạn hy vọng ... cơ hội trong thị trường việc làm sau này.", 
+                        options: [
+                            {id: "A", text: "wonder"}, 
+                            {id: "B", text: "have"}, 
+                            {id: "C", text: "doing"}, 
+                            {id: "D", text: "take on"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> '... a chance'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào luôn đi kèm với cụm từ 'a chance' để mang ý nghĩa là 'có được cơ hội'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tự hỏi<br>B. có<br>C. đang làm<br>D. đảm nhận"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "Không có gì ngạc nhiên khi nhiều người trẻ lo lắng ... việc làm thất vọng cha mẹ...", 
+                        options: [
+                            {id: "A", text: "of"}, 
+                            {id: "B", text: "at"}, 
+                            {id: "C", text: "about"}, 
+                            {id: "D", text: "with"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Preposition (Giới từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'worry'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ 'worry' luôn bắt buộc đi kèm với giới từ nào khi muốn nói về việc lo âu về điều gì đó?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. của<br>B. tại<br>C. về<br>D. với"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Kết quả là những người trẻ tuổi ... vì căng thẳng.", 
+                        options: [
+                            {id: "A", text: "suffer"}, 
+                            {id: "B", text: "please"}, 
+                            {id: "C", text: "balance"}, 
+                            {id: "D", text: "cope with"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Phrasal Verbs / Prepositions.", 
+                            "<strong>Signal (Dấu hiệu):</strong> '... from stress'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào trong số các đáp án luôn kết hợp với giới từ 'from' để diễn tả việc chịu đựng một chứng bệnh hoặc áp lực?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. chịu đựng (đi với from)<br>B. làm hài lòng<br>C. cân bằng<br>D. đối phó với"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "Tập thể dục là một cách giải tỏa căng thẳng tốt ... nó làm tăng một số hóa chất trong não giúp bạn bình tĩnh lại.", 
+                        options: [
+                            {id: "A", text: "although"}, 
+                            {id: "B", text: "unless"}, 
+                            {id: "C", text: "because"}, 
+                            {id: "D", text: "because of"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Conjunction (Liên từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'it increases...' (Clause).", 
+                            "<strong>Logic (Tư duy):</strong> Mệnh đề phía sau giải thích lý do cho nhận định phía trước. Hơn nữa, sau ô trống là một mệnh đề (S+V), vậy ta dùng liên từ nào phù hợp?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. mặc dù<br>B. trừ khi<br>C. bởi vì (+ Clause)<br>D. bởi vì (+ Noun phrase)"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "Bạn phải ngủ đủ giấc để tránh căng thẳng và giữ sức khỏe cũng như tràn đầy ...", 
+                        options: [
+                            {id: "A", text: "obstacle"}, 
+                            {id: "B", text: "effort"}, 
+                            {id: "C", text: "assignment"}, 
+                            {id: "D", text: "energy"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary / Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'stay healthy', 'full of ...'.", 
+                            "<strong>Logic (Tư duy):</strong> Danh từ nào thường đi sau cụm 'full of' để miêu tả một cơ thể khỏe mạnh, năng động sau khi đã 'get enough sleep'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. trở ngại<br>B. nỗ lực<br>C. bài tập<br>D. năng lượng"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Healthy Lifestyle Campaign",
+                content: `
+                    <h3 style="margin-top:0">Healthy Lifestyle Campaign</h3>
+                    <p>Join us for a Healthy Lifestyle Campaign at our school. Throughout the month, we'll be organizing various activities and initiatives to promote 
+                    <span id="gap-3-20" class="gap" onclick="app.selectQuestion(3, 20)">(20) ______</span> 
+                    and mental well-being.</p>
+                    <p>On the campaign, you can engage 
+                    <span id="gap-3-21" class="gap" onclick="app.selectQuestion(3, 21)">(21) ______</span> 
+                    interactive workshops, fitness classes, and awareness sessions that focus on the importance of maintaining a healthy lifestyle. These activities aim to enhance 
+                    <span id="gap-3-22" class="gap" onclick="app.selectQuestion(3, 22)">(22) ______</span> 
+                    about the benefits of exercise, proper nutrition, and stress management.</p>
+                    <p><span id="gap-3-23" class="gap" onclick="app.selectQuestion(3, 23)">(23) ______</span> 
+                    you want to get more involved, keep in touch with our campaign coordinator who will provide more information on upcoming events and guide you on how to adopt 
+                    <span id="gap-3-24" class="gap" onclick="app.selectQuestion(3, 24)">(24) ______</span>.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "...để thúc đẩy sức khỏe ... và tinh thần.", 
+                        options: [
+                            {id: "A", text: "physic"}, 
+                            {id: "B", text: "physically"}, 
+                            {id: "C", text: "physics"}, 
+                            {id: "D", text: "physical"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Word Form (Từ loại).", 
+                            "<strong>Signal (Dấu hiệu):</strong> '... and mental well-being'.", 
+                            "<strong>Logic (Tư duy):</strong> Từ cần điền phải đồng cấp với tính từ 'mental' (do có chữ 'and'). Ta cần loại từ gì ở đây?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. thuốc xổ (từ cổ)<br>B. về mặt thể chất (Adv)<br>C. vật lý học (N)<br>D. thuộc về thể chất (Adj)"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Trong chiến dịch, bạn có thể tham gia ... các hội thảo tương tác...", 
+                        options: [
+                            {id: "A", text: "in"}, 
+                            {id: "B", text: "on"}, 
+                            {id: "C", text: "at"}, 
+                            {id: "D", text: "to"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Preposition.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'engage'.", 
+                            "<strong>Logic (Tư duy):</strong> Giới từ nào luôn đi kèm sau động từ 'engage' để mang nghĩa tham gia vào hoạt động nào đó?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. trong/vào<br>B. trên<br>C. tại<br>D. tới"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Các hoạt động này nhằm mục đích nâng cao ... về lợi ích của việc tập thể dục...", 
+                        options: [
+                            {id: "A", text: "awareness"}, 
+                            {id: "B", text: "supporting"}, 
+                            {id: "C", text: "investment"}, 
+                            {id: "D", text: "education"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'enhance', 'about'.", 
+                            "<strong>Logic (Tư duy):</strong> Danh từ nào thường đi liền với 'enhance' và giới từ 'about' để nói về sự hiểu biết của con người về một vấn đề?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. nhận thức<br>B. việc hỗ trợ<br>C. sự đầu tư<br>D. giáo dục"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "... bạn muốn tham gia nhiều hơn, hãy giữ liên lạc với điều phối viên...", 
+                        options: [
+                            {id: "A", text: "And"}, 
+                            {id: "B", text: "But"}, 
+                            {id: "C", text: "If"}, 
+                            {id: "D", text: "Although"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Conjunction (Liên từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'you want to get more involved', 'keep in touch'.", 
+                            "<strong>Logic (Tư duy):</strong> Liên từ nào dùng để tạo ra một câu điều kiện (mệnh đề If)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Và<br>B. Nhưng<br>C. Nếu<br>D. Mặc dù"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "...hướng dẫn bạn cách áp dụng một lối sống lành mạnh hơn.", 
+                        options: [
+                            {id: "A", text: "a lifestyle healthier"}, 
+                            {id: "B", text: "a health lifestyle"}, 
+                            {id: "C", text: "lifestyle health"}, 
+                            {id: "D", text: "a healthier lifestyle"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Word Order (Trật tự từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'lifestyle' (N), 'healthier' (Adj).", 
+                            "<strong>Logic (Tư duy):</strong> Trong ngữ pháp tiếng Anh, Tính từ bổ nghĩa ('healthier') phải đứng trước hay đứng sau Danh từ ('lifestyle')?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. (Sai trật tự)<br>B. (Sai từ loại)<br>C. (Sai trật tự)<br>D. một lối sống lành mạnh hơn"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Young People's Diets",
+                content: `
+                    <h3 style="margin-top:0">Young People's Diets</h3>
+                    <p>Many health experts believe that children and young people today are more unhealthy than they used to be. So why has this happened? One reason is bad eating habits. Lots of young people don't have a healthy diet.</p>
+                    <p>They eat too 
+                    <span id="gap-4-23" class="gap" onclick="app.selectQuestion(4, 23)">(23) ______</span> 
+                    fast food like hamburgers and pizza and not enough fruit and vegetables. 
+                    <span id="gap-4-24" class="gap" onclick="app.selectQuestion(4, 24)">(24) ______</span> 
+                    the US, many children have been eating fast food regularly since they were very young.</p>
+                    <p>In fact, almost one-third of American children aged four to nineteen have been eating fast food nearly all the time. They also don't 
+                    <span id="gap-4-25" class="gap" onclick="app.selectQuestion(4, 25)">(25) ______</span> 
+                    exercise and spend too much their time watching TV, surfing the Internet or playing computer games.</p>
+                    <p><span id="gap-4-26" class="gap" onclick="app.selectQuestion(4, 26)">(26) ______</span> 
+                    how can you change your habits if you have been following an unhealthy lifestyle for a long time? First, change your 
+                    <span id="gap-4-27" class="gap" onclick="app.selectQuestion(4, 27)">(27) ______</span> 
+                    and eat more fruit and vegetables. Next, find an activity you enjoy.</p>
+                `,
+                questions: [
+                    { 
+                        id: 23, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "Họ ăn quá ... thức ăn nhanh như hamburger và pizza...", 
+                        options: [
+                            {id: "A", text: "many"}, 
+                            {id: "B", text: "more"}, 
+                            {id: "C", text: "the most"}, 
+                            {id: "D", text: "much"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Quantifiers (Lượng từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'too ...', 'fast food' (Uncountable Noun).", 
+                            "<strong>Logic (Tư duy):</strong> Lượng từ nào kết hợp với 'too' để đi trước danh từ không đếm được như 'fast food'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. nhiều (đếm được)<br>B. nhiều hơn<br>C. nhiều nhất<br>D. nhiều (không đếm được)"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "... Hoa Kỳ, nhiều trẻ em đã thường xuyên ăn thức ăn nhanh...", 
+                        options: [
+                            {id: "A", text: "On"}, 
+                            {id: "B", text: "In"}, 
+                            {id: "C", text: "At"}, 
+                            {id: "D", text: "From"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Preposition of Place.", 
+                            "<strong>Signal (Dấu hiệu):</strong> '... the US' (Country).", 
+                            "<strong>Logic (Tư duy):</strong> Giới từ nào luôn được sử dụng khi đứng trước tên của một quốc gia, thành phố?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. trên<br>B. trong / ở<br>C. tại<br>D. từ"
+                        ] 
+                    },
+                    { 
+                        id: 25, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Họ cũng không ... tập thể dục và dành quá nhiều thời gian xem TV...", 
+                        options: [
+                            {id: "A", text: "do"}, 
+                            {id: "B", text: "play"}, 
+                            {id: "C", text: "make"}, 
+                            {id: "D", text: "bring"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> '... exercise'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào luôn đi chung với 'exercise' để mô tả hành động rèn luyện thể chất?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tập / làm<br>B. chơi<br>C. tạo ra<br>D. mang lại"
+                        ] 
+                    },
+                    { 
+                        id: 26, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "...vậy làm thế nào bạn có thể thay đổi thói quen của mình nếu...", 
+                        options: [
+                            {id: "A", text: "And"}, 
+                            {id: "B", text: "So"}, 
+                            {id: "C", text: "However"}, 
+                            {id: "D", text: "Because"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Discourse Markers (Từ nối).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'how can you change your habits'.", 
+                            "<strong>Logic (Tư duy):</strong> Sau khi nêu ra vấn đề ở câu trước, từ nối nào hay được dùng để chuyển tiếp sang một câu hỏi tìm giải pháp?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Và<br>B. Vậy thì / Vì vậy<br>C. Tuy nhiên<br>D. Bởi vì"
+                        ] 
+                    },
+                    { 
+                        id: 27, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "Đầu tiên, hãy thay đổi ... của bạn và ăn nhiều trái cây và rau hơn.", 
+                        options: [
+                            {id: "A", text: "menu"}, 
+                            {id: "B", text: "diet"}, 
+                            {id: "C", text: "ingredients"}, 
+                            {id: "D", text: "recipes"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'eat more fruit and vegetables'.", 
+                            "<strong>Logic (Tư duy):</strong> Từ nào chỉ tổng thể thói quen, chế độ ăn uống hàng ngày của một người?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. thực đơn<br>B. chế độ ăn uống<br>C. nguyên liệu<br>D. công thức nấu ăn"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "Well-Balanced Life",
+                content: `
+                    <h3 style="margin-top:0">Well-Balanced Life</h3>
+                    <p>When I was at school, I had to learn how to have a well-balanced life in order to reduce stress and anxiety. Here are some of the typical things I did. Firstly, I managed my time properly.</p>
+                    <p><span id="gap-5-20" class="gap" onclick="app.selectQuestion(5, 20)">(20) ______</span> 
+                    I started to plan my schedule, made a weekly work list and gave priority to some of my work. This helped me concentrate my efforts on my most important tasks.</p>
+                    <p><span id="gap-5-21" class="gap" onclick="app.selectQuestion(5, 21)">(21) ______</span> 
+                    I communicated with my family, friends, and teachers about my busy schedule and problems, so they would offer me additional support.</p>
+                    <p>I also took breaks appropriately because they helped me keep away from stress and anxiety and gave my brain a rest and improved my 
+                    <span id="gap-5-22" class="gap" onclick="app.selectQuestion(5, 22)">(22) ______</span>. 
+                    Finally, I looked after my 
+                    <span id="gap-5-23" class="gap" onclick="app.selectQuestion(5, 23)">(23) ______</span> 
+                    I got at least eight hours of sleep a day. I played football with my classmates twice a week and went for a walk with my grandparents early every morning.</p>
+                    <p>Besides, I also tried to 
+                    <span id="gap-5-24" class="gap" onclick="app.selectQuestion(5, 24)">(24) ______</span> 
+                    a healthy diet. I ate a lot of fruit and vegetables. I ate little fattening foods and avoided junk foods like chips, cookies, pizza, etc.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "... tôi bắt đầu lên kế hoạch cho lịch trình của mình...", 
+                        options: [
+                            {id: "A", text: "however"}, 
+                            {id: "B", text: "therefore"}, 
+                            {id: "C", text: "but"}, 
+                            {id: "D", text: "because"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Linking Words.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'managed my time properly' (Nguyên nhân) -> 'started to plan' (Kết quả).", 
+                            "<strong>Logic (Tư duy):</strong> Từ nối nào diễn tả kết quả của việc cố gắng 'manage time properly'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tuy nhiên<br>B. do đó / vì vậy<br>C. nhưng<br>D. bởi vì"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "..., tôi giao tiếp với gia đình, bạn bè và giáo viên về lịch trình bận rộn...", 
+                        options: [
+                            {id: "A", text: "With"}, 
+                            {id: "B", text: "For"}, 
+                            {id: "C", text: "By"}, 
+                            {id: "D", text: "In addition"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Transition Words.", 
+                            "<strong>Signal (Dấu hiệu):</strong> Previous action: 'managed my time'. Next action: 'communicated with my family'.", 
+                            "<strong>Logic (Tư duy):</strong> Cụm từ nào dùng để thêm một thông tin, một hành động mới vào chuỗi các sự việc đang liệt kê?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Với<br>B. Cho<br>C. Bằng cách<br>D. Thêm vào đó"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "...giúp não bộ nghỉ ngơi và cải thiện ... của tôi.", 
+                        options: [
+                            {id: "A", text: "happy"}, 
+                            {id: "B", text: "happier"}, 
+                            {id: "C", text: "happiness"}, 
+                            {id: "D", text: "mood"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Noun Vocabulary.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'improved my ...'.", 
+                            "<strong>Logic (Tư duy):</strong> Nghỉ ngơi sẽ giúp cải thiện trạng thái cảm xúc tạm thời của bạn. Danh từ nào diễn tả tâm trạng?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. vui vẻ (Adj)<br>B. vui hơn (Adj-er)<br>C. sự hạnh phúc (N)<br>D. tâm trạng (N)"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "Cuối cùng, tôi chăm sóc ... tôi ngủ ít nhất tám tiếng một ngày.", 
+                        options: [
+                            {id: "A", text: "healthy diet"}, 
+                            {id: "B", text: "junk foods"}, 
+                            {id: "C", text: "physical health"}, 
+                            {id: "D", text: "make sure"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary Context.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'sleep', 'played football', 'went for a walk'.", 
+                            "<strong>Logic (Tư duy):</strong> Ngủ đủ giấc và chơi thể thao là các hoạt động giúp bảo vệ khía cạnh nào của cơ thể?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. chế độ ăn lành mạnh<br>B. đồ ăn vặt<br>C. sức khỏe thể chất<br>D. đảm bảo"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "Bên cạnh đó, tôi cũng cố gắng ... một chế độ ăn uống lành mạnh.", 
+                        options: [
+                            {id: "A", text: "take part"}, 
+                            {id: "B", text: "paticipate"}, 
+                            {id: "C", text: "be careful"}, 
+                            {id: "D", text: "maintain"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation / Verb Choice.", 
+                            "<strong>Signal (Dấu hiệu):</strong> '... a healthy diet'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào có nghĩa là 'duy trì' một thứ gì đó ở trạng thái ổn định lâu dài (như chế độ ăn uống)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tham gia<br>B. tham gia<br>C. cẩn thận<br>D. duy trì"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "Careful Choices for a Healthy Life",
+                content: `
+                    <h3 style="margin-top:0">Careful Choices for a Healthy Life</h3>
+                    <p>We need to make careful choices for a healthy life. First of all, we need to be careful about the food we eat. The body 
+                    <span id="gap-6-20" class="gap" onclick="app.selectQuestion(6, 20)">(20) ______</span> 
+                    the nutrients in foods for growth, for energy, and for repairing itself.</p>
+                    <p>The nutrients in the foods are carbohydrates, fats, proteins, vitamins, minerals, and water. Carbohydrates and fats give us 
+                    <span id="gap-6-21" class="gap" onclick="app.selectQuestion(6, 21)">(21) ______</span>. 
+                    Proteins help growth and maintain and repair the body.</p>
+                    <p>People need a balanced diet including all these nutrients. It is important to balance the calories in the food we eat with the calories we use. If we eat more calories than our body uses, we gain weight. 
+                    <span id="gap-6-22" class="gap" onclick="app.selectQuestion(6, 22)">(22) ______</span> 
+                    such as candy, soda and desserts have lots of calories but they don't have many nutrients.</p>
+                    <p>Avoiding food with a lot of sugar, salt and fat is a good idea. Eating these kinds of foods can lead to a variety of health problems such as obesity. Along with the diet, being active is also important. Doing exercise 
+                    <span id="gap-6-23" class="gap" onclick="app.selectQuestion(6, 23)">(23) ______</span> 
+                    is the best thing we can do for our body. It helps our heart stay healthy 
+                    <span id="gap-6-24" class="gap" onclick="app.selectQuestion(6, 24)">(24) ______</span> 
+                    makes our bones strong. Riding a bike or swimming is the best exercise.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "Cơ thể ... các chất dinh dưỡng trong thực phẩm để tăng trưởng, lấy năng lượng và tự sửa chữa.", 
+                        options: [
+                            {id: "A", text: "can't use"}, 
+                            {id: "B", text: "can use"}, 
+                            {id: "C", text: "should use"}, 
+                            {id: "D", text: "mustn't use"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Modal Verbs.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'The body ... nutrients', 'for growth'.", 
+                            "<strong>Logic (Tư duy):</strong> Việc cơ thể hấp thụ dinh dưỡng là một bản năng và khả năng tự nhiên. Modal verb nào diễn tả 'khả năng' thực hiện một hành động?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. không thể sử dụng<br>B. có thể sử dụng<br>C. nên sử dụng<br>D. không được phép sử dụng"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Carbohydrate và chất béo cung cấp cho chúng ta ...", 
+                        options: [
+                            {id: "A", text: "energy"}, 
+                            {id: "B", text: "nutrients"}, 
+                            {id: "C", text: "minerals"}, 
+                            {id: "D", text: "foods"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Biology/Health Vocabulary.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'Carbohydrates and fats give us...'.", 
+                            "<strong>Logic (Tư duy):</strong> Chức năng chính yếu của 'fats' và 'carbohydrates' đối với cơ thể người là cung cấp nguồn gì?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. năng lượng<br>B. dinh dưỡng<br>C. khoáng chất<br>D. thực phẩm"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "... như kẹo, nước ngọt và đồ tráng miệng có rất nhiều calo nhưng lại không có nhiều chất dinh dưỡng.", 
+                        options: [
+                            {id: "A", text: "desserts"}, 
+                            {id: "B", text: "junk foods"}, 
+                            {id: "C", text: "calories"}, 
+                            {id: "D", text: "proteins"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Category Vocabulary.", 
+                            "<strong>Signal (Dấu hiệu):</strong> '... such as candy, soda and desserts'.", 
+                            "<strong>Logic (Tư duy):</strong> Từ nào là thuật ngữ chung bao hàm các thực phẩm kém lành mạnh như 'candy' và 'soda'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. đồ tráng miệng<br>B. đồ ăn vặt / đồ ăn rác<br>C. calo<br>D. protein"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "Tập thể dục ... là điều tốt nhất chúng ta có thể làm cho cơ thể mình.", 
+                        options: [
+                            {id: "A", text: "hardly ever"}, 
+                            {id: "B", text: "always"}, 
+                            {id: "C", text: "never"}, 
+                            {id: "D", text: "regularly"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Adverbs of Frequency.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'Doing exercise ...', 'is the best thing'.", 
+                            "<strong>Logic (Tư duy):</strong> Để việc tập thể dục đạt hiệu quả là 'the best thing', bạn cần tập với tần suất như thế nào?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. hầu như không bao giờ<br>B. luôn luôn<br>C. không bao giờ<br>D. thường xuyên / đều đặn"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Nó giúp tim của chúng ta khỏe mạnh ... làm cho xương của chúng ta chắc khỏe.", 
+                        options: [
+                            {id: "A", text: "and"}, 
+                            {id: "B", text: "so"}, 
+                            {id: "C", text: "but"}, 
+                            {id: "D", text: "or"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Conjunctions.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'stay healthy' (Benefit 1), 'makes our bones strong' (Benefit 2).", 
+                            "<strong>Logic (Tư duy):</strong> Liên từ nào kết nối hai mệnh đề mang ý nghĩa bổ sung thêm lợi ích tích cực, diễn đạt sự đồng thuận, cộng gộp?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. và<br>B. vì vậy<br>C. nhưng<br>D. hoặc"
+                        ] 
+                    }
+                ]
+            }
+        ];
+
+        // --- APP LOGIC GIỮ NGUYÊN ---
+        const app = {
+            state: { exIdx: 0, currentScore: 0, maxScore: 0, qMap: {} },
+
+            initExercise: function(index) {
+                if(index >= exercises.length) { alert("Hoàn thành tất cả!"); return; }
+                this.state.exIdx = index;
+                const exData = exercises[index];
+
+                document.getElementById('ex-title').innerText = exData.title;
+                document.getElementById('ex-content').innerHTML = exData.content;
+                this.scrollToTop();
+
+                this.closeQuestionPanel();
+                if(window.innerWidth > 900) {
+                     document.getElementById('empty-state').style.display = 'block';
+                     document.getElementById('q-card-area').style.display = 'none';
+                }
+
+                const grid = document.getElementById('sidebar-grid');
+                grid.innerHTML = '';
+                exData.questions.forEach(q => {
+                    const key = `${index}-${q.id}`;
+                    if (!this.state.qMap[key]) {
+                        this.state.qMap[key] = { points: 5, hintsOpen: [false,false,false,false], answered: false, userChoice: null };
+                        this.state.maxScore += 5;
+                    }
+                    const cell = document.createElement('div');
+                    cell.className = 'q-cell';
+                    cell.id = `cell-${q.id}`;
+                    cell.innerText = q.id;
+                    cell.onclick = () => {
+                        this.selectQuestion(index+1, q.id);
+                        if(window.innerWidth <= 900) this.toggleSidebar();
+                    };
+                    grid.appendChild(cell);
+                });
+                this.updateStats();
+            },
+
+            selectQuestion: function(exId, qId) {
+                const realIndex = exId - 1;
+                const exData = exercises[realIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+                const key = `${realIndex}-${qId}`;
+                const qState = this.state.qMap[key];
+
+                document.querySelectorAll('.gap').forEach(e => e.classList.remove('active-gap'));
+                const gap = document.getElementById(`gap-${exId}-${qId}`);
+                if(gap) gap.classList.add('active-gap');
+
+                document.querySelectorAll('.q-cell').forEach(e => e.classList.remove('active'));
+                document.getElementById(`cell-${qId}`).classList.add('active');
+
+                document.getElementById('q-number').innerText = qId;
+                this.renderPointsBadge(qState);
+                this.renderHints(realIndex, qId, qData, qState);
+                this.renderOptions(realIndex, qId, qData, qState);
+
+                // --- XỬ LÝ PHẦN DỊCH CÂU ---
+                document.getElementById('trans-content').classList.remove('show');
+                document.querySelector('.trans-toggle-btn').innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                const transText = qData.sentence_translation || "Chưa có bản dịch cho câu này.";
+                document.getElementById('trans-content').innerHTML = transText;
+
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('q-card-area').style.display = 'block';
+                document.getElementById('question-panel').classList.add('active');
+                
+                if(window.innerWidth <= 900 && gap) {
+                    setTimeout(() => {
+                        const container = document.querySelector('.main-content');
+                        const gapRect = gap.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        const currentScroll = container.scrollTop;
+                        const gapTopRelative = gapRect.top - containerRect.top; 
+                        const targetScroll = currentScroll + gapTopRelative - 70;
+                        container.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                    }, 300);
+                }
+
+                document.querySelectorAll('.signal-word').forEach(e => e.classList.remove('highlighted'));
+                if (qState.hintsOpen[1] && qData.signalIds) {
+                    qData.signalIds.forEach(id => {
+                        const el = document.getElementById(id);
+                        if(el) el.classList.add('highlighted');
+                    });
+                }
+            },
+
+            renderPointsBadge: function(qState) {
+                const badge = document.getElementById('q-points-badge');
+                badge.innerText = `${qState.points} pts`;
+                badge.style.background = qState.answered ? (qState.points > 0 ? 'var(--green)' : 'var(--red)') : 'var(--primary)';
+            },
+
+            renderHints: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('hints-container');
+                container.innerHTML = '';
+                qData.hints.forEach((hintText, i) => {
+                    const isOpen = qState.hintsOpen[i];
+                    const isLocked = i > 0 && !qState.hintsOpen[i-1] && !qState.answered;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'hint-item';
+                    div.innerHTML = `
+                        <div class="hint-header" onclick="app.openHint(${exIndex}, ${qId}, ${i})" style="opacity:${isLocked?0.5:1}">
+                            <span><i class="fas ${isOpen?'fa-book-open':(isLocked?'fa-lock':'fa-lightbulb')}" style="color:${isOpen?'var(--primary)':'var(--orange)'};margin-right:8px;"></i>${isOpen?`Gợi ý ${i+1}`:`Gợi ý ${i+1}`}</span>
+                            ${(!isOpen && !qState.answered) ? '<span style="font-size:0.75rem; color:red; bg:#fee; padding:2px;">-1đ</span>' : ''}
+                        </div>
+                        <div class="hint-content ${isOpen ? 'show' : ''}">${hintText}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            },
+
+            openHint: function(exIndex, qId, i) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                if(qState.answered || qState.hintsOpen[i]) return;
+                if(i > 0 && !qState.hintsOpen[i-1]) { alert("Vui lòng mở theo thứ tự!"); return; }
+                
+                if(qState.points > 0) qState.points--;
+                qState.hintsOpen[i] = true;
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            renderOptions: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                qData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `<span class="option-label">${opt.id}.</span> <span class="option-text">${opt.text}</span>`;
+                    
+                    if(qState.answered) {
+                        btn.disabled = true;
+                        if(opt.id === qData.correct) btn.classList.add('correct-select');
+                        if(opt.id === qState.userChoice && opt.id !== qData.correct) btn.classList.add('wrong-select');
+                    } else {
+                        btn.onclick = () => this.submitAnswer(exIndex, qId, opt.id);
+                    }
+                    container.appendChild(btn);
+                });
+            },
+
+            toggleTranslation: function() {
+                const box = document.getElementById('trans-content');
+                const btn = document.querySelector('.trans-toggle-btn');
+                
+                if (box.classList.contains('show')) {
+                    box.classList.remove('show');
+                    btn.innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                    btn.style.backgroundColor = "#f8f9fa";
+                    btn.style.color = "var(--primary)";
+                } else {
+                    box.classList.add('show');
+                    btn.innerHTML = '<i class="fas fa-chevron-up"></i> Ẩn dịch';
+                    btn.style.backgroundColor = "var(--primary)";
+                    btn.style.color = "white";
+                }
+            },
+
+            submitAnswer: function(exIndex, qId, choiceId) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                const exData = exercises[exIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+
+                qState.answered = true;
+                qState.userChoice = choiceId;
+
+                const gap = document.getElementById(`gap-${exIndex+1}-${qId}`);
+                const cell = document.getElementById(`cell-${qId}`);
+
+                if(choiceId === qData.correct) {
+                    this.state.currentScore += qState.points;
+                    gap.classList.add('correct');
+                    gap.innerText = qData.options.find(o=>o.id===choiceId).text;
+                    cell.classList.add('done');
+                } else {
+                    qState.points = 0;
+                    gap.classList.add('wrong');
+                    gap.innerText = qData.options.find(o=>o.id===qData.correct).text;
+                    cell.classList.add('wrong');
+                }
+                this.updateStats();
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            updateStats: function() {
+                const s = this.state.currentScore;
+                const m = this.state.maxScore;
+                document.getElementById('current-score').innerText = s;
+                document.getElementById('max-score').innerText = m;
+                document.getElementById('m-score').innerText = s;
+                document.getElementById('m-max').innerText = m;
+            },
+
+            toggleSidebar: function() {
+                document.getElementById('sidebar').classList.toggle('active');
+                document.querySelector('.sidebar-overlay').classList.toggle('active');
+            },
+
+            closeQuestionPanel: function() {
+                document.getElementById('question-panel').classList.remove('active');
+            },
+
+            scrollToTop: function() {
+                document.querySelector('.main-content').scrollTop = 0;
+            },
+
+            nextExercise: function() {
+                this.initExercise(this.state.exIdx + 1);
+            }
+        };
+
+        app.initExercise(0);
+    </script>
+</body>
+</html>
