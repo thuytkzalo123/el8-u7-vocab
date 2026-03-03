@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cloze Test: Thinking Logic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary-bg: #f0f2f5;
+            --white: #ffffff;
+            --text-main: #202124;
+            --border: #dadce0;
+            --orange: #f59e0b;
+            --green: #1e8e3e;
+            --red: #d93025;
+            --header-height: 60px;
+            --panel-height: 50vh; 
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--secondary-bg);
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden; 
+        }
+
+        /* --- HEADER MOBILE --- */
+        .mobile-header {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .menu-btn { font-size: 1.4rem; color: #555; padding: 5px 10px; cursor: pointer; }
+        .mobile-score { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 300px;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            height: 100%; flex-shrink: 0;
+            z-index: 200; 
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header h3 { margin: 0; color: var(--primary); }
+        .close-sidebar-btn { display: none; font-size: 1.2rem; cursor: pointer; }
+        .stats-area { padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid var(--border); }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .stat-value { font-weight: 800; color: var(--primary); }
+        .question-grid-container { flex: 1; padding: 20px; overflow-y: auto; }
+        .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .q-cell {
+            aspect-ratio: 1; background: var(--white); border: 1px solid var(--border);
+            border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-weight: 600; color: #666; transition: 0.2s;
+        }
+        .q-cell.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-cell.done { background: #e6f4ea; color: var(--green); border-color: var(--green); }
+        .q-cell.wrong { background: #fce8e6; color: var(--red); border-color: var(--red); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            display: flex; justify-content: center;
+            position: relative;
+            scroll-behavior: smooth; 
+        }
+        .content-wrapper { display: flex; width: 100%; max-width: 1200px; gap: 25px; }
+
+        /* TEXT PANEL */
+        .text-panel {
+            flex: 2;
+            background: var(--white); border-radius: 12px; padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            height: fit-content;
+            line-height: 2.0; font-size: 1.15rem; color: #333;
+        }
+        
+        .gap {
+            display: inline-block; min-width: 40px; border-bottom: 2px solid #ccc;
+            color: var(--primary); font-weight: 700; text-align: center;
+            cursor: pointer; padding: 2px 6px; transition: 0.2s; border-radius: 4px;
+        }
+        .gap.active-gap { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .gap.correct { color: var(--green); border-bottom-color: var(--green); }
+        .gap.wrong { color: var(--red); border-bottom-color: var(--red); } 
+        .signal-word.highlighted { background-color: #fff176; font-weight: bold; color: black; border-radius: 3px; }
+
+        /* QUESTION PANEL */
+        .question-panel {
+            flex: 1; min-width: 350px;
+            position: sticky; top: 0; height: fit-content;
+        }
+        .q-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        /* 1. OPTIONS (TOP) */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .option-btn {
+            padding: 12px 15px; border: 1px solid var(--border); background: white;
+            border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .option-label { font-weight: bold; color: #555; min-width: 25px; } 
+        .option-text { flex: 1; } 
+        .correct-select { background: #e6f4ea !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: bold; }
+        .wrong-select { background: #fce8e6 !important; border-color: var(--red) !important; color: var(--red) !important; }
+
+        /* 2. HINTS (MIDDLE) */
+        .hints-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #eee; }
+        .hint-item { border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fafafa; }
+        .hint-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+        .hint-content { padding: 10px; background: white; border-top: 1px solid #eee; font-size: 0.95rem; display: none; line-height: 1.5; color: #444; }
+        .hint-content.show { display: block; }
+
+        /* 3. TRANSLATION (BOTTOM) */
+        .trans-toggle-btn {
+            width: 100%; margin-top: 5px; padding: 10px;
+            background-color: #f8f9fa; border: 1px dashed var(--primary);
+            color: var(--primary); border-radius: 8px; font-weight: 600;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .trans-toggle-btn:hover { background-color: #e8f0fe; }
+        .trans-box {
+            margin-top: 10px; padding: 12px;
+            background-color: #eef7ff; border-left: 4px solid var(--primary);
+            border-radius: 4px; color: #333; font-style: italic; font-size: 0.95rem;
+            line-height: 1.5; display: none; animation: fadeIn 0.3s ease;
+        }
+        .trans-box.show { display: block; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; padding-top: var(--header-height); }
+            .mobile-header { display: flex; }
+
+            .sidebar {
+                position: fixed; left: 0; top: 0; bottom: 0;
+                width: 85%; max-width: 320px;
+                transform: translateX(-100%);
+                box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .close-sidebar-btn { display: block; }
+
+            .main-content {
+                display: block; width: 100%; padding: 0;
+                height: calc(100vh - var(--header-height)); 
+            }
+            .content-wrapper { flex-direction: column; width: 100%; }
+            
+            .text-panel { 
+                width: 100%; border-radius: 0; box-shadow: none; 
+                padding: 20px; 
+                padding-bottom: 80vh !important; 
+            }
+
+            .question-panel {
+                position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+                width: 100%; z-index: 150;
+                transform: translateY(120%);
+                transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
+            }
+            .question-panel.active { transform: translateY(0); }
+
+            .q-card {
+                border-radius: 20px 20px 0 0; 
+                padding: 15px 20px 20px 20px;
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+                height: var(--panel-height); 
+                max-height: var(--panel-height);
+                overflow-y: auto;
+                border-top: 1px solid #ddd;
+                position: relative;
+            }
+
+            .drag-handle {
+                width: 40px; height: 5px; background: #e0e0e0;
+                border-radius: 10px; margin: 0 auto 10px auto;
+            }
+
+            .mobile-collapse-btn {
+                display: flex !important; justify-content: center; align-items: center;
+                width: 28px; height: 28px; background: #f1f3f4; border-radius: 50%;
+                position: absolute; right: 15px; top: 12px;
+                cursor: pointer; color: #555;
+            }
+
+            #empty-state { display: none !important; }
+        }
+
+        .mobile-collapse-btn { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <div class="menu-btn" onclick="app.toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="mobile-score">
+            <span id="m-score">0</span> / <span id="m-max">0</span>
+        </div>
+        <div class="menu-btn" onclick="app.scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" onclick="app.toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-book-open"></i> Cloze Test</h3>
+            <i class="fas fa-times close-sidebar-btn" onclick="app.toggleSidebar()"></i>
+        </div>
+        <div class="stats-area">
+            <div class="stat-row">
+                <span>Điểm số:</span>
+                <span class="stat-value"><span id="current-score">0</span> / <span id="max-score">0</span></span>
+            </div>
+            <div style="font-size: 0.85rem; color: #666; margin-top:5px;">
+                * 5đ/câu. Trừ 1đ/gợi ý.
+            </div>
+        </div>
+        <div class="question-grid-container">
+            <div style="font-weight:bold; margin-bottom:10px;">Câu hỏi</div>
+            <div id="sidebar-grid" class="q-grid"></div>
+        </div>
+        <div style="padding: 20px; border-top:1px solid #eee;">
+            <button onclick="app.nextExercise()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">
+                Bài tiếp theo <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="text-panel">
+                <h2 id="ex-title" style="margin-top:0; color:var(--primary); font-size:1.3rem; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">Loading...</h2>
+                <div id="ex-content"></div>
+            </div>
+
+            <div class="question-panel" id="question-panel">
+                <div class="q-card" id="q-card-area">
+                    <div class="drag-handle"></div>
+                    <div class="mobile-collapse-btn" onclick="app.closeQuestionPanel()">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-right: 40px;">
+                        <h3 style="margin:0; font-size:1.1rem;">Câu <span id="q-number">...</span></h3>
+                        <span id="q-points-badge" style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">5 Points</span>
+                    </div>
+
+                    <div class="options-grid" id="options-container"></div>
+
+                    <div class="hints-list" id="hints-container"></div>
+
+                    <div id="translation-section">
+                        <button class="trans-toggle-btn" onclick="app.toggleTranslation()">
+                            <i class="fas fa-language"></i> Dịch câu này
+                        </button>
+                        <div id="trans-content" class="trans-box"></div>
+                    </div>
+
+                </div>
+
+                <div id="empty-state" style="text-align:center; color:#999; margin-top:50px;">
+                    <i class="fas fa-mouse-pointer" style="font-size:2rem; margin-bottom:10px;"></i>
+                    <p>Chọn ô trống để bắt đầu</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- DỮ LIỆU BÀI TẬP ĐÃ CẬP NHẬT (THINKING LOGIC) ---
+       // --- DỮ LIỆU CẬP NHẬT: 6 BÀI CLOZE TEST MỚI ---
+        const exercises = [
+            {
+                id: 1,
+                title: "Đề 1: Smart Electric Bike",
+                content: `
+                    <h3 style="margin-top:0">Upgrade Your Commute!</h3>
+                    <p>Do you want a faster, eco-friendly way to travel? Our new smart electric bike is the perfect solution for you! With our advanced system, you 
+                    <span id="gap-1-17" class="gap" onclick="app.selectQuestion(1, 17)">(17) ______</span> 
+                    check your speed and battery life through a simple mobile app.</p>
+                    <p>Our smart technology remembers your riding patterns and 
+                    <span id="gap-1-18" class="gap" onclick="app.selectQuestion(1, 18)">(18) ______</span> 
+                    adjusts power usage to save energy. For a limited time, you can get this amazing smart bike for just $799!</p>
+                    <p>The package 
+                    <span id="gap-1-19" class="gap" onclick="app.selectQuestion(1, 19)">(19) ______</span> 
+                    a free helmet and a one-year warranty. Call us now at 555-1234 and enjoy a special discount!</p>
+                `,
+                questions: [
+                    { 
+                        id: 17, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Với hệ thống tiên tiến của chúng tôi, bạn ... kiểm tra tốc độ và tuổi thọ pin thông qua một ứng dụng di động đơn giản.", 
+                        options: [
+                            {id: "A", text: "can"}, 
+                            {id: "B", text: "must"}, 
+                            {id: "C", text: "should"}, 
+                            {id: "D", text: "need"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Modal Verbs (Động từ khuyết thiếu).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'advanced system', 'check your speed'.", 
+                            "<strong>Logic (Tư duy):</strong> Modal verb nào được dùng để chỉ một khả năng (ability) mà 'advanced system' cung cấp cho người dùng?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. có thể<br>B. phải<br>C. nên<br>D. cần"
+                        ] 
+                    },
+                    { 
+                        id: 18, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "Công nghệ thông minh của chúng tôi ghi nhớ thói quen lái xe của bạn và ... điều chỉnh việc sử dụng năng lượng để tiết kiệm điện.", 
+                        options: [
+                            {id: "A", text: "automated"}, 
+                            {id: "B", text: "automate"}, 
+                            {id: "C", text: "automatic"}, 
+                            {id: "D", text: "automatically"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Word Form (Từ loại).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'adjusts' (Verb).", 
+                            "<strong>Logic (Tư duy):</strong> Từ loại nào (Noun, Adj, Adv) được dùng để bổ nghĩa cho động từ thường 'adjusts'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. được tự động hóa (V-ed/Adj)<br>B. tự động hóa (V)<br>C. tự động (Adj)<br>D. một cách tự động (Adv)"
+                        ] 
+                    },
+                    { 
+                        id: 19, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "Gói sản phẩm ... một mũ bảo hiểm miễn phí và bảo hành một năm.", 
+                        options: [
+                            {id: "A", text: "involves"}, 
+                            {id: "B", text: "includes"}, 
+                            {id: "C", text: "covers"}, 
+                            {id: "D", text: "consists"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary (Ngữ nghĩa của động từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'The package', 'a free helmet'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào thường được dùng để chỉ việc một món hàng được 'chứa đựng bên trong' một 'package'? (Lưu ý: 'consists' bắt buộc phải đi kèm với giới từ gì?)", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. liên quan<br>B. bao gồm<br>C. bao phủ / chi trả<br>D. bao gồm (cần đi với giới từ 'of')"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Đề 2: Electronic Devices Deals",
+                content: `
+                    <h3 style="margin-top:0">Get the Best Deals!</h3>
+                    <p>Looking for a new electronic device? The latest gadgets are here to help you in your daily life. With the best smartphones, tablets, and laptops, you can enjoy fast internet, amazing cameras, and 
+                    <span id="gap-2-17" class="gap" onclick="app.selectQuestion(2, 17)">(17) ______</span>.</p>
+                    <p>Whether you need a device for work, study, or entertainment, these products will meet all your needs. Don’t miss out! Get the 
+                    <span id="gap-2-18" class="gap" onclick="app.selectQuestion(2, 18)">(18) ______</span> 
+                    deals on the newest models now.</p>
+                    <p>Take advantage of special 
+                    <span id="gap-2-19" class="gap" onclick="app.selectQuestion(2, 19)">(19) ______</span> 
+                    and bring home a device that makes your life easier. Hurry up, the sale ends soon. Order online or visit our store today!</p>
+                `,
+                questions: [
+                    { 
+                        id: 17, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "...bạn có thể tận hưởng internet nhanh, camera tuyệt vời và ...", 
+                        options: [
+                            {id: "A", text: "long-lasting battery"}, 
+                            {id: "B", text: "lasting-long battery"}, 
+                            {id: "C", text: "battery long-lasting"}, 
+                            {id: "D", text: "battery lasting-long"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Noun Phrase Word Order (Trật tự từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'fast internet', 'amazing cameras'.", 
+                            "<strong>Logic (Tư duy):</strong> Trong một cụm danh từ tiếng Anh, cụm Tính từ ghép ('long-lasting') phải đứng trước hay đứng sau Danh từ chính ('battery')?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. pin dùng được lâu<br>B. (sai trật tự từ)<br>C. (sai trật tự từ)<br>D. (sai trật tự từ)"
+                        ] 
+                    },
+                    { 
+                        id: 18, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "Hãy nhận những thỏa thuận ... trên các mẫu mới nhất ngay bây giờ.", 
+                        options: [
+                            {id: "A", text: "worse"}, 
+                            {id: "B", text: "better"}, 
+                            {id: "C", text: "best"}, 
+                            {id: "D", text: "worst"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Adjective Comparison (So sánh tính từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'the', 'deals'.", 
+                            "<strong>Logic (Tư duy):</strong> Mạo từ 'the' đứng trước tính từ thường báo hiệu cấu trúc so sánh gì (hơn hay nhất)? Người mua hàng luôn muốn tìm kiếm 'deals' mang tính chất như thế nào?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tệ hơn<br>B. tốt hơn<br>C. tốt nhất<br>D. tệ nhất"
+                        ] 
+                    },
+                    { 
+                        id: 19, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "Hãy tận dụng các ... đặc biệt và mang về nhà một thiết bị giúp cuộc sống của bạn dễ dàng hơn.", 
+                        options: [
+                            {id: "A", text: "discounts"}, 
+                            {id: "B", text: "offers"}, 
+                            {id: "C", text: "deals"}, 
+                            {id: "D", text: "promotions"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation (Kết hợp từ thương mại).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'Take advantage of special...'.", 
+                            "<strong>Logic (Tư duy):</strong> Danh từ nào tạo thành một cụm (fixed collocation) kinh điển và phổ biến nhất với tính từ 'special' trong các quảng cáo mua sắm?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. giảm giá<br>B. ưu đãi<br>C. thỏa thuận<br>D. chương trình khuyến mãi"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Đề 3: Discover the iPhone 17",
+                content: `
+                    <h3 style="margin-top:0">Discover the iPhone 17!</h3>
+                    <p>Discover the iPhone 17! It 
+                    <span id="gap-3-20" class="gap" onclick="app.selectQuestion(3, 20)">(20) ______</span> 
+                    a bright screen, a fast A17 chip, and a better camera. Enjoy longer battery life and 5G speed.</p>
+                    <p>Perfect for photos, games, and 
+                    <span id="gap-3-21" class="gap" onclick="app.selectQuestion(3, 21)">(21) ______</span> 
+                    in touch. Get the iPhone 17 now and enjoy 
+                    <span id="gap-3-22" class="gap" onclick="app.selectQuestion(3, 22)">(22) ______</span> 
+                    latest technology!</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "Nó ... màn hình sáng, chip A17 nhanh và camera tốt hơn.", 
+                        options: [
+                            {id: "A", text: "have"}, 
+                            {id: "B", text: "has"}, 
+                            {id: "C", text: "had"}, 
+                            {id: "D", text: "having"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Subject-Verb Agreement (Hòa hợp chủ vị).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'It' (Subject).", 
+                            "<strong>Logic (Tư duy):</strong> Đại từ 'It' là ngôi thứ mấy, số ít hay số nhiều? Động từ 'have' ở hiện tại đơn phải chia như thế nào với chủ ngữ này?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. có (số nhiều)<br>B. có (số ít)<br>C. đã có (quá khứ)<br>D. đang có (V-ing)"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Hoàn hảo cho việc chụp ảnh, chơi game và ... liên lạc.", 
+                        options: [
+                            {id: "A", text: "staying"}, 
+                            {id: "B", text: "having"}, 
+                            {id: "C", text: "getting"}, 
+                            {id: "D", text: "making"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation (Cụm từ cố định).", 
+                            "<strong>Signal (Dấu hiệu):</strong> '... in touch'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào khi đi với 'in touch' tạo thành cụm từ mang ý nghĩa 'giữ liên lạc' với người khác?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. giữ/duy trì<br>B. có<br>C. lấy/nhận<br>D. làm/tạo"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "Mua iPhone 17 ngay bây giờ và tận hưởng công nghệ mới nhất!", 
+                        options: [
+                            {id: "A", text: "a"}, 
+                            {id: "B", text: "an"}, 
+                            {id: "C", text: "the"}, 
+                            {id: "D", text: "Ø (no article)"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Articles (Mạo từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'latest' (Superlative).", 
+                            "<strong>Logic (Tư duy):</strong> Mạo từ nào luôn bắt buộc phải đứng trước một tính từ ở dạng so sánh nhất (Superlative)?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. một<br>B. một<br>C. cái/điều (xác định)<br>D. không dùng mạo từ"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Đề 4: Wearable Technology",
+                content: `
+                    <h3 style="margin-top:0">Wearable Technology</h3>
+                    <p>The 
+                    <span id="gap-4-20" class="gap" onclick="app.selectQuestion(4, 20)">(20) ______</span> 
+                    rise of wearable technology has opened new doors for personal health monitoring. Devices like smartwatches and fitness trackers 
+                    <span id="gap-4-21" class="gap" onclick="app.selectQuestion(4, 21)">(21) ______</span> 
+                    people to monitor their heart rate, steps, and sleep patterns.</p>
+                    <p>This data can then be 
+                    <span id="gap-4-22" class="gap" onclick="app.selectQuestion(4, 22)">(22) ______</span> 
+                    to health apps for analysis. In the future, wearable technology is expected to include more advanced medical features, such as monitoring blood sugar levels and detecting irregular heartbeats.</p>
+                    <p>These devices will play a major role in preventative healthcare. As technology 
+                    <span id="gap-4-23" class="gap" onclick="app.selectQuestion(4, 23)">(23) ______</span>, 
+                    wearables will become smaller, more accurate, and integrated into our everyday lives. The 
+                    <span id="gap-4-24" class="gap" onclick="app.selectQuestion(4, 24)">(24) ______</span> 
+                    for wearable technology are extensive and ever-growing.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Sự gia tăng ... của công nghệ đeo được đã mở ra những cánh cửa mới...", 
+                        options: [
+                            {id: "A", text: "recent"}, 
+                            {id: "B", text: "late"}, 
+                            {id: "C", text: "early"}, 
+                            {id: "D", text: "lately"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Word Form (Từ loại).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'The ... rise' (Noun phrase).", 
+                            "<strong>Logic (Tư duy):</strong> Vị trí đứng trước danh từ 'rise' cần một Tính từ hay Trạng từ? 'Lately' là loại từ gì?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. gần đây (Adj)<br>B. muộn<br>C. sớm<br>D. gần đây (Adv)"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Các thiết bị như đồng hồ thông minh ... mọi người theo dõi nhịp tim của họ.", 
+                        options: [
+                            {id: "A", text: "allow"}, 
+                            {id: "B", text: "let"}, 
+                            {id: "C", text: "admit"}, 
+                            {id: "D", text: "accept"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Verb Patterns (Cấu trúc động từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'people' (Object) + 'to monitor' (to V).", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào có cấu trúc [Verb + Object + TO V]? Động từ 'let' đi với 'to V' hay 'V-inf'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. cho phép<br>B. để cho<br>C. thừa nhận<br>D. chấp nhận"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "Dữ liệu này sau đó có thể được ... sang các ứng dụng sức khỏe để phân tích.", 
+                        options: [
+                            {id: "A", text: "sent"}, 
+                            {id: "B", text: "connected"}, 
+                            {id: "C", text: "transferred"}, 
+                            {id: "D", text: "streamed"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary (Ngữ cảnh công nghệ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'This data', 'to health apps'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào chuyên dùng để mô tả việc dịch chuyển/truyền tải 'data' từ thiết bị này sang thiết bị/ứng dụng khác?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. gửi<br>B. kết nối<br>C. truyền tải / chuyển dữ liệu<br>D. phát trực tiếp"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Khi công nghệ ..., các thiết bị đeo sẽ trở nên nhỏ hơn...", 
+                        options: [
+                            {id: "A", text: "advances"}, 
+                            {id: "B", text: "progresses"}, 
+                            {id: "C", text: "moves"}, 
+                            {id: "D", text: "performed"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'As technology ...'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào thường ghép cặp với 'technology' để chỉ sự tiến bộ, phát triển vượt bậc?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tiến bộ/phát triển<br>B. tiến triển (cho quy trình)<br>C. di chuyển<br>D. thực hiện"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "Những ... cho công nghệ đeo được là rất lớn và ngày càng phát triển.", 
+                        options: [
+                            {id: "A", text: "potential"}, 
+                            {id: "B", text: "possibilities"}, 
+                            {id: "C", text: "impossible"}, 
+                            {id: "D", text: "possibility"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Subject-Verb Agreement.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'The ...' (Subject) + 'are' (Plural Verb).", 
+                            "<strong>Logic (Tư duy):</strong> Động từ chính trong câu là 'are', vậy Danh từ làm chủ ngữ cần điền vào ô trống phải ở dạng số ít hay số nhiều?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tiềm năng (không đếm được)<br>B. những khả năng (số nhiều)<br>C. không thể (Adj)<br>D. khả năng (số ít)"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "Đề 5: The Latest Smartphones",
+                content: `
+                    <h3 style="margin-top:0">The Latest Smartphones</h3>
+                    <p>The latest smartphones are sleek, slim, and offer many 
+                    <span id="gap-5-20" class="gap" onclick="app.selectQuestion(5, 20)">(20) ______</span> 
+                    such as high-resolution cameras, fast processors, and artificial intelligence capabilities. They allow users to perform a wide range of tasks, including browsing the Internet, sending emails, making video calls, playing games, 
+                    <span id="gap-5-21" class="gap" onclick="app.selectQuestion(5, 21)">(21) ______</span> 
+                    streaming videos.</p>
+                    <p>In the future, smartphones are likely to become even more advanced, with features such as foldable screens, holographic displays, and improved battery life. AI will 
+                    <span id="gap-5-22" class="gap" onclick="app.selectQuestion(5, 22)">(22) ______</span> 
+                    a significant role in the development of these devices, with features such as voice recognition, facial recognition, and natural language processing becoming more sophisticated.</p>
+                    <p>Smartphones will likely become even more integrated into our lives, with the ability to 
+                    <span id="gap-5-23" class="gap" onclick="app.selectQuestion(5, 23)">(23) ______</span> 
+                    more of our daily activities, such as managing our homes, vehicles, and health. The possibilities are endless, and it will be exciting to see what the future holds 
+                    <span id="gap-5-24" class="gap" onclick="app.selectQuestion(5, 24)">(24) ______</span> 
+                    electronic devices.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "Các điện thoại thông minh mới nhất... cung cấp nhiều ... như camera độ phân giải cao, bộ vi xử lý nhanh...", 
+                        options: [
+                            {id: "A", text: "assist"}, 
+                            {id: "B", text: "touchscreen"}, 
+                            {id: "C", text: "functions"}, 
+                            {id: "D", text: "features"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary (Công nghệ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'many', 'such as cameras, processors'.", 
+                            "<strong>Logic (Tư duy):</strong> 'Cameras' hay 'processors' là các bộ phận/đặc điểm được tích hợp sẵn trên điện thoại. Danh từ nào dùng để chỉ các 'đặc điểm nổi bật' của sản phẩm?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. hỗ trợ (Động từ)<br>B. màn hình cảm ứng<br>C. chức năng hoạt động<br>D. tính năng / đặc điểm nổi bật"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "B", 
+                        signalIds: [], 
+                        sentence_translation: "...bao gồm duyệt Internet, gửi email, gọi video, chơi game, ... xem video trực tuyến.", 
+                        options: [
+                            {id: "A", text: "or"}, 
+                            {id: "B", text: "and"}, 
+                            {id: "C", text: "but"}, 
+                            {id: "D", text: "so"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Conjunctions (Liên từ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'browsing...', 'sending...', 'making...', 'playing...', 'streaming...'.", 
+                            "<strong>Logic (Tư duy):</strong> Liên từ nào được đặt trước thành phần cuối cùng của một chuỗi liệt kê mang tính chất bổ sung, cộng gộp?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. hoặc<br>B. và<br>C. nhưng<br>D. vì vậy"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "AI sẽ ... một vai trò quan trọng trong sự phát triển của các thiết bị này...", 
+                        options: [
+                            {id: "A", text: "play"}, 
+                            {id: "B", text: "make"}, 
+                            {id: "C", text: "memorial"}, 
+                            {id: "D", text: "vehicle"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation (Cụm từ cố định).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'a significant role'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào tạo thành cụm cố định với 'a role' mang ý nghĩa đảm nhận vị trí, vai trò nào đó?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. đóng (vai trò)<br>B. làm/tạo ra<br>C. đài tưởng niệm<br>D. phương tiện"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "...với khả năng ... nhiều hoạt động hàng ngày của chúng ta hơn, chẳng hạn như quản lý nhà cửa...", 
+                        options: [
+                            {id: "A", text: "admit"}, 
+                            {id: "B", text: "accept"}, 
+                            {id: "C", text: "control"}, 
+                            {id: "D", text: "allow"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary Context.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'ability to', 'daily activities', 'managing'.", 
+                            "<strong>Logic (Tư duy):</strong> Động từ nào có nét nghĩa gần giống với từ 'managing' (quản lý/điều hành) khi nhắc đến máy móc và các hoạt động?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. thừa nhận<br>B. chấp nhận<br>C. kiểm soát/điều khiển<br>D. cho phép"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "...và sẽ rất thú vị khi xem tương lai dành ... các thiết bị điện tử là gì.", 
+                        options: [
+                            {id: "A", text: "by"}, 
+                            {id: "B", text: "with"}, 
+                            {id: "C", text: "of"}, 
+                            {id: "D", text: "for"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Preposition & Idiom.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'what the future holds'.", 
+                            "<strong>Logic (Tư duy):</strong> Giới từ nào hoàn thiện thành ngữ 'hold something ... someone/something' mang ý nghĩa 'điều gì đang chờ đợi phía trước'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. bởi<br>B. với<br>C. của<br>D. cho (dành cho)"
+                        ] 
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "Đề 6: Electronic Devices in Schools",
+                content: `
+                    <h3 style="margin-top:0">Electronic Devices in Schools</h3>
+                    <p>Nowadays, many schools use electronic devices to improve learning. Tablets, smartphones, and laptops are commonly used in the classroom. These devices help students find information faster and make lessons more 
+                    <span id="gap-6-20" class="gap" onclick="app.selectQuestion(6, 20)">(20) ______</span>.</p>
+                    <p>Teachers can use projectors and online materials to present topics in exciting ways. Students also use apps and educational games that make learning more fun and 
+                    <span id="gap-6-21" class="gap" onclick="app.selectQuestion(6, 21)">(21) ______</span>. 
+                    These tools keep students more engaged and active during lessons.</p>
+                    <p>Besides, students can save their work and notes easily on their devices. They don't need to carry heavy books anymore. 
+                    <span id="gap-6-22" class="gap" onclick="app.selectQuestion(6, 22)">(22) ______</span>, 
+                    teachers should make sure students don't get too addicted to their screens and always use devices for study, not for games.</p>
+                    <p>Another great thing is that students can review lessons at home. They can 
+                    <span id="gap-6-23" class="gap" onclick="app.selectQuestion(6, 23)">(23) ______</span> 
+                    videos or look through presentations whenever they need. This helps students learn at their own 
+                    <span id="gap-6-24" class="gap" onclick="app.selectQuestion(6, 24)">(24) ______</span> 
+                    and improve their understanding.</p>
+                `,
+                questions: [
+                    { 
+                        id: 20, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "Các thiết bị này giúp học sinh tìm kiếm thông tin nhanh hơn và làm cho bài học trở nên ... hơn.", 
+                        options: [
+                            {id: "A", text: "noisy"}, 
+                            {id: "B", text: "difficult"}, 
+                            {id: "C", text: "interactive"}, 
+                            {id: "D", text: "boring"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Adjectives (Ngữ cảnh).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'improve learning', 'make lessons more'.", 
+                            "<strong>Logic (Tư duy):</strong> 'Improve learning' (cải thiện việc học) là một ý nghĩa tích cực. Tính từ nào mang nét nghĩa tích cực để miêu tả một lớp học sử dụng thiết bị điện tử?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. ồn ào<br>B. khó khăn<br>C. có tính tương tác<br>D. nhàm chán"
+                        ] 
+                    },
+                    { 
+                        id: 21, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Học sinh cũng sử dụng các ứng dụng... làm cho việc học trở nên thú vị và ... hơn.", 
+                        options: [
+                            {id: "A", text: "effective"}, 
+                            {id: "B", text: "expensive"}, 
+                            {id: "C", text: "dangerous"}, 
+                            {id: "D", text: "careless"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Adjectives (Tương đồng).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'fun and ...'.", 
+                            "<strong>Logic (Tư duy):</strong> Từ cần điền đứng sau 'and', nối với tính từ tích cực 'fun'. Tính từ nào phù hợp để chỉ chất lượng của việc học tập?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. hiệu quả<br>B. đắt đỏ<br>C. nguy hiểm<br>D. bất cẩn"
+                        ] 
+                    },
+                    { 
+                        id: 22, 
+                        correct: "C", 
+                        signalIds: [], 
+                        sentence_translation: "..., giáo viên nên đảm bảo rằng học sinh không trở nên quá nghiện màn hình...", 
+                        options: [
+                            {id: "A", text: "Therefore"}, 
+                            {id: "B", text: "Moreover"}, 
+                            {id: "C", text: "However"}, 
+                            {id: "D", text: "But"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Linking Words (Từ nối).", 
+                            "<strong>Signal (Dấu hiệu):</strong> Lợi ích ('save work', 'don't need heavy books') vs Rủi ro ('addicted to screens'). Dấu phẩy ngay sau ô trống.", 
+                            "<strong>Logic (Tư duy):</strong> Từ nối nào chỉ sự tương phản giữa đoạn khen ngợi và lời cảnh báo, đồng thời phải đi kèm với dấu phẩy phía sau?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. Vì vậy<br>B. Hơn nữa<br>C. Tuy nhiên<br>D. Nhưng"
+                        ] 
+                    },
+                    { 
+                        id: 23, 
+                        correct: "A", 
+                        signalIds: [], 
+                        sentence_translation: "Họ có thể ... video hoặc xem qua các bài thuyết trình bất cứ khi nào họ cần.", 
+                        options: [
+                            {id: "A", text: "download"}, 
+                            {id: "B", text: "delete"}, 
+                            {id: "C", text: "upload"}, 
+                            {id: "D", text: "shut"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Vocabulary (Công nghệ).", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'videos', 'at home', 'whenever they need'.", 
+                            "<strong>Logic (Tư duy):</strong> Để có thể xem lại bài học 'at home' vào bất cứ lúc nào, học sinh cần làm hành động gì với các tệp 'videos' trên mạng?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. tải xuống<br>B. xóa<br>C. tải lên<br>D. đóng"
+                        ] 
+                    },
+                    { 
+                        id: 24, 
+                        correct: "D", 
+                        signalIds: [], 
+                        sentence_translation: "Điều này giúp học sinh học theo ... của riêng họ và cải thiện sự hiểu biết.", 
+                        options: [
+                            {id: "A", text: "mistake"}, 
+                            {id: "B", text: "level"}, 
+                            {id: "C", text: "cost"}, 
+                            {id: "D", text: "pace"}
+                        ], 
+                        hints: [
+                            "<strong>Enemy (Phân loại):</strong> Collocation/Idiom.", 
+                            "<strong>Signal (Dấu hiệu):</strong> 'at their own ...'.", 
+                            "<strong>Logic (Tư duy):</strong> Danh từ nào kết hợp với 'at one's own' để tạo thành thành ngữ có nghĩa là 'làm việc với một nhịp độ/tốc độ thoải mái với bản thân'?", 
+                            "<strong>Translation (Dịch đáp án):</strong><br>A. lỗi lầm<br>B. cấp độ<br>C. chi phí<br>D. nhịp độ/tốc độ"
+                        ] 
+                    }
+                ]
+            }
+        ];
+
+        // --- APP LOGIC GIỮ NGUYÊN ---
+        const app = {
+            state: { exIdx: 0, currentScore: 0, maxScore: 0, qMap: {} },
+
+            initExercise: function(index) {
+                if(index >= exercises.length) { alert("Hoàn thành tất cả!"); return; }
+                this.state.exIdx = index;
+                const exData = exercises[index];
+
+                document.getElementById('ex-title').innerText = exData.title;
+                document.getElementById('ex-content').innerHTML = exData.content;
+                this.scrollToTop();
+
+                this.closeQuestionPanel();
+                if(window.innerWidth > 900) {
+                     document.getElementById('empty-state').style.display = 'block';
+                     document.getElementById('q-card-area').style.display = 'none';
+                }
+
+                const grid = document.getElementById('sidebar-grid');
+                grid.innerHTML = '';
+                exData.questions.forEach(q => {
+                    const key = `${index}-${q.id}`;
+                    if (!this.state.qMap[key]) {
+                        this.state.qMap[key] = { points: 5, hintsOpen: [false,false,false,false], answered: false, userChoice: null };
+                        this.state.maxScore += 5;
+                    }
+                    const cell = document.createElement('div');
+                    cell.className = 'q-cell';
+                    cell.id = `cell-${q.id}`;
+                    cell.innerText = q.id;
+                    cell.onclick = () => {
+                        this.selectQuestion(index+1, q.id);
+                        if(window.innerWidth <= 900) this.toggleSidebar();
+                    };
+                    grid.appendChild(cell);
+                });
+                this.updateStats();
+            },
+
+            selectQuestion: function(exId, qId) {
+                const realIndex = exId - 1;
+                const exData = exercises[realIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+                const key = `${realIndex}-${qId}`;
+                const qState = this.state.qMap[key];
+
+                document.querySelectorAll('.gap').forEach(e => e.classList.remove('active-gap'));
+                const gap = document.getElementById(`gap-${exId}-${qId}`);
+                if(gap) gap.classList.add('active-gap');
+
+                document.querySelectorAll('.q-cell').forEach(e => e.classList.remove('active'));
+                document.getElementById(`cell-${qId}`).classList.add('active');
+
+                document.getElementById('q-number').innerText = qId;
+                this.renderPointsBadge(qState);
+                this.renderHints(realIndex, qId, qData, qState);
+                this.renderOptions(realIndex, qId, qData, qState);
+
+                // --- XỬ LÝ PHẦN DỊCH CÂU ---
+                document.getElementById('trans-content').classList.remove('show');
+                document.querySelector('.trans-toggle-btn').innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                const transText = qData.sentence_translation || "Chưa có bản dịch cho câu này.";
+                document.getElementById('trans-content').innerHTML = transText;
+
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('q-card-area').style.display = 'block';
+                document.getElementById('question-panel').classList.add('active');
+                
+                if(window.innerWidth <= 900 && gap) {
+                    setTimeout(() => {
+                        const container = document.querySelector('.main-content');
+                        const gapRect = gap.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        const currentScroll = container.scrollTop;
+                        const gapTopRelative = gapRect.top - containerRect.top; 
+                        const targetScroll = currentScroll + gapTopRelative - 70;
+                        container.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                    }, 300);
+                }
+
+                document.querySelectorAll('.signal-word').forEach(e => e.classList.remove('highlighted'));
+                if (qState.hintsOpen[1] && qData.signalIds) {
+                    qData.signalIds.forEach(id => {
+                        const el = document.getElementById(id);
+                        if(el) el.classList.add('highlighted');
+                    });
+                }
+            },
+
+            renderPointsBadge: function(qState) {
+                const badge = document.getElementById('q-points-badge');
+                badge.innerText = `${qState.points} pts`;
+                badge.style.background = qState.answered ? (qState.points > 0 ? 'var(--green)' : 'var(--red)') : 'var(--primary)';
+            },
+
+            renderHints: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('hints-container');
+                container.innerHTML = '';
+                qData.hints.forEach((hintText, i) => {
+                    const isOpen = qState.hintsOpen[i];
+                    const isLocked = i > 0 && !qState.hintsOpen[i-1] && !qState.answered;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'hint-item';
+                    div.innerHTML = `
+                        <div class="hint-header" onclick="app.openHint(${exIndex}, ${qId}, ${i})" style="opacity:${isLocked?0.5:1}">
+                            <span><i class="fas ${isOpen?'fa-book-open':(isLocked?'fa-lock':'fa-lightbulb')}" style="color:${isOpen?'var(--primary)':'var(--orange)'};margin-right:8px;"></i>${isOpen?`Gợi ý ${i+1}`:`Gợi ý ${i+1}`}</span>
+                            ${(!isOpen && !qState.answered) ? '<span style="font-size:0.75rem; color:red; bg:#fee; padding:2px;">-1đ</span>' : ''}
+                        </div>
+                        <div class="hint-content ${isOpen ? 'show' : ''}">${hintText}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            },
+
+            openHint: function(exIndex, qId, i) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                if(qState.answered || qState.hintsOpen[i]) return;
+                if(i > 0 && !qState.hintsOpen[i-1]) { alert("Vui lòng mở theo thứ tự!"); return; }
+                
+                if(qState.points > 0) qState.points--;
+                qState.hintsOpen[i] = true;
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            renderOptions: function(exIndex, qId, qData, qState) {
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                qData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `<span class="option-label">${opt.id}.</span> <span class="option-text">${opt.text}</span>`;
+                    
+                    if(qState.answered) {
+                        btn.disabled = true;
+                        if(opt.id === qData.correct) btn.classList.add('correct-select');
+                        if(opt.id === qState.userChoice && opt.id !== qData.correct) btn.classList.add('wrong-select');
+                    } else {
+                        btn.onclick = () => this.submitAnswer(exIndex, qId, opt.id);
+                    }
+                    container.appendChild(btn);
+                });
+            },
+
+            toggleTranslation: function() {
+                const box = document.getElementById('trans-content');
+                const btn = document.querySelector('.trans-toggle-btn');
+                
+                if (box.classList.contains('show')) {
+                    box.classList.remove('show');
+                    btn.innerHTML = '<i class="fas fa-language"></i> Dịch câu này';
+                    btn.style.backgroundColor = "#f8f9fa";
+                    btn.style.color = "var(--primary)";
+                } else {
+                    box.classList.add('show');
+                    btn.innerHTML = '<i class="fas fa-chevron-up"></i> Ẩn dịch';
+                    btn.style.backgroundColor = "var(--primary)";
+                    btn.style.color = "white";
+                }
+            },
+
+            submitAnswer: function(exIndex, qId, choiceId) {
+                const qState = this.state.qMap[`${exIndex}-${qId}`];
+                const exData = exercises[exIndex];
+                const qData = exData.questions.find(q => q.id === qId);
+
+                qState.answered = true;
+                qState.userChoice = choiceId;
+
+                const gap = document.getElementById(`gap-${exIndex+1}-${qId}`);
+                const cell = document.getElementById(`cell-${qId}`);
+
+                if(choiceId === qData.correct) {
+                    this.state.currentScore += qState.points;
+                    gap.classList.add('correct');
+                    gap.innerText = qData.options.find(o=>o.id===choiceId).text;
+                    cell.classList.add('done');
+                } else {
+                    qState.points = 0;
+                    gap.classList.add('wrong');
+                    gap.innerText = qData.options.find(o=>o.id===qData.correct).text;
+                    cell.classList.add('wrong');
+                }
+                this.updateStats();
+                this.selectQuestion(exIndex+1, qId);
+            },
+
+            updateStats: function() {
+                const s = this.state.currentScore;
+                const m = this.state.maxScore;
+                document.getElementById('current-score').innerText = s;
+                document.getElementById('max-score').innerText = m;
+                document.getElementById('m-score').innerText = s;
+                document.getElementById('m-max').innerText = m;
+            },
+
+            toggleSidebar: function() {
+                document.getElementById('sidebar').classList.toggle('active');
+                document.querySelector('.sidebar-overlay').classList.toggle('active');
+            },
+
+            closeQuestionPanel: function() {
+                document.getElementById('question-panel').classList.remove('active');
+            },
+
+            scrollToTop: function() {
+                document.querySelector('.main-content').scrollTop = 0;
+            },
+
+            nextExercise: function() {
+                this.initExercise(this.state.exIdx + 1);
+            }
+        };
+
+        app.initExercise(0);
+    </script>
+</body>
+</html>
