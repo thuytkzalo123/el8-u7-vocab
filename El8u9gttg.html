@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Prepositions of Time (50 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Prepositions of Time (50 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">50</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">50</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // BATCH 1 (Câu 1 - 30)
+            {
+                q: "I have a meeting _______ 9 a.m. tomorrow.",
+                qVi: "Tôi có một cuộc họp _______ 9 giờ sáng ngày mai.",
+                key: ["9 a.m.", "specific time"],
+                opts: ["in", "on", "at", "by"],
+                optsVi: ["trong", "vào", "lúc", "trước"],
+                correct: 2,
+                exp: "Dùng giới từ <b>at</b> trước một mốc thời gian/giờ giấc cụ thể trong ngày (9 a.m.)."
+            },
+            {
+                q: "We will finish the project _______ two weeks.",
+                qVi: "Chúng tôi sẽ hoàn thành dự án _______ hai tuần nữa.",
+                key: ["future duration", "two weeks"],
+                opts: ["for", "in", "at", "on"],
+                optsVi: ["trong (khoảng)", "trong (tương lai)", "lúc", "vào"],
+                correct: 1,
+                exp: "Dùng <b>in</b> + khoảng thời gian để chỉ một thời điểm trong tương lai (sau bao lâu nữa sẽ xảy ra)."
+            },
+            {
+                q: "You must hand in your assignment _______ Friday.",
+                qVi: "Bạn phải nộp bài tập _______ thứ Sáu.",
+                key: ["must hand in", "deadline"],
+                opts: ["for", "in", "at", "by"],
+                optsVi: ["cho", "trong", "lúc", "trước/chậm nhất là"],
+                correct: 3,
+                exp: "<b>by</b> + mốc thời gian mang nghĩa là 'trước hoặc muộn nhất là vào lúc đó' (chỉ hạn chót - deadline)."
+            },
+            {
+                q: "My birthday is _______ May 15th.",
+                qVi: "Sinh nhật của tôi là _______ ngày 15 tháng 5.",
+                key: ["date", "May 15th"],
+                opts: ["in", "on", "at", "for"],
+                optsVi: ["trong (tháng)", "vào (ngày)", "lúc", "cho"],
+                correct: 1,
+                exp: "Dùng <b>on</b> trước các ngày cụ thể trong tháng (May 15th) hoặc ngày trong tuần."
+            },
+            {
+                q: "It has been raining _______ three hours.",
+                qVi: "Trời đã mưa được _______ ba tiếng đồng hồ rồi.",
+                key: ["has been raining", "duration"],
+                opts: ["for", "in", "by", "at"],
+                optsVi: ["trong khoảng", "trong", "trước", "lúc"],
+                correct: 0,
+                exp: "Dùng <b>for</b> + khoảng thời gian (three hours) để chỉ một hành động đã kéo dài bao lâu (thường dùng trong thì Hoàn thành)."
+            },
+            {
+                q: "I'll be home _______ 6 p.m. Don't worry if I'm a bit late, but I won't be later than 6.",
+                qVi: "Tôi sẽ về nhà _______ 6 giờ tối. Đừng lo nếu tôi hơi trễ, nhưng tôi sẽ không về muộn hơn 6 giờ đâu.",
+                key: ["won't be later than", "deadline"],
+                opts: ["in", "for", "by", "on"],
+                optsVi: ["trong", "cho", "chậm nhất là", "vào"],
+                correct: 2,
+                exp: "<b>by</b> mang nghĩa là trước hoặc đúng vào thời điểm đó (không muộn hơn)."
+            },
+            {
+                q: "We usually go to the beach _______ summer.",
+                qVi: "Chúng tôi thường đi biển _______ mùa hè.",
+                key: ["seasons", "summer"],
+                opts: ["on", "at", "in", "by"],
+                optsVi: ["vào (ngày)", "lúc", "vào (mùa)", "trước"],
+                correct: 2,
+                exp: "Dùng <b>in</b> trước các mùa trong năm (in summer), tháng, năm, thập kỷ."
+            },
+            {
+                q: "The store closes _______ midnight.",
+                qVi: "Cửa hàng đóng cửa _______ nửa đêm.",
+                key: ["midnight", "fixed expression"],
+                opts: ["in", "on", "at", "for"],
+                optsVi: ["trong", "vào", "lúc", "cho"],
+                correct: 2,
+                exp: "Dùng <b>at</b> cho các thời điểm cụ thể trong ngày (at midnight, at noon, at night)."
+            },
+            {
+                q: "I studied English _______ five years when I was a child.",
+                qVi: "Tôi đã học tiếng Anh _______ năm năm khi tôi còn nhỏ.",
+                key: ["duration", "five years"],
+                opts: ["for", "in", "by", "at"],
+                optsVi: ["trong khoảng", "trong", "trước", "lúc"],
+                correct: 0,
+                exp: "<b>for</b> + khoảng thời gian (five years) dùng để chỉ hành động đã kéo dài bao lâu."
+            },
+            {
+                q: "Can you finish the report _______ the end of the day? (Hạn chót)",
+                qVi: "Bạn có thể hoàn thành báo cáo _______ cuối ngày không? (Hạn chót)",
+                key: ["deadline", "end of the day"],
+                opts: ["in", "for", "by", "on"],
+                optsVi: ["trong", "cho", "trước/chậm nhất", "vào"],
+                correct: 2,
+                exp: "<b>by</b> dùng để chỉ hạn chót (muộn nhất là vào lúc nào đó)."
+            },
+            {
+                q: "The train leaves _______ five minutes. Hurry up!",
+                qVi: "Chuyến tàu sẽ rời đi _______ năm phút nữa. Nhanh lên!",
+                key: ["future", "five minutes"],
+                opts: ["in", "for", "at", "by"],
+                optsVi: ["trong (sau bao lâu nữa)", "trong khoảng", "lúc", "trước"],
+                correct: 0,
+                exp: "<b>in</b> + khoảng thời gian dùng trong tương lai mang nghĩa 'sau bao lâu nữa'."
+            },
+            {
+                q: "I was born _______ 1995.",
+                qVi: "Tôi sinh _______ năm 1995.",
+                key: ["years", "1995"],
+                opts: ["on", "at", "in", "by"],
+                optsVi: ["vào (ngày)", "lúc", "vào (năm)", "trước"],
+                correct: 2,
+                exp: "Dùng giới từ <b>in</b> trước các năm (in 1995)."
+            },
+            {
+                q: "We are going to have a party _______ Saturday night.",
+                qVi: "Chúng tôi sẽ tổ chức một bữa tiệc _______ tối thứ Bảy.",
+                key: ["specific day", "Saturday night"],
+                opts: ["in", "on", "at", "for"],
+                optsVi: ["trong", "vào", "lúc", "cho"],
+                correct: 1,
+                exp: "Dùng <b>on</b> cho các buổi của một ngày cụ thể trong tuần (on Saturday night, on Monday morning)."
+            },
+            {
+                q: "Please be there _______ 8 o'clock sharp.",
+                qVi: "Vui lòng có mặt ở đó đúng _______ 8 giờ.",
+                key: ["clock time", "8 o'clock"],
+                opts: ["in", "on", "at", "for"],
+                optsVi: ["trong", "vào", "lúc", "cho"],
+                correct: 2,
+                exp: "Dùng <b>at</b> cho giờ giấc cụ thể trên đồng hồ."
+            },
+            {
+                q: "I will wait for you _______ 10 minutes, then I have to go.",
+                qVi: "Tôi sẽ đợi bạn _______ 10 phút, sau đó tôi phải đi.",
+                key: ["duration", "10 minutes"],
+                opts: ["for", "in", "by", "at"],
+                optsVi: ["trong khoảng", "sau (bao lâu nữa)", "trước", "lúc"],
+                correct: 0,
+                exp: "<b>for</b> + khoảng thời gian để chỉ khoảng thời gian hành động diễn ra."
+            },
+            {
+                q: "The technology will change significantly _______ the next decade.",
+                qVi: "Công nghệ sẽ thay đổi đáng kể _______ thập kỷ tới.",
+                key: ["long periods", "decade"],
+                opts: ["for", "in", "at", "on"],
+                optsVi: ["khoảng", "trong", "lúc", "vào"],
+                correct: 1,
+                exp: "Dùng <b>in</b> cho một khoảng thời gian dài như tháng, năm, thập kỷ, thế kỷ."
+            },
+            {
+                q: "You need to register _______ October 1st if you want to join.",
+                qVi: "Bạn cần đăng ký _______ ngày 1 tháng 10 nếu bạn muốn tham gia.",
+                key: ["deadline", "October 1st"],
+                opts: ["by", "for", "at", "in"],
+                optsVi: ["trước/hạn chót", "cho", "lúc", "trong"],
+                correct: 0,
+                exp: "<b>by</b> dùng để chỉ hạn chót (trước ngày 1/10)."
+            },
+            {
+                q: "What do you usually do _______ the weekend?",
+                qVi: "Bạn thường làm gì _______ cuối tuần?",
+                key: ["weekend differences"],
+                opts: ["in", "on", "at", "Both B & C are correct"],
+                optsVi: ["trong", "vào (Mỹ)", "vào (Anh)", "Cả B và C đều đúng"],
+                correct: 3,
+                exp: "Tiếng Anh-Anh (British English) dùng <b>at the weekend</b>, tiếng Anh-Mỹ (American English) dùng <b>on the weekend</b>. Cả hai đều đúng."
+            },
+            {
+                q: "I'll have my car fixed _______ tomorrow. I need it for work.",
+                qVi: "Tôi sẽ sửa xong xe _______ ngày mai. Tôi cần nó để đi làm.",
+                key: ["deadline", "tomorrow"],
+                opts: ["for", "in", "by", "at"],
+                optsVi: ["cho", "trong", "trước/chậm nhất là", "lúc"],
+                correct: 2,
+                exp: "Cần xe đi làm nên hạn chót sửa xe là ngày mai -> dùng <b>by</b> tomorrow."
+            },
+            {
+                q: "It's very quiet _______ night.",
+                qVi: "Rất yên tĩnh _______ ban đêm.",
+                key: ["night", "fixed expression"],
+                opts: ["in", "on", "at", "for"],
+                optsVi: ["trong", "vào", "vào", "cho"],
+                correct: 2,
+                exp: "Cụm từ cố định chỉ thời gian trong ngày: <b>at night</b> (nhưng in the morning/afternoon/evening)."
+            },
+            {
+                q: "I haven't seen her _______ a long time.",
+                qVi: "Tôi đã không gặp cô ấy _______ một thời gian dài.",
+                key: ["duration", "a long time"],
+                opts: ["for", "in", "by", "at"],
+                optsVi: ["trong khoảng", "trong", "trước", "lúc"],
+                correct: 0,
+                exp: "<b>for</b> a long time (trong một khoảng thời gian dài)."
+            },
+            {
+                q: "We reached the station just _______ time to catch the train.",
+                qVi: "Chúng tôi đến ga vừa _______ lúc để bắt tàu.",
+                key: ["time to catch", "idiom"],
+                opts: ["at", "in", "on", "by"],
+                optsVi: ["lúc", "kịp", "đúng giờ", "trước"],
+                correct: 1,
+                exp: "Cụm từ <b>in time</b> nghĩa là kịp lúc, vừa sát giờ để làm gì đó."
+            },
+            {
+                q: "The flowers will bloom _______ a few days.",
+                qVi: "Những bông hoa sẽ nở _______ vài ngày nữa.",
+                key: ["future meaning", "a few days"],
+                opts: ["for", "by", "in", "at"],
+                optsVi: ["khoảng", "trước", "trong (sau vài ngày nữa)", "lúc"],
+                correct: 2,
+                exp: "<b>in</b> + khoảng thời gian mang nghĩa tương lai (sau bao lâu nữa việc đó sẽ xảy ra)."
+            },
+            {
+                q: "She promised to call me _______ 5 o'clock, but it's 5:30 now.",
+                qVi: "Cô ấy hứa sẽ gọi cho tôi _______ 5 giờ, nhưng bây giờ đã là 5:30.",
+                key: ["promised", "deadline"],
+                opts: ["by", "in", "for", "on"],
+                optsVi: ["trước", "trong", "cho", "vào"],
+                correct: 0,
+                exp: "Lời hứa gọi trước hạn chót 5 giờ -> <b>by</b> 5 o'clock."
+            },
+            {
+                q: "We visited Japan _______ 2019.",
+                qVi: "Chúng tôi đã đến thăm Nhật Bản _______ năm 2019.",
+                key: ["years", "2019"],
+                opts: ["at", "on", "in", "for"],
+                optsVi: ["lúc", "vào (ngày)", "vào (năm)", "khoảng"],
+                correct: 2,
+                exp: "Dùng giới từ <b>in</b> trước mốc thời gian là năm."
+            },
+            {
+                q: "I have been waiting here _______ 2 p.m.",
+                qVi: "Tôi đã đợi ở đây _______ 2 giờ chiều.",
+                key: ["Perfect tense", "starting point"],
+                opts: ["for", "since", "in", "by"],
+                optsVi: ["khoảng", "từ lúc", "trong", "trước"],
+                correct: 1,
+                exp: "Dùng <b>since</b> + mốc thời gian (2 p.m.) trong thì Hoàn thành để chỉ thời điểm bắt đầu hành động."
+            },
+            {
+                q: "They have lived in this city _______ ten years.",
+                qVi: "Họ đã sống ở thành phố này _______ mười năm.",
+                key: ["Perfect tense", "duration"],
+                opts: ["for", "in", "at", "by"],
+                optsVi: ["được/trong khoảng", "trong", "lúc", "trước"],
+                correct: 0,
+                exp: "Dùng <b>for</b> + khoảng thời gian (ten years) để chỉ hành động kéo dài bao lâu."
+            },
+            {
+                q: "The meeting will be over _______ 4:30 p.m.",
+                qVi: "Cuộc họp sẽ kết thúc _______ lúc 4:30 chiều.",
+                key: ["specific time"],
+                opts: ["in", "at", "on", "for"],
+                optsVi: ["trong", "lúc", "vào", "cho"],
+                correct: 1,
+                exp: "Dùng <b>at</b> trước giờ giấc cụ thể trên đồng hồ."
+            },
+            {
+                q: "Can you send me the file _______ Monday?",
+                qVi: "Bạn có thể gửi cho tôi tệp tin _______ thứ Hai không?",
+                key: ["deadline"],
+                opts: ["by", "in", "for", "at"],
+                optsVi: ["trước", "trong", "cho", "lúc"],
+                correct: 0,
+                exp: "Yêu cầu hoàn thành công việc trước thời hạn (hạn chót) -> <b>by</b> Monday."
+            },
+            {
+                q: "I like to drink coffee _______ the morning.",
+                qVi: "Tôi thích uống cà phê _______ buổi sáng.",
+                key: ["part of the day"],
+                opts: ["on", "at", "in", "by"],
+                optsVi: ["vào (ngày)", "lúc", "vào (buổi)", "trước"],
+                correct: 2,
+                exp: "Cụm từ cố định chỉ các buổi trong ngày: <b>in</b> the morning / afternoon / evening."
+            },
+            
+            // BATCH 2 (Câu 31 - 50)
+            {
+                q: "The movie starts _______ 8:30 p.m.",
+                qVi: "Bộ phim bắt đầu _______ 8:30 tối.",
+                key: ["clock time"],
+                opts: ["in", "on", "at", "by"],
+                optsVi: ["trong", "vào", "lúc", "trước"],
+                correct: 2,
+                exp: "Dùng <b>at</b> cho thời gian/giờ giấc cụ thể."
+            },
+            {
+                q: "I haven't seen my grandparents _______ many years.",
+                qVi: "Tôi đã không gặp ông bà mình _______ nhiều năm.",
+                key: ["duration", "many years"],
+                opts: ["for", "in", "by", "at"],
+                optsVi: ["trong khoảng", "trong", "trước", "lúc"],
+                correct: 0,
+                exp: "<b>for</b> + khoảng thời gian (many years)."
+            },
+            {
+                q: "You should submit your application _______ the end of this month. (Hạn chót)",
+                qVi: "Bạn nên nộp đơn đăng ký _______ cuối tháng này. (Hạn chót)",
+                key: ["deadline", "the end of"],
+                opts: ["in", "for", "by", "on"],
+                optsVi: ["trong", "cho", "trước", "vào"],
+                correct: 2,
+                exp: "<b>by</b> dùng để chỉ thời hạn cuối cùng (deadline)."
+            },
+            {
+                q: "My family always gathers _______ Christmas Day.",
+                qVi: "Gia đình tôi luôn tụ họp _______ ngày Giáng sinh.",
+                key: ["specific day", "Christmas Day"],
+                opts: ["in", "on", "at", "for"],
+                optsVi: ["trong", "vào", "lúc", "cho"],
+                correct: 1,
+                exp: "Dùng <b>on</b> trước các ngày lễ cụ thể có chữ 'Day' (on Christmas Day, on Valentine's Day). Nếu chỉ nói 'Christmas' thì dùng 'at Christmas'."
+            },
+            {
+                q: "We'll be back _______ a few minutes. (Nghĩa tương lai)",
+                qVi: "Chúng tôi sẽ quay lại _______ vài phút nữa. (Nghĩa tương lai)",
+                key: ["future", "a few minutes"],
+                opts: ["for", "at", "by", "in"],
+                optsVi: ["khoảng", "lúc", "trước", "trong (sau bao lâu nữa)"],
+                correct: 3,
+                exp: "<b>in</b> + khoảng thời gian dùng trong tương lai để chỉ 'sau bao lâu nữa sẽ xảy ra'."
+            },
+            {
+                q: "I'll finish my homework _______ 9 o'clock. I promise it won't be later.",
+                qVi: "Tôi sẽ làm xong bài tập về nhà _______ 9 giờ. Tôi hứa sẽ không muộn hơn.",
+                key: ["deadline", "won't be later"],
+                opts: ["on", "by", "in", "for"],
+                optsVi: ["vào", "trước", "trong", "cho"],
+                correct: 1,
+                exp: "<b>by</b> + thời gian mang nghĩa là trước hoặc chậm nhất là vào thời điểm đó."
+            },
+            {
+                q: "She has lived in Hanoi _______ five months.",
+                qVi: "Cô ấy đã sống ở Hà Nội _______ năm tháng.",
+                key: ["duration", "five months"],
+                opts: ["since", "in", "for", "by"],
+                optsVi: ["từ lúc", "trong", "được/trong khoảng", "trước"],
+                correct: 2,
+                exp: "<b>for</b> + khoảng thời gian (five months)."
+            },
+            {
+                q: "We usually have a short break _______ noon.",
+                qVi: "Chúng tôi thường có một kỳ nghỉ ngắn _______ buổi trưa.",
+                key: ["noon", "fixed expression"],
+                opts: ["in", "on", "at", "by"],
+                optsVi: ["trong", "vào", "lúc", "trước"],
+                correct: 2,
+                exp: "Cụm từ cố định: <b>at noon</b>."
+            },
+            {
+                q: "Humans will probably live on Mars _______ the future.",
+                qVi: "Con người có thể sẽ sống trên sao Hỏa _______ tương lai.",
+                key: ["future", "fixed expression"],
+                opts: ["in", "on", "at", "for"],
+                optsVi: ["trong", "vào", "lúc", "cho"],
+                correct: 0,
+                exp: "Cụm từ cố định: <b>in the future</b> (trong tương lai)."
+            },
+            {
+                q: "Please return the book to the library _______ Monday.",
+                qVi: "Vui lòng trả sách cho thư viện _______ thứ Hai.",
+                key: ["deadline", "Monday"],
+                opts: ["for", "in", "at", "by"],
+                optsVi: ["cho", "trong", "lúc", "trước/chậm nhất là"],
+                correct: 3,
+                exp: "Hạn chót để trả sách là trước hoặc trong ngày thứ Hai -> dùng <b>by</b>."
+            },
+            {
+                q: "I usually wake up early _______ the morning.",
+                qVi: "Tôi thường thức dậy sớm _______ buổi sáng.",
+                key: ["morning", "part of the day"],
+                opts: ["on", "at", "in", "by"],
+                optsVi: ["vào (ngày)", "lúc", "vào (buổi)", "trước"],
+                correct: 2,
+                exp: "Cụm từ cố định: <b>in the morning</b>."
+            },
+            {
+                q: "They've been playing football _______ two hours.",
+                qVi: "Họ đã chơi bóng đá _______ hai tiếng đồng hồ.",
+                key: ["duration", "two hours"],
+                opts: ["for", "in", "by", "at"],
+                optsVi: ["được/trong khoảng", "trong", "trước", "lúc"],
+                correct: 0,
+                exp: "<b>for</b> + khoảng thời gian (two hours) trong thì Hiện tại hoàn thành tiếp diễn."
+            },
+            {
+                q: "The shop will be closed _______ January.",
+                qVi: "Cửa hàng sẽ đóng cửa _______ tháng Một.",
+                key: ["month", "January"],
+                opts: ["at", "in", "on", "by"],
+                optsVi: ["lúc", "trong", "vào", "trước"],
+                correct: 1,
+                exp: "Dùng <b>in</b> trước các tháng trong năm (in January)."
+            },
+            {
+                q: "I hope to buy a new car _______ the age of 30.",
+                qVi: "Tôi hy vọng sẽ mua được một chiếc ô tô mới _______ tuổi 30.",
+                key: ["age"],
+                opts: ["in", "on", "at", "for"],
+                optsVi: ["trong", "vào", "ở", "cho"],
+                correct: 2,
+                exp: "Dùng <b>at</b> trước độ tuổi (at the age of 30)."
+            },
+            {
+                q: "Can you send the email _______ 5 p.m.? I need it for the meeting.",
+                qVi: "Bạn có thể gửi email _______ 5 giờ chiều không? Tôi cần nó cho cuộc họp.",
+                key: ["deadline", "5 p.m."],
+                opts: ["in", "for", "by", "at"],
+                optsVi: ["trong", "cho", "trước", "lúc"],
+                correct: 2,
+                exp: "Yêu cầu phải có trước một thời điểm nhất định -> <b>by</b> (hạn chót)."
+            },
+            {
+                q: "We had a wonderful time _______ our vacation.",
+                qVi: "Chúng tôi đã có một khoảng thời gian tuyệt vời _______ kỳ nghỉ của mình.",
+                key: ["vacation", "fixed expression"],
+                opts: ["on", "in", "at", "for"],
+                optsVi: ["trong", "trong", "lúc", "cho"],
+                correct: 0,
+                exp: "Cụm từ cố định: <b>on vacation</b> / on holiday (trong kỳ nghỉ)."
+            },
+            {
+                q: "The project must be completed _______ tomorrow morning.",
+                qVi: "Dự án phải được hoàn thành _______ sáng ngày mai.",
+                key: ["deadline", "completed"],
+                opts: ["by", "for", "in", "on"],
+                optsVi: ["trước", "cho", "trong", "vào"],
+                correct: 0,
+                exp: "Dự án phải nộp nên cần thời hạn cuối (deadline) -> <b>by</b>."
+            },
+            {
+                q: "He stayed in the hospital _______ a week.",
+                qVi: "Anh ấy đã ở lại bệnh viện _______ một tuần.",
+                key: ["duration", "a week"],
+                opts: ["in", "at", "by", "for"],
+                optsVi: ["trong", "lúc", "trước", "trong khoảng"],
+                correct: 3,
+                exp: "<b>for</b> + khoảng thời gian (a week) chỉ khoảng thời gian hành động diễn ra."
+            },
+            {
+                q: "I'll see you _______ next Friday.",
+                qVi: "Tôi sẽ gặp bạn _______ thứ Sáu tuần tới.",
+                key: ["next", "Friday"],
+                opts: ["on", "at", "in", "(/) không dùng giới từ"],
+                optsVi: ["vào", "lúc", "trong", "(/) không dùng"],
+                correct: 3,
+                exp: "Không dùng các giới từ in/on/at trước những từ chỉ thời gian bắt đầu bằng: <b>next, last, this, every</b>. Do đó đáp án là không dùng giới từ (/)."
+            },
+            {
+                q: "Let's meet _______ the weekend.",
+                qVi: "Hãy gặp nhau _______ cuối tuần nhé.",
+                key: ["the weekend"],
+                opts: ["in", "at", "on", "Both B & C are correct"],
+                optsVi: ["trong", "vào (Anh)", "vào (Mỹ)", "Cả B và C đều đúng"],
+                correct: 3,
+                exp: "Tiếng Anh-Anh (British English) dùng <b>at the weekend</b>, tiếng Anh-Mỹ (American English) dùng <b>on the weekend</b>. Cả B và C đều đúng."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1;
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                // Sidebar nav item
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            for (let i = 0; i < 4; i++) {
+                const optTrans = document.getElementById(`trans-opt-${index}-${i}`);
+                if(optTrans) optTrans.classList.toggle('show');
+            }
+            
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
