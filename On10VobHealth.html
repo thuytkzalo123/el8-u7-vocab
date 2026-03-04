@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Health & Lifestyle (90 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Health & Lifestyle (90 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">90</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">90</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // List 1
+            {
+                q: "Getting enough sleep is one of many important ways to _______ good physical health.",
+                qVi: "Ngủ đủ giấc là một trong nhiều cách quan trọng để _______ sức khỏe thể chất tốt.",
+                key: ["good physical health", "ways to"],
+                opts: ["refuse", "accept", "access", "maintain"],
+                optsVi: ["từ chối", "chấp nhận", "truy cập", "duy trì"],
+                correct: 3,
+                exp: "Duy trì sức khỏe tốt -> <b>maintain</b> good physical health."
+            },
+            {
+                q: "Eating a healthy _______ reduces the risk of developing various diseases.",
+                qVi: "Ăn một _______ lành mạnh làm giảm nguy cơ mắc các bệnh khác nhau.",
+                key: ["Eating a healthy", "reduces the risk"],
+                opts: ["diet", "range", "level", "rate"],
+                optsVi: ["chế độ ăn", "phạm vi", "mức độ", "tỷ lệ"],
+                correct: 0,
+                exp: "Chế độ ăn uống lành mạnh -> a healthy <b>diet</b>."
+            },
+            {
+                q: "Even in his old age, his grandfather continues to exercise _______.",
+                qVi: "Ngay cả khi đã lớn tuổi, ông của anh ấy vẫn tiếp tục tập thể dục _______.",
+                key: ["continues to exercise"],
+                opts: ["carelessly", "regularly", "temporarily", "accurately"],
+                optsVi: ["một cách cẩu thả", "thường xuyên", "tạm thời", "chính xác"],
+                correct: 1,
+                exp: "Tập thể dục một cách thường xuyên, đều đặn -> exercise <b>regularly</b>."
+            },
+            {
+                q: "The health expert gave us some useful _______ on how to get a good night's sleep.",
+                qVi: "Chuyên gia sức khỏe đã cho chúng tôi một vài _______ hữu ích về cách để có giấc ngủ ngon.",
+                key: ["useful", "expert gave"],
+                opts: ["access", "advice", "speciality", "habit"],
+                optsVi: ["quyền truy cập", "lời khuyên", "đặc sản/chuyên môn", "thói quen"],
+                correct: 1,
+                exp: "Cho lời khuyên hữu ích -> gave some useful <b>advice</b>."
+            },
+            {
+                q: "Students should be taught how to manage _______ before important exams.",
+                qVi: "Học sinh nên được dạy cách quản lý _______ trước những kỳ thi quan trọng.",
+                key: ["manage", "before important exams"],
+                opts: ["duty", "promise", "behaviour", "stress"],
+                optsVi: ["nhiệm vụ", "lời hứa", "hành vi", "căng thẳng"],
+                correct: 3,
+                exp: "Kiểm soát/quản lý căng thẳng trước kỳ thi -> manage <b>stress</b>."
+            },
+            {
+                q: "She provided us with valuable _______ on how to think more positively.",
+                qVi: "Cô ấy đã cung cấp cho chúng tôi những _______ giá trị về cách suy nghĩ tích cực hơn.",
+                key: ["valuable", "how to think"],
+                opts: ["habitats", "targets", "tips", "fields"],
+                optsVi: ["môi trường sống", "mục tiêu", "mẹo/lời khuyên", "cánh đồng/lĩnh vực"],
+                correct: 2,
+                exp: "Những mẹo hay, lời khuyên giá trị -> valuable <b>tips</b>."
+            },
+            {
+                q: "Having a _______ life is essential for good mental health.",
+                qVi: "Có một cuộc sống _______ là điều cần thiết để có sức khỏe tinh thần tốt.",
+                key: ["life", "good mental health"],
+                opts: ["well-balanced", "well-equipped", "well-prepared", "well-behaved"],
+                optsVi: ["cân bằng tốt", "được trang bị tốt", "được chuẩn bị tốt", "cư xử tốt"],
+                correct: 0,
+                exp: "Cuộc sống cân bằng -> a <b>well-balanced</b> life."
+            },
+            {
+                q: "Learning to manage your time by giving _______ to your work helps you deal with tasks more effectively.",
+                qVi: "Học cách quản lý thời gian bằng cách dành sự _______ cho công việc giúp bạn giải quyết nhiệm vụ hiệu quả hơn.",
+                key: ["giving ___ to", "manage your time"],
+                opts: ["dependence", "reliability", "recognition", "priority"],
+                optsVi: ["sự phụ thuộc", "độ tin cậy", "sự công nhận", "sự ưu tiên"],
+                correct: 3,
+                exp: "Dành sự ưu tiên cho cái gì -> give <b>priority</b> to."
+            },
+            {
+                q: "He sought advice from a professional _______ regarding his studies.",
+                qVi: "Cậu ấy đã tìm kiếm lời khuyên từ một _______ chuyên nghiệp liên quan đến việc học của mình.",
+                key: ["advice from", "professional"],
+                opts: ["artisan", "collector", "officer", "counsellor"],
+                optsVi: ["nghệ nhân", "người sưu tầm", "sĩ quan", "người tư vấn/cố vấn"],
+                correct: 3,
+                exp: "Xin lời khuyên từ người cố vấn -> professional <b>counsellor</b>."
+            },
+            {
+                q: "Without the teacher's guidance, the students couldn't _______ the task in such a short time.",
+                qVi: "Nếu không có sự hướng dẫn của giáo viên, học sinh không thể _______ nhiệm vụ trong thời gian ngắn như vậy.",
+                key: ["the task in such a short time"],
+                opts: ["manage", "accomplish", "prioritise", "balance"],
+                optsVi: ["quản lý", "hoàn thành/đạt được", "ưu tiên", "cân bằng"],
+                correct: 1,
+                exp: "Hoàn thành một nhiệm vụ -> <b>accomplish</b> the task."
+            },
+            {
+                q: "He kept _______ seeing the psychiatrist, saying that he was too busy.",
+                qVi: "Anh ta cứ _______ việc đi gặp bác sĩ tâm lý, nói rằng anh ta quá bận.",
+                key: ["kept", "too busy"],
+                opts: ["delaying", "maintaining", "intending", "reducing"],
+                optsVi: ["trì hoãn", "duy trì", "dự định", "làm giảm"],
+                correct: 0,
+                exp: "Vì quá bận nên liên tục trì hoãn -> kept <b>delaying</b>."
+            },
+            {
+                q: "Before starting work on the project, you should pay attention to the _______ date.",
+                qVi: "Trước khi bắt đầu làm dự án, bạn nên chú ý đến ngày _______.",
+                key: ["pay attention to", "date"],
+                opts: ["fine", "wide", "long", "due"],
+                optsVi: ["tốt", "rộng", "dài", "đến hạn"],
+                correct: 3,
+                exp: "Ngày đến hạn (deadline) -> <b>due</b> date."
+            },
+            {
+                q: "Feeling _______ out about his studies, he decided to take a break.",
+                qVi: "Cảm thấy _______ về việc học của mình, cậu ấy quyết định nghỉ ngơi.",
+                key: ["Feeling ___ out", "take a break"],
+                opts: ["balanced", "physical", "mental", "stressed"],
+                optsVi: ["cân bằng", "thể chất", "tinh thần", "căng thẳng"],
+                correct: 3,
+                exp: "Cụm từ chỉ sự căng thẳng tột độ -> <b>stressed</b> out."
+            },
+            {
+                q: "I'm not very _______ about the result of the exam I took last week.",
+                qVi: "Tôi không mấy _______ về kết quả kỳ thi tôi làm tuần trước.",
+                key: ["not very", "about the result"],
+                opts: ["reliable", "skilled", "optimistic", "regular"],
+                optsVi: ["đáng tin cậy", "lành nghề", "lạc quan", "thường xuyên"],
+                correct: 2,
+                exp: "Không tự tin, không lạc quan về kết quả -> not very <b>optimistic</b>."
+            },
+            {
+                q: "The library is an ideal place for self-study because there are fewer _______ compared to home.",
+                qVi: "Thư viện là nơi lý tưởng để tự học vì có ít sự _______ hơn so với ở nhà.",
+                key: ["fewer", "self-study"],
+                opts: ["priorities", "assignments", "distractions", "handicrafts"],
+                optsVi: ["sự ưu tiên", "bài tập", "sự xao nhãng", "đồ thủ công"],
+                correct: 2,
+                exp: "Ít yếu tố gây xao nhãng làm mất tập trung -> fewer <b>distractions</b>."
+            },
+            {
+                q: "Consuming too much fast food can cause you to _______ weight.",
+                qVi: "Tiêu thụ quá nhiều thức ăn nhanh có thể khiến bạn _______ cân.",
+                key: ["fast food", "weight"],
+                opts: ["find", "gain", "purchase", "plan"],
+                optsVi: ["tìm", "tăng", "mua", "kế hoạch"],
+                correct: 1,
+                exp: "Tăng cân -> <b>gain</b> weight."
+            },
+            {
+                q: "Your health will _______ if you don't get enough sleep at night.",
+                qVi: "Sức khỏe của bạn sẽ _______ nếu bạn không ngủ đủ giấc vào ban đêm.",
+                key: ["health will", "don't get enough sleep"],
+                opts: ["arrange", "create", "suffer", "maintain"],
+                optsVi: ["sắp xếp", "tạo ra", "chịu đựng/giảm sút", "duy trì"],
+                correct: 2,
+                exp: "Thiếu ngủ khiến sức khỏe đi xuống, gánh chịu hậu quả -> will <b>suffer</b>."
+            },
+            {
+                q: "Using the best _______ when cooking ensures a healthy and delicious meal.",
+                qVi: "Sử dụng những _______ tốt nhất khi nấu ăn đảm bảo một bữa ăn lành mạnh và ngon miệng.",
+                key: ["cooking", "delicious meal"],
+                opts: ["ingredients", "purposes", "habits", "values"],
+                optsVi: ["nguyên liệu/thành phần", "mục đích", "thói quen", "giá trị"],
+                correct: 0,
+                exp: "Nấu ăn cần nguyên liệu tốt -> best <b>ingredients</b>."
+            },
+            {
+                q: "Some teenagers find it hard to _______ academic difficulties.",
+                qVi: "Một số thanh thiếu niên cảm thấy khó khăn để _______ những khó khăn trong học tập.",
+                key: ["hard to", "difficulties"],
+                opts: ["comment", "explore", "widen", "overcome"],
+                optsVi: ["bình luận", "khám phá", "mở rộng", "vượt qua"],
+                correct: 3,
+                exp: "Vượt qua khó khăn -> <b>overcome</b> difficulties."
+            },
+            {
+                q: "Many students experience high levels of stress and _______ before exams.",
+                qVi: "Nhiều học sinh trải qua mức độ căng thẳng và _______ cao trước kỳ thi.",
+                key: ["stress and", "before exams"],
+                opts: ["schedule", "task", "assignment", "anxiety"],
+                optsVi: ["lịch trình", "nhiệm vụ", "bài tập", "sự lo âu"],
+                correct: 3,
+                exp: "Căng thẳng và lo âu thường đi kèm nhau -> stress and <b>anxiety</b>."
+            },
+            {
+                q: "Learning to manage your time _______ leads to a more productive working day.",
+                qVi: "Học cách quản lý thời gian của bạn _______ dẫn đến một ngày làm việc hiệu quả hơn.",
+                key: ["manage your time", "productive"],
+                opts: ["typically", "properly", "willingly", "voluntarily"],
+                optsVi: ["điển hình", "một cách hợp lý/đúng đắn", "sẵn lòng", "tự nguyện"],
+                correct: 1,
+                exp: "Quản lý thời gian đúng cách/hợp lý -> manage your time <b>properly</b>."
+            },
+            {
+                q: "John struggled to _______ on his homework because of the nearby construction noise.",
+                qVi: "John đã phải vật lộn để _______ vào bài tập về nhà của mình vì tiếng ồn xây dựng gần đó.",
+                key: ["struggled to", "on his homework"],
+                opts: ["manage", "concentrate", "balance", "suffer"],
+                optsVi: ["quản lý", "tập trung", "cân bằng", "chịu đựng"],
+                correct: 1,
+                exp: "Tập trung vào việc gì -> <b>concentrate</b> on."
+            },
+            {
+                q: "When teens are stressed, they turn to their parents and friends for _______ support.",
+                qVi: "Khi thanh thiếu niên bị căng thẳng, họ tìm đến cha mẹ và bạn bè để được hỗ trợ _______.",
+                key: ["support", "stressed"],
+                opts: ["additional", "typical", "popular", "vibrant"],
+                optsVi: ["bổ sung/thêm", "điển hình", "phổ biến", "sôi động"],
+                correct: 0,
+                exp: "Hỗ trợ thêm (ngoài tự thân) -> <b>additional</b> support (Cũng có thể dùng 'emotional support', nhưng trong 4 đáp án này, additional là hợp lý nhất)."
+            },
+            {
+                q: "Taking breaks _______ helps you recharge and focus on your tasks better.",
+                qVi: "Nghỉ ngơi _______ giúp bạn nạp lại năng lượng và tập trung vào nhiệm vụ tốt hơn.",
+                key: ["Taking breaks", "recharge"],
+                opts: ["easily", "widely", "appropriately", "typically"],
+                optsVi: ["dễ dàng", "rộng rãi", "một cách phù hợp", "điển hình"],
+                correct: 2,
+                exp: "Nghỉ ngơi đúng lúc, phù hợp -> <b>appropriately</b>."
+            },
+            {
+                q: "Try to avoid _______ foods, or you might become obese.",
+                qVi: "Cố gắng tránh các loại thực phẩm _______, nếu không bạn có thể bị béo phì.",
+                key: ["avoid", "become obese"],
+                opts: ["healthy", "fattening", "calm", "peaceful"],
+                optsVi: ["lành mạnh", "gây béo", "bình tĩnh", "yên bình"],
+                correct: 1,
+                exp: "Thức ăn làm tăng cân -> <b>fattening</b> foods."
+            },
+            {
+                q: "For good physical health, it's important to include exercise in your daily _______.",
+                qVi: "Để có sức khỏe thể chất tốt, điều quan trọng là đưa việc tập thể dục vào _______ hàng ngày của bạn.",
+                key: ["daily", "exercise"],
+                opts: ["behaviour", "attitude", "skill", "routine"],
+                optsVi: ["hành vi", "thái độ", "kỹ năng", "thói quen/lịch trình"],
+                correct: 3,
+                exp: "Thói quen hàng ngày -> daily <b>routine</b>."
+            },
+            {
+                q: "She has been in a good _______ since she received her test result.",
+                qVi: "Cô ấy đã ở trong một _______ tốt kể từ khi nhận được kết quả bài kiểm tra.",
+                key: ["in a good", "received test result"],
+                opts: ["mind", "feeling", "attitude", "mood"],
+                optsVi: ["tâm trí", "cảm giác", "thái độ", "tâm trạng"],
+                correct: 3,
+                exp: "Cụm từ: in a good <b>mood</b> (tâm trạng tốt)."
+            },
+            {
+                q: "Getting a full night's sleep helped him feel awake and _______.",
+                qVi: "Ngủ đủ giấc cả đêm giúp anh ấy cảm thấy tỉnh táo và _______.",
+                key: ["feel awake and"],
+                opts: ["negative", "modern", "alert", "noisy"],
+                optsVi: ["tiêu cực", "hiện đại", "tỉnh táo/lanh lợi", "ồn ào"],
+                correct: 2,
+                exp: "Awake and <b>alert</b> (thức giấc và tỉnh táo)."
+            },
+            {
+                q: "As _______ approach, we often experience increased stress.",
+                qVi: "Khi _______ đến gần, chúng ta thường trải qua sự căng thẳng gia tăng.",
+                key: ["approach", "increased stress"],
+                opts: ["deadlines", "schedules", "tasks", "tools"],
+                optsVi: ["hạn chót", "lịch trình", "nhiệm vụ", "công cụ"],
+                correct: 0,
+                exp: "Hạn chót công việc đến gần gây áp lực -> <b>deadlines</b>."
+            },
+            {
+                q: "The health expert gave us some useful _______ to fall asleep more easily.",
+                qVi: "Chuyên gia y tế đã cho chúng tôi một vài _______ hữu ích để đi vào giấc ngủ dễ dàng hơn.",
+                key: ["useful", "fall asleep"],
+                opts: ["communities", "techniques", "functions", "symbols"],
+                optsVi: ["cộng đồng", "kỹ thuật/phương pháp", "chức năng", "biểu tượng"],
+                correct: 1,
+                exp: "Các kỹ thuật, phương pháp để ngủ ngon -> useful <b>techniques</b>."
+            },
+
+            // List 2
+            {
+                q: "After a few weeks, I decided to _______ with the original exercise routine.",
+                qVi: "Sau một vài tuần, tôi quyết định _______ với thói quen tập thể dục ban đầu.",
+                key: ["original exercise routine"],
+                opts: ["stick", "avoid", "manage", "consider"],
+                optsVi: ["bám vào/gắn bó", "tránh", "quản lý", "cân nhắc"],
+                correct: 0,
+                exp: "Cụm từ: <b>stick</b> with (tiếp tục làm theo, gắn bó với cái gì)."
+            },
+            {
+                q: "He _______ for a moment when his friend persuaded him to join the gym.",
+                qVi: "Anh ấy đã _______ một lúc khi bạn anh ấy thuyết phục anh ấy tham gia phòng tập thể dục.",
+                key: ["for a moment", "persuaded"],
+                opts: ["balanced", "prioritised", "hesitated", "reduced"],
+                optsVi: ["cân bằng", "ưu tiên", "do dự", "giảm bớt"],
+                correct: 2,
+                exp: "Đắn đo suy nghĩ một lúc -> <b>hesitated</b>."
+            },
+            {
+                q: "He didn't _______ washing cooking utensils before preparing dinner.",
+                qVi: "Anh ấy đã không _______ rửa đồ dùng nấu ăn trước khi chuẩn bị bữa tối.",
+                key: ["didn't ___ washing"],
+                opts: ["decide", "bother", "change", "participate"],
+                optsVi: ["quyết định", "bận tâm/chịu khó", "thay đổi", "tham gia"],
+                correct: 1,
+                exp: "Cấu trúc: not <b>bother</b> + V-ing (không bận tâm/buồn làm việc gì)."
+            },
+            {
+                q: "John made up his _______ to live a 'zero-waste' lifestyle.",
+                qVi: "John đã quyết định sống một lối sống 'không rác thải'.",
+                key: ["made up his"],
+                opts: ["mood", "feeling", "mind", "attitude"],
+                optsVi: ["tâm trạng", "cảm giác", "tâm trí", "thái độ"],
+                correct: 2,
+                exp: "Thành ngữ: make up one's <b>mind</b> (đưa ra quyết định)."
+            },
+            {
+                q: "Homeless and without money, David moved around searching for food and _______.",
+                qVi: "Vô gia cư và không có tiền, David đi lang thang tìm kiếm thức ăn và _______.",
+                key: ["searching for food and"],
+                opts: ["skill", "style", "shelter", "community"],
+                optsVi: ["kỹ năng", "phong cách", "nơi trú ẩn", "cộng đồng"],
+                correct: 2,
+                exp: "Người vô gia cư cần thức ăn và <b>shelter</b> (nơi trú ẩn)."
+            },
+            {
+                q: "A poor diet often lacks essential _______, which can lead to various diseases.",
+                qVi: "Một chế độ ăn uống kém thường thiếu _______ thiết yếu, điều này có thể dẫn đến các bệnh khác nhau.",
+                key: ["poor diet lacks essential"],
+                opts: ["organs", "nutrients", "techniques", "tips"],
+                optsVi: ["cơ quan", "chất dinh dưỡng", "kỹ thuật", "mẹo"],
+                correct: 1,
+                exp: "Chế độ ăn kém thiếu các chất dinh dưỡng thiết yếu -> essential <b>nutrients</b>."
+            },
+            {
+                q: "Swimming, gardening, and drinking orange juice can help _______ your body.",
+                qVi: "Bơi lội, làm vườn và uống nước cam có thể giúp _______ cơ thể bạn.",
+                key: ["help", "your body"],
+                opts: ["manage", "struggle", "bother", "detox"],
+                optsVi: ["quản lý", "vật lộn", "bận tâm", "giải độc"],
+                correct: 3,
+                exp: "Hoạt động lành mạnh giúp thanh lọc cơ thể -> <b>detox</b> your body."
+            },
+            {
+                q: "Some health advice found on the Internet can actually be _______.",
+                qVi: "Một số lời khuyên về sức khỏe tìm thấy trên Internet thực tế có thể là _______.",
+                key: ["advice on the Internet", "actually be"],
+                opts: ["typical", "affordable", "vibrant", "harmful"],
+                optsVi: ["điển hình", "giá cả phải chăng", "sôi động", "có hại"],
+                correct: 3,
+                exp: "Lời khuyên không kiểm chứng trên mạng có thể gây hại -> <b>harmful</b>."
+            },
+            {
+                q: "A balanced diet rich in vegetables provides various health _______.",
+                qVi: "Một chế độ ăn uống cân bằng giàu rau quả cung cấp các _______ sức khỏe khác nhau.",
+                key: ["balanced diet", "health"],
+                opts: ["techniques", "skills", "benefits", "feelings"],
+                optsVi: ["kỹ thuật", "kỹ năng", "lợi ích", "cảm giác"],
+                correct: 2,
+                exp: "Ăn uống lành mạnh mang lại lợi ích sức khỏe -> health <b>benefits</b>."
+            },
+            {
+                q: "Our body produces a number of natural _______ that act as painkillers.",
+                qVi: "Cơ thể chúng ta sản xuất một số _______ tự nhiên hoạt động như thuốc giảm đau.",
+                key: ["produces natural", "painkillers"],
+                opts: ["organs", "chemicals", "viruses", "bones"],
+                optsVi: ["cơ quan", "hóa chất/chất hóa học", "vi rút", "xương"],
+                correct: 1,
+                exp: "Cơ thể tiết ra các hóa chất tự nhiên -> natural <b>chemicals</b> (như endorphins)."
+            },
+            {
+                q: "The school launched a campaign to _______ healthy habits among students.",
+                qVi: "Trường học đã phát động một chiến dịch để _______ những thói quen lành mạnh ở học sinh.",
+                key: ["campaign to", "healthy habits"],
+                opts: ["promote", "struggle", "delay", "consider"],
+                optsVi: ["thúc đẩy", "vật lộn", "trì hoãn", "cân nhắc"],
+                correct: 0,
+                exp: "Đẩy mạnh, khuyến khích thói quen tốt -> <b>promote</b>."
+            },
+            {
+                q: "Many teenagers are _______ to processed food, signalling a potential health crisis.",
+                qVi: "Nhiều thanh thiếu niên _______ thực phẩm chế biến sẵn, báo hiệu một cuộc khủng hoảng sức khỏe tiềm ẩn.",
+                key: ["processed food", "health crisis"],
+                opts: ["liveable", "congested", "bustling", "addicted"],
+                optsVi: ["đáng sống", "tắc nghẽn", "nhộn nhịp", "nghiện"],
+                correct: 3,
+                exp: "Nghiện đồ ăn nhanh -> <b>addicted</b> to."
+            },
+            {
+                q: "He learned from his mother how to prepare healthy and _______ meals.",
+                qVi: "Anh ấy học từ mẹ cách chuẩn bị những bữa ăn lành mạnh và _______.",
+                key: ["healthy and", "meals"],
+                opts: ["vibrant", "itchy", "nourishing", "pricey"],
+                optsVi: ["sôi động", "ngứa", "bổ dưỡng", "đắt đỏ"],
+                correct: 2,
+                exp: "Bữa ăn lành mạnh và bổ dưỡng -> <b>nourishing</b> meals."
+            },
+            {
+                q: "Teens can become _______ if they spend many hours a day sitting in front of the computer.",
+                qVi: "Thanh thiếu niên có thể trở nên _______ nếu họ dành nhiều giờ một ngày ngồi trước máy tính.",
+                key: ["sitting in front of computer", "become"],
+                opts: ["risky", "nourishing", "obese", "special"],
+                optsVi: ["rủi ro", "bổ dưỡng", "béo phì", "đặc biệt"],
+                correct: 2,
+                exp: "Ngồi nhiều ít vận động dẫn đến béo phì -> become <b>obese</b>."
+            },
+            {
+                q: "Regular exercise helps lower the _______ of developing certain illnesses.",
+                qVi: "Tập thể dục thường xuyên giúp làm giảm _______ phát triển một số bệnh nhất định.",
+                key: ["lower the", "illnesses"],
+                opts: ["tip", "risk", "advice", "purpose"],
+                optsVi: ["mẹo", "rủi ro/nguy cơ", "lời khuyên", "mục đích"],
+                correct: 1,
+                exp: "Giảm nguy cơ mắc bệnh -> lower the <b>risk</b>."
+            },
+            {
+                q: "I have the habit of taking a short _______ after lunch.",
+                qVi: "Tôi có thói quen chợp mắt một lúc (ngủ ngắn) sau bữa trưa.",
+                key: ["taking a short", "after lunch"],
+                opts: ["list", "task", "function", "nap"],
+                optsVi: ["danh sách", "nhiệm vụ", "chức năng", "giấc ngủ ngắn"],
+                correct: 3,
+                exp: "Ngủ trưa -> take a <b>nap</b>."
+            },
+            {
+                q: "I'm _______ to coffee; it makes me feel sick every time I drink it.",
+                qVi: "Tôi bị _______ với cà phê; nó làm tôi cảm thấy buồn nôn mỗi khi tôi uống nó.",
+                key: ["to coffee", "makes me feel sick"],
+                opts: ["addicted", "skilled", "allergic", "congested"],
+                optsVi: ["nghiện", "lành nghề", "dị ứng", "tắc nghẽn"],
+                correct: 2,
+                exp: "Uống vào bị buồn nôn/phản ứng xấu -> <b>allergic</b> to (dị ứng với)."
+            },
+            {
+                q: "He made a remarkable _______ from the operation.",
+                qVi: "Anh ấy đã có một sự _______ đáng chú ý từ ca phẫu thuật.",
+                key: ["from the operation"],
+                opts: ["recovery", "allergy", "appointment", "ambulance"],
+                optsVi: ["sự phục hồi", "dị ứng", "cuộc hẹn", "xe cứu thương"],
+                correct: 0,
+                exp: "Bình phục sau phẫu thuật -> make a <b>recovery</b>."
+            },
+            {
+                q: "Many people prefer herbal _______ when treating a cold or a sore throat.",
+                qVi: "Nhiều người thích các loại _______ thảo dược khi điều trị cảm lạnh hoặc đau họng.",
+                key: ["herbal", "treating a cold"],
+                opts: ["allergies", "amenities", "remedies", "positions"],
+                optsVi: ["dị ứng", "tiện ích", "phương thuốc", "vị trí"],
+                correct: 2,
+                exp: "Phương pháp chữa bệnh bằng thảo dược -> herbal <b>remedies</b>."
+            },
+            {
+                q: "Exercising at the gym twice a week helps to build and _______ muscles.",
+                qVi: "Tập thể dục tại phòng gym hai lần một tuần giúp xây dựng và làm _______ cơ bắp.",
+                key: ["build and", "muscles"],
+                opts: ["reduce", "strengthen", "prevent", "cause"],
+                optsVi: ["giảm bớt", "tăng cường/làm khỏe", "ngăn chặn", "gây ra"],
+                correct: 1,
+                exp: "Làm săn chắc cơ bắp -> <b>strengthen</b> muscles."
+            },
+            {
+                q: "A balanced diet combined with enough sleep can _______ your immune system.",
+                qVi: "Một chế độ ăn uống cân bằng kết hợp với ngủ đủ giấc có thể _______ hệ thống miễn dịch của bạn.",
+                key: ["immune system"],
+                opts: ["struggle", "prioritise", "manage", "boost"],
+                optsVi: ["vật lộn", "ưu tiên", "quản lý", "tăng cường/thúc đẩy"],
+                correct: 3,
+                exp: "Tăng cường hệ miễn dịch -> <b>boost</b> your immune system."
+            },
+            {
+                q: "Healthy _______ greatly benefit both your physical and mental health.",
+                qVi: "Những _______ lành mạnh có lợi ích lớn cho cả sức khỏe thể chất và tinh thần của bạn.",
+                key: ["Healthy", "greatly benefit"],
+                opts: ["techniques", "relationships", "deadlines", "experiences"],
+                optsVi: ["kỹ thuật", "mối quan hệ", "hạn chót", "trải nghiệm"],
+                correct: 1,
+                exp: "Mối quan hệ tốt giúp ích cho sức khỏe tinh thần -> Healthy <b>relationships</b>."
+            },
+            {
+                q: "Smoking is linked to the development of several serious _______.",
+                qVi: "Hút thuốc có liên quan đến sự phát triển của một số _______ nghiêm trọng.",
+                key: ["Smoking is linked to", "serious"],
+                opts: ["diseases", "duties", "moods", "priorities"],
+                optsVi: ["căn bệnh", "nhiệm vụ", "tâm trạng", "sự ưu tiên"],
+                correct: 0,
+                exp: "Hút thuốc dẫn đến các bệnh nghiêm trọng -> serious <b>diseases</b>."
+            },
+            {
+                q: "By jogging for half an hour a day, teenagers can get _______.",
+                qVi: "Bằng cách chạy bộ nửa giờ mỗi ngày, thanh thiếu niên có thể trở nên _______.",
+                key: ["jogging", "get"],
+                opts: ["calm", "quiet", "fit", "wrong"],
+                optsVi: ["bình tĩnh", "yên lặng", "cân đối/khỏe mạnh", "sai"],
+                correct: 2,
+                exp: "Tập thể dục giúp cơ thể cân đối -> get <b>fit</b>."
+            },
+            {
+                q: "James aims to complete a 30-minute _______ at home every day.",
+                qVi: "James đặt mục tiêu hoàn thành một buổi _______ 30 phút ở nhà mỗi ngày.",
+                key: ["complete a 30-minute", "at home"],
+                opts: ["capacity", "workout", "construction", "renovation"],
+                optsVi: ["sức chứa", "buổi tập luyện", "sự xây dựng", "sự cải tạo"],
+                correct: 1,
+                exp: "Buổi tập luyện thể dục -> <b>workout</b>."
+            },
+            {
+                q: "Spending more time _______ with friends can improve your mental health.",
+                qVi: "Dành nhiều thời gian hơn để _______ với bạn bè có thể cải thiện sức khỏe tinh thần của bạn.",
+                key: ["time", "with friends"],
+                opts: ["preventing", "reducing", "struggling", "socialising"],
+                optsVi: ["ngăn ngừa", "giảm bớt", "vật lộn", "giao lưu/xã giao"],
+                correct: 3,
+                exp: "Giao lưu, trò chuyện với bạn bè -> <b>socialising</b>."
+            },
+            {
+                q: "People tend to have routine _______ more often as they get older.",
+                qVi: "Mọi người có xu hướng đi _______ định kỳ thường xuyên hơn khi họ già đi.",
+                key: ["routine", "as they get older"],
+                opts: ["check-ups", "diseases", "priorities", "schedules"],
+                optsVi: ["kiểm tra sức khỏe", "bệnh tật", "ưu tiên", "lịch trình"],
+                correct: 0,
+                exp: "Khám sức khỏe định kỳ -> routine <b>check-ups</b>."
+            },
+            {
+                q: "It's a good idea to _______ starchy and fatty foods with healthier options.",
+                qVi: "Đó là một ý kiến hay để _______ các thực phẩm giàu tinh bột và chất béo bằng các lựa chọn lành mạnh hơn.",
+                key: ["fatty foods with healthier options"],
+                opts: ["divide", "struggle", "manage", "replace"],
+                optsVi: ["chia", "vật lộn", "quản lý", "thay thế"],
+                correct: 3,
+                exp: "Thay thế món ăn xấu bằng món tốt hơn -> <b>replace</b>... with..."
+            },
+            {
+                q: "Many teenagers feel a bit _______ while waiting for their test results.",
+                qVi: "Nhiều thanh thiếu niên cảm thấy hơi _______ trong khi chờ kết quả kiểm tra của họ.",
+                key: ["feel a bit", "waiting for test results"],
+                opts: ["continuous", "proud", "tense", "bustling"],
+                optsVi: ["liên tục", "tự hào", "căng thẳng", "nhộn nhịp"],
+                correct: 2,
+                exp: "Cảm giác hồi hộp, lo âu khi chờ kết quả -> <b>tense</b>."
+            },
+            {
+                q: "Teens are under increasing _______ not to disappoint their parents.",
+                qVi: "Thanh thiếu niên đang chịu _______ ngày càng tăng để không làm cha mẹ thất vọng.",
+                key: ["under increasing", "not to disappoint"],
+                opts: ["duty", "deadline", "pressure", "priority"],
+                optsVi: ["nhiệm vụ", "hạn chót", "áp lực", "sự ưu tiên"],
+                correct: 2,
+                exp: "Chịu áp lực -> under <b>pressure</b>."
+            },
+
+            // List 3
+            {
+                q: "Fruits and vegetables provide essential _______ for a balanced diet.",
+                qVi: "Trái cây và rau quả cung cấp các _______ thiết yếu cho một chế độ ăn uống cân bằng.",
+                key: ["provide essential", "balanced diet"],
+                opts: ["organs", "nutrients", "techniques", "tips"],
+                optsVi: ["cơ quan", "chất dinh dưỡng", "kỹ thuật", "mẹo"],
+                correct: 1,
+                exp: "Rau quả chứa nhiều dưỡng chất -> <b>nutrients</b>."
+            },
+            {
+                q: "Don't _______ to ask for help if you need further information.",
+                qVi: "Đừng _______ yêu cầu giúp đỡ nếu bạn cần thêm thông tin.",
+                key: ["Don't", "to ask for help"],
+                opts: ["balance", "prioritise", "hesitate", "reduce"],
+                optsVi: ["cân bằng", "ưu tiên", "do dự", "giảm"],
+                correct: 2,
+                exp: "Đừng ngại ngùng/do dự -> Don't <b>hesitate</b> to V."
+            },
+            {
+                q: "If you _______ with your exercise routine, you'll become fitter in no time.",
+                qVi: "Nếu bạn _______ với thói quen tập thể dục của mình, bạn sẽ trở nên cân đối nhanh chóng.",
+                key: ["with your exercise routine"],
+                opts: ["stick", "avoid", "manage", "consider"],
+                optsVi: ["bám sát/tuân thủ", "tránh", "quản lý", "cân nhắc"],
+                correct: 0,
+                exp: "Kiên trì với lịch tập -> <b>stick</b> with."
+            },
+            {
+                q: "He hasn't made up his _______ about joining the gym or not.",
+                qVi: "Anh ấy vẫn chưa đưa ra _______ về việc có tham gia phòng tập hay không.",
+                key: ["made up his"],
+                opts: ["mood", "feeling", "mind", "attitude"],
+                optsVi: ["tâm trạng", "cảm giác", "tâm trí", "thái độ"],
+                correct: 2,
+                exp: "Quyết định -> make up one's <b>mind</b>."
+            },
+            {
+                q: "Having a comfortable _______ is crucial for a good quality of life.",
+                qVi: "Có một _______ thoải mái là rất quan trọng để có chất lượng cuộc sống tốt.",
+                key: ["comfortable", "quality of life"],
+                opts: ["skill", "style", "shelter", "community"],
+                optsVi: ["kỹ năng", "phong cách", "nơi ở/chỗ trú ngụ", "cộng đồng"],
+                correct: 2,
+                exp: "Một chỗ ở tốt cải thiện chất lượng sống -> comfortable <b>shelter</b>."
+            },
+            {
+                q: "Social media influencers should _______ healthy lifestyles to inspire their followers.",
+                qVi: "Những người có ảnh hưởng trên mạng xã hội nên _______ lối sống lành mạnh để truyền cảm hứng cho những người theo dõi họ.",
+                key: ["healthy lifestyles", "inspire"],
+                opts: ["promote", "struggle", "delay", "consider"],
+                optsVi: ["thúc đẩy/cổ vũ", "vật lộn", "trì hoãn", "cân nhắc"],
+                correct: 0,
+                exp: "Lan tỏa lối sống tích cực -> <b>promote</b>."
+            },
+            {
+                q: "_______ after a period of unhealthy eating can greatly benefit your body and mind.",
+                qVi: "_______ sau một khoảng thời gian ăn uống không lành mạnh có thể mang lại lợi ích lớn cho cơ thể và tâm trí bạn.",
+                key: ["after unhealthy eating", "benefit your body"],
+                opts: ["Struggling", "Managing", "Bothering", "Detoxing"],
+                optsVi: ["Vật lộn", "Quản lý", "Bận tâm", "Giải độc/Thanh lọc"],
+                correct: 3,
+                exp: "Thanh lọc cơ thể -> <b>Detoxing</b>."
+            },
+            {
+                q: "Long-term exposure to polluted air is _______ to the respiratory system.",
+                qVi: "Tiếp xúc lâu dài với không khí ô nhiễm thì _______ cho hệ hô hấp.",
+                key: ["polluted air is", "to the respiratory system"],
+                opts: ["typical", "affordable", "vibrant", "harmful"],
+                optsVi: ["điển hình", "giá cả phải chăng", "sôi động", "có hại"],
+                correct: 3,
+                exp: "Không khí ô nhiễm gây hại -> <b>harmful</b>."
+            },
+            {
+                q: "He didn't _______ to read the nutrition label before buying the snack.",
+                qVi: "Anh ấy đã không _______ đọc nhãn dinh dưỡng trước khi mua món ăn nhẹ.",
+                key: ["didn't ___ to read"],
+                opts: ["decide", "bother", "change", "participate"],
+                optsVi: ["quyết định", "bận tâm/chịu khó", "thay đổi", "tham gia"],
+                correct: 1,
+                exp: "Không thèm để tâm làm gì -> didn't <b>bother</b> to V."
+            },
+            {
+                q: "Reducing the intake of artificial _______ in food can improve your health.",
+                qVi: "Giảm lượng tiêu thụ _______ nhân tạo trong thực phẩm có thể cải thiện sức khỏe của bạn.",
+                key: ["artificial", "in food"],
+                opts: ["organs", "chemicals", "viruses", "bones"],
+                optsVi: ["cơ quan", "hóa chất", "vi rút", "xương"],
+                correct: 1,
+                exp: "Các chất hóa học nhân tạo trong đồ ăn -> artificial <b>chemicals</b>."
+            },
+            {
+                q: "Good _______ with family can enhance the quality of one's mental life.",
+                qVi: "_______ tốt với gia đình có thể nâng cao chất lượng đời sống tinh thần của một người.",
+                key: ["Good", "with family"],
+                opts: ["techniques", "relationships", "deadlines", "experiences"],
+                optsVi: ["kỹ thuật", "mối quan hệ", "hạn chót", "kinh nghiệm"],
+                correct: 1,
+                exp: "Mối quan hệ tốt đẹp -> Good <b>relationships</b>."
+            },
+            {
+                q: "Many people are _______ to caffeine and can't start their day without coffee.",
+                qVi: "Nhiều người bị _______ caffeine và không thể bắt đầu ngày mới mà không có cà phê.",
+                key: ["can't start without coffee"],
+                opts: ["liveable", "congested", "bustling", "addicted"],
+                optsVi: ["đáng sống", "tắc nghẽn", "nhộn nhịp", "nghiện"],
+                correct: 3,
+                exp: "Phụ thuộc vào chất kích thích -> <b>addicted</b> to."
+            },
+            {
+                q: "After the accident, it took him 5 months to make a full _______.",
+                qVi: "Sau vụ tai nạn, anh ấy mất 5 tháng để _______ hoàn toàn.",
+                key: ["make a full", "After the accident"],
+                opts: ["recovery", "allergy", "appointment", "ambulance"],
+                optsVi: ["sự phục hồi", "dị ứng", "cuộc hẹn", "xe cứu thương"],
+                correct: 0,
+                exp: "Hồi phục sức khỏe -> make a full <b>recovery</b>."
+            },
+            {
+                q: "_______ individuals are at higher risk of various health conditions.",
+                qVi: "Những cá nhân _______ có nguy cơ cao mắc các tình trạng sức khỏe khác nhau.",
+                key: ["individuals are at higher risk"],
+                opts: ["Risky", "Special", "Obese", "Nourishing"],
+                optsVi: ["Nguy hiểm", "Đặc biệt", "Béo phì", "Bổ dưỡng"],
+                correct: 2,
+                exp: "Người thừa cân có nguy cơ mang mầm bệnh -> <b>Obese</b> individuals."
+            },
+            {
+                q: "Emily is _______ to pollen and suffers from hay fever every spring.",
+                qVi: "Emily bị _______ với phấn hoa và bị viêm mũi dị ứng mỗi mùa xuân.",
+                key: ["to pollen", "hay fever"],
+                opts: ["addicted", "skilled", "allergic", "congested"],
+                optsVi: ["nghiện", "lành nghề", "dị ứng", "tắc nghẽn"],
+                correct: 2,
+                exp: "Dị ứng phấn hoa -> <b>allergic</b> to pollen."
+            },
+            {
+                q: "Taking a _______ at noon can improve your productivity and mood in the afternoon.",
+                qVi: "Có một _______ vào buổi trưa có thể cải thiện năng suất và tâm trạng của bạn vào buổi chiều.",
+                key: ["at noon", "improve productivity"],
+                opts: ["list", "task", "function", "nap"],
+                optsVi: ["danh sách", "nhiệm vụ", "chức năng", "giấc ngủ ngắn"],
+                correct: 3,
+                exp: "Ngủ trưa -> take a <b>nap</b>."
+            },
+            {
+                q: "A(n) _______ breakfast leads to a productive day.",
+                qVi: "Một bữa sáng _______ dẫn đến một ngày làm việc hiệu quả.",
+                key: ["breakfast"],
+                opts: ["vibrant", "itchy", "nourishing", "pricey"],
+                optsVi: ["sôi động", "ngứa", "bổ dưỡng", "đắt đỏ"],
+                correct: 2,
+                exp: "Bữa ăn giàu dinh dưỡng -> <b>nourishing</b> breakfast."
+            },
+            {
+                q: "To stay _______, add a variety of exercises to your routine.",
+                qVi: "Để giữ dáng _______, hãy thêm nhiều bài tập thể dục khác nhau vào thói quen của bạn.",
+                key: ["stay", "exercises"],
+                opts: ["calm", "wrong", "fit", "quiet"],
+                optsVi: ["bình tĩnh", "sai", "cân đối/khỏe mạnh", "yên tĩnh"],
+                correct: 2,
+                exp: "Giữ thân hình cân đối, khỏe mạnh -> stay <b>fit</b>."
+            },
+            {
+                q: "Some people prefer natural _______ over prescription medications.",
+                qVi: "Một số người thích các _______ tự nhiên hơn là thuốc kê đơn.",
+                key: ["natural", "over prescription medications"],
+                opts: ["allergies", "amenities", "remedies", "positions"],
+                optsVi: ["dị ứng", "tiện ích", "phương thuốc", "vị trí"],
+                correct: 2,
+                exp: "Phương thuốc tự nhiên -> natural <b>remedies</b>."
+            },
+            {
+                q: "Regular swimming can _______ your cardiovascular system.",
+                qVi: "Bơi lội thường xuyên có thể _______ hệ tim mạch của bạn.",
+                key: ["swimming", "cardiovascular system"],
+                opts: ["reduce", "strengthen", "prevent", "cause"],
+                optsVi: ["làm giảm", "làm khỏe/tăng cường", "ngăn chặn", "gây ra"],
+                correct: 1,
+                exp: "Tăng cường hệ thống tim mạch -> <b>strengthen</b>."
+            },
+            {
+                q: "A healthy diet can _______ your energy levels and improve your well-being.",
+                qVi: "Một chế độ ăn uống lành mạnh có thể _______ mức năng lượng của bạn và cải thiện sức khỏe.",
+                key: ["your energy levels"],
+                opts: ["struggle", "prioritise", "manage", "boost"],
+                optsVi: ["vật lộn", "ưu tiên", "quản lý", "tăng cường"],
+                correct: 3,
+                exp: "Làm tăng năng lượng -> <b>boost</b> your energy levels."
+            },
+            {
+                q: "Annual _______ are important for early detection of health issues.",
+                qVi: "_______ hàng năm rất quan trọng để phát hiện sớm các vấn đề sức khỏe.",
+                key: ["Annual", "detection of health issues"],
+                opts: ["check-ups", "diseases", "priorities", "schedules"],
+                optsVi: ["kiểm tra sức khỏe", "bệnh tật", "sự ưu tiên", "lịch trình"],
+                correct: 0,
+                exp: "Khám sức khỏe tổng quát -> annual <b>check-ups</b>."
+            },
+            {
+                q: "Lifestyle choices play a significant role in the prevention of chronic _______.",
+                qVi: "Lựa chọn lối sống đóng một vai trò quan trọng trong việc ngăn ngừa các _______ mãn tính.",
+                key: ["prevention of chronic"],
+                opts: ["diseases", "duties", "moods", "priorities"],
+                optsVi: ["căn bệnh", "nhiệm vụ", "tâm trạng", "sự ưu tiên"],
+                correct: 0,
+                exp: "Bệnh mãn tính -> chronic <b>diseases</b>."
+            },
+            {
+                q: "He feels a lot of _______ to succeed in his career.",
+                qVi: "Anh ấy cảm thấy rất nhiều _______ để thành công trong sự nghiệp của mình.",
+                key: ["feels a lot of", "to succeed"],
+                opts: ["duty", "priority", "pressure", "deadline"],
+                optsVi: ["nhiệm vụ", "ưu tiên", "áp lực", "hạn chót"],
+                correct: 2,
+                exp: "Chịu áp lực thành công -> feel a lot of <b>pressure</b>."
+            },
+            {
+                q: "A passive lifestyle increases the _______ of developing chronic diseases.",
+                qVi: "Một lối sống thụ động làm tăng _______ phát triển các bệnh mãn tính.",
+                key: ["increases the", "developing chronic diseases"],
+                opts: ["tip", "risk", "advice", "purpose"],
+                optsVi: ["mẹo", "rủi ro/nguy cơ", "lời khuyên", "mục đích"],
+                correct: 1,
+                exp: "Làm tăng nguy cơ mắc bệnh -> increases the <b>risk</b>."
+            },
+            {
+                q: "Joining a club is a great way to _______ and expand your social circle.",
+                qVi: "Tham gia một câu lạc bộ là một cách tuyệt vời để _______ và mở rộng vòng tròn xã hội của bạn.",
+                key: ["expand your social circle"],
+                opts: ["prevent", "reduce", "struggle", "socialise"],
+                optsVi: ["ngăn chặn", "giảm", "vật lộn", "giao lưu/xã giao"],
+                correct: 3,
+                exp: "Gặp gỡ, nói chuyện kết bạn -> <b>socialise</b>."
+            },
+            {
+                q: "Drinking water has many _______ for your skin.",
+                qVi: "Uống nước có rất nhiều _______ cho làn da của bạn.",
+                key: ["has many", "for your skin"],
+                opts: ["techniques", "skills", "benefits", "feelings"],
+                optsVi: ["kỹ thuật", "kỹ năng", "lợi ích", "cảm giác"],
+                correct: 2,
+                exp: "Tác dụng tốt -> <b>benefits</b>."
+            },
+            {
+                q: "It's often hard to _______ unhealthy habits with healthier ones.",
+                qVi: "Thường rất khó để _______ thói quen không lành mạnh bằng những thói quen lành mạnh hơn.",
+                key: ["unhealthy habits with healthier ones"],
+                opts: ["divide", "struggle", "manage", "replace"],
+                optsVi: ["chia", "vật lộn", "quản lý", "thay thế"],
+                correct: 3,
+                exp: "Thay thế cái xấu bằng cái tốt -> <b>replace</b>."
+            },
+            {
+                q: "Despite being busy, my uncle still tries to do a 20-minute _______ every day.",
+                qVi: "Dù bận rộn, chú tôi vẫn cố gắng thực hiện một _______ 20 phút mỗi ngày.",
+                key: ["do a 20-minute"],
+                opts: ["construction", "workout", "capacity", "renovation"],
+                optsVi: ["xây dựng", "buổi tập thể dục", "sức chứa", "cải tạo"],
+                correct: 1,
+                exp: "Buổi rèn luyện thể lực -> <b>workout</b>."
+            },
+            {
+                q: "Emergency situations can make people feel _______ and anxious.",
+                qVi: "Các tình huống khẩn cấp có thể khiến mọi người cảm thấy _______ và lo lắng.",
+                key: ["feel ___ and anxious"],
+                opts: ["bustling", "proud", "tense", "continuous"],
+                optsVi: ["nhộn nhịp", "tự hào", "căng thẳng", "liên tục"],
+                correct: 2,
+                exp: "Cảm giác áp lực, hồi hộp lo sợ -> <b>tense</b>."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
