@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Vocabulary (90 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Vocabulary (90 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">90</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">90</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // List 1
+            {
+                q: "Our family plans to move to the _______ to escape the fast pace of life in the city centre.",
+                qVi: "Gia đình chúng tôi dự định chuyển đến _______ để thoát khỏi nhịp sống hối hả ở trung tâm thành phố.",
+                key: ["escape the fast pace", "city centre"],
+                opts: ["ranges", "suburbs", "streets", "lanes"],
+                optsVi: ["dãy núi", "ngoại ô", "đường phố", "làn đường"],
+                correct: 1,
+                exp: "Rời trung tâm thành phố (city centre) thường là chuyển đến ngoại ô (<b>suburbs</b>)."
+            },
+            {
+                q: "There is a significant lack of healthcare and leisure _______ in the area.",
+                qVi: "Có sự thiếu hụt đáng kể về chăm sóc sức khỏe và _______ giải trí trong khu vực.",
+                key: ["healthcare and leisure"],
+                opts: ["situations", "responses", "facilities", "appointments"],
+                optsVi: ["tình huống", "phản hồi", "cơ sở vật chất/tiện ích", "cuộc hẹn"],
+                correct: 2,
+                exp: "Cơ sở vật chất/tiện ích y tế và giải trí -> healthcare and leisure <b>facilities</b>."
+            },
+            {
+                q: "Our new _______ are nice, friendly, and always willing to give us a helping hand.",
+                qVi: "Những _______ mới của chúng tôi rất tốt bụng, thân thiện và luôn sẵn sàng giúp đỡ chúng tôi.",
+                key: ["nice, friendly", "give a helping hand"],
+                opts: ["colours", "customs", "behaviours", "neighbours"],
+                optsVi: ["màu sắc", "phong tục", "hành vi", "hàng xóm"],
+                correct: 3,
+                exp: "Chỉ người sống cạnh nhà -> <b>neighbours</b> (hàng xóm)."
+            },
+            {
+                q: "The villagers _______ well with each other; conflicts and arguments are rare.",
+                qVi: "Dân làng _______ tốt với nhau; xung đột và cãi vã rất hiếm.",
+                key: ["well with each other", "conflicts are rare"],
+                opts: ["turn on", "go on", "get on", "take on"],
+                optsVi: ["bật", "tiếp tục", "hòa thuận", "đảm nhận"],
+                correct: 2,
+                exp: "Cụm động từ: <b>get on</b> well with (hòa thuận với ai)."
+            },
+            {
+                q: "The programme is designed to encourage members of the _______ to exercise more.",
+                qVi: "Chương trình được thiết kế để khuyến khích các thành viên của _______ tập thể dục nhiều hơn.",
+                key: ["members of the"],
+                opts: ["community", "circumstance", "occasion", "festival"],
+                optsVi: ["cộng đồng", "hoàn cảnh", "dịp", "lễ hội"],
+                correct: 0,
+                exp: "Thành viên trong cộng đồng -> members of the <b>community</b>."
+            },
+            {
+                q: "This piece of pottery _______ me of our trip to Bat Trang Village last year.",
+                qVi: "Món đồ gốm này _______ tôi về chuyến đi của chúng tôi đến Làng Bát Tràng năm ngoái.",
+                key: ["___ me of"],
+                opts: ["reminds", "refuses", "revises", "reflects"],
+                optsVi: ["gợi nhớ", "từ chối", "ôn tập", "phản ánh"],
+                correct: 0,
+                exp: "Cấu trúc: <b>remind</b> somebody of something (gợi nhớ ai về điều gì)."
+            },
+            {
+                q: "These porcelain tea cups were skilfully made by talented local _______.",
+                qVi: "Những tách trà sứ này được làm một cách khéo léo bởi những _______ địa phương tài năng.",
+                key: ["skilfully made", "porcelain tea cups"],
+                opts: ["collectors", "officers", "electricians", "artisans"],
+                optsVi: ["nhà sưu tập", "sĩ quan", "thợ điện", "nghệ nhân"],
+                correct: 3,
+                exp: "Người làm đồ thủ công mỹ nghệ -> <b>artisans</b> (nghệ nhân)."
+            },
+            {
+                q: "Police officers ensure that everyone _______ the law.",
+                qVi: "Cảnh sát đảm bảo rằng mọi người đều _______ luật pháp.",
+                key: ["ensure", "the law"],
+                opts: ["relates", "designs", "obeys", "denies"],
+                optsVi: ["liên quan", "thiết kế", "tuân theo", "phủ nhận"],
+                correct: 2,
+                exp: "Tuân thủ luật pháp -> <b>obey</b> the law."
+            },
+            {
+                q: "Hoi An Ancient Town is a major tourist _______, famous for its ancient beauty.",
+                qVi: "Phố cổ Hội An là một _______ du lịch lớn, nổi tiếng với vẻ đẹp cổ kính.",
+                key: ["tourist"],
+                opts: ["delivery", "attraction", "equipment", "property"],
+                optsVi: ["giao hàng", "điểm thu hút", "thiết bị", "tài sản"],
+                correct: 1,
+                exp: "Điểm tham quan du lịch -> tourist <b>attraction</b>."
+            },
+            {
+                q: "Foreign tourists are fascinated by the traditional _______ and souvenirs sold at the flea market.",
+                qVi: "Khách du lịch nước ngoài bị cuốn hút bởi những _______ và đồ lưu niệm truyền thống được bán tại chợ trời.",
+                key: ["traditional", "sold at the flea market"],
+                opts: ["lifestyles", "values", "techniques", "handicrafts"],
+                optsVi: ["lối sống", "giá trị", "kỹ thuật", "đồ thủ công"],
+                correct: 3,
+                exp: "Các món đồ được làm bằng tay -> <b>handicrafts</b> (đồ thủ công)."
+            },
+            {
+                q: "Banh my, pho and bun cha are famous examples of Vietnamese _______.",
+                qVi: "Bánh mì, phở và bún chả là những ví dụ nổi tiếng về _______ của Việt Nam.",
+                key: ["Banh my, pho and bun cha"],
+                opts: ["flavours", "images", "habits", "specialities"],
+                optsVi: ["hương vị", "hình ảnh", "thói quen", "đặc sản"],
+                correct: 3,
+                exp: "Món ăn đặc trưng của một vùng/quốc gia -> <b>specialities</b> (đặc sản)."
+            },
+            {
+                q: "Garbage _______ wake up early to take away rubbish, helping to keep the streets clean.",
+                qVi: "Những _______ rác thức dậy sớm để mang rác đi, giúp giữ cho đường phố sạch sẽ.",
+                key: ["Garbage", "take away rubbish"],
+                opts: ["officers", "artisans", "collectors", "firefighters"],
+                optsVi: ["sĩ quan", "nghệ nhân", "người thu gom", "lính cứu hỏa"],
+                correct: 2,
+                exp: "Người thu gom rác -> Garbage <b>collectors</b>."
+            },
+            {
+                q: "The 50-year-old art gallery is a significant place of _______ in our city.",
+                qVi: "Phòng tranh 50 năm tuổi là một địa điểm _______ quan trọng trong thành phố của chúng tôi.",
+                key: ["place of"],
+                opts: ["interest", "pattern", "activity", "location"],
+                optsVi: ["sự quan tâm/thu hút", "mẫu/họa tiết", "hoạt động", "vị trí"],
+                correct: 0,
+                exp: "Địa điểm thu hút/danh lam thắng cảnh -> place of <b>interest</b>."
+            },
+            {
+                q: "Local villagers _______ the techniques of making cốm by passing them down to their descendants.",
+                qVi: "Người dân làng địa phương _______ kỹ thuật làm cốm bằng cách truyền lại cho con cháu của họ.",
+                key: ["techniques", "passing them down"],
+                opts: ["prevent", "preserve", "prepare", "predict"],
+                optsVi: ["ngăn chặn", "bảo tồn/gìn giữ", "chuẩn bị", "dự đoán"],
+                correct: 1,
+                exp: "Gìn giữ, bảo tồn kỹ thuật truyền thống -> <b>preserve</b>."
+            },
+            {
+                q: "The process of making pottery has been _______ by using machines.",
+                qVi: "Quá trình làm đồ gốm đã được _______ bằng cách sử dụng máy móc.",
+                key: ["process", "using machines"],
+                opts: ["limited", "contained", "assessed", "shortened"],
+                optsVi: ["hạn chế", "chứa đựng", "đánh giá", "rút ngắn"],
+                correct: 3,
+                exp: "Dùng máy móc giúp làm nhanh hơn -> <b>shortened</b> (được rút ngắn)."
+            },
+            {
+                q: "The _______ from freshly baked bread fills the entire room.",
+                qVi: "_______ từ bánh mì mới nướng lan tỏa khắp căn phòng.",
+                key: ["freshly baked bread"],
+                opts: ["collection", "fragrance", "delivery", "generation"],
+                optsVi: ["bộ sưu tập", "mùi thơm/hương thơm", "sự giao hàng", "thế hệ"],
+                correct: 1,
+                exp: "Mùi hương thơm ngát (của bánh mì/nước hoa) -> <b>fragrance</b>."
+            },
+            {
+                q: "The houses in Hoi An Ancient Town are still maintained in their _______ state.",
+                qVi: "Những ngôi nhà ở Phố cổ Hội An vẫn được duy trì ở trạng thái _______ của chúng.",
+                key: ["maintained in their", "state"],
+                opts: ["local", "original", "famous", "pleasant"],
+                optsVi: ["địa phương", "nguyên bản/ban đầu", "nổi tiếng", "dễ chịu"],
+                correct: 1,
+                exp: "Được giữ gìn nguyên trạng ban đầu -> <b>original</b> state."
+            },
+            {
+                q: "The community hall serves a useful _______ as a meeting place.",
+                qVi: "Hội trường cộng đồng phục vụ một _______ hữu ích như một nơi gặp gỡ.",
+                key: ["serves a useful"],
+                opts: ["function", "beauty", "technique", "effect"],
+                optsVi: ["chức năng", "vẻ đẹp", "kỹ thuật", "tác dụng"],
+                correct: 0,
+                exp: "Đóng vai trò/Có chức năng -> serve a <b>function</b>."
+            },
+            {
+                q: "There is a variety of pottery and handmade goods available at the _______.",
+                qVi: "Có nhiều loại đồ gốm và hàng thủ công có sẵn tại _______.",
+                key: ["pottery and handmade goods"],
+                opts: ["speciality", "collection", "workshop", "artisan"],
+                optsVi: ["đặc sản", "bộ sưu tập", "xưởng", "nghệ nhân"],
+                correct: 2,
+                exp: "Nơi sản xuất và bán đồ thủ công/gốm sứ -> <b>workshop</b> (xưởng)."
+            },
+            {
+                q: "We couldn't _______ all the souvenirs and handmade products available at the market.",
+                qVi: "Chúng tôi không thể _______ tất cả quà lưu niệm và các sản phẩm thủ công có sẵn ở chợ.",
+                key: ["couldn't"],
+                opts: ["rent", "cost", "afford", "arrange"],
+                optsVi: ["thuê", "tốn", "đủ khả năng (chi trả)", "sắp xếp"],
+                correct: 2,
+                exp: "Không đủ khả năng mua/chi trả -> couldn't <b>afford</b>."
+            },
+            {
+                q: "Water is considered a _______ for many local people in parts of Africa.",
+                qVi: "Nước được coi là một _______ đối với nhiều người dân địa phương ở một số vùng của Châu Phi.",
+                key: ["Water is considered a", "parts of Africa"],
+                opts: ["consumer", "price", "bargain", "luxury"],
+                optsVi: ["người tiêu dùng", "giá cả", "món hời", "sự xa xỉ/thứ xa xỉ"],
+                correct: 3,
+                exp: "Ở nơi thiếu thốn (như Châu Phi), nước là một thứ xa xỉ -> a <b>luxury</b>."
+            },
+            {
+                q: "The trade fair will help local people _______ their handmade products.",
+                qVi: "Hội chợ thương mại sẽ giúp người dân địa phương _______ các sản phẩm thủ công của họ.",
+                key: ["trade fair", "handmade products"],
+                opts: ["perform", "avoid", "promote", "experience"],
+                optsVi: ["biểu diễn", "tránh", "quảng bá", "trải nghiệm"],
+                correct: 2,
+                exp: "Hội chợ giúp quảng bá sản phẩm -> <b>promote</b> products."
+            },
+            {
+                q: "Sitting around the campfire on a winter night gave us a _______ feeling.",
+                qVi: "Ngồi quanh đống lửa trại vào một đêm mùa đông mang lại cho chúng tôi một cảm giác _______.",
+                key: ["campfire on a winter night"],
+                opts: ["exotic", "cosy", "noisy", "busy"],
+                optsVi: ["kỳ lạ/ngoại lai", "ấm cúng", "ồn ào", "bận rộn"],
+                correct: 1,
+                exp: "Lửa trại đem lại cảm giác ấm áp, thân mật -> <b>cosy</b> feeling."
+            },
+            {
+                q: "Our new apartment needs some _______, but we are on a tight budget at the moment.",
+                qVi: "Căn hộ mới của chúng tôi cần một số _______, nhưng hiện tại chúng tôi đang có ngân sách eo hẹp.",
+                key: ["apartment needs"],
+                opts: ["system", "assistant", "task", "furniture"],
+                optsVi: ["hệ thống", "trợ lý", "nhiệm vụ", "đồ nội thất"],
+                correct: 3,
+                exp: "Căn hộ mới thì cần sắm đồ gỗ/nội thất -> <b>furniture</b>."
+            },
+            {
+                q: "The _______ was out of order, so I had to take the stairs instead.",
+                qVi: "_______ đã bị hỏng, vì vậy thay vào đó tôi phải đi cầu thang bộ.",
+                key: ["out of order", "take the stairs instead"],
+                opts: ["appliance", "sensor", "elevator", "monitor"],
+                optsVi: ["thiết bị", "cảm biến", "thang máy", "màn hình"],
+                correct: 2,
+                exp: "Hỏng thang máy nên phải đi thang bộ -> <b>elevator</b>."
+            },
+            {
+                q: "Local residents have installed solar panels to _______ electricity for their homes.",
+                qVi: "Người dân địa phương đã lắp đặt các tấm pin mặt trời để _______ điện cho ngôi nhà của họ.",
+                key: ["solar panels", "electricity"],
+                opts: ["generate", "consume", "programme", "perform"],
+                optsVi: ["tạo ra/phát", "tiêu thụ", "lập trình", "biểu diễn"],
+                correct: 0,
+                exp: "Sản xuất/phát điện -> <b>generate</b> electricity."
+            },
+            {
+                q: "The village is _______ situated on an island to the north of the country.",
+                qVi: "Ngôi làng nằm _______ trên một hòn đảo ở phía bắc của đất nước.",
+                key: ["situated on an island"],
+                opts: ["completely", "remotely", "temporarily", "effectively"],
+                optsVi: ["hoàn toàn", "xa xôi/hẻo lánh", "tạm thời", "hiệu quả"],
+                correct: 1,
+                exp: "Nằm ở vị trí hẻo lánh/xa xôi -> <b>remotely</b> situated."
+            },
+            {
+                q: "The _______ of living in this town is not too high, making it suitable for low-income workers.",
+                qVi: "_______ sinh hoạt ở thị trấn này không quá cao, làm cho nó phù hợp với những người lao động thu nhập thấp.",
+                key: ["of living", "not too high"],
+                opts: ["standard", "level", "amount", "cost"],
+                optsVi: ["tiêu chuẩn", "mức độ", "số lượng", "chi phí"],
+                correct: 3,
+                exp: "Chi phí sinh hoạt -> <b>cost</b> of living."
+            },
+            {
+                q: "Living in a mountainous area, we enjoy _______ air and home-grown vegetables.",
+                qVi: "Sống ở vùng núi, chúng tôi tận hưởng không khí _______ và các loại rau tự trồng.",
+                key: ["enjoy", "air"],
+                opts: ["polluted", "friendly", "fresh", "public"],
+                optsVi: ["bị ô nhiễm", "thân thiện", "trong lành", "công cộng"],
+                correct: 2,
+                exp: "Không khí trong lành -> <b>fresh</b> air."
+            },
+            {
+                q: "Job _______ in this small village are quite limited.",
+                qVi: "_______ việc làm ở ngôi làng nhỏ này khá hạn chế.",
+                key: ["Job", "limited"],
+                opts: ["opportunities", "roles", "purposes", "challenges"],
+                optsVi: ["cơ hội", "vai trò", "mục đích", "thách thức"],
+                correct: 0,
+                exp: "Cơ hội việc làm -> Job <b>opportunities</b>."
+            },
+
+            // List 2
+            {
+                q: "People living in this mountainous area enjoy a very high life _______.",
+                qVi: "Người dân sống ở vùng núi này tận hưởng _______ sống rất cao.",
+                key: ["high life"],
+                opts: ["entry", "entrance", "expectancy", "expectation"],
+                optsVi: ["sự đi vào", "lối vào", "tuổi thọ", "sự mong đợi"],
+                correct: 2,
+                exp: "Tuổi thọ trung bình -> life <b>expectancy</b>."
+            },
+            {
+                q: "The capital city has a robust _______ system with numerous hospitals and clinics.",
+                qVi: "Thành phố thủ đô có một hệ thống _______ mạnh mẽ với nhiều bệnh viện và phòng khám.",
+                key: ["system", "hospitals and clinics"],
+                opts: ["facility", "healthcare", "service", "chance"],
+                optsVi: ["cơ sở vật chất", "chăm sóc sức khỏe", "dịch vụ", "cơ hội"],
+                correct: 1,
+                exp: "Hệ thống y tế/chăm sóc sức khỏe -> <b>healthcare</b> system."
+            },
+            {
+                q: "People in _______ areas enjoy fresh air and affordable food.",
+                qVi: "Người dân ở các khu vực _______ tận hưởng không khí trong lành và thực phẩm giá cả phải chăng.",
+                key: ["fresh air", "areas"],
+                opts: ["attractive", "popular", "famous", "rural"],
+                optsVi: ["hấp dẫn", "phổ biến", "nổi tiếng", "nông thôn"],
+                correct: 3,
+                exp: "Vùng nông thôn (nơi có không khí trong lành) -> <b>rural</b> areas."
+            },
+            {
+                q: "The police have increased _______ across the city following a bomb alert.",
+                qVi: "Cảnh sát đã tăng cường _______ trên toàn thành phố sau một cảnh báo bom.",
+                key: ["police", "bomb alert"],
+                opts: ["security", "facility", "exhibition", "workshop"],
+                optsVi: ["an ninh", "cơ sở vật chất", "triển lãm", "xưởng"],
+                correct: 0,
+                exp: "Tăng cường an ninh -> increased <b>security</b>."
+            },
+            {
+                q: "It is a sparsely populated area, with an average _______ of 2.4 people per hectare.",
+                qVi: "Đây là một khu vực dân cư thưa thớt, với _______ trung bình là 2,4 người mỗi ha.",
+                key: ["sparsely populated", "people per hectare"],
+                opts: ["range", "rate", "density", "level"],
+                optsVi: ["phạm vi", "tỷ lệ", "mật độ", "mức độ"],
+                correct: 2,
+                exp: "Mật độ dân số -> population <b>density</b>."
+            },
+            {
+                q: "The community healthcare centre is easily _______ by public transport.",
+                qVi: "Trung tâm chăm sóc sức khỏe cộng đồng rất dễ dàng _______ bằng phương tiện giao thông công cộng.",
+                key: ["by public transport"],
+                opts: ["nearby", "remote", "accessible", "handmade"],
+                optsVi: ["gần đó", "xa xôi", "có thể tiếp cận/đi tới", "thủ công"],
+                correct: 2,
+                exp: "Có thể đến được/đi vào được -> easily <b>accessible</b>."
+            },
+            {
+                q: "The local villagers are _______, always willing to help strangers.",
+                qVi: "Dân làng địa phương rất _______, luôn sẵn lòng giúp đỡ người lạ.",
+                key: ["willing to help strangers"],
+                opts: ["healthy", "hospitable", "skilled", "unhelpful"],
+                optsVi: ["khỏe mạnh", "hiếu khách", "lành nghề", "không hữu ích"],
+                correct: 1,
+                exp: "Sẵn lòng giúp đỡ khách lạ là tính <b>hospitable</b> (hiếu khách)."
+            },
+            {
+                q: "The trip to Bat Trang, a famous traditional craft village in Hanoi, was a(n) _______ experience.",
+                qVi: "Chuyến đi đến Bát Tràng, một làng nghề truyền thống nổi tiếng ở Hà Nội, là một trải nghiệm _______.",
+                key: ["experience"],
+                opts: ["attractive", "memorable", "various", "reliable"],
+                optsVi: ["hấp dẫn", "đáng nhớ", "khác nhau", "đáng tin cậy"],
+                correct: 1,
+                exp: "Một trải nghiệm đáng nhớ -> a <b>memorable</b> experience."
+            },
+            {
+                q: "The committee is set up to deal with _______ issues in the community.",
+                qVi: "Ủy ban được thành lập để giải quyết các vấn đề _______ trong cộng đồng.",
+                key: ["issues in the community"],
+                opts: ["skilled", "enjoyable", "interesting", "specific"],
+                optsVi: ["lành nghề", "thú vị", "thú vị", "cụ thể/riêng biệt"],
+                correct: 3,
+                exp: "Giải quyết một vấn đề cụ thể nào đó -> <b>specific</b> issues."
+            },
+            {
+                q: "The spicy flavour is _______ of the local cuisine, adding to its uniqueness.",
+                qVi: "Hương vị cay nồng là _______ của ẩm thực địa phương, làm tăng thêm tính độc đáo của nó.",
+                key: ["of the local cuisine"],
+                opts: ["typical", "impressive", "different", "famous"],
+                optsVi: ["điển hình/đặc trưng", "ấn tượng", "khác biệt", "nổi tiếng"],
+                correct: 0,
+                exp: "Cấu trúc: be <b>typical</b> of (là đặc trưng của)."
+            },
+            {
+                q: "Hue is renowned for being the _______ of the bai tho conical hats.",
+                qVi: "Huế nổi tiếng là _______ của nón lá bài thơ.",
+                key: ["of the bai tho conical hats"],
+                opts: ["key", "target", "birthplace", "habitat"],
+                optsVi: ["chìa khóa", "mục tiêu", "nơi sinh ra/nơi bắt nguồn", "môi trường sống"],
+                correct: 2,
+                exp: "Nơi sản sinh ra một nét văn hóa -> <b>birthplace</b>."
+            },
+            {
+                q: "There is a wide _______ of marble sculptures in the village, fascinating many tourists.",
+                qVi: "Có một sự _______ phong phú của các tác phẩm điêu khắc bằng đá cẩm thạch trong làng, thu hút nhiều khách du lịch.",
+                key: ["a wide", "of marble sculptures"],
+                opts: ["variety", "culture", "handicraft", "interest"],
+                optsVi: ["sự đa dạng", "văn hóa", "đồ thủ công", "sự quan tâm"],
+                correct: 0,
+                exp: "Cụm từ: a wide <b>variety</b> of (rất nhiều loại, sự đa dạng)."
+            },
+            {
+                q: "The resort lies amid the magnificent _______, featuring gently rolling hills.",
+                qVi: "Khu nghỉ dưỡng nằm giữa _______ tráng lệ, nổi bật với những ngọn đồi thoai thoải.",
+                key: ["magnificent", "hills"],
+                opts: ["site", "scenery", "tradition", "habit"],
+                optsVi: ["địa điểm", "phong cảnh", "truyền thống", "thói quen"],
+                correct: 1,
+                exp: "Phong cảnh thiên nhiên -> <b>scenery</b>."
+            },
+            {
+                q: "It's an ancient city famous for many interesting sights and _______ monuments.",
+                qVi: "Đó là một thành phố cổ nổi tiếng với nhiều cảnh điểm thú vị và các di tích _______.",
+                key: ["monuments", "ancient city"],
+                opts: ["cultural", "traditional", "historical", "typical"],
+                optsVi: ["văn hóa", "truyền thống", "thuộc về lịch sử", "điển hình"],
+                correct: 2,
+                exp: "Di tích lịch sử -> <b>historical</b> monuments."
+            },
+            {
+                q: "Some foreign tourists choose to take a boat to _______ themselves in the culture of the floating market.",
+                qVi: "Một số du khách nước ngoài chọn đi thuyền để _______ mình vào văn hóa của chợ nổi.",
+                key: ["themselves in the culture"],
+                opts: ["involve", "engage", "immerse", "impact"],
+                optsVi: ["liên quan", "tham gia", "đắm chìm", "tác động"],
+                correct: 2,
+                exp: "Đắm chìm vào văn hóa -> <b>immerse</b> oneself in."
+            },
+            {
+                q: "The Buddha statue was skilfully _______ from marble by a famous artisan.",
+                qVi: "Bức tượng Phật được _______ khéo léo từ đá cẩm thạch bởi một nghệ nhân nổi tiếng.",
+                key: ["statue", "from marble"],
+                opts: ["embroidered", "carved", "knitted", "weaved"],
+                optsVi: ["thêu", "chạm khắc", "đan", "dệt"],
+                correct: 1,
+                exp: "Điêu khắc, tạc tượng đá -> <b>carved</b>."
+            },
+            {
+                q: "This department store is a famous attraction known for its _______ products.",
+                qVi: "Cửa hàng bách hóa này là một điểm tham quan nổi tiếng với các sản phẩm _______.",
+                key: ["products"],
+                opts: ["high-paying", "high-flying", "high-powered", "high-quality"],
+                optsVi: ["trả lương cao", "thành công rực rỡ", "có quyền lực cao", "chất lượng cao"],
+                correct: 3,
+                exp: "Sản phẩm chất lượng cao -> <b>high-quality</b> products."
+            },
+            {
+                q: "Our pottery workshop is in _______ with other traditional villages.",
+                qVi: "Xưởng gốm của chúng tôi đang trong sự _______ với các làng truyền thống khác.",
+                key: ["in", "with other"],
+                opts: ["reality", "competition", "basis", "general"],
+                optsVi: ["thực tế", "sự cạnh tranh", "cơ sở", "chung"],
+                correct: 1,
+                exp: "Cạnh tranh với ai -> in <b>competition</b> with."
+            },
+            {
+                q: "The remote island is a favourite _______ for families seeking a break from city life.",
+                qVi: "Hòn đảo hoang sơ là một _______ yêu thích của các gia đình tìm kiếm sự nghỉ ngơi khỏi cuộc sống thành thị.",
+                key: ["favourite", "for families"],
+                opts: ["spot", "beauty", "pleasure", "interest"],
+                optsVi: ["địa điểm/điểm đến", "vẻ đẹp", "niềm vui", "sự quan tâm"],
+                correct: 0,
+                exp: "Điểm đến, nơi chốn -> <b>spot</b>."
+            },
+            {
+                q: "Making and selling handicrafts can provide _______ income for local people.",
+                qVi: "Việc làm và bán đồ thủ công có thể mang lại thu nhập _______ cho người dân địa phương.",
+                key: ["income"],
+                opts: ["unique", "typical", "additional", "competitive"],
+                optsVi: ["độc đáo", "điển hình", "bổ sung/thêm", "cạnh tranh"],
+                correct: 2,
+                exp: "Thu nhập phụ, thu nhập kiếm thêm -> <b>additional</b> income."
+            },
+            {
+                q: "Local villagers _______ their living by selling traditional crafts.",
+                qVi: "Dân làng địa phương _______ sống bằng cách bán đồ thủ công truyền thống.",
+                key: ["living by selling"],
+                opts: ["turn", "bring", "keep", "earn"],
+                optsVi: ["xoay", "mang", "giữ", "kiếm"],
+                correct: 3,
+                exp: "Cụm từ: <b>earn</b> one's living (kiếm sống)."
+            },
+            {
+                q: "The artisans in my village rely on basket weaving as their _______ source of income.",
+                qVi: "Các nghệ nhân trong làng tôi dựa vào nghề đan giỏ như là nguồn thu nhập _______ của họ.",
+                key: ["source of income"],
+                opts: ["primary", "special", "typical", "specific"],
+                optsVi: ["chính/chủ yếu", "đặc biệt", "điển hình", "cụ thể"],
+                correct: 0,
+                exp: "Nguồn thu nhập chính -> <b>primary</b> source."
+            },
+            {
+                q: "City dwellers _______ numerous challenges, including heavy traffic, air pollution, and housing shortages.",
+                qVi: "Cư dân thành phố _______ nhiều thách thức, bao gồm giao thông đông đúc, ô nhiễm không khí và thiếu hụt nhà ở.",
+                key: ["numerous challenges"],
+                opts: ["chase", "lay", "face", "wake"],
+                optsVi: ["đuổi theo", "đặt/để", "đối mặt", "thức giấc"],
+                correct: 2,
+                exp: "Đối mặt với thử thách -> <b>face</b> challenges."
+            },
+            {
+                q: "For some, life in rural areas is not as _______ as life in urban areas.",
+                qVi: "Đối với một số người, cuộc sống ở khu vực nông thôn không _______ như cuộc sống ở khu vực thành thị.",
+                key: ["not as", "as life in urban"],
+                opts: ["ready", "convenient", "hesitant", "reliant"],
+                optsVi: ["sẵn sàng", "tiện lợi", "do dự", "dựa dẫm"],
+                correct: 1,
+                exp: "Nông thôn không tiện nghi bằng thành phố -> not as <b>convenient</b>."
+            },
+            {
+                q: "The tradition of pottery-making has been in _______, prompting local people to seek alternative sources of income.",
+                qVi: "Truyền thống làm gốm đang trong tình trạng _______, thúc đẩy người dân địa phương tìm kiếm các nguồn thu nhập thay thế.",
+                key: ["in", "seek alternative sources"],
+                opts: ["growth", "development", "progress", "decline"],
+                optsVi: ["sự tăng trưởng", "sự phát triển", "sự tiến bộ", "sự suy tàn/giảm sút"],
+                correct: 3,
+                exp: "Vì nghề đi xuống nên phải tìm việc khác -> in <b>decline</b>."
+            },
+            {
+                q: "Once a _______ community, this town now looks like a ghost city.",
+                qVi: "Từng là một cộng đồng _______, thị trấn này bây giờ trông giống như một thành phố ma.",
+                key: ["Once a", "now looks like a ghost city"],
+                opts: ["available", "present", "historical", "thriving"],
+                optsVi: ["có sẵn", "hiện tại", "lịch sử", "phát triển mạnh/thịnh vượng"],
+                correct: 3,
+                exp: "Đối lập với 'thành phố ma' (vắng vẻ) là từng phát triển sầm uất -> <b>thriving</b>."
+            },
+            {
+                q: "The village faces a _______ of skilled artisans, threatening the survival of the tradition of basket weaving.",
+                qVi: "Ngôi làng phải đối mặt với sự _______ các nghệ nhân lành nghề, đe dọa sự tồn tại của truyền thống đan giỏ.",
+                key: ["faces a", "of skilled artisans"],
+                opts: ["shortage", "quality", "depth", "width"],
+                optsVi: ["sự thiếu hụt", "chất lượng", "chiều sâu", "chiều rộng"],
+                correct: 0,
+                exp: "Thiếu thợ lành nghề -> a <b>shortage</b> of."
+            },
+            {
+                q: "The old town serves as a(n) _______ centre, hosting numerous festivals annually.",
+                qVi: "Khu phố cổ đóng vai trò là một trung tâm _______, tổ chức nhiều lễ hội hàng năm.",
+                key: ["centre", "hosting numerous festivals"],
+                opts: ["educational", "medical", "cultural", "financial"],
+                optsVi: ["giáo dục", "y tế", "văn hóa", "tài chính"],
+                correct: 2,
+                exp: "Lễ hội thuộc về lĩnh vực văn hóa -> <b>cultural</b> centre."
+            },
+            {
+                q: "Bat Trang ceramics have _______ nationwide popularity, attributed to the craftsmanship of local skilled artisans.",
+                qVi: "Gốm sứ Bát Tràng đã _______ sự nổi tiếng trên toàn quốc, nhờ vào tay nghề của các nghệ nhân lành nghề địa phương.",
+                key: ["nationwide popularity"],
+                opts: ["gained", "landed", "brought", "shared"],
+                optsVi: ["giành được/đạt được", "hạ cánh", "mang lại", "chia sẻ"],
+                correct: 0,
+                exp: "Đạt được sự nổi tiếng -> <b>gained</b> popularity."
+            },
+            {
+                q: "The craft of drum making was first _______ to the village in the 13th century.",
+                qVi: "Nghề làm trống lần đầu tiên được _______ vào làng vào thế kỷ 13.",
+                key: ["was first", "to the village"],
+                opts: ["exchanged", "introduced", "consumed", "required"],
+                optsVi: ["trao đổi", "giới thiệu/đưa vào", "tiêu thụ", "yêu cầu"],
+                correct: 1,
+                exp: "Nghề được du nhập/đưa vào -> was <b>introduced</b>."
+            },
+
+            // List 3
+            {
+                q: "The local government is investing in _______ to ensure easier access for all citizens.",
+                qVi: "Chính quyền địa phương đang đầu tư vào _______ để đảm bảo mọi người dân đều có thể tiếp cận dễ dàng hơn.",
+                key: ["investing in", "easier access"],
+                opts: ["service", "healthcare", "facility", "chance"],
+                optsVi: ["dịch vụ", "chăm sóc sức khỏe", "cơ sở hạ tầng", "cơ hội"],
+                correct: 2,
+                exp: "Đầu tư vào cơ sở vật chất hạ tầng (cầu đường...) để đi lại dễ hơn -> <b>facility</b> (infrastructure)."
+            },
+            {
+                q: "The life _______ in this region has significantly improved over the past decade.",
+                qVi: "_______ sống ở khu vực này đã cải thiện đáng kể trong thập kỷ qua.",
+                key: ["The life"],
+                opts: ["entry", "expectation", "expectancy", "entrance"],
+                optsVi: ["sự đi vào", "sự kỳ vọng", "tuổi thọ", "lối vào"],
+                correct: 2,
+                exp: "Cụm từ cố định: life <b>expectancy</b> (tuổi thọ)."
+            },
+            {
+                q: "It's true that _______ areas need more educational resources and infrastructure.",
+                qVi: "Đúng là các khu vực _______ cần nhiều nguồn lực giáo dục và cơ sở hạ tầng hơn.",
+                key: ["areas need more educational resources"],
+                opts: ["attractive", "famous", "popular", "rural"],
+                optsVi: ["hấp dẫn", "nổi tiếng", "phổ biến", "nông thôn"],
+                correct: 3,
+                exp: "Khu vực cần được đầu tư thêm giáo dục là vùng <b>rural</b> (nông thôn)."
+            },
+            {
+                q: "The _______ in the city has been enhanced to guarantee the safety of both residents and tourists.",
+                qVi: "_______ trong thành phố đã được tăng cường để đảm bảo an toàn cho cả người dân và khách du lịch.",
+                key: ["guarantee the safety"],
+                opts: ["security", "facility", "exhibition", "workshop"],
+                optsVi: ["an ninh", "cơ sở vật chất", "triển lãm", "xưởng"],
+                correct: 0,
+                exp: "Tăng cường an ninh để đảm bảo an toàn -> <b>security</b>."
+            },
+            {
+                q: "Local residents are _______ and always welcome new neighbours.",
+                qVi: "Người dân địa phương rất _______ và luôn chào đón những người hàng xóm mới.",
+                key: ["welcome new neighbours"],
+                opts: ["healthy", "hospitable", "unhelpful", "skilled"],
+                optsVi: ["khỏe mạnh", "hiếu khách", "không hữu ích", "lành nghề"],
+                correct: 1,
+                exp: "Chào đón người khác thể hiện tính <b>hospitable</b> (hiếu khách)."
+            },
+            {
+                q: "_______ events help bring the community closer together.",
+                qVi: "Các sự kiện _______ giúp đưa cộng đồng xích lại gần nhau hơn.",
+                key: ["events", "community"],
+                opts: ["Educational", "Financial", "Cultural", "Medical"],
+                optsVi: ["Giáo dục", "Tài chính", "Văn hóa", "Y tế"],
+                correct: 2,
+                exp: "Các lễ hội, sự kiện văn hóa giúp gắn kết cộng đồng -> <b>Cultural</b> events."
+            },
+            {
+                q: "Visitors can _______ themselves in local traditions by participating in cultural workshops.",
+                qVi: "Du khách có thể _______ bản thân vào truyền thống địa phương bằng cách tham gia các xưởng văn hóa.",
+                key: ["themselves in"],
+                opts: ["involve", "engage", "immerse", "impact"],
+                optsVi: ["liên quan", "tham gia", "đắm chìm", "tác động"],
+                correct: 2,
+                exp: "Cấu trúc: <b>immerse</b> oneself in (đắm chìm vào)."
+            },
+            {
+                q: "The town's festival was _______ with music, food, and games.",
+                qVi: "Lễ hội của thị trấn thật _______ với âm nhạc, thức ăn và trò chơi.",
+                key: ["festival was", "music, food"],
+                opts: ["attractive", "memorable", "various", "reliable"],
+                optsVi: ["hấp dẫn", "đáng nhớ", "đa dạng", "đáng tin cậy"],
+                correct: 1,
+                exp: "Đáng nhớ nhờ có nhiều hoạt động -> <b>memorable</b>."
+            },
+            {
+                q: "The regulations have _______ guidelines to protect the local historical landmarks.",
+                qVi: "Các quy định có các hướng dẫn _______ để bảo vệ các di tích lịch sử địa phương.",
+                key: ["guidelines"],
+                opts: ["skilled", "enjoyable", "interesting", "specific"],
+                optsVi: ["lành nghề", "thú vị", "thú vị", "cụ thể"],
+                correct: 3,
+                exp: "Hướng dẫn rõ ràng, chi tiết -> <b>specific</b> guidelines."
+            },
+            {
+                q: "It is _______ to see bustling markets in every Vietnamese city.",
+                qVi: "Thật là _______ khi thấy những khu chợ sầm uất ở mọi thành phố của Việt Nam.",
+                key: ["in every Vietnamese city"],
+                opts: ["typical", "famous", "different", "impressive"],
+                optsVi: ["điển hình/đặc trưng", "nổi tiếng", "khác biệt", "ấn tượng"],
+                correct: 0,
+                exp: "Chợ là nét đặc trưng thường thấy -> <b>typical</b>."
+            },
+            {
+                q: "Skilled artisans _______ beautiful designs into wood, creating unique masterpieces.",
+                qVi: "Các nghệ nhân lành nghề _______ những thiết kế tuyệt đẹp vào gỗ, tạo ra những kiệt tác độc đáo.",
+                key: ["into wood"],
+                opts: ["knit", "carve", "weave", "embroider"],
+                optsVi: ["đan", "chạm khắc", "dệt", "thêu"],
+                correct: 1,
+                exp: "Chạm khắc trên gỗ -> <b>carve</b>."
+            },
+            {
+                q: "We found a _______ of locally grown produce in a flea market.",
+                qVi: "Chúng tôi đã tìm thấy một sự _______ của các nông sản trồng ở địa phương trong chợ trời.",
+                key: ["a ___ of"],
+                opts: ["variety", "culture", "interest", "handicraft"],
+                optsVi: ["sự đa dạng", "văn hóa", "sự quan tâm", "đồ thủ công"],
+                correct: 0,
+                exp: "Cụm từ: a <b>variety</b> of (sự đa dạng/nhiều loại)."
+            },
+            {
+                q: "Hanoi, Vietnam's capital city, has many _______ buildings worth visiting.",
+                qVi: "Hà Nội, thủ đô của Việt Nam, có nhiều tòa nhà _______ đáng để đến thăm.",
+                key: ["buildings worth visiting"],
+                opts: ["typical", "traditional", "historical", "cultural"],
+                optsVi: ["điển hình", "truyền thống", "thuộc về lịch sử", "văn hóa"],
+                correct: 2,
+                exp: "Các tòa nhà cổ kính, di tích -> <b>historical</b> buildings."
+            },
+            {
+                q: "Urban planners are addressing high population _______ with new housing and green spaces.",
+                qVi: "Các nhà quy hoạch đô thị đang giải quyết _______ dân số cao bằng nhà ở mới và không gian xanh.",
+                key: ["population"],
+                opts: ["rate", "range", "density", "level"],
+                optsVi: ["tỷ lệ", "phạm vi", "mật độ", "mức độ"],
+                correct: 2,
+                exp: "Mật độ dân số -> population <b>density</b>."
+            },
+            {
+                q: "The new metro system makes commuting much more _______ for residents and tourists alike.",
+                qVi: "Hệ thống tàu điện ngầm mới làm cho việc đi lại trở nên _______ hơn nhiều cho cả người dân và khách du lịch.",
+                key: ["makes commuting much more"],
+                opts: ["ready", "convenient", "hesitant", "reliant"],
+                optsVi: ["sẵn sàng", "tiện lợi", "do dự", "dựa dẫm"],
+                correct: 1,
+                exp: "Giao thông công cộng tốt giúp đi lại <b>convenient</b> (tiện lợi)."
+            },
+            {
+                q: "The lakeside _______ is perfect for an afternoon of relaxation.",
+                qVi: "_______ ven hồ hoàn hảo cho một buổi chiều thư giãn.",
+                key: ["lakeside", "relaxation"],
+                opts: ["site", "scenery", "tradition", "habit"],
+                optsVi: ["địa điểm", "phong cảnh", "truyền thống", "thói quen"],
+                correct: 1,
+                exp: "Cảnh đẹp quanh hồ -> lakeside <b>scenery</b>."
+            },
+            {
+                q: "If villagers produce _______ vegetables, they can sell them at better prices.",
+                qVi: "Nếu người dân làng sản xuất rau _______, họ có thể bán chúng với giá tốt hơn.",
+                key: ["vegetables", "better prices"],
+                opts: ["high-paying", "high-powered", "high-flying", "high-quality"],
+                optsVi: ["trả lương cao", "quyền lực", "thành công", "chất lượng cao"],
+                correct: 3,
+                exp: "Sản phẩm tốt sẽ bán được giá cao -> <b>high-quality</b> vegetables."
+            },
+            {
+                q: "The new public library is _______ to all residents.",
+                qVi: "Thư viện công cộng mới _______ đối với tất cả người dân.",
+                key: ["to all residents"],
+                opts: ["nearby", "handmade", "accessible", "remote"],
+                optsVi: ["gần đó", "thủ công", "có thể tiếp cận", "xa xôi"],
+                correct: 2,
+                exp: "Mở cửa cho mọi người vào -> <b>accessible</b> to."
+            },
+            {
+                q: "The new café is a popular _______ for the young to meet and relax.",
+                qVi: "Quán cà phê mới là một _______ phổ biến để giới trẻ gặp gỡ và thư giãn.",
+                key: ["popular", "to meet and relax"],
+                opts: ["spot", "interest", "pleasure", "beauty"],
+                optsVi: ["địa điểm", "sự quan tâm", "niềm vui", "vẻ đẹp"],
+                correct: 0,
+                exp: "Địa điểm tụ tập -> popular <b>spot</b>."
+            },
+            {
+                q: "The city has received _______ funding for the new shopping centre.",
+                qVi: "Thành phố đã nhận được tài trợ _______ cho trung tâm mua sắm mới.",
+                key: ["funding"],
+                opts: ["unique", "typical", "additional", "competitive"],
+                optsVi: ["độc đáo", "điển hình", "bổ sung/thêm", "cạnh tranh"],
+                correct: 2,
+                exp: "Nguồn quỹ bổ sung -> <b>additional</b> funding."
+            },
+            {
+                q: "The small business is thriving despite being in _______ with larger corporations.",
+                qVi: "Doanh nghiệp nhỏ đang phát triển mạnh mặc dù đang trong sự _______ với các tập đoàn lớn hơn.",
+                key: ["being in", "with larger corporations"],
+                opts: ["reality", "competition", "basis", "general"],
+                optsVi: ["thực tế", "cạnh tranh", "cơ sở", "chung"],
+                correct: 1,
+                exp: "Cạnh tranh với ai -> in <b>competition</b> with."
+            },
+            {
+                q: "Agriculture is still the _______ source of income for many families living in the countryside.",
+                qVi: "Nông nghiệp vẫn là nguồn thu nhập _______ đối với nhiều gia đình sống ở nông thôn.",
+                key: ["source of income"],
+                opts: ["primary", "specific", "typical", "special"],
+                optsVi: ["chính/chủ yếu", "cụ thể", "điển hình", "đặc biệt"],
+                correct: 0,
+                exp: "Nguồn thu nhập chính yếu -> <b>primary</b> source."
+            },
+            {
+                q: "Beijing is considered the _______ of many world-famous dishes, including Peking Duck.",
+                qVi: "Bắc Kinh được coi là _______ của nhiều món ăn nổi tiếng thế giới, bao gồm Vịt quay Bắc Kinh.",
+                key: ["of many world-famous dishes"],
+                opts: ["key", "target", "birthplace", "habitat"],
+                optsVi: ["chìa khóa", "mục tiêu", "nơi ra đời/nơi bắt nguồn", "môi trường sống"],
+                correct: 2,
+                exp: "Nơi sản sinh ra món ăn -> <b>birthplace</b>."
+            },
+            {
+                q: "They will launch a campaign to _______ sustainable tourism practices on the island.",
+                qVi: "Họ sẽ khởi động một chiến dịch để _______ các hoạt động du lịch bền vững trên đảo.",
+                key: ["sustainable tourism practices"],
+                opts: ["require", "introduce", "consume", "exchange"],
+                optsVi: ["yêu cầu", "giới thiệu", "tiêu thụ", "trao đổi"],
+                correct: 1,
+                exp: "Giới thiệu, phổ biến hình thức mới -> <b>introduce</b>."
+            },
+            {
+                q: "Central Vietnam _______ harsh weather and natural disasters every year.",
+                qVi: "Miền Trung Việt Nam _______ thời tiết khắc nghiệt và thiên tai hàng năm.",
+                key: ["harsh weather"],
+                opts: ["chases", "lays", "faces", "wakes"],
+                optsVi: ["đuổi theo", "đặt", "đối mặt", "thức giấc"],
+                correct: 2,
+                exp: "Đối mặt với khó khăn/thiên tai -> <b>faces</b>."
+            },
+            {
+                q: "Ho Chi Minh City has a _______ economy, attracting businesses and investors from other regions.",
+                qVi: "Thành phố Hồ Chí Minh có một nền kinh tế _______, thu hút các doanh nghiệp và nhà đầu tư từ các khu vực khác.",
+                key: ["economy", "attracting businesses"],
+                opts: ["present", "available", "historical", "thriving"],
+                optsVi: ["hiện tại", "có sẵn", "thuộc lịch sử", "phát triển mạnh mẽ"],
+                correct: 3,
+                exp: "Nền kinh tế thịnh vượng -> <b>thriving</b> economy."
+            },
+            {
+                q: "There has been a _______ in traditional handicrafts as younger generations move to urban areas for work.",
+                qVi: "Có sự _______ trong đồ thủ công truyền thống khi thế hệ trẻ chuyển đến khu vực đô thị để làm việc.",
+                key: ["move to urban areas for work"],
+                opts: ["growth", "development", "progress", "decline"],
+                optsVi: ["tăng trưởng", "phát triển", "tiến bộ", "suy tàn/giảm sút"],
+                correct: 3,
+                exp: "Ít người theo nghề làm nghề bị mai một -> a <b>decline</b>."
+            },
+            {
+                q: "Tourists visiting the Mekong Delta _______ a deeper understanding of traditional Vietnamese life.",
+                qVi: "Khách du lịch đến thăm Đồng bằng sông Cửu Long _______ sự hiểu biết sâu sắc hơn về cuộc sống truyền thống của người Việt.",
+                key: ["a deeper understanding"],
+                opts: ["gain", "share", "bring", "land"],
+                optsVi: ["đạt được/thu được", "chia sẻ", "mang", "hạ cánh"],
+                correct: 0,
+                exp: "Thu được kiến thức/hiểu biết -> <b>gain</b> an understanding."
+            },
+            {
+                q: "Some rural areas in Vietnam still experience a _______ of clean drinking water.",
+                qVi: "Một số khu vực nông thôn ở Việt Nam vẫn phải trải qua sự _______ nước uống sạch.",
+                key: ["a ___ of clean drinking water"],
+                opts: ["shortage", "quality", "width", "depth"],
+                optsVi: ["thiếu hụt", "chất lượng", "chiều rộng", "chiều sâu"],
+                correct: 0,
+                exp: "Thiếu nước sạch -> a <b>shortage</b> of."
+            },
+            {
+                q: "Artisans in Bat Trang _______ a living by crafting beautiful ceramics sold locally and abroad.",
+                qVi: "Các nghệ nhân ở Bát Tràng _______ sống bằng cách chế tác đồ gốm đẹp được bán trong nước và quốc tế.",
+                key: ["a living by"],
+                opts: ["bring", "turn", "keep", "earn"],
+                optsVi: ["mang", "xoay", "giữ", "kiếm"],
+                correct: 3,
+                exp: "Kiếm sống -> <b>earn</b> a living."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
