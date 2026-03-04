@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Prepositions of Place (50 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Prepositions of Place (50 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">50</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">50</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "The cat is sleeping _______ the sofa.",
+                qVi: "Con mèo đang ngủ _______ ghế sofa.",
+                key: ["the sofa", "surface"],
+                opts: ["in", "on", "at", "opposite"],
+                optsVi: ["trong", "trên", "tại", "đối diện"],
+                correct: 1,
+                exp: "Dùng <b>on</b> để chỉ vị trí nằm trên một bề mặt phẳng (trên ghế sofa)."
+            },
+            {
+                q: "My keys are _______ my pocket.",
+                qVi: "Chìa khóa của tôi ở _______ túi của tôi.",
+                key: ["my pocket", "inside"],
+                opts: ["on", "under", "in", "at"],
+                optsVi: ["trên", "dưới", "trong", "tại"],
+                correct: 2,
+                exp: "Dùng <b>in</b> để chỉ vị trí bên trong một không gian kín hoặc không gian có giới hạn (trong túi quần/áo)."
+            },
+            {
+                q: "We met _______ the bus stop this morning.",
+                qVi: "Chúng tôi đã gặp nhau _______ trạm xe buýt sáng nay.",
+                key: ["the bus stop", "specific point"],
+                opts: ["at", "in", "on", "under"],
+                optsVi: ["tại", "trong", "trên", "dưới"],
+                correct: 0,
+                exp: "Dùng <b>at</b> để chỉ một địa điểm cụ thể, một điểm dừng hoặc nơi gặp gỡ (tại trạm xe buýt)."
+            },
+            {
+                q: "There is a beautiful painting _______ the wall.",
+                qVi: "Có một bức tranh đẹp _______ tường.",
+                key: ["the wall", "surface"],
+                opts: ["in", "at", "on", "in front of"],
+                optsVi: ["trong", "tại", "trên", "phía trước"],
+                correct: 2,
+                exp: "Dùng <b>on</b> cho các vật được gắn hoặc treo trên một bề mặt phẳng (trên tường)."
+            },
+            {
+                q: "The supermarket is _______ the post office. They are facing each other across the street.",
+                qVi: "Siêu thị thì _______ bưu điện. Chúng đối diện nhau qua đường.",
+                key: ["facing each other"],
+                opts: ["under", "on", "in", "opposite"],
+                optsVi: ["dưới", "trên", "trong", "đối diện"],
+                correct: 3,
+                exp: "Ngữ cảnh 'facing each other' (đối diện nhau) nên giới từ cần dùng là <b>opposite</b>."
+            },
+            {
+                q: "The ball rolled _______ the car, so I couldn't see it from above.",
+                qVi: "Quả bóng lăn _______ xe ô tô, nên tôi không thể nhìn thấy nó từ trên cao.",
+                key: ["couldn't see it from above"],
+                opts: ["on", "under", "at", "opposite"],
+                optsVi: ["trên", "dưới", "tại", "đối diện"],
+                correct: 1,
+                exp: "Bị che khuất không nhìn thấy từ trên cao nghĩa là quả bóng đã nằm <b>under</b> (dưới gầm) xe."
+            },
+            {
+                q: "Who is that boy standing _______ your house? He’s right by the gate.",
+                qVi: "Cậu bé đang đứng _______ nhà bạn là ai vậy? Cậu ấy ở ngay cạnh cổng.",
+                key: ["right by the gate"],
+                opts: ["in front of", "in", "on", "under"],
+                optsVi: ["phía trước", "trong", "trên", "dưới"],
+                correct: 0,
+                exp: "Đứng ngay cạnh cổng nghĩa là đang đứng <b>in front of</b> (phía trước) ngôi nhà."
+            },
+            {
+                q: "I live _______ the third floor of this apartment building.",
+                qVi: "Tôi sống _______ tầng ba của tòa nhà chung cư này.",
+                key: ["the third floor", "floor level"],
+                opts: ["in", "at", "on", "opposite"],
+                optsVi: ["trong", "tại", "trên", "đối diện"],
+                correct: 2,
+                exp: "Với các tầng của tòa nhà (floor), ta luôn dùng giới từ <b>on</b>."
+            },
+            {
+                q: "She is waiting for you _______ the entrance of the cinema.",
+                qVi: "Cô ấy đang đợi bạn _______ lối vào của rạp chiếu phim.",
+                key: ["the entrance", "specific point"],
+                opts: ["on", "at", "in", "under"],
+                optsVi: ["trên", "tại", "trong", "dưới"],
+                correct: 1,
+                exp: "Lối vào (the entrance) được coi là một điểm cụ thể trong không gian, ta dùng giới từ <b>at</b>."
+            },
+            {
+                q: "There are many colorful fish _______ the pond.",
+                qVi: "Có rất nhiều cá đầy màu sắc _______ ao.",
+                key: ["the pond", "inside liquid"],
+                opts: ["on", "at", "in", "in front of"],
+                optsVi: ["trên", "tại", "trong", "phía trước"],
+                correct: 2,
+                exp: "Cá sống bên trong môi trường nước (không gian bao quanh), nên ta dùng giới từ <b>in</b>."
+            },
+            {
+                q: "Please don't leave your shoes _______ the middle of the floor.",
+                qVi: "Làm ơn đừng để giày của bạn _______ giữa sàn nhà.",
+                key: ["the middle of"],
+                opts: ["in", "at", "opposite", "under"],
+                optsVi: ["ở/trong", "tại", "đối diện", "dưới"],
+                correct: 0,
+                exp: "Cụm từ cố định: <b>in the middle of</b> (ở giữa của cái gì đó)."
+            },
+            {
+                q: "The dog is hiding _______ the table because it's scared of the thunder.",
+                qVi: "Con chó đang trốn _______ bàn vì nó sợ tiếng sấm.",
+                key: ["hiding", "table"],
+                opts: ["on", "under", "opposite", "in"],
+                optsVi: ["trên", "dưới gầm", "đối diện", "trong"],
+                correct: 1,
+                exp: "Hành động 'trốn' (hiding) thường diễn ra ở những nơi bị che khuất như <b>under</b> (dưới gầm) bàn."
+            },
+            {
+                q: "The library is _______ the park. You just need to cross the road to get there.",
+                qVi: "Thư viện thì _______ công viên. Bạn chỉ cần băng qua đường là tới.",
+                key: ["cross the road"],
+                opts: ["in", "on", "opposite", "at"],
+                optsVi: ["trong", "trên", "đối diện", "tại"],
+                correct: 2,
+                exp: "Ngữ cảnh 'băng qua đường' (cross the road) cho thấy hai địa điểm này nằm <b>opposite</b> (đối diện) nhau."
+            },
+            {
+                q: "My office is _______ the end of this hallway.",
+                qVi: "Văn phòng của tôi nằm _______ cuối hành lang này.",
+                key: ["the end of"],
+                opts: ["in", "at", "on", "under"],
+                optsVi: ["trong", "tại/ở", "trên", "dưới"],
+                correct: 1,
+                exp: "Cụm từ cố định chỉ vị trí: <b>at the end of</b> (ở phía cuối của)."
+            },
+            {
+                q: "There is a small garden _______ the house where we plant flowers.",
+                qVi: "Có một khu vườn nhỏ _______ ngôi nhà nơi chúng tôi trồng hoa.",
+                key: ["garden", "house"],
+                opts: ["in front of", "in", "at", "opposite"],
+                optsVi: ["phía trước", "trong", "tại", "đối diện"],
+                correct: 0,
+                exp: "Mô tả vị trí của sân vườn so với ngôi nhà. Hợp lý nhất là <b>in front of</b> (phía trước) hoặc behind (phía sau)."
+            },
+            {
+                q: "I left my phone _______ work yesterday, so I don't have it now.",
+                qVi: "Tôi đã để quên điện thoại _______ chỗ làm hôm qua, nên bây giờ tôi không có nó.",
+                key: ["work"],
+                opts: ["in", "on", "at", "under"],
+                optsVi: ["trong", "trên", "ở/tại", "dưới"],
+                correct: 2,
+                exp: "Cụm từ cố định chỉ địa điểm làm việc: <b>at work</b>."
+            },
+            {
+                q: "He is sitting _______ his desk, studying for the exam.",
+                qVi: "Anh ấy đang ngồi _______ bàn làm việc, học bài cho kỳ thi.",
+                key: ["sitting", "his desk"],
+                opts: ["at", "in", "on", "opposite"],
+                optsVi: ["tại/vào", "trong", "trên", "đối diện"],
+                correct: 0,
+                exp: "Khi nói ngồi làm việc/học tập tại bàn, ta dùng giới từ <b>at</b> (at the table / at the desk)."
+            },
+            {
+                q: "Look! There is a tiny spider _______ the ceiling.",
+                qVi: "Nhìn kìa! Có một con nhện nhỏ tí hon _______ trần nhà.",
+                key: ["the ceiling", "surface"],
+                opts: ["in", "on", "at", "under"],
+                optsVi: ["trong", "trên", "tại", "dưới"],
+                correct: 1,
+                exp: "Trần nhà (ceiling) được xem là một bề mặt phẳng. Những vật bám trên bề mặt phẳng dùng giới từ <b>on</b>."
+            },
+            {
+                q: "The school is _______ the stadium. They are on two different sides of the main road.",
+                qVi: "Trường học _______ sân vận động. Chúng nằm ở hai bên khác nhau của con đường chính.",
+                key: ["two different sides of the main road"],
+                opts: ["in", "at", "opposite", "on"],
+                optsVi: ["trong", "tại", "đối diện", "trên"],
+                correct: 2,
+                exp: "Nằm ở hai bên khác nhau của con đường nghĩa là chúng <b>opposite</b> (đối diện) nhau."
+            },
+            {
+                q: "It's very cold today. I prefer to stay _______ home.",
+                qVi: "Hôm nay trời rất lạnh. Tôi thích ở _______ nhà hơn.",
+                key: ["stay", "home"],
+                opts: ["in", "at", "on", "under"],
+                optsVi: ["trong", "ở", "trên", "dưới"],
+                correct: 1,
+                exp: "Cụm từ cố định: <b>at home</b> (ở nhà)."
+            },
+            {
+                q: "There is a small rug _______ the coffee table.",
+                qVi: "Có một tấm thảm nhỏ _______ bàn cà phê.",
+                key: ["rug", "coffee table"],
+                opts: ["on", "under", "in", "opposite"],
+                optsVi: ["trên", "dưới", "trong", "đối diện"],
+                correct: 1,
+                exp: "Thảm thường được trải <b>under</b> (bên dưới) bàn cà phê."
+            },
+            {
+                q: "I’ll meet you _______ the entrance of the shopping mall.",
+                qVi: "Tôi sẽ gặp bạn _______ lối vào của trung tâm mua sắm.",
+                key: ["the entrance", "specific location"],
+                opts: ["in", "on", "at", "behind"],
+                optsVi: ["trong", "trên", "tại", "phía sau"],
+                correct: 2,
+                exp: "Lối vào (the entrance) là một điểm hẹn cụ thể, dùng giới từ <b>at</b>."
+            },
+            {
+                q: "The sun disappeared _______ the clouds.",
+                qVi: "Mặt trời đã biến mất _______ những đám mây.",
+                key: ["disappeared", "the clouds"],
+                opts: ["behind", "on", "in front of", "at"],
+                optsVi: ["phía sau", "trên", "phía trước", "tại"],
+                correct: 0,
+                exp: "Mặt trời bị mây che khuất tức là nó nằm <b>behind</b> (phía sau) những đám mây."
+            },
+            {
+                q: "My house is _______ the cinema. We just have to cross the street to get there.",
+                qVi: "Nhà tôi ở _______ rạp chiếu phim. Chúng tôi chỉ cần băng qua đường là tới.",
+                key: ["cross the street"],
+                opts: ["under", "in", "opposite", "behind"],
+                optsVi: ["dưới", "trong", "đối diện", "phía sau"],
+                correct: 2,
+                exp: "Băng qua đường là tới chứng tỏ hai địa điểm nằm <b>opposite</b> (đối diện) nhau."
+            },
+            {
+                q: "Don't sit _______ the TV; it's bad for your eyes.",
+                qVi: "Đừng ngồi _______ TV; nó có hại cho mắt của bạn.",
+                key: ["sit", "bad for your eyes"],
+                opts: ["at", "in front of", "under", "on"],
+                optsVi: ["tại", "phía trước", "dưới", "trên"],
+                correct: 1,
+                exp: "Ngồi xem TV nghĩa là ngồi <b>in front of</b> (ngay phía trước) màn hình."
+            },
+            {
+                q: "Is there any milk _______ the fridge?",
+                qVi: "Có còn chút sữa nào _______ tủ lạnh không?",
+                key: ["milk", "the fridge"],
+                opts: ["on", "at", "in", "opposite"],
+                optsVi: ["trên", "tại", "trong", "đối diện"],
+                correct: 2,
+                exp: "Tủ lạnh là một không gian kín chứa đồ bên trong, dùng giới từ <b>in</b>."
+            },
+            {
+                q: "The cat is hiding _______ the curtain, so you can only see its tail.",
+                qVi: "Con mèo đang trốn _______ rèm cửa, nên bạn chỉ có thể nhìn thấy đuôi của nó.",
+                key: ["hiding", "only see its tail"],
+                opts: ["behind", "on", "in front of", "at"],
+                optsVi: ["phía sau", "trên", "phía trước", "tại"],
+                correct: 0,
+                exp: "Con mèo bị che khuất một phần bởi rèm cửa, nghĩa là nó đang nấp <b>behind</b> (phía sau) rèm."
+            },
+            {
+                q: "Put your coat _______ the hook behind the door.",
+                qVi: "Hãy treo áo khoác của bạn _______ cái móc sau cửa.",
+                key: ["coat", "the hook"],
+                opts: ["in", "on", "at", "under"],
+                optsVi: ["trong", "trên (vào)", "tại", "dưới"],
+                correct: 1,
+                exp: "Treo đồ vật lên móc ta dùng giới từ <b>on</b> (on the hook)."
+            },
+            {
+                q: "We were sitting _______ the back of the classroom.",
+                qVi: "Chúng tôi đang ngồi _______ cuối lớp học.",
+                key: ["the back of the classroom"],
+                opts: ["on", "in", "opposite", "under"],
+                optsVi: ["trên", "ở", "đối diện", "dưới"],
+                correct: 1,
+                exp: "Với cụm từ 'the back of' một không gian như phòng học, xe hơi, ta dùng <b>in</b> (in the back of) hoặc 'at' (nhưng ở đây không có đáp án at)."
+            },
+            {
+                q: "The teacher is standing _______ the whiteboard.",
+                qVi: "Giáo viên đang đứng _______ bảng trắng.",
+                key: ["standing", "the whiteboard"],
+                opts: ["in front of", "under", "in", "on"],
+                optsVi: ["phía trước", "dưới", "trong", "trên"],
+                correct: 0,
+                exp: "Khi giảng bài, giáo viên thường đứng <b>in front of</b> (phía trước) bảng để học sinh dễ nhìn."
+            },
+            {
+                q: "There are some keys _______ the floor. Did you drop them?",
+                qVi: "Có vài chiếc chìa khóa _______ sàn nhà. Bạn có làm rơi chúng không?",
+                key: ["the floor", "surface"],
+                opts: ["in", "at", "on", "opposite"],
+                optsVi: ["trong", "tại", "trên", "đối diện"],
+                correct: 2,
+                exp: "Sàn nhà (floor) là bề mặt phẳng, dùng giới từ <b>on</b>."
+            },
+            {
+                q: "I left my umbrella _______ the chair, so it’s out of sight.",
+                qVi: "Tôi để ô của mình _______ chiếc ghế, nên nó bị khuất tầm nhìn.",
+                key: ["out of sight", "chair"],
+                opts: ["on", "under", "in front of", "at"],
+                optsVi: ["trên", "dưới", "phía trước", "tại"],
+                correct: 1,
+                exp: "Bị khuất tầm nhìn (out of sight) khi để ô ở ghế thì thường là để <b>under</b> (dưới gầm) ghế."
+            },
+            {
+                q: "The bank is _______ the pharmacy. They are on the same side of the street, but facing each other.",
+                qVi: "Ngân hàng nằm _______ hiệu thuốc.",
+                key: ["facing each other"],
+                opts: ["in", "opposite", "under", "at"],
+                optsVi: ["trong", "đối diện", "dưới", "tại"],
+                correct: 1,
+                exp: "Hai tòa nhà 'facing each other' (hướng mặt vào nhau) thì chúng nằm <b>opposite</b> (đối diện) nhau."
+            },
+            {
+                q: "There is a beautiful garden _______ our house.",
+                qVi: "Có một khu vườn đẹp _______ nhà chúng tôi.",
+                key: ["garden", "house"],
+                opts: ["behind", "on", "in", "under"],
+                optsVi: ["phía sau", "trên", "trong", "dưới"],
+                correct: 0,
+                exp: "Khu vườn thường nằm <b>behind</b> (phía sau) hoặc in front of (phía trước) ngôi nhà."
+            },
+            {
+                q: "I'll be waiting for you _______ the bus station.",
+                qVi: "Tôi sẽ đợi bạn _______ bến xe buýt.",
+                key: ["the bus station", "specific point"],
+                opts: ["in", "on", "at", "opposite"],
+                optsVi: ["trong", "trên", "tại", "đối diện"],
+                correct: 2,
+                exp: "Bến xe (bus station) là một địa điểm công cộng cụ thể để gặp gỡ, dùng <b>at</b>."
+            },
+            {
+                q: "Look! There’s a fly _______ the ceiling.",
+                qVi: "Nhìn kìa! Có một con ruồi _______ trần nhà.",
+                key: ["the ceiling", "surface"],
+                opts: ["in", "on", "at", "under"],
+                optsVi: ["trong", "trên", "tại", "dưới"],
+                correct: 1,
+                exp: "Ruồi đậu trên bề mặt phẳng của trần nhà, dùng giới từ <b>on</b>."
+            },
+            {
+                q: "The kids are playing _______ the park.",
+                qVi: "Bọn trẻ đang chơi _______ công viên.",
+                key: ["playing", "the park"],
+                opts: ["on", "at", "in", "opposite"],
+                optsVi: ["trên", "tại", "trong", "đối diện"],
+                correct: 2,
+                exp: "Công viên là một khu vực không gian rộng lớn được bao quanh, ta dùng giới từ <b>in</b>."
+            },
+            {
+                q: "He parked his car _______ the garage.",
+                qVi: "Anh ấy đã đậu xe _______ ga-ra.",
+                key: ["parked", "garage"],
+                opts: ["in front of", "on", "at", "under"],
+                optsVi: ["phía trước", "trên", "tại", "dưới"],
+                correct: 0,
+                exp: "Thông thường xe đậu 'in' (trong) ga-ra. Vì không có đáp án 'in', đáp án hợp lý nhất về không gian là đậu <b>in front of</b> (phía trước) ga-ra."
+            },
+            {
+                q: "My office is _______ the second floor.",
+                qVi: "Văn phòng của tôi nằm _______ tầng hai.",
+                key: ["the second floor"],
+                opts: ["in", "at", "on", "behind"],
+                optsVi: ["trong", "tại", "trên", "phía sau"],
+                correct: 2,
+                exp: "Chỉ vị trí tầng nhà (floor), ta luôn dùng giới từ <b>on</b>."
+            },
+            {
+                q: "The book fell _______ the bed, and I can't reach it.",
+                qVi: "Cuốn sách rơi xuống _______ giường, và tôi không thể với tới nó.",
+                key: ["fell", "can't reach it"],
+                opts: ["on", "under", "in", "at"],
+                optsVi: ["trên", "dưới gầm", "trong", "tại"],
+                correct: 1,
+                exp: "Rơi xuống và khó với tới thường là rơi vào vị trí bị che khuất như <b>under</b> (dưới gầm) giường."
+            },
+            {
+                q: "I saw a bird sitting _______ the roof.",
+                qVi: "Tôi thấy một con chim đang đậu _______ mái nhà.",
+                key: ["sitting", "the roof"],
+                opts: ["in", "at", "on", "behind"],
+                optsVi: ["trong", "tại", "trên", "phía sau"],
+                correct: 2,
+                exp: "Đậu trên bề mặt mái nhà (roof), dùng giới từ <b>on</b>."
+            },
+            {
+                q: "The two players stood _______ each other before the match started.",
+                qVi: "Hai cầu thủ đứng _______ nhau trước khi trận đấu bắt đầu.",
+                key: ["two players stood"],
+                opts: ["under", "opposite", "in", "at"],
+                optsVi: ["dưới", "đối diện", "trong", "tại"],
+                correct: 1,
+                exp: "Trong thể thao, trước trận đấu hai đối thủ thường đứng mặt đối mặt, tức là <b>opposite</b> (đối diện) nhau."
+            },
+            {
+                q: "There is a sign _______ the door that says \"Push\".",
+                qVi: "Có một tấm biển _______ cửa ghi chữ \"Đẩy\".",
+                key: ["a sign", "the door"],
+                opts: ["on", "in", "at", "behind"],
+                optsVi: ["trên", "trong", "tại", "phía sau"],
+                correct: 0,
+                exp: "Tấm biển được dán/gắn lên bề mặt cánh cửa, dùng giới từ <b>on</b>."
+            },
+            {
+                q: "Who is that man standing _______ the window?",
+                qVi: "Người đàn ông đang đứng _______ cửa sổ kia là ai?",
+                key: ["standing", "the window"],
+                opts: ["in", "on", "at", "under"],
+                optsVi: ["trong", "trên", "tại/cạnh", "dưới"],
+                correct: 2,
+                exp: "Đứng ngay sát cạnh hoặc tại vị trí cửa sổ, ta dùng <b>at</b> (hoặc by)."
+            },
+            {
+                q: "The mouse ran _______ the cupboard to hide from the cat.",
+                qVi: "Con chuột chạy ra _______ tủ để trốn con mèo.",
+                key: ["hide from the cat"],
+                opts: ["on", "behind", "opposite", "at"],
+                optsVi: ["trên", "phía sau", "đối diện", "tại"],
+                correct: 1,
+                exp: "Để trốn (hide), con chuột phải chạy vào nơi bị che khuất như <b>behind</b> (phía sau) tủ."
+            },
+            {
+                q: "I saw your picture _______ the newspaper today.",
+                qVi: "Tôi đã thấy hình của bạn _______ tờ báo hôm nay.",
+                key: ["picture", "newspaper"],
+                opts: ["on", "in", "at", "under"],
+                optsVi: ["trên", "trong", "tại", "dưới"],
+                correct: 1,
+                exp: "Tin tức, hình ảnh được in ấn bên trong tờ báo, sách, tạp chí... ta dùng giới từ <b>in</b>."
+            },
+            {
+                q: "The bin is kept _______ the sink in the kitchen.",
+                qVi: "Thùng rác được đặt _______ bồn rửa trong nhà bếp.",
+                key: ["bin", "the sink"],
+                opts: ["on", "under", "opposite", "at"],
+                optsVi: ["trên", "dưới", "đối diện", "tại"],
+                correct: 1,
+                exp: "Trong nhà bếp, thùng rác thường được giấu gọn gàng ở khoang <b>under</b> (bên dưới) bồn rửa chén."
+            },
+            {
+                q: "There's a long queue _______ the ticket office.",
+                qVi: "Có một hàng đợi dài _______ quầy bán vé.",
+                key: ["queue", "ticket office"],
+                opts: ["in front of", "on", "under", "opposite"],
+                optsVi: ["phía trước", "trên", "dưới", "đối diện"],
+                correct: 0,
+                exp: "Người ta thường xếp hàng <b>in front of</b> (phía trước) quầy vé để chờ mua vé."
+            },
+            {
+                q: "They are sitting _______ the dinner table.",
+                qVi: "Họ đang ngồi _______ bàn ăn.",
+                key: ["sitting", "dinner table"],
+                opts: ["in", "on", "at", "under"],
+                optsVi: ["trong", "trên", "vào/tại", "dưới"],
+                correct: 2,
+                exp: "Cụm từ chỉ hành động ngồi vào bàn để ăn uống/làm việc là sit <b>at</b> the table."
+            },
+            {
+                q: "My shop is _______ the post office; I can see their front door from mine.",
+                qVi: "Cửa hàng của tôi _______ bưu điện; tôi có thể nhìn thấy cửa trước của họ từ cửa của tôi.",
+                key: ["see their front door from mine"],
+                opts: ["behind", "under", "opposite", "in"],
+                optsVi: ["phía sau", "dưới", "đối diện", "trong"],
+                correct: 2,
+                exp: "Hai cửa hàng có thể nhìn trực diện cửa của nhau, nghĩa là chúng <b>opposite</b> (đối diện) nhau."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1;
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                // Sidebar nav item
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            for (let i = 0; i < 4; i++) {
+                const optTrans = document.getElementById(`trans-opt-${index}-${i}`);
+                if(optTrans) optTrans.classList.toggle('show');
+            }
+            
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
