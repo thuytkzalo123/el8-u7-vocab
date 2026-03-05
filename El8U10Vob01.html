@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Communication & Future Technology (40 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Communication & Future Technology (40 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">40</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">40</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // List 1 (câu 1-20 tương ứng với 21-40 trong yêu cầu của bạn)
+            {
+                q: "People often use a ______ to send text messages and make calls.",
+                qVi: "Mọi người thường sử dụng _______ để gửi tin nhắn văn bản và gọi điện thoại.",
+                key: ["send text messages", "make calls"],
+                opts: ["smartphone", "newspaper", "pigeon", "button"],
+                optsVi: ["điện thoại thông minh", "tờ báo", "chim bồ câu", "nút bấm"],
+                correct: 0,
+                exp: "Thiết bị dùng để nhắn tin và gọi điện thông dụng nhất hiện nay là <b>smartphone</b>."
+            },
+            {
+                q: "A ______ allows you to talk and see another person on the screen.",
+                qVi: "Một _______ cho phép bạn nói chuyện và nhìn thấy người khác trên màn hình.",
+                key: ["talk and see", "on the screen"],
+                opts: ["video call", "newspaper", "emoji", "translation machine"],
+                optsVi: ["cuộc gọi video", "tờ báo", "biểu tượng cảm xúc", "máy phiên dịch"],
+                correct: 0,
+                exp: "Cuộc gọi có thể nhìn thấy mặt nhau qua màn hình gọi là <b>video call</b>."
+            },
+            {
+                q: "In the past, messages were sometimes sent by ______.",
+                qVi: "Trong quá khứ, các tin nhắn đôi khi được gửi bằng _______.",
+                key: ["In the past", "sent by"],
+                opts: ["smartphone", "carried pigeon", "laptop", "tablet"],
+                optsVi: ["điện thoại thông minh", "chim bồ câu đưa thư", "máy tính xách tay", "máy tính bảng"],
+                correct: 1,
+                exp: "Cách truyền tin thời xưa khi chưa có công nghệ là dùng chim bồ câu đưa thư -> <b>carried pigeon</b>."
+            },
+            {
+                q: "A ______ helps people show feelings in text messages.",
+                qVi: "Một _______ giúp mọi người thể hiện cảm xúc trong các tin nhắn văn bản.",
+                key: ["show feelings", "text messages"],
+                opts: ["emoji", "computer", "telephone", "translator"],
+                optsVi: ["biểu tượng cảm xúc", "máy tính", "điện thoại", "người/máy phiên dịch"],
+                correct: 0,
+                exp: "Hình ảnh nhỏ dùng để thể hiện cảm xúc khi chat là <b>emoji</b>."
+            },
+            {
+                q: "A ______ is a small portable computer you can carry easily.",
+                qVi: "_______ là một chiếc máy tính xách tay nhỏ gọn mà bạn có thể dễ dàng mang theo.",
+                key: ["small portable computer", "carry easily"],
+                opts: ["laptop", "newspaper", "pigeon", "button"],
+                optsVi: ["máy tính xách tay", "tờ báo", "chim bồ câu", "nút bấm"],
+                correct: 0,
+                exp: "Máy tính cá nhân có thể mang đi được gọi là <b>laptop</b>."
+            },
+            {
+                q: "People read the news in a ______ every morning.",
+                qVi: "Mọi người đọc tin tức trên một _______ mỗi sáng.",
+                key: ["read the news", "every morning"],
+                opts: ["smartphone", "newspaper", "webcam", "tablet"],
+                optsVi: ["điện thoại thông minh", "tờ báo", "webcam", "máy tính bảng"],
+                correct: 1,
+                exp: "Phương tiện truyền thống để đọc tin tức hàng ngày là <b>newspaper</b>."
+            },
+            {
+                q: "A ______ helps people translate words from one language to another.",
+                qVi: "Một _______ giúp mọi người dịch các từ từ ngôn ngữ này sang ngôn ngữ khác.",
+                key: ["translate words"],
+                opts: ["translator", "pigeon", "button", "emoji"],
+                optsVi: ["người/công cụ phiên dịch", "chim bồ câu", "nút bấm", "biểu tượng cảm xúc"],
+                correct: 0,
+                exp: "Người hoặc thiết bị làm nhiệm vụ dịch thuật gọi là <b>translator</b>."
+            },
+            {
+                q: "In online meetings, people often use a ______ to talk with many participants.",
+                qVi: "Trong các cuộc họp trực tuyến, mọi người thường sử dụng _______ để nói chuyện với nhiều người tham gia.",
+                key: ["talk with many participants"],
+                opts: ["group call", "slow call", "paper call", "pigeon call"],
+                optsVi: ["cuộc gọi nhóm", "cuộc gọi chậm", "cuộc gọi giấy", "cuộc gọi bồ câu"],
+                correct: 0,
+                exp: "Cuộc gọi có nhiều người tham gia cùng lúc là <b>group call</b>."
+            },
+            {
+                q: "A ______ lets people record and send spoken messages.",
+                qVi: "Một _______ cho phép mọi người ghi âm và gửi các tin nhắn bằng giọng nói.",
+                key: ["record and send", "spoken messages"],
+                opts: ["voice message", "newspaper", "button", "pigeon"],
+                optsVi: ["tin nhắn thoại", "tờ báo", "nút bấm", "chim bồ câu"],
+                correct: 0,
+                exp: "Tin nhắn được ghi âm lại thay vì gõ chữ là <b>voice message</b>."
+            },
+            {
+                q: "A ______ is used to type documents and join online meetings.",
+                qVi: "Một _______ được sử dụng để gõ tài liệu và tham gia các cuộc họp trực tuyến.",
+                key: ["type documents", "join online meetings"],
+                opts: ["computer", "pigeon", "emoji", "newspaper"],
+                optsVi: ["máy tính", "chim bồ câu", "biểu tượng cảm xúc", "tờ báo"],
+                correct: 0,
+                exp: "Thiết bị dùng để soạn thảo và họp online là <b>computer</b>."
+            },
+            {
+                q: "When you move an image closer on the screen, you ______.",
+                qVi: "Khi bạn phóng to một hình ảnh lại gần hơn trên màn hình, bạn _______.",
+                key: ["move an image closer"],
+                opts: ["zoom in", "zoom out", "move down", "translate"],
+                optsVi: ["phóng to", "thu nhỏ", "di chuyển xuống", "phiên dịch"],
+                correct: 0,
+                exp: "Phóng to hình ảnh để nhìn gần/rõ hơn là <b>zoom in</b>."
+            },
+            {
+                q: "When you want to see the whole picture, you ______.",
+                qVi: "Khi bạn muốn xem toàn bộ bức tranh, bạn _______.",
+                key: ["see the whole picture"],
+                opts: ["zoom in", "zoom out", "focus on", "transmit"],
+                optsVi: ["phóng to", "thu nhỏ", "tập trung vào", "truyền phát"],
+                correct: 1,
+                exp: "Thu nhỏ lại để lấy góc nhìn bao quát hơn là <b>zoom out</b>."
+            },
+            {
+                q: "In an online meeting, participants often talk ______ the internet.",
+                qVi: "Trong một cuộc họp trực tuyến, những người tham gia thường nói chuyện _______ internet.",
+                key: ["talk", "internet"],
+                opts: ["under", "behind", "via", "opposite"],
+                optsVi: ["dưới", "phía sau", "thông qua/qua", "đối diện"],
+                correct: 2,
+                exp: "Thông qua phương thức kết nối mạng -> <b>via</b> the internet."
+            },
+            {
+                q: "When people meet and talk directly, they meet ______.",
+                qVi: "Khi mọi người gặp gỡ và nói chuyện trực tiếp, họ gặp nhau _______.",
+                key: ["meet and talk directly"],
+                opts: ["in person", "under", "behind", "opposite"],
+                optsVi: ["trực tiếp (ngoài đời thực)", "dưới", "phía sau", "đối diện"],
+                correct: 0,
+                exp: "Cụm từ chỉ việc gặp gỡ trực tiếp (không qua mạng) là meet <b>in person</b>."
+            },
+            {
+                q: "Communication technology is becoming very ______ today.",
+                qVi: "Công nghệ giao tiếp đang trở nên rất _______ ngày nay.",
+                key: ["becoming very"],
+                opts: ["slow", "fast", "behind", "under"],
+                optsVi: ["chậm", "nhanh", "phía sau", "dưới"],
+                correct: 1,
+                exp: "Công nghệ giao tiếp ngày càng phát triển <b>fast</b> (nhanh chóng)."
+            },
+            {
+                q: "When everything works well, the meeting will ______.",
+                qVi: "Khi mọi thứ hoạt động tốt, cuộc họp sẽ _______.",
+                key: ["everything works well"],
+                opts: ["go smoothly", "zoom out", "move down", "kidding"],
+                optsVi: ["diễn ra suôn sẻ", "thu nhỏ", "di chuyển xuống", "nói đùa"],
+                correct: 0,
+                exp: "Mọi việc thuận lợi thì cuộc họp sẽ <b>go smoothly</b> (diễn ra suôn sẻ)."
+            },
+            {
+                q: "When you talk with someone directly, you talk ______.",
+                qVi: "Khi bạn nói chuyện trực tiếp với ai đó, bạn nói chuyện _______.",
+                key: ["talk with someone directly"],
+                opts: ["face to face", "under", "behind", "opposite"],
+                optsVi: ["mặt đối mặt", "dưới", "phía sau", "đối diện"],
+                correct: 0,
+                exp: "Gặp gỡ, trò chuyện trực tiếp là <b>face to face</b>."
+            },
+            {
+                q: "A ______ helps your computer send video to other people in a call.",
+                qVi: "Một _______ giúp máy tính của bạn gửi video tới người khác trong một cuộc gọi.",
+                key: ["send video"],
+                opts: ["webcam", "pigeon", "newspaper", "emoji"],
+                optsVi: ["webcam (camera máy tính)", "chim bồ câu", "tờ báo", "biểu tượng cảm xúc"],
+                correct: 0,
+                exp: "Thiết bị dùng để thu hình trên máy tính là <b>webcam</b>."
+            },
+            {
+                q: "To start a call, you usually press a ______ on the screen.",
+                qVi: "Để bắt đầu cuộc gọi, bạn thường nhấn vào một _______ trên màn hình.",
+                key: ["press a", "on the screen"],
+                opts: ["button", "pigeon", "translator", "tablet"],
+                optsVi: ["nút bấm", "chim bồ câu", "người/máy phiên dịch", "máy tính bảng"],
+                correct: 0,
+                exp: "Nhấn vào nút (ảo hoặc vật lý) -> press a <b>button</b>."
+            },
+            {
+                q: "In the future, international communication may become very ______ for everyone.",
+                qVi: "Trong tương lai, giao tiếp quốc tế có thể trở nên rất _______ đối với mọi người.",
+                key: ["international communication", "in the future"],
+                opts: ["difficult", "easy", "slow", "behind"],
+                optsVi: ["khó khăn", "dễ dàng", "chậm", "phía sau"],
+                correct: 1,
+                exp: "Nhờ công nghệ, việc giao tiếp sẽ ngày càng trở nên <b>easy</b> (dễ dàng)."
+            },
+
+            // List 2 (câu 21-40 tương ứng với 1-20 trong yêu cầu của bạn)
+            {
+                q: "In the future, scientists believe people may use ______ to communicate using only their thoughts.",
+                qVi: "Trong tương lai, các nhà khoa học tin rằng con người có thể sử dụng _______ để giao tiếp chỉ bằng suy nghĩ của họ.",
+                key: ["communicate using only their thoughts"],
+                opts: ["holography", "telepathy", "newspaper", "carried pigeon"],
+                optsVi: ["kỹ thuật ảnh toàn ký (3D)", "thần giao cách cảm", "tờ báo", "chim bồ câu đưa thư"],
+                correct: 1,
+                exp: "Giao tiếp bằng suy nghĩ (không cần nói) gọi là <b>telepathy</b> (thần giao cách cảm)."
+            },
+            {
+                q: "With a faster ______, international meetings will become smoother and clearer.",
+                qVi: "Với _______ nhanh hơn, các cuộc họp quốc tế sẽ trở nên suôn sẻ và rõ ràng hơn.",
+                key: ["faster", "smoother and clearer"],
+                opts: ["button", "webcam", "high-speed internet connection", "translator"],
+                optsVi: ["nút bấm", "webcam", "kết nối internet tốc độ cao", "người/máy phiên dịch"],
+                correct: 2,
+                exp: "Họp online cần mạng mạnh -> <b>high-speed internet connection</b>."
+            },
+            {
+                q: "In the future, people may join a virtual ______ where participants from many countries meet online.",
+                qVi: "Trong tương lai, mọi người có thể tham gia một _______ ảo nơi những người tham gia từ nhiều quốc gia gặp gỡ trực tuyến.",
+                key: ["participants meet online"],
+                opts: ["conference", "newspaper", "pigeon", "tablet"],
+                optsVi: ["hội nghị", "tờ báo", "chim bồ câu", "máy tính bảng"],
+                correct: 0,
+                exp: "Cuộc gặp gỡ trang trọng nhiều người là <b>conference</b> (hội nghị)."
+            },
+            {
+                q: "Many companies already ______ important online meetings using video technology.",
+                qVi: "Nhiều công ty đã _______ các cuộc họp trực tuyến quan trọng bằng công nghệ video.",
+                key: ["online meetings"],
+                opts: ["move up", "hold the conference", "zoom out", "translate"],
+                optsVi: ["tiến lên", "tổ chức hội nghị/cuộc họp", "thu nhỏ", "phiên dịch"],
+                correct: 1,
+                exp: "Cụm từ: <b>hold the conference/meeting</b> (tổ chức hội nghị/cuộc họp)."
+            },
+            {
+                q: "With advanced AI, computers may automatically ______ conversations between different languages.",
+                qVi: "Với AI tiên tiến, máy tính có thể tự động _______ các cuộc trò chuyện giữa các ngôn ngữ khác nhau.",
+                key: ["between different languages"],
+                opts: ["transmit", "translate", "adjust", "focus on"],
+                optsVi: ["truyền phát", "phiên dịch", "điều chỉnh", "tập trung vào"],
+                correct: 1,
+                exp: "Chuyển đổi ngôn ngữ này sang ngôn ngữ khác là <b>translate</b>."
+            },
+            {
+                q: "When people from different countries talk, a ______ may help them understand each other.",
+                qVi: "Khi những người từ các quốc gia khác nhau nói chuyện, một _______ có thể giúp họ hiểu nhau.",
+                key: ["different countries", "understand each other"],
+                opts: ["translator", "laptop", "button", "emoji"],
+                optsVi: ["người/máy phiên dịch", "máy tính xách tay", "nút bấm", "biểu tượng cảm xúc"],
+                correct: 0,
+                exp: "Công cụ hoặc người giúp dịch ngôn ngữ là <b>translator</b>."
+            },
+            {
+                q: "Future technology may allow meetings to happen ______, so people in different countries can talk without delay.",
+                qVi: "Công nghệ tương lai có thể cho phép các cuộc họp diễn ra _______, vì vậy những người ở các quốc gia khác nhau có thể nói chuyện mà không bị chậm trễ.",
+                key: ["talk without delay"],
+                opts: ["slowly", "in real time", "in the end", "behind"],
+                optsVi: ["chậm chạp", "theo thời gian thực (trực tiếp)", "cuối cùng", "phía sau"],
+                correct: 1,
+                exp: "Trò chuyện ngay lập tức không có độ trễ gọi là <b>in real time</b>."
+            },
+            {
+                q: "Using holographic technology, people may see a ______ of the speaker in the meeting room.",
+                qVi: "Sử dụng công nghệ ảnh toàn ký (holographic), mọi người có thể nhìn thấy một _______ của người nói trong phòng họp.",
+                key: ["holographic technology"],
+                opts: ["3D image", "newspaper", "carried pigeon", "button"],
+                optsVi: ["hình ảnh 3D", "tờ báo", "chim bồ câu đưa thư", "nút bấm"],
+                correct: 0,
+                exp: "Công nghệ Hologram tạo ra <b>3D image</b> (hình ảnh 3 chiều)."
+            },
+            {
+                q: "Before starting an online meeting, users usually press a ______ on the screen.",
+                qVi: "Trước khi bắt đầu một cuộc họp trực tuyến, người dùng thường nhấn vào một _______ trên màn hình.",
+                key: ["press a", "on the screen"],
+                opts: ["pigeon", "button", "translator", "opposite"],
+                optsVi: ["chim bồ câu", "nút bấm", "máy phiên dịch", "đối diện"],
+                correct: 1,
+                exp: "Nhấn nút -> press a <b>button</b>."
+            },
+            {
+                q: "In the future, communication across countries may become easier even when there is a ______.",
+                qVi: "Trong tương lai, giao tiếp giữa các quốc gia có thể trở nên dễ dàng hơn ngay cả khi có _______.",
+                key: ["across countries", "even when there is a"],
+                opts: ["voice message", "language barrier", "group call", "tablet"],
+                optsVi: ["tin nhắn thoại", "rào cản ngôn ngữ", "cuộc gọi nhóm", "máy tính bảng"],
+                correct: 1,
+                exp: "Sự khác biệt ngôn ngữ gây khó khăn giao tiếp gọi là <b>language barrier</b> (rào cản ngôn ngữ)."
+            },
+            {
+                q: "Modern smartphones allow people to ______ friends or colleagues from anywhere in the world.",
+                qVi: "Điện thoại thông minh hiện đại cho phép mọi người _______ cho bạn bè hoặc đồng nghiệp từ bất cứ đâu trên thế giới.",
+                key: ["allow people to"],
+                opts: ["make a call", "zoom out", "move down", "focus on"],
+                optsVi: ["thực hiện cuộc gọi", "thu nhỏ", "di chuyển xuống", "tập trung vào"],
+                correct: 0,
+                exp: "Cụm từ: <b>make a call</b> (gọi điện)."
+            },
+            {
+                q: "During an online meeting, participants can turn on their ______ so others can see them.",
+                qVi: "Trong một cuộc họp trực tuyến, người tham gia có thể bật _______ của họ để những người khác có thể nhìn thấy họ.",
+                key: ["turn on", "so others can see them"],
+                opts: ["newspaper", "webcam", "carried pigeon", "translation machine"],
+                optsVi: ["tờ báo", "webcam (camera)", "chim bồ câu", "máy phiên dịch"],
+                correct: 1,
+                exp: "Thiết bị dùng để thu và truyền hình ảnh là <b>webcam</b>."
+            },
+            {
+                q: "In the future, people might join a ______ with dozens of participants at the same time.",
+                qVi: "Trong tương lai, mọi người có thể tham gia một _______ với hàng chục người tham gia cùng lúc.",
+                key: ["join a", "dozens of participants"],
+                opts: ["group call", "pigeon call", "paper call", "slow call"],
+                optsVi: ["cuộc gọi nhóm", "cuộc gọi bồ câu", "cuộc gọi giấy", "cuộc gọi chậm"],
+                correct: 0,
+                exp: "Cuộc gọi nhiều người là <b>group call</b>."
+            },
+            {
+                q: "With new technology, international communication will become faster and more ______.",
+                qVi: "Với công nghệ mới, giao tiếp quốc tế sẽ trở nên nhanh hơn và _______ hơn.",
+                key: ["faster and more"],
+                opts: ["slow", "difficult", "easy", "behind"],
+                optsVi: ["chậm", "khó khăn", "dễ dàng", "phía sau"],
+                correct: 2,
+                exp: "Công nghệ giúp mọi thứ tốt hơn, đi cùng 'faster' (nhanh hơn) là <b>easy</b> (dễ dàng hơn)."
+            },
+            {
+                q: "If you want to see more details on the screen, you should ______ the image.",
+                qVi: "Nếu bạn muốn xem thêm chi tiết trên màn hình, bạn nên _______ hình ảnh.",
+                key: ["see more details"],
+                opts: ["zoom in", "zoom out", "move down", "translate"],
+                optsVi: ["phóng to", "thu nhỏ", "di chuyển xuống", "phiên dịch"],
+                correct: 0,
+                exp: "Xem chi tiết rõ hơn cần phóng to -> <b>zoom in</b>."
+            },
+            {
+                q: "When the image is too large, you can ______ to see the whole picture.",
+                qVi: "Khi hình ảnh quá lớn, bạn có thể _______ để xem toàn bộ bức tranh.",
+                key: ["image is too large", "see the whole picture"],
+                opts: ["zoom in", "zoom out", "hold the conference", "transmit"],
+                optsVi: ["phóng to", "thu nhỏ", "tổ chức hội nghị", "truyền phát"],
+                correct: 1,
+                exp: "Thu nhỏ để nhìn được bao quát toàn cảnh -> <b>zoom out</b>."
+            },
+            {
+                q: "Future devices may automatically ______ the sound or image quality during a video call.",
+                qVi: "Các thiết bị trong tương lai có thể tự động _______ chất lượng âm thanh hoặc hình ảnh trong cuộc gọi video.",
+                key: ["automatically", "the sound or image quality"],
+                opts: ["adjust", "pigeon", "joke", "conference"],
+                optsVi: ["điều chỉnh", "chim bồ câu", "nói đùa", "hội nghị"],
+                correct: 0,
+                exp: "Thiết bị thông minh tự động <b>adjust</b> (điều chỉnh) chất lượng."
+            },
+            {
+                q: "In many online meetings, participants need to ______ the main topic to avoid wasting time.",
+                qVi: "Trong nhiều cuộc họp trực tuyến, những người tham gia cần _______ vào chủ đề chính để tránh lãng phí thời gian.",
+                key: ["the main topic", "avoid wasting time"],
+                opts: ["move up", "focus on", "joke", "zoom out"],
+                optsVi: ["tiến lên", "tập trung vào", "nói đùa", "thu nhỏ"],
+                correct: 1,
+                exp: "Để không lãng phí thời gian, cần <b>focus on</b> (tập trung vào) chủ đề chính."
+            },
+            {
+                q: "Communication technology is developing very ______, so new inventions appear every year.",
+                qVi: "Công nghệ giao tiếp đang phát triển rất _______, vì vậy những phát minh mới xuất hiện hàng năm.",
+                key: ["developing very", "new inventions appear every year"],
+                opts: ["slow", "behind", "fast", "under"],
+                optsVi: ["chậm", "phía sau", "nhanh", "dưới"],
+                correct: 2,
+                exp: "Mỗi năm đều có phát minh mới chứng tỏ nó phát triển rất <b>fast</b> (nhanh)."
+            },
+            {
+                q: "Many experts believe that advanced communication technology will play a very ______ role in society.",
+                qVi: "Nhiều chuyên gia tin rằng công nghệ giao tiếp tiên tiến sẽ đóng một vai trò rất _______ trong xã hội.",
+                key: ["play a very ___ role"],
+                opts: ["joking", "serious", "kidding", "opposite"],
+                optsVi: ["đùa giỡn", "nghiêm túc/quan trọng", "nói đùa", "đối diện"],
+                correct: 1,
+                exp: "Cụm từ: play a <b>serious</b> / important role (đóng vai trò quan trọng/to lớn)."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
