@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Vocabulary (90 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Vocabulary (90 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">90</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">90</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // List 1
+            {
+                q: "Trang An is a famous scenic landscape _______ located in Ninh Binh.",
+                qVi: "Tràng An là một _______ danh lam thắng cảnh nổi tiếng nằm ở Ninh Bình.",
+                key: ["scenic landscape", "located in Ninh Binh"],
+                opts: ["religion", "experience", "complex", "history"],
+                optsVi: ["tôn giáo", "kinh nghiệm", "quần thể", "lịch sử"],
+                correct: 2,
+                exp: "Tràng An được biết đến là một quần thể danh lam thắng cảnh (scenic landscape <b>complex</b>)."
+            },
+            {
+                q: "A lot of visitors come here every year to see _______ monuments.",
+                qVi: "Rất nhiều du khách đến đây mỗi năm để xem các di tích _______.",
+                key: ["monuments"],
+                opts: ["bustling", "ancient", "congested", "affordable"],
+                optsVi: ["nhộn nhịp", "cổ đại/cổ kính", "tắc nghẽn", "giá cả phải chăng"],
+                correct: 1,
+                exp: "Các di tích/công trình kiến trúc lâu đời thường đi với tính từ <b>ancient</b> (cổ kính)."
+            },
+            {
+                q: "The fortress is considered a _______ landmark in the city.",
+                qVi: "Pháo đài được coi là một địa danh _______ trong thành phố.",
+                key: ["fortress", "landmark"],
+                opts: ["national", "historic", "religious", "damaged"],
+                optsVi: ["thuộc về quốc gia", "có tính lịch sử", "thuộc về tôn giáo", "bị hư hỏng"],
+                correct: 1,
+                exp: "Pháo đài là một công trình mang ý nghĩa lịch sử -> <b>historic</b> landmark."
+            },
+            {
+                q: "The Statue of Liberty is a _______ monument and an important symbol of New York.",
+                qVi: "Tượng Nữ thần Tự do là một tượng đài _______ và là một biểu tượng quan trọng của New York.",
+                key: ["Statue of Liberty", "symbol of New York"],
+                opts: ["magnificent", "calm", "peaceful", "busy"],
+                optsVi: ["tráng lệ/vĩ đại", "bình tĩnh", "yên bình", "bận rộn"],
+                correct: 0,
+                exp: "Công trình vĩ đại, to lớn và ấn tượng -> <b>magnificent</b>."
+            },
+            {
+                q: "The area used to be _______ by refugees in the 19th century.",
+                qVi: "Khu vực này từng bị _______ bởi những người tị nạn vào thế kỷ 19.",
+                key: ["area", "refugees"],
+                opts: ["decided", "obeyed", "reminded", "occupied"],
+                optsVi: ["được quyết định", "được tuân theo", "được nhắc nhở", "bị chiếm đóng/cư ngụ"],
+                correct: 3,
+                exp: "Được sinh sống, cư ngụ hoặc chiếm đóng bởi ai đó -> <b>occupied</b>."
+            },
+            {
+                q: "Thanks to _______ efforts, many ancient buildings are still in good condition.",
+                qVi: "Nhờ vào các nỗ lực _______, nhiều tòa nhà cổ vẫn ở trong tình trạng tốt.",
+                key: ["efforts", "still in good condition"],
+                opts: ["facilities", "attraction", "preservation", "amenities"],
+                optsVi: ["cơ sở vật chất", "sự thu hút", "sự bảo tồn", "tiện nghi"],
+                correct: 2,
+                exp: "Nỗ lực gìn giữ, bảo vệ công trình cũ -> <b>preservation</b> efforts."
+            },
+            {
+                q: "Folk music is an important part of our country's cultural _______.",
+                qVi: "Âm nhạc dân gian là một phần quan trọng trong _______ văn hóa của đất nước chúng ta.",
+                key: ["cultural"],
+                opts: ["fragrance", "speciality", "workshop", "heritage"],
+                optsVi: ["hương thơm", "đặc sản", "nhà xưởng", "di sản"],
+                correct: 3,
+                exp: "Cụm từ cố định: cultural <b>heritage</b> (di sản văn hóa)."
+            },
+            {
+                q: "There is a monument _______ to the soldiers who were killed in the war.",
+                qVi: "Có một đài tưởng niệm được _______ cho những người lính đã hy sinh trong chiến tranh.",
+                key: ["monument", "to the soldiers"],
+                opts: ["occupied", "dedicated", "preserved", "struggled"],
+                optsVi: ["bị chiếm đóng", "dành riêng/cống hiến", "được bảo tồn", "đấu tranh"],
+                correct: 1,
+                exp: "Cấu trúc: <b>dedicated</b> to (dành riêng để tưởng nhớ ai)."
+            },
+            {
+                q: "Many local people visit the ancient site to _______ the deities believed to bring good fortune.",
+                qVi: "Nhiều người dân địa phương đến thăm khu di tích cổ để _______ các vị thần được cho là mang lại may mắn.",
+                key: ["visit the ancient site", "the deities"],
+                opts: ["worship", "preserve", "occupy", "promote"],
+                optsVi: ["thờ cúng", "bảo tồn", "chiếm đóng", "thúc đẩy"],
+                correct: 0,
+                exp: "Đến đền miếu để thờ cúng thần linh -> <b>worship</b>."
+            },
+            {
+                q: "Some tribal groups continue to maintain their _______ and traditions.",
+                qVi: "Một số nhóm bộ lạc tiếp tục duy trì _______ và truyền thống của họ.",
+                key: ["maintain their", "and traditions"],
+                opts: ["decisions", "functions", "customs", "facilities"],
+                optsVi: ["quyết định", "chức năng", "phong tục", "cơ sở vật chất"],
+                correct: 2,
+                exp: "Phong tục và truyền thống thường đi liền với nhau -> <b>customs</b> and traditions."
+            },
+            {
+                q: "The campaign has made a significant _______ to preserving our national heritage.",
+                qVi: "Chiến dịch đã có một _______ quan trọng đối với việc bảo tồn di sản quốc gia của chúng ta.",
+                key: ["made a significant", "to preserving"],
+                opts: ["occupation", "contribution", "recognition", "observation"],
+                optsVi: ["nghề nghiệp/sự chiếm đóng", "sự đóng góp", "sự công nhận", "sự quan sát"],
+                correct: 1,
+                exp: "Cấu trúc: make a <b>contribution</b> to (đóng góp vào việc gì)."
+            },
+            {
+                q: "They received _______ for their sacrifices during the war.",
+                qVi: "Họ đã nhận được _______ cho những hy sinh của họ trong chiến tranh.",
+                key: ["received", "for their sacrifices"],
+                opts: ["preservation", "recognition", "occupation", "contribution"],
+                optsVi: ["sự bảo tồn", "sự công nhận", "sự chiếm đóng", "sự đóng góp"],
+                correct: 1,
+                exp: "Được đền đáp, ghi nhận công lao -> receive <b>recognition</b>."
+            },
+            {
+                q: "The authorities have worked to _______ the richness of the area's cultural heritage.",
+                qVi: "Các nhà chức trách đã nỗ lực để _______ sự phong phú của di sản văn hóa khu vực.",
+                key: ["the richness of the area's cultural heritage"],
+                opts: ["observe", "contribute", "promote", "occupy"],
+                optsVi: ["quan sát", "đóng góp", "quảng bá/thúc đẩy", "chiếm đóng"],
+                correct: 2,
+                exp: "Lan tỏa, quảng bá văn hóa -> <b>promote</b>."
+            },
+            {
+                q: "Nowadays, people tend to buy _______ rather than prepare meals at home.",
+                qVi: "Ngày nay, mọi người có xu hướng mua _______ thay vì tự chuẩn bị bữa ăn ở nhà.",
+                key: ["buy", "rather than prepare meals"],
+                opts: ["amenities", "souvenirs", "workshops", "takeaways"],
+                optsVi: ["tiện nghi", "đồ lưu niệm", "xưởng", "đồ ăn mang đi"],
+                correct: 3,
+                exp: "Mua đồ ăn mua sẵn mang về -> <b>takeaways</b>."
+            },
+            {
+                q: "It’s vital to keep old traditions alive for future _______.",
+                qVi: "Việc giữ cho các truyền thống cũ tồn tại cho các _______ tương lai là điều quan trọng.",
+                key: ["future"],
+                opts: ["generations", "artisans", "officers", "collectors"],
+                optsVi: ["thế hệ", "nghệ nhân", "sĩ quan", "người sưu tầm"],
+                correct: 0,
+                exp: "Thế hệ tương lai/mai sau -> future <b>generations</b>."
+            },
+            {
+                q: "Tourists are required to _______ the rules of the heritage site.",
+                qVi: "Khách du lịch được yêu cầu _______ các quy tắc của khu di sản.",
+                key: ["the rules"],
+                opts: ["occupy", "preserve", "observe", "promote"],
+                optsVi: ["chiếm đóng", "bảo tồn", "tuân thủ/quan sát", "thúc đẩy"],
+                correct: 2,
+                exp: "Tuân thủ luật lệ, nội quy (formal) -> <b>observe</b> the rules."
+            },
+            {
+                q: "By the end of this year, they will have renovated all of the existing _______.",
+                qVi: "Đến cuối năm nay, họ sẽ cải tạo tất cả các _______ hiện có.",
+                key: ["renovated"],
+                opts: ["souvenirs", "structures", "takeaways", "generations"],
+                optsVi: ["đồ lưu niệm", "công trình/cấu trúc", "đồ ăn mang về", "thế hệ"],
+                correct: 1,
+                exp: "Cải tạo, sửa chữa tòa nhà/công trình -> renovate <b>structures</b>."
+            },
+            {
+                q: "Vietnamese people honour their _______ and celebrate their death anniversary each year.",
+                qVi: "Người Việt Nam tôn vinh _______ của họ và kỷ niệm ngày giỗ của họ mỗi năm.",
+                key: ["honour their", "death anniversary"],
+                opts: ["generations", "customs", "traditions", "ancestors"],
+                optsVi: ["thế hệ", "phong tục", "truyền thống", "tổ tiên"],
+                correct: 3,
+                exp: "Thờ cúng ông bà, tổ tiên -> honour <b>ancestors</b>."
+            },
+            {
+                q: "Nowadays, there is less emphasis on teaching young people about the importance of _______.",
+                qVi: "Ngày nay, người ta ít chú trọng đến việc dạy cho những người trẻ tuổi về tầm quan trọng của _______.",
+                key: ["teaching young people about"],
+                opts: ["occupation", "gratitude", "promotion", "recognition"],
+                optsVi: ["nghề nghiệp", "lòng biết ơn", "sự thăng tiến", "sự công nhận"],
+                correct: 1,
+                exp: "Dạy trẻ em về sự biết ơn (với thế hệ trước) -> <b>gratitude</b>."
+            },
+            {
+                q: "The custom of wishing people a good meal before eating is a _______ tradition in northern Vietnam.",
+                qVi: "Phong tục chúc mọi người ăn ngon miệng trước khi ăn là một truyền thống _______ ở miền Bắc Việt Nam.",
+                key: ["tradition"],
+                opts: ["deep-rooted", "remote", "fresh", "cosy"],
+                optsVi: ["lâu đời/ăn sâu bám rễ", "xa xôi", "tươi mới", "ấm cúng"],
+                correct: 0,
+                exp: "Truyền thống lâu đời, khó thay đổi -> <b>deep-rooted</b> tradition."
+            },
+            {
+                q: "This style of cooking first _______ in our country in the early 2000s.",
+                qVi: "Phong cách nấu ăn này lần đầu tiên _______ ở nước ta vào đầu những năm 2000.",
+                key: ["first", "in our country"],
+                opts: ["obeyed", "occupied", "appeared", "recognised"],
+                optsVi: ["đã tuân theo", "đã chiếm đóng", "xuất hiện", "được công nhận"],
+                correct: 2,
+                exp: "Bắt đầu có mặt, xuất hiện -> <b>appeared</b>."
+            },
+            {
+                q: "Nowadays, people are busy earning money to meet their daily _______ needs.",
+                qVi: "Ngày nay, mọi người bận rộn kiếm tiền để đáp ứng các nhu cầu _______ hàng ngày của họ.",
+                key: ["meet their daily", "needs"],
+                opts: ["basic", "exotic", "noisy", "crowded"],
+                optsVi: ["cơ bản", "kỳ lạ", "ồn ào", "đông đúc"],
+                correct: 0,
+                exp: "Nhu cầu cơ bản (ăn, mặc, ở) -> <b>basic</b> needs."
+            },
+            {
+                q: "Preserving cultural heritage is one way we can keep ourselves _______ with our past.",
+                qVi: "Bảo tồn di sản văn hóa là một cách chúng ta có thể giữ cho bản thân được _______ với quá khứ của mình.",
+                key: ["keep ourselves", "with our past"],
+                opts: ["occupied", "associated", "contributed", "preserved"],
+                optsVi: ["bận rộn", "kết nối/gắn kết", "đóng góp", "được bảo tồn"],
+                correct: 1,
+                exp: "Giữ mối liên hệ, gắn kết với quá khứ -> <b>associated</b> with."
+            },
+            {
+                q: "Vietnamese people take great _______ in the traditions passed down through generations.",
+                qVi: "Người Việt Nam rất _______ về những truyền thống được truyền lại qua nhiều thế hệ.",
+                key: ["take great", "in the traditions"],
+                opts: ["luxury", "pride", "opportunity", "fragrance"],
+                optsVi: ["sự xa xỉ", "niềm tự hào", "cơ hội", "hương thơm"],
+                correct: 1,
+                exp: "Cấu trúc: take <b>pride</b> in (tự hào về điều gì)."
+            },
+            {
+                q: "In mountainous areas, many children still go to school _______.",
+                qVi: "Ở các khu vực miền núi, nhiều trẻ em vẫn đến trường _______.",
+                key: ["go to school"],
+                opts: ["barefoot", "appropriately", "remotely", "effectively"],
+                optsVi: ["bằng chân trần", "một cách thích hợp", "xa xôi", "hiệu quả"],
+                correct: 0,
+                exp: "Đi chân đất tới trường do nghèo khó -> go <b>barefoot</b>."
+            },
+            {
+                q: "On the first day of the new year, villagers practise certain _______ believed to bring prosperity.",
+                qVi: "Vào ngày đầu tiên của năm mới, dân làng thực hiện những _______ nhất định được tin là sẽ mang lại sự thịnh vượng.",
+                key: ["practise certain", "bring prosperity"],
+                opts: ["amenities", "opportunities", "souvenirs", "rituals"],
+                optsVi: ["tiện nghi", "cơ hội", "đồ lưu niệm", "nghi lễ"],
+                correct: 3,
+                exp: "Thực hiện các nghi lễ tín ngưỡng -> practise <b>rituals</b>."
+            },
+            {
+                q: "To make this traditional soup perfect, it’s important to use fresh _______.",
+                qVi: "Để làm cho món súp truyền thống này hoàn hảo, điều quan trọng là sử dụng _______ tươi.",
+                key: ["soup perfect", "use fresh"],
+                opts: ["ingredients", "facilities", "practices", "customs"],
+                optsVi: ["nguyên liệu/thành phần", "cơ sở vật chất", "tập quán", "phong tục"],
+                correct: 0,
+                exp: "Nấu ăn thì cần nguyên liệu -> fresh <b>ingredients</b>."
+            },
+            {
+                q: "Nowadays, most _______ activities take place indoors, which is different from the past.",
+                qVi: "Ngày nay, hầu hết các hoạt động _______ diễn ra trong nhà, điều này khác với quá khứ.",
+                key: ["activities take place indoors"],
+                opts: ["simple", "costly", "leisure", "natural"],
+                optsVi: ["đơn giản", "đắt đỏ", "giải trí", "tự nhiên"],
+                correct: 2,
+                exp: "Hoạt động vui chơi, thư giãn -> <b>leisure</b> activities."
+            },
+            {
+                q: "Our modern lifestyle is linked to greater _______ of choice.",
+                qVi: "Lối sống hiện đại của chúng ta gắn liền với _______ lựa chọn lớn hơn.",
+                key: ["greater", "of choice"],
+                opts: ["freedom", "material", "difference", "support"],
+                optsVi: ["sự tự do", "vật chất", "sự khác biệt", "sự hỗ trợ"],
+                correct: 0,
+                exp: "Sự tự do lựa chọn -> <b>freedom</b> of choice."
+            },
+            {
+                q: "Many parents with traditional mindsets restrict their children from _______ their own interests.",
+                qVi: "Nhiều bậc cha mẹ có tư duy truyền thống cấm cản con cái _______ sở thích riêng của chúng.",
+                key: ["restrict their children from", "their own interests"],
+                opts: ["depending", "observing", "promoting", "pursuing"],
+                optsVi: ["phụ thuộc", "quan sát", "thúc đẩy", "theo đuổi"],
+                correct: 3,
+                exp: "Theo đuổi ước mơ, sở thích -> <b>pursuing</b> interests."
+            },
+
+            // List 2
+            {
+                q: "Nourishing home-cooked meals cannot be _______ by takeaways.",
+                qVi: "Những bữa ăn bổ dưỡng nấu tại nhà không thể bị _______ bởi đồ ăn mang đi.",
+                key: ["cannot be", "by takeaways"],
+                opts: ["replaced", "depended", "worshiped", "pursued"],
+                optsVi: ["thay thế", "phụ thuộc", "tôn thờ", "theo đuổi"],
+                correct: 0,
+                exp: "Không thể bị thay thế -> cannot be <b>replaced</b>."
+            },
+            {
+                q: "Today’s generations don’t bother _______ factual information.",
+                qVi: "Các thế hệ ngày nay không buồn _______ thông tin thực tế.",
+                key: ["bother", "information"],
+                opts: ["promoting", "recognising", "contributing", "memorising"],
+                optsVi: ["thúc đẩy", "nhận ra", "đóng góp", "ghi nhớ"],
+                correct: 3,
+                exp: "Do có internet nên người ta không cần học thuộc lòng -> <b>memorising</b> information."
+            },
+            {
+                q: "The concept of a large _______ family is rarely seen in modern society.",
+                qVi: "Khái niệm về một gia đình _______ lớn hiếm khi được thấy trong xã hội hiện đại.",
+                key: ["family"],
+                opts: ["natural", "historic", "extended", "occupied"],
+                optsVi: ["tự nhiên", "mang tính lịch sử", "đa thế hệ", "bị chiếm đóng"],
+                correct: 2,
+                exp: "Gia đình nhiều thế hệ sống chung -> <b>extended</b> family."
+            },
+            {
+                q: "The government aims to build a(n) _______ society where everyone has equal rights and opportunities.",
+                qVi: "Chính phủ đặt mục tiêu xây dựng một xã hội _______ nơi mọi người có quyền và cơ hội bình đẳng.",
+                key: ["society", "equal rights"],
+                opts: ["religious", "natural", "ancient", "democratic"],
+                optsVi: ["thuộc về tôn giáo", "tự nhiên", "cổ đại", "dân chủ"],
+                correct: 3,
+                exp: "Xã hội công bằng, bình đẳng -> <b>democratic</b> society (xã hội dân chủ)."
+            },
+            {
+                q: "There are _______ attitudes towards the concept of trial marriage.",
+                qVi: "Có những thái độ _______ đối với khái niệm sống thử.",
+                key: ["attitudes towards"],
+                opts: ["various", "dedicated", "magnificent", "basic"],
+                optsVi: ["nhiều/khác nhau", "tận tụy", "tráng lệ", "cơ bản"],
+                correct: 0,
+                exp: "Nhiều quan điểm, thái độ khác nhau -> <b>various</b> attitudes."
+            },
+            {
+                q: "Don’t share your _______ information with others online.",
+                qVi: "Đừng chia sẻ thông tin _______ của bạn với người khác trên mạng.",
+                key: ["information", "online"],
+                opts: ["ancient", "personal", "natural", "historical"],
+                optsVi: ["cổ kính", "cá nhân", "tự nhiên", "thuộc lịch sử"],
+                correct: 1,
+                exp: "Thông tin cá nhân (tên, tuổi, số thẻ...) -> <b>personal</b> information."
+            },
+            {
+                q: "His _______ values leads her to spend more time with her loved ones.",
+                qVi: "Những giá trị _______ của anh ấy dẫn dắt cô ấy dành nhiều thời gian hơn cho những người thân yêu.",
+                key: ["values", "spend more time with her loved ones"],
+                opts: ["democratic", "well-prepared", "deep-rooted", "family-oriented"],
+                optsVi: ["dân chủ", "chuẩn bị tốt", "lâu đời", "hướng về gia đình"],
+                correct: 3,
+                exp: "Luôn đặt gia đình lên trên hết -> <b>family-oriented</b> values."
+            },
+            {
+                q: "Teaching young people to _______ traditions and customs is crucial.",
+                qVi: "Dạy những người trẻ tuổi _______ các truyền thống và phong tục là điều rất quan trọng.",
+                key: ["traditions and customs"],
+                opts: ["pursue", "value", "replace", "associate"],
+                optsVi: ["theo đuổi", "trân trọng/coi trọng", "thay thế", "liên kết"],
+                correct: 1,
+                exp: "Trân trọng các giá trị văn hóa -> <b>value</b> traditions."
+            },
+            {
+                q: "His grandparents still hold _______ views on romantic relationships.",
+                qVi: "Ông bà của anh ấy vẫn giữ những quan điểm _______ về các mối quan hệ lãng mạn.",
+                key: ["views on romantic relationships"],
+                opts: ["well-preserved", "old-fashioned", "family-oriented", "well-equipped"],
+                optsVi: ["được bảo quản tốt", "lỗi thời/cổ hủ", "hướng về gia đình", "được trang bị tốt"],
+                correct: 1,
+                exp: "Quan điểm cũ, không còn phù hợp với hiện tại -> <b>old-fashioned</b> views."
+            },
+            {
+                q: "Teens today demand more _______ than their parents did at their age.",
+                qVi: "Thanh thiếu niên ngày nay đòi hỏi nhiều _______ hơn so với cha mẹ của họ ở cùng độ tuổi.",
+                key: ["demand more"],
+                opts: ["opinion", "taste", "privacy", "experience"],
+                optsVi: ["ý kiến", "hương vị/sở thích", "sự riêng tư", "kinh nghiệm"],
+                correct: 2,
+                exp: "Người trẻ luôn muốn có không gian riêng -> demand more <b>privacy</b>."
+            },
+            {
+                q: "Generational _______ are almost unavoidable in today’s society.",
+                qVi: "Những _______ thế hệ hầu như không thể tránh khỏi trong xã hội ngày nay.",
+                key: ["Generational", "unavoidable"],
+                opts: ["values", "opportunities", "conflicts", "appliances"],
+                optsVi: ["giá trị", "cơ hội", "xung đột", "thiết bị"],
+                correct: 2,
+                exp: "Xung đột/mâu thuẫn thế hệ -> Generational <b>conflicts</b>."
+            },
+            {
+                q: "Traditional _______ are typically worn on special occasions, while trendy clothes are used daily.",
+                qVi: "_______ truyền thống thường được mặc trong các dịp đặc biệt, trong khi quần áo theo xu hướng được sử dụng hàng ngày.",
+                key: ["worn on special occasions"],
+                opts: ["costumes", "trends", "ingredients", "souvenirs"],
+                optsVi: ["trang phục", "xu hướng", "nguyên liệu", "đồ lưu niệm"],
+                correct: 0,
+                exp: "Quần áo/trang phục đặc trưng -> <b>costumes</b>."
+            },
+            {
+                q: "Nowadays, students often don’t take _______, as everything is readily available on the Internet.",
+                qVi: "Ngày nay, sinh viên thường không ghi _______, vì mọi thứ đều có sẵn trên Internet.",
+                key: ["take", "readily available"],
+                opts: ["trends", "notes", "values", "customs"],
+                optsVi: ["xu hướng", "ghi chú", "giá trị", "phong tục"],
+                correct: 1,
+                exp: "Hành động ghi chép bài -> take <b>notes</b>."
+            },
+            {
+                q: "Today, it’s easier and more _______ to travel from one city to another.",
+                qVi: "Ngày nay, việc đi lại từ thành phố này sang thành phố khác trở nên dễ dàng và _______ hơn.",
+                key: ["easier and more", "travel"],
+                opts: ["convenient", "democratic", "oriented", "extended"],
+                optsVi: ["thuận tiện", "dân chủ", "định hướng", "mở rộng"],
+                correct: 0,
+                exp: "Giao thông phát triển giúp việc đi lại <b>convenient</b> (thuận tiện) hơn."
+            },
+            {
+                q: "In the past, learning _______ mostly on teachers, while today’s focus is on students.",
+                qVi: "Trước đây, việc học _______ chủ yếu vào giáo viên, trong khi trọng tâm ngày nay là học sinh.",
+                key: ["learning", "mostly on teachers"],
+                opts: ["memorised", "replaced", "struggled", "depended"],
+                optsVi: ["ghi nhớ", "thay thế", "đấu tranh", "phụ thuộc"],
+                correct: 3,
+                exp: "Cấu trúc: <b>depended</b> on (phụ thuộc vào)."
+            },
+            {
+                q: "Today, young people seem to be more _______ than previous generations.",
+                qVi: "Ngày nay, những người trẻ dường như _______ hơn so với các thế hệ trước.",
+                key: ["more", "than previous generations"],
+                opts: ["natural", "basic", "personal", "independent"],
+                optsVi: ["tự nhiên", "cơ bản", "cá nhân", "độc lập"],
+                correct: 3,
+                exp: "Giới trẻ ngày nay tự chủ, không dựa dẫm -> <b>independent</b> (độc lập)."
+            },
+            {
+                q: "Though your grandparents’ views differ from yours, it’s important to _______ them.",
+                qVi: "Mặc dù quan điểm của ông bà bạn khác với bạn, nhưng việc _______ họ là điều quan trọng.",
+                key: ["grandparents' views differ", "important to"],
+                opts: ["observe", "recognise", "respect", "promote"],
+                optsVi: ["quan sát", "nhận ra", "tôn trọng", "thúc đẩy"],
+                correct: 2,
+                exp: "Đối với người lớn tuổi phải có sự <b>respect</b> (tôn trọng)."
+            },
+            {
+                q: "Rapid changes in society contribute to the generation _______ in many families.",
+                qVi: "Những thay đổi nhanh chóng trong xã hội góp phần tạo ra _______ thế hệ trong nhiều gia đình.",
+                key: ["generation"],
+                opts: ["value", "gap", "pride", "tradition"],
+                optsVi: ["giá trị", "khoảng cách", "sự tự hào", "truyền thống"],
+                correct: 1,
+                exp: "Cụm từ cố định: generation <b>gap</b> (khoảng cách thế hệ)."
+            },
+            {
+                q: "In the past, people used to _______ heavily on bicycles to get around.",
+                qVi: "Trong quá khứ, mọi người từng _______ rất nhiều vào xe đạp để đi lại.",
+                key: ["heavily on bicycles"],
+                opts: ["remember", "rely", "remind", "purchase"],
+                optsVi: ["nhớ", "dựa dẫm/phụ thuộc", "nhắc nhở", "mua"],
+                correct: 1,
+                exp: "Cấu trúc: <b>rely</b> on (phụ thuộc vào)."
+            },
+            {
+                q: "High-rise buildings are now a common _______ in large cities.",
+                qVi: "Các tòa nhà cao tầng hiện là một _______ phổ biến ở các thành phố lớn.",
+                key: ["common"],
+                opts: ["sight", "pride", "gap", "respect"],
+                optsVi: ["cảnh tượng", "niềm tự hào", "khoảng cách", "sự tôn trọng"],
+                correct: 0,
+                exp: "Hình ảnh, cảnh tượng quen thuộc -> common <b>sight</b>."
+            },
+            {
+                q: "He lives in a(n) _______ family, with only two generations in his household.",
+                qVi: "Anh ấy sống trong một gia đình _______, chỉ có hai thế hệ trong nhà.",
+                key: ["only two generations"],
+                opts: ["extended", "democratic", "nuclear", "historical"],
+                optsVi: ["đa thế hệ", "dân chủ", "hạt nhân", "thuộc lịch sử"],
+                correct: 2,
+                exp: "Gia đình gồm bố mẹ và con cái (2 thế hệ) -> <b>nuclear</b> family."
+            },
+            {
+                q: "The number of young people remaining _______ is on the rise in today’s society.",
+                qVi: "Số lượng thanh niên tiếp tục sống _______ đang gia tăng trong xã hội ngày nay.",
+                key: ["remaining"],
+                opts: ["private", "single", "personal", "convenient"],
+                optsVi: ["riêng tư", "độc thân", "cá nhân", "tiện lợi"],
+                correct: 1,
+                exp: "Sống một mình, không kết hôn -> remaining <b>single</b>."
+            },
+            {
+                q: "Many women become the _______, while some men choose to be house husbands.",
+                qVi: "Nhiều phụ nữ trở thành _______, trong khi một số nam giới chọn làm người chồng nội trợ.",
+                key: ["men choose to be house husbands"],
+                opts: ["relative", "breadwinner", "generation", "marriage"],
+                optsVi: ["họ hàng", "trụ cột gia đình", "thế hệ", "hôn nhân"],
+                correct: 1,
+                exp: "Người đi làm kiếm tiền chính trong nhà -> <b>breadwinner</b>."
+            },
+            {
+                q: "In the past, children were often left to _______ their difficulties on their own.",
+                qVi: "Trong quá khứ, trẻ em thường bị bỏ lại để tự mình _______ những khó khăn.",
+                key: ["their difficulties"],
+                opts: ["overcome", "promote", "contribute", "memorise"],
+                optsVi: ["vượt qua", "thúc đẩy", "đóng góp", "ghi nhớ"],
+                correct: 0,
+                exp: "Vượt qua thử thách/khó khăn -> <b>overcome</b> difficulties."
+            },
+            {
+                q: "He’s always _______ for everything his parents have done to give him a better future.",
+                qVi: "Anh ấy luôn _______ vì tất cả những gì cha mẹ đã làm để mang lại cho anh ấy một tương lai tốt đẹp hơn.",
+                key: ["for everything his parents have done"],
+                opts: ["dedicated", "independent", "democratic", "grateful"],
+                optsVi: ["tận tụy", "độc lập", "dân chủ", "biết ơn"],
+                correct: 3,
+                exp: "Thể hiện lòng biết ơn -> be <b>grateful</b> for."
+            },
+            {
+                q: "Our language is an important part of our national _______.",
+                qVi: "Ngôn ngữ của chúng ta là một phần quan trọng của _______ quốc gia.",
+                key: ["national"],
+                opts: ["nature", "condition", "cuisine", "identity"],
+                optsVi: ["thiên nhiên", "điều kiện", "ẩm thực", "bản sắc"],
+                correct: 3,
+                exp: "Cụm từ: national <b>identity</b> (bản sắc dân tộc/quốc gia)."
+            },
+            {
+                q: "In the past, letters were _______ across long distances, sometimes even hundreds of kilometres.",
+                qVi: "Trong quá khứ, những lá thư được _______ qua những khoảng cách dài, đôi khi lên tới hàng trăm km.",
+                key: ["letters were", "across long distances"],
+                opts: ["communicated", "updated", "delivered", "posted"],
+                optsVi: ["được giao tiếp", "được cập nhật", "được giao/vận chuyển", "được đăng"],
+                correct: 2,
+                exp: "Đưa thư, vận chuyển hàng hóa -> <b>delivered</b>."
+            },
+            {
+                q: "Nowadays, young people feel more comfortable wearing _______ clothes.",
+                qVi: "Ngày nay, những người trẻ cảm thấy thoải mái hơn khi mặc quần áo _______.",
+                key: ["comfortable wearing"],
+                opts: ["folk", "casual", "private", "personal"],
+                optsVi: ["dân gian", "thường ngày/thoải mái", "riêng tư", "cá nhân"],
+                correct: 1,
+                exp: "Trang phục bình thường, thoải mái hàng ngày -> <b>casual</b> clothes."
+            },
+            {
+                q: "In the past, people couldn’t afford to eat in restaurants and typically bought food from street _______.",
+                qVi: "Trước đây, mọi người không có khả năng ăn ở nhà hàng và thường mua đồ ăn từ những _______ trên đường phố.",
+                key: ["bought food from street"],
+                opts: ["customs", "structures", "vendors", "facilities"],
+                optsVi: ["phong tục", "cấu trúc", "người bán hàng rong", "cơ sở vật chất"],
+                correct: 2,
+                exp: "Người bán dạo ngoài đường -> street <b>vendors</b>."
+            },
+            {
+                q: "Our grandmother used to _______ us by telling different folk stories.",
+                qVi: "Bà của chúng tôi thường _______ chúng tôi bằng cách kể những câu chuyện dân gian khác nhau.",
+                key: ["by telling different folk stories"],
+                opts: ["preserve", "entertain", "obey", "occupy"],
+                optsVi: ["bảo tồn", "giải trí/mua vui", "tuân theo", "chiếm đóng"],
+                correct: 1,
+                exp: "Kể chuyện để làm vui lòng, giải trí cho trẻ con -> <b>entertain</b>."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
