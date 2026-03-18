@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Experiences & Emotions (60 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Experiences & Emotions (60 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">60</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">60</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // List 1 (30 câu)
+            {
+                q: "The roller-coaster ride at the theme park was a(n) ______ experience.",
+                qVi: "Chuyến đi tàu lượn siêu tốc tại công viên giải trí là một trải nghiệm _______.",
+                key: ["roller-coaster ride", "experience"],
+                opts: ["mountainous", "thrilling", "ancient", "complex"],
+                optsVi: ["nhiều núi", "hồi hộp/cảm giác mạnh", "cổ kính", "phức tạp"],
+                correct: 1,
+                exp: "Tàu lượn siêu tốc mang lại cảm giác mạnh, kịch tính -> <b>thrilling</b>."
+            },
+            {
+                q: "The rainforest we visited last year was ______ in diverse flora and fauna.",
+                qVi: "Khu rừng nhiệt đới mà chúng tôi đã đến thăm năm ngoái rất _______ hệ thực vật và động vật đa dạng.",
+                key: ["rainforest", "in diverse flora and fauna"],
+                opts: ["rich", "historic", "magnificent", "occupied"],
+                optsVi: ["giàu có/phong phú", "có tính lịch sử", "tráng lệ", "bị chiếm đóng"],
+                correct: 0,
+                exp: "Cấu trúc: be <b>rich</b> in (phong phú/dồi dào về cái gì)."
+            },
+            {
+                q: "We stopped for a moment to admire the magnificent mountain ______.",
+                qVi: "Chúng tôi dừng lại một lát để chiêm ngưỡng _______ núi non tráng lệ.",
+                key: ["admire the magnificent mountain"],
+                opts: ["scenery", "structure", "heritage", "preservation"],
+                optsVi: ["phong cảnh", "cấu trúc", "di sản", "sự bảo tồn"],
+                correct: 0,
+                exp: "Phong cảnh thiên nhiên -> mountain <b>scenery</b>."
+            },
+            {
+                q: "The holiday was generally ______ despite a few rainy days.",
+                qVi: "Kỳ nghỉ nói chung là _______ bất chấp một vài ngày mưa.",
+                key: ["holiday", "despite a few rainy days"],
+                opts: ["personal", "democratic", "enjoyable", "historical"],
+                optsVi: ["cá nhân", "dân chủ", "thú vị", "thuộc lịch sử"],
+                correct: 2,
+                exp: "Kỳ nghỉ mang lại niềm vui, sự thích thú -> <b>enjoyable</b>."
+            },
+            {
+                q: "When we visited Trang An last month, we had the opportunity to ______ a traditional craft village.",
+                qVi: "Khi chúng tôi đến thăm Tràng An vào tháng trước, chúng tôi đã có cơ hội _______ một làng nghề truyền thống.",
+                key: ["opportunity to", "a traditional craft village"],
+                opts: ["promote", "contribute", "explore", "follow"],
+                optsVi: ["thúc đẩy", "đóng góp", "khám phá", "theo sau"],
+                correct: 2,
+                exp: "Đi tham quan, tìm hiểu một địa danh -> <b>explore</b>."
+            },
+            {
+                q: "Our family enjoyed a ______ cruise tour around the bay last week.",
+                qVi: "Gia đình chúng tôi đã tận hưởng một chuyến du ngoạn trên du thuyền _______ quanh vịnh vào tuần trước.",
+                key: ["Our family enjoyed a", "cruise tour"],
+                opts: ["basic", "brilliant", "various", "private"],
+                optsVi: ["cơ bản", "xuất sắc/tuyệt vời", "khác nhau", "riêng tư"],
+                correct: 1,
+                exp: "Một chuyến đi rất tuyệt vời, tuyệt hảo -> <b>brilliant</b> cruise tour (Private cũng có thể đúng nhưng Brilliant miêu tả cảm xúc trải nghiệm hợp lý hơn trong ngữ cảnh 'enjoyed')."
+            },
+            {
+                q: "Our last night in Hoi An was ______ as we helped the locals pick up litter.",
+                qVi: "Đêm cuối cùng của chúng tôi ở Hội An thật _______ khi chúng tôi giúp người dân địa phương nhặt rác.",
+                key: ["last night", "helped the locals"],
+                opts: ["ancient", "complex", "basic", "memorable"],
+                optsVi: ["cổ kính", "phức tạp", "cơ bản", "đáng nhớ"],
+                correct: 3,
+                exp: "Làm được việc ý nghĩa khiến đêm đó trở nên đáng nhớ -> <b>memorable</b>."
+            },
+            {
+                q: "Some students choose to learn new words by ______ rather than truly understanding their meanings.",
+                qVi: "Một số học sinh chọn học từ mới bằng cách _______ thay vì thực sự hiểu nghĩa của chúng.",
+                key: ["learn new words by", "rather than truly understanding"],
+                opts: ["pile", "rote", "path", "mark"],
+                optsVi: ["đống", "học vẹt", "con đường", "dấu ấn"],
+                correct: 1,
+                exp: "Cụm từ: learn by <b>rote</b> (học vẹt, học thuộc lòng mà không hiểu)."
+            },
+            {
+                q: "The bungee jump was such a(n) ______ experience that everyone got so excited.",
+                qVi: "Nhảy bungee là một trải nghiệm _______ đến nỗi mọi người đều rất phấn khích.",
+                key: ["bungee jump", "excited"],
+                opts: ["amazing", "tiring", "dull", "affordable"],
+                optsVi: ["kinh ngạc/tuyệt vời", "mệt mỏi", "tẻ nhạt", "giá phải chăng"],
+                correct: 0,
+                exp: "Trải nghiệm tạo sự phấn khích lớn -> <b>amazing</b>."
+            },
+            {
+                q: "Contrary to our initial thoughts, the hike through the dense forest was a(n) ______ experience.",
+                qVi: "Trái ngược với suy nghĩ ban đầu của chúng tôi, chuyến đi bộ đường dài qua khu rừng rậm là một trải nghiệm _______.",
+                key: ["Contrary to", "hike through the dense forest"],
+                opts: ["democratic", "independent", "private", "exhilarating"],
+                optsVi: ["dân chủ", "độc lập", "riêng tư", "vui vẻ/hồ hởi"],
+                correct: 3,
+                exp: "Ban đầu tưởng mệt/đáng sợ, nhưng thực tế lại rất vui vẻ, phấn khích -> <b>exhilarating</b>."
+            },
+            {
+                q: "The rain poured down, making the conditions ______ for hikers.",
+                qVi: "Mưa trút xuống, làm cho điều kiện trở nên _______ đối với những người đi bộ đường dài.",
+                key: ["rain poured down", "conditions"],
+                opts: ["exciting", "unpleasant", "amazing", "brilliant"],
+                optsVi: ["thú vị", "khó chịu/đáng ghét", "tuyệt vời", "xuất sắc"],
+                correct: 1,
+                exp: "Mưa lớn gây cản trở, khó chịu cho người đi bộ -> <b>unpleasant</b>."
+            },
+            {
+                q: "The student felt completely ______, as there was nothing he could do to stop bullying at school.",
+                qVi: "Học sinh đó cảm thấy hoàn toàn _______, vì cậu ấy không thể làm gì để ngăn chặn bắt nạt ở trường.",
+                key: ["felt completely", "nothing he could do"],
+                opts: ["brilliant", "personal", "helpless", "convenient"],
+                optsVi: ["xuất sắc", "cá nhân", "bất lực", "tiện lợi"],
+                correct: 2,
+                exp: "Không thể làm gì để thay đổi tình hình -> cảm thấy <b>helpless</b> (bất lực)."
+            },
+            {
+                q: "It was a deeply ______ moment when I entered the wrong room.",
+                qVi: "Đó là một khoảnh khắc vô cùng _______ khi tôi vào nhầm phòng.",
+                key: ["entered the wrong room", "moment"],
+                opts: ["embarrassing", "exhilarating", "amazing", "helpless"],
+                optsVi: ["xấu hổ/ngượng ngùng", "vui vẻ", "tuyệt vời", "bất lực"],
+                correct: 0,
+                exp: "Vào nhầm phòng gây ra sự lúng túng, ngượng ngùng -> <b>embarrassing</b>."
+            },
+            {
+                q: "My mind went ______ when the teacher asked me to repeat the Q.",
+                qVi: "Đầu óc tôi trở nên _______ khi giáo viên yêu cầu tôi lặp lại câu hỏi.",
+                key: ["My mind went"],
+                opts: ["mild", "empty", "blank", "fit"],
+                optsVi: ["nhẹ", "trống rỗng", "trống rỗng (idiom)", "vừa vặn"],
+                correct: 2,
+                exp: "Thành ngữ: one's mind goes <b>blank</b> (đầu óc trống rỗng, không nhớ gì cả)."
+            },
+            {
+                q: "The final scene was so ______ that it left everyone in tears.",
+                qVi: "Cảnh cuối cùng quá _______ đến nỗi nó khiến mọi người rơi nước mắt.",
+                key: ["left everyone in tears"],
+                opts: ["touching", "exhilarating", "funny", "serious"],
+                optsVi: ["cảm động", "vui vẻ", "buồn cười", "nghiêm túc"],
+                correct: 0,
+                exp: "Làm người khác khóc vì cảm động -> <b>touching</b>."
+            },
+            {
+                q: "Exploring coral reefs in the deep sea is a(n) ______ experience.",
+                qVi: "Khám phá các rạn san hô dưới biển sâu là một trải nghiệm _______.",
+                key: ["Exploring coral reefs"],
+                opts: ["peaceful", "exciting", "extended", "nuclear"],
+                optsVi: ["yên bình", "thú vị/hào hứng", "mở rộng", "hạt nhân"],
+                correct: 1,
+                exp: "Một chuyến đi lặn biển ngắm san hô mang lại sự hào hứng -> <b>exciting</b>."
+            },
+            {
+                q: "It was ______ to see various plants and animals in the rainforest.",
+                qVi: "Thật là _______ khi nhìn thấy nhiều loại thực vật và động vật trong rừng nhiệt đới.",
+                key: ["see various plants and animals"],
+                opts: ["basic", "helpless", "unpleasant", "wonderful"],
+                optsVi: ["cơ bản", "bất lực", "khó chịu", "tuyệt vời"],
+                correct: 3,
+                exp: "Ngắm nhìn thiên nhiên phong phú là một điều tuyệt vời -> <b>wonderful</b>."
+            },
+            {
+                q: "The local performers gave us a performance on the ______ of nature.",
+                qVi: "Các nghệ sĩ địa phương đã mang đến cho chúng tôi một màn trình diễn với _______ thiên nhiên.",
+                key: ["performance on the"],
+                opts: ["activity", "community", "craft", "theme"],
+                optsVi: ["hoạt động", "cộng đồng", "nghề thủ công", "chủ đề"],
+                correct: 3,
+                exp: "Trình diễn theo một chủ đề nhất định -> on the <b>theme</b> of."
+            },
+            {
+                q: "The 10-day course in the army camp was ______ for each child.",
+                qVi: "Khóa học 10 ngày trong doanh trại quân đội là _______ đối với mỗi đứa trẻ.",
+                key: ["10-day course in the army camp"],
+                opts: ["private", "unforgettable", "dependent", "basic"],
+                optsVi: ["riêng tư", "không thể quên", "phụ thuộc", "cơ bản"],
+                correct: 1,
+                exp: "Một trải nghiệm sâu sắc, khó quên -> <b>unforgettable</b>."
+            },
+            {
+                q: "Minh was afraid of attending school because he was being ______ by his peers.",
+                qVi: "Minh sợ đến trường vì cậu bé đang bị _______ bởi các bạn cùng trang lứa.",
+                key: ["afraid of attending school", "by his peers"],
+                opts: ["accepted", "depended", "bullied", "respected"],
+                optsVi: ["được chấp nhận", "bị phụ thuộc", "bị bắt nạt", "được tôn trọng"],
+                correct: 2,
+                exp: "Lý do sợ đi học thường là do bị bắt nạt -> being <b>bullied</b>."
+            },
+            {
+                q: "Laura felt terrible after she had ______ with her parents over her career.",
+                qVi: "Laura cảm thấy tồi tệ sau khi cô ấy _______ với cha mẹ về sự nghiệp của mình.",
+                key: ["felt terrible", "with her parents over"],
+                opts: ["pursued", "reminded", "observed", "argued"],
+                optsVi: ["theo đuổi", "nhắc nhở", "quan sát", "cãi nhau/tranh luận"],
+                correct: 3,
+                exp: "Cãi vã, tranh luận gay gắt -> <b>argued</b> with sb over sth."
+            },
+            {
+                q: "The ______ activities helped everyone understand each other better.",
+                qVi: "Các hoạt động _______ đã giúp mọi người hiểu nhau hơn.",
+                key: ["activities", "understand each other better"],
+                opts: ["costume", "ritual", "team-building", "vendor"],
+                optsVi: ["trang phục", "nghi lễ", "xây dựng nhóm", "người bán hàng"],
+                correct: 2,
+                exp: "Hoạt động gắn kết tập thể -> <b>team-building</b> activities."
+            },
+            {
+                q: "After taking an eco-tour, we were more ______ of environmental protection.",
+                qVi: "Sau khi tham gia một chuyến du lịch sinh thái, chúng tôi đã _______ hơn về bảo vệ môi trường.",
+                key: ["were more", "of environmental protection"],
+                opts: ["thrilled", "pleased", "aware", "embarrassed"],
+                optsVi: ["hồi hộp", "hài lòng", "nhận thức", "xấu hổ"],
+                correct: 2,
+                exp: "Cấu trúc: be <b>aware</b> of (nhận thức về điều gì)."
+            },
+            {
+                q: "He had a(n) ______ on his knee from falling off his bike this morning.",
+                qVi: "Anh ấy có một _______ trên đầu gối do ngã xe đạp sáng nay.",
+                key: ["on his knee", "falling off his bike"],
+                opts: ["bruise", "burn", "cut", "illness"],
+                optsVi: ["vết bầm tím", "vết bỏng", "vết cắt", "căn bệnh"],
+                correct: 0,
+                exp: "Ngã xe thường dẫn đến trầy xước hoặc bầm tím -> <b>bruise</b>."
+            },
+            {
+                q: "Tim ______ his ankle again while trying to reach the finishing line.",
+                qVi: "Tim lại _______ mắt cá chân của mình trong khi cố gắng chạm tới đích.",
+                key: ["his ankle"],
+                opts: ["burned", "cut", "broke", "sprained"],
+                optsVi: ["đốt cháy", "cắt", "làm gãy", "bị bong gân"],
+                correct: 3,
+                exp: "Bong gân mắt cá chân -> <b>sprained</b> his ankle."
+            },
+            {
+                q: "______ of heights and speed, he didn't dare try bungee jumping.",
+                qVi: "_______ độ cao và tốc độ, anh ấy không dám thử nhảy bungee.",
+                key: ["of heights and speed", "didn't dare"],
+                opts: ["Brilliant", "Frightened", "Amazed", "Fascinated"],
+                optsVi: ["Xuất sắc", "Sợ hãi", "Kinh ngạc", "Bị cuốn hút"],
+                correct: 1,
+                exp: "Cấu trúc: be <b>frightened</b> of (sợ hãi cái gì)."
+            },
+            {
+                q: "The idea of going to the beach on a rainy day was ______, but we went anyway.",
+                qVi: "Ý tưởng đi biển vào một ngày mưa thật _______, nhưng dù sao chúng tôi cũng đã đi.",
+                key: ["beach on a rainy day"],
+                opts: ["amazing", "exciting", "ridiculous", "pleasant"],
+                optsVi: ["tuyệt vời", "thú vị", "nực cười/vô lý", "dễ chịu"],
+                correct: 2,
+                exp: "Đi biển ngày mưa là một ý tưởng kỳ cục, nực cười -> <b>ridiculous</b>."
+            },
+            {
+                q: "I wasn't ______ enough to cross the deep river.",
+                qVi: "Tôi không đủ _______ để băng qua con sông sâu.",
+                key: ["enough to cross the deep river"],
+                opts: ["brave", "unforgettable", "thrilling", "frightened"],
+                optsVi: ["dũng cảm", "không thể quên", "hồi hộp", "sợ hãi"],
+                correct: 0,
+                exp: "Cần sự dũng cảm để làm việc nguy hiểm -> <b>brave</b>."
+            },
+            {
+                q: "We tend to panic when faced with a ______ situation.",
+                qVi: "Chúng ta có xu hướng hoảng loạn khi đối mặt với một tình huống _______.",
+                key: ["panic when faced with"],
+                opts: ["memorable", "risky", "enjoyable", "touching"],
+                optsVi: ["đáng nhớ", "rủi ro/nguy hiểm", "thú vị", "cảm động"],
+                correct: 1,
+                exp: "Tình huống nguy hiểm gây hoảng sợ -> <b>risky</b> situation."
+            },
+            {
+                q: "Our kids felt ______ when we had to leave the park earlier than planned.",
+                qVi: "Các con của chúng tôi cảm thấy _______ khi chúng tôi phải rời công viên sớm hơn dự kiến.",
+                key: ["leave earlier than planned", "kids felt"],
+                opts: ["thrilled", "excited", "pleased", "disappointed"],
+                optsVi: ["hồi hộp", "hào hứng", "hài lòng", "thất vọng"],
+                correct: 3,
+                exp: "Đang chơi vui mà phải về sớm sẽ gây ra sự thất vọng -> <b>disappointed</b>."
+            },
+
+            // List 2 (30 câu)
+            {
+                q: "The trip taught us to prepare for ______ challenges during outdoor activities.",
+                qVi: "Chuyến đi đã dạy chúng tôi chuẩn bị cho những thách thức _______ trong các hoạt động ngoài trời.",
+                key: ["prepare for", "challenges"],
+                opts: ["embarrassing", "thrilling", "unexpected", "pleasant"],
+                optsVi: ["xấu hổ", "hồi hộp", "không mong đợi/bất ngờ", "dễ chịu"],
+                correct: 2,
+                exp: "Hoạt động ngoài trời thường có những rủi ro bất ngờ -> <b>unexpected</b> challenges."
+            },
+            {
+                q: "Many people are ______ of snakes, while others feel perfectly comfortable touching them.",
+                qVi: "Nhiều người _______ rắn, trong khi những người khác cảm thấy hoàn toàn thoải mái khi chạm vào chúng.",
+                key: ["of snakes", "while others feel comfortable"],
+                opts: ["touched", "terrified", "thrilled", "disappointed"],
+                optsVi: ["xúc động", "khiếp sợ", "hồi hộp", "thất vọng"],
+                correct: 1,
+                exp: "Sợ hãi tột độ với con vật gì -> be <b>terrified</b> of."
+            },
+            {
+                q: "It's perfectly natural to feel ______ before important exams.",
+                qVi: "Việc cảm thấy _______ trước những kỳ thi quan trọng là hoàn toàn tự nhiên.",
+                key: ["feel", "before important exams"],
+                opts: ["brilliant", "amazed", "nervous", "exciting"],
+                optsVi: ["xuất sắc", "kinh ngạc", "hồi hộp/lo lắng", "thú vị (để miêu tả vật)"],
+                correct: 2,
+                exp: "Tâm lý lo lắng trước kỳ thi -> feel <b>nervous</b>."
+            },
+            {
+                q: "Being a(n) ______, Martin felt totally uncomfortable at the party.",
+                qVi: "Là một _______, Martin cảm thấy hoàn toàn không thoải mái tại bữa tiệc.",
+                key: ["uncomfortable at the party"],
+                opts: ["introvert", "extrovert", "optimist", "conformist"],
+                optsVi: ["người hướng nội", "người hướng ngoại", "người lạc quan", "người tuân thủ"],
+                correct: 0,
+                exp: "Người hướng nội thường ngại đám đông -> <b>introvert</b>."
+            },
+            {
+                q: "These ______ trips are ideal for thrill-seeking tourists.",
+                qVi: "Những chuyến đi _______ này rất lý tưởng cho những du khách thích tìm kiếm cảm giác mạnh.",
+                key: ["thrill-seeking tourists"],
+                opts: ["unpleasant", "helpless", "embarrassing", "adventurous"],
+                optsVi: ["khó chịu", "bất lực", "xấu hổ", "mang tính phiêu lưu"],
+                correct: 3,
+                exp: "Chuyến đi mạo hiểm, phiêu lưu -> <b>adventurous</b> trips."
+            },
+            {
+                q: "Holidays without parents help children develop greater ______ in themselves.",
+                qVi: "Những kỳ nghỉ không có cha mẹ giúp trẻ em phát triển _______ lớn hơn vào bản thân.",
+                key: ["develop greater", "in themselves"],
+                opts: ["benefit", "confidence", "challenge", "recognition"],
+                optsVi: ["lợi ích", "sự tự tin", "thách thức", "sự công nhận"],
+                correct: 1,
+                exp: "Tin tưởng vào khả năng của bản thân -> <b>confidence</b> in themselves."
+            },
+            {
+                q: "Dealing with angry customers can be frustrating, but it can also be a(n) ______ experience.",
+                qVi: "Đối phó với những khách hàng tức giận có thể gây bực bội, nhưng nó cũng có thể là một trải nghiệm _______.",
+                key: ["frustrating, but", "experience"],
+                opts: ["confident", "rewarding", "disappointing", "unpleasant"],
+                optsVi: ["tự tin", "bổ ích/đáng giá", "đáng thất vọng", "khó chịu"],
+                correct: 1,
+                exp: "Trái ngược với sự bực bội, nó đem lại bài học quý giá -> <b>rewarding</b> experience."
+            },
+            {
+                q: "The family outing helped our kids develop their ______ skills.",
+                qVi: "Chuyến đi chơi của gia đình đã giúp những đứa trẻ của chúng tôi phát triển các kỹ năng _______ của chúng.",
+                key: ["develop their", "skills"],
+                opts: ["dependent", "democratic", "complex", "social"],
+                optsVi: ["phụ thuộc", "dân chủ", "phức tạp", "xã hội"],
+                correct: 3,
+                exp: "Kỹ năng giao tiếp xã hội -> <b>social</b> skills."
+            },
+            {
+                q: "Extracurricular activities can contribute to developing students into ______ citizens.",
+                qVi: "Các hoạt động ngoại khóa có thể góp phần phát triển học sinh thành những công dân _______.",
+                key: ["citizens"],
+                opts: ["responsible", "thrilling", "helpless", "dependent"],
+                optsVi: ["có trách nhiệm", "hồi hộp", "bất lực", "phụ thuộc"],
+                correct: 0,
+                exp: "Công dân có trách nhiệm -> <b>responsible</b> citizens."
+            },
+            {
+                q: "Summer courses are ______ for developing essential skills in children.",
+                qVi: "Các khóa học mùa hè rất _______ cho việc phát triển các kỹ năng thiết yếu ở trẻ em.",
+                key: ["for developing essential skills"],
+                opts: ["ancient", "confident", "beneficial", "frightened"],
+                optsVi: ["cổ kính", "tự tin", "có lợi", "sợ hãi"],
+                correct: 2,
+                exp: "Có ích, có lợi cho việc gì -> be <b>beneficial</b> for."
+            },
+            {
+                q: "If you're ______, this cruise tour is perfect for you.",
+                qVi: "Nếu bạn là người _______, chuyến du ngoạn này là hoàn hảo cho bạn.",
+                key: ["cruise tour is perfect for you"],
+                opts: ["unpleasant", "outgoing", "frustrated", "helpless"],
+                optsVi: ["khó chịu", "hòa đồng/cởi mở", "bực bội", "bất lực"],
+                correct: 1,
+                exp: "Du lịch du thuyền đông người phù hợp với người cởi mở, hướng ngoại -> <b>outgoing</b>."
+            },
+            {
+                q: "Children need to be responsible and ______ to join this summer course.",
+                qVi: "Trẻ em cần phải có trách nhiệm và _______ để tham gia khóa học mùa hè này.",
+                key: ["responsible and"],
+                opts: ["embarrassed", "touching", "difficult", "hard-working"],
+                optsVi: ["xấu hổ", "cảm động", "khó khăn", "chăm chỉ"],
+                correct: 3,
+                exp: "Đức tính tốt đi kèm với 'có trách nhiệm' là <b>hard-working</b> (chăm chỉ)."
+            },
+            {
+                q: "Volunteering as an English teacher in a mountainous area can be ______.",
+                qVi: "Tình nguyện làm giáo viên tiếng Anh ở một khu vực miền núi có thể rất _______.",
+                key: ["Volunteering", "mountainous area"],
+                opts: ["normal", "bustling", "tough", "thrilled"],
+                optsVi: ["bình thường", "nhộn nhịp", "khó khăn/vất vả", "hồi hộp (chỉ cảm xúc)"],
+                correct: 2,
+                exp: "Làm việc ở vùng núi thiếu thốn thường rất vất vả -> <b>tough</b>."
+            },
+            {
+                q: "Helping the locals to save sea turtles was a ______ experience.",
+                qVi: "Giúp đỡ người dân địa phương cứu rùa biển là một trải nghiệm _______.",
+                key: ["save sea turtles", "experience"],
+                opts: ["calm", "valuable", "peaceful", "crowded"],
+                optsVi: ["bình tĩnh", "quý giá", "yên bình", "đông đúc"],
+                correct: 1,
+                exp: "Một trải nghiệm có ý nghĩa -> <b>valuable</b> experience."
+            },
+            {
+                q: "Joining other volunteers to cook for the poor helped me ______ much experience.",
+                qVi: "Tham gia cùng các tình nguyện viên khác để nấu ăn cho người nghèo đã giúp tôi _______ nhiều kinh nghiệm.",
+                key: ["helped me", "much experience"],
+                opts: ["delay", "bother", "escape", "gain"],
+                optsVi: ["trì hoãn", "bận tâm", "trốn thoát", "đạt được/thu được"],
+                correct: 3,
+                exp: "Thu được, tích lũy được kinh nghiệm -> <b>gain</b> experience."
+            },
+            {
+                q: "Last summer's volunteer tourism programme gave me ______ experiences.",
+                qVi: "Chương trình du lịch tình nguyện mùa hè năm ngoái đã mang đến cho tôi những trải nghiệm _______.",
+                key: ["gave me", "experiences"],
+                opts: ["local", "helpless", "precious", "skilled"],
+                optsVi: ["địa phương", "bất lực", "quý giá", "lành nghề"],
+                correct: 2,
+                exp: "Những trải nghiệm đáng trân trọng -> <b>precious</b> experiences."
+            },
+            {
+                q: "Spending time with the elderly in the nursing home taught me to ______ what I have.",
+                qVi: "Dành thời gian với người cao tuổi trong viện dưỡng lão đã dạy tôi biết _______ những gì tôi có.",
+                key: ["taught me to", "what I have"],
+                opts: ["appreciate", "maintain", "accomplish", "suffer"],
+                optsVi: ["trân trọng/biết ơn", "duy trì", "hoàn thành", "chịu đựng"],
+                correct: 0,
+                exp: "Biết trân quý những gì đang có -> <b>appreciate</b>."
+            },
+            {
+                q: "His parents were ______ and supportive when he was in trouble.",
+                qVi: "Cha mẹ anh ấy rất _______ và hỗ trợ khi anh ấy gặp rắc rối.",
+                key: ["and supportive", "in trouble"],
+                opts: ["stressed", "embarrassed", "relaxed", "sympathetic"],
+                optsVi: ["căng thẳng", "xấu hổ", "thư giãn", "cảm thông"],
+                correct: 3,
+                exp: "Đồng cảm, thấu hiểu với người khác -> <b>sympathetic</b>."
+            },
+            {
+                q: "Many passengers were ______ when the flight was delayed for another 30 minutes.",
+                qVi: "Nhiều hành khách đã _______ khi chuyến bay bị hoãn thêm 30 phút nữa.",
+                key: ["passengers were", "flight was delayed"],
+                opts: ["annoyed", "thrilled", "helpless", "embarrassed"],
+                optsVi: ["bực mình", "hồi hộp", "bất lực", "xấu hổ"],
+                correct: 0,
+                exp: "Chuyến bay bị hoãn thường gây ra sự bực tức -> <b>annoyed</b>."
+            },
+            {
+                q: "I found his behaviour ______ when he insulted one of my friends.",
+                qVi: "Tôi thấy hành vi của anh ta thật _______ khi anh ta lăng mạ một trong những người bạn của tôi.",
+                key: ["found his behaviour", "insulted one of my friends"],
+                opts: ["thrilling", "disgusting", "brilliant", "magnificent"],
+                optsVi: ["hồi hộp", "kinh tởm/đáng ghét", "xuất sắc", "tráng lệ"],
+                correct: 1,
+                exp: "Hành vi lăng mạ người khác là không thể chấp nhận được -> <b>disgusting</b>."
+            },
+            {
+                q: "Seeing animals in the zoo taught me to be more ______ towards them.",
+                qVi: "Nhìn thấy các loài động vật trong sở thú đã dạy tôi phải _______ hơn với chúng.",
+                key: ["taught me to be more", "towards them"],
+                opts: ["hard-working", "sociable", "considerate", "touching"],
+                optsVi: ["chăm chỉ", "hòa đồng", "chu đáo/ân cần", "cảm động"],
+                correct: 2,
+                exp: "Biết quan tâm, ân cần với động vật -> be <b>considerate</b> towards."
+            },
+            {
+                q: "He had an accident because he was ______ by the argument.",
+                qVi: "Anh ta bị tai nạn vì bị _______ bởi cuộc tranh cãi.",
+                key: ["had an accident because", "by the argument"],
+                opts: ["distracted", "respected", "concentrated", "suffered"],
+                optsVi: ["bị xao nhãng", "được tôn trọng", "tập trung", "chịu đựng"],
+                correct: 0,
+                exp: "Mất tập trung dẫn đến tai nạn -> <b>distracted</b>."
+            },
+            {
+                q: "Her friends ______ her when she couldn't afford to buy new shoes.",
+                qVi: "Bạn bè cô ấy đã _______ cô ấy khi cô ấy không đủ tiền mua giày mới.",
+                key: ["when she couldn't afford to buy"],
+                opts: ["obeyed", "promoted", "contributed", "teased"],
+                optsVi: ["tuân theo", "thúc đẩy", "đóng góp", "trêu chọc"],
+                correct: 3,
+                exp: "Chế giễu, trêu chọc ai đó -> <b>teased</b>."
+            },
+            {
+                q: "Tourists were ______ when they saw some ancient tools in the cave.",
+                qVi: "Khách du lịch đã _______ khi nhìn thấy một số công cụ cổ trong hang động.",
+                key: ["saw some ancient tools in the cave"],
+                opts: ["annoyed", "disappointed", "stressed", "surprised"],
+                optsVi: ["bực mình", "thất vọng", "căng thẳng", "ngạc nhiên"],
+                correct: 3,
+                exp: "Thấy đồ vật cổ xưa thường gây ra sự ngạc nhiên -> <b>surprised</b>."
+            },
+            {
+                q: "Spending the whole afternoon ______ on the beach helped me recharge my energy.",
+                qVi: "Dành cả buổi chiều _______ trên bãi biển đã giúp tôi nạp lại năng lượng.",
+                key: ["helped me recharge my energy"],
+                opts: ["bustling", "embarrassing", "frustrating", "relaxing"],
+                optsVi: ["nhộn nhịp", "xấu hổ", "bực bội", "thư giãn"],
+                correct: 3,
+                exp: "Nghỉ ngơi, thư giãn nạp năng lượng -> <b>relaxing</b>."
+            },
+            {
+                q: "Mary felt ______ about leaving the party so early.",
+                qVi: "Mary cảm thấy _______ về việc rời bữa tiệc quá sớm.",
+                key: ["felt", "leaving the party so early"],
+                opts: ["uneasy", "thrilled", "peaceful", "surprised"],
+                optsVi: ["bứt rứt/không thoải mái", "hồi hộp", "yên bình", "ngạc nhiên"],
+                correct: 1,
+                exp: "Cảm giác áy náy, không thoải mái -> <b>uneasy</b>."
+            },
+            {
+                q: "We felt so sad when we saw the ______ living conditions in the slums.",
+                qVi: "Chúng tôi cảm thấy rất buồn khi chứng kiến điều kiện sống _______ trong các khu ổ chuột.",
+                key: ["felt so sad", "living conditions in the slums"],
+                opts: ["determined", "relaxing", "miserable", "brilliant"],
+                optsVi: ["quyết tâm", "thư giãn", "khốn khổ/tồi tàn", "xuất sắc"],
+                correct: 2,
+                exp: "Khu ổ chuột thường có điều kiện sống rất tệ -> <b>miserable</b> living conditions."
+            },
+            {
+                q: "A(n) ______ smile appeared on her face when she saw her daughter's progress.",
+                qVi: "Một nụ cười _______ hiện lên trên khuôn mặt cô khi thấy sự tiến bộ của con gái mình.",
+                key: ["smile", "saw her daughter's progress"],
+                opts: ["stressful", "satisfied", "anxious", "disappointed"],
+                optsVi: ["căng thẳng", "hài lòng/mãn nguyện", "lo lắng", "thất vọng"],
+                correct: 1,
+                exp: "Thấy con tiến bộ nên mỉm cười mãn nguyện -> <b>satisfied</b> smile."
+            },
+            {
+                q: "Moving to this city was ______ at first, as everything was new to me.",
+                qVi: "Chuyển đến thành phố này lúc đầu rất _______, vì mọi thứ đều mới mẻ đối với tôi.",
+                key: ["everything was new to me"],
+                opts: ["relaxing", "thrilling", "sympathetic", "overwhelming"],
+                optsVi: ["thư giãn", "hồi hộp", "cảm thông", "choáng ngợp"],
+                correct: 3,
+                exp: "Nhiều thứ mới mẻ ập đến cùng lúc khiến người ta bị ngợp -> <b>overwhelming</b>."
+            },
+            {
+                q: "The ______ traffic in the capital city was the most surprising aspect of my first visit.",
+                qVi: "Giao thông _______ ở thành phố thủ đô là khía cạnh đáng ngạc nhiên nhất trong chuyến thăm đầu tiên của tôi.",
+                key: ["traffic", "most surprising"],
+                opts: ["simple", "deep-rooted", "chaotic", "regular"],
+                optsVi: ["đơn giản", "lâu đời", "hỗn loạn", "thường xuyên"],
+                correct: 2,
+                exp: "Giao thông ở các thủ đô lớn thường rất đông đúc, lộn xộn -> <b>chaotic</b> traffic."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
