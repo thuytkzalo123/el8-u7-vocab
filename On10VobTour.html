@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Tourism & Environment (90 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Tourism & Environment (90 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">90</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">90</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // BATCH 1 (1 - 30)
+            {
+                q: "We booked the ______ well in advance to ensure we had a place to stay during our trip.",
+                qVi: "Chúng tôi đã đặt _______ từ trước rất lâu để đảm bảo có chỗ ở trong suốt chuyến đi.",
+                key: ["booked", "place to stay"],
+                opts: ["itinerary", "journey", "package", "hostel"],
+                optsVi: ["lịch trình", "hành trình", "gói (du lịch)", "nhà nghỉ"],
+                correct: 3,
+                exp: "Đặt chỗ ở để ngủ lại -> book a <b>hostel</b> (nhà nghỉ/nhà trọ)."
+            },
+            {
+                q: "Applying eco-friendly ______ helps protect both your skin and the coral reefs while snorkelling.",
+                qVi: "Thoa _______ thân thiện với môi trường giúp bảo vệ cả làn da của bạn và các rạn san hô khi lặn với ống thở.",
+                key: ["Applying", "protect your skin"],
+                opts: ["sunblock", "accommodation", "safari", "suggestion"],
+                optsVi: ["kem chống nắng", "chỗ ở", "chuyến dã ngoại/săn bắn", "lời gợi ý"],
+                correct: 0,
+                exp: "Bôi kem chống nắng bảo vệ da -> apply <b>sunblock</b>."
+            },
+            {
+                q: "There is a ______ store opposite our hotel.",
+                qVi: "Có một cửa hàng _______ đối diện khách sạn của chúng tôi.",
+                key: ["store"],
+                opts: ["convenience", "pharmacy", "embassy", "gallery"],
+                optsVi: ["sự tiện lợi", "hiệu thuốc", "đại sứ quán", "phòng tranh"],
+                correct: 0,
+                exp: "Cửa hàng tiện lợi -> <b>convenience</b> store."
+            },
+            {
+                q: "The travel agency provided useful ______ for a foreign vacation.",
+                qVi: "Đại lý du lịch đã cung cấp những _______ hữu ích cho kỳ nghỉ ở nước ngoài.",
+                key: ["provided useful", "for a vacation"],
+                opts: ["brochures", "souvenirs", "suggestions", "handicrafts"],
+                optsVi: ["tờ rơi/sách quảng cáo", "đồ lưu niệm", "lời gợi ý", "đồ thủ công"],
+                correct: 2,
+                exp: "Đưa ra lời khuyên/gợi ý hữu ích -> provide useful <b>suggestions</b>."
+            },
+            {
+                q: "The ______ colours of the sunset over the sea created a breathtaking view.",
+                qVi: "Màu sắc _______ của cảnh hoàng hôn trên biển đã tạo ra một khung cảnh ngoạn mục.",
+                key: ["colours of the sunset", "breathtaking view"],
+                opts: ["quiet", "liveable", "vibrant", "remote"],
+                optsVi: ["yên tĩnh", "đáng sống", "rực rỡ/sôi động", "xa xôi"],
+                correct: 2,
+                exp: "Màu sắc hoàng hôn rực rỡ, sống động -> <b>vibrant</b> colours."
+            },
+            {
+                q: "Coastal ______ has significantly altered the beach's landscape over the years.",
+                qVi: "_______ ven biển đã làm thay đổi đáng kể cảnh quan của bãi biển qua nhiều năm.",
+                key: ["Coastal", "altered the beach's landscape"],
+                opts: ["guide", "entrance", "brochure", "erosion"],
+                optsVi: ["hướng dẫn", "lối vào", "tờ rơi", "sự xói mòn"],
+                correct: 3,
+                exp: "Sự xói mòn bờ biển -> Coastal <b>erosion</b>."
+            },
+            {
+                q: "The cabin is located in a ______ area with stunning views of the mountains.",
+                qVi: "Căn nhà gỗ nằm ở một khu vực _______ với tầm nhìn tuyệt đẹp ra những ngọn núi.",
+                key: ["cabin is located in", "views of the mountains"],
+                opts: ["liveable", "remote", "alert", "reliable"],
+                optsVi: ["đáng sống", "xa xôi/hẻo lánh", "tỉnh táo", "đáng tin cậy"],
+                correct: 1,
+                exp: "Nhà gỗ trên núi thường ở vùng hẻo lánh -> <b>remote</b> area."
+            },
+            {
+                q: "The museum was built as a lasting ______ to the civil war.",
+                qVi: "Bảo tàng được xây dựng như một _______ lâu dài đối với cuộc nội chiến.",
+                key: ["built as a lasting", "to the civil war"],
+                opts: ["bakery", "vacation", "monument", "dumpling"],
+                optsVi: ["tiệm bánh", "kỳ nghỉ", "đài tưởng niệm/di tích", "bánh bao"],
+                correct: 2,
+                exp: "Công trình xây để tưởng nhớ sự kiện lịch sử -> <b>monument</b>."
+            },
+            {
+                q: "______ on the beach was a highlight of the trip.",
+                qVi: "_______ trên bãi biển là một điểm nhấn của chuyến đi.",
+                key: ["on the beach"],
+                opts: ["Sunbathing", "Preserving", "Booking", "Arranging"],
+                optsVi: ["Tắm nắng", "Bảo tồn", "Đặt chỗ", "Sắp xếp"],
+                correct: 0,
+                exp: "Hoạt động tắm nắng trên bãi biển -> <b>Sunbathing</b>."
+            },
+            {
+                q: "The bungalow is quite small but ______.",
+                qVi: "Ngôi nhà gỗ khá nhỏ nhưng _______.",
+                key: ["small but"],
+                opts: ["historical", "charming", "remote", "adventurous"],
+                optsVi: ["thuộc về lịch sử", "duyên dáng/quyến rũ", "xa xôi", "thích phiêu lưu"],
+                correct: 1,
+                exp: "Nhỏ nhưng đẹp, đáng yêu -> <b>charming</b>."
+            },
+            {
+                q: "We did a ______ tour of the city last month.",
+                qVi: "Chúng tôi đã thực hiện một chuyến đi _______ vòng quanh thành phố vào tháng trước.",
+                key: ["did a ___ tour"],
+                opts: ["sightseeing", "itinerary", "budget", "guide"],
+                optsVi: ["ngắm cảnh", "lịch trình", "ngân sách", "hướng dẫn"],
+                correct: 0,
+                exp: "Cụm từ: a <b>sightseeing</b> tour (chuyến đi tham quan ngắm cảnh)."
+            },
+            {
+                q: "We participated in a(n) ______ beach clean-up event.",
+                qVi: "Chúng tôi đã tham gia vào một sự kiện dọn dẹp bãi biển _______.",
+                key: ["participated in", "clean-up event"],
+                opts: ["cruise", "luxurious", "exploration", "voluntary"],
+                optsVi: ["du thuyền", "sang trọng", "khám phá", "tình nguyện"],
+                correct: 3,
+                exp: "Hoạt động dọn rác bảo vệ môi trường mang tính chất tình nguyện -> <b>voluntary</b> event."
+            },
+            {
+                q: "We need to make sure we have all our belongings packed before we ______.",
+                qVi: "Chúng ta cần đảm bảo rằng đã đóng gói tất cả đồ đạc trước khi _______.",
+                key: ["belongings packed", "before we"],
+                opts: ["recognise", "hunt", "depart", "estimate"],
+                optsVi: ["nhận ra", "săn", "khởi hành/rời đi", "ước tính"],
+                correct: 2,
+                exp: "Chuẩn bị hành lý trước khi khởi hành -> <b>depart</b>."
+            },
+            {
+                q: "The tour included ______ stops at natural reserves.",
+                qVi: "Chuyến tham quan bao gồm _______ điểm dừng tại các khu bảo tồn thiên nhiên.",
+                key: ["stops at natural reserves"],
+                opts: ["additional", "delicious", "luxurious", "various"],
+                optsVi: ["bổ sung", "ngon", "sang trọng", "nhiều/đa dạng"],
+                correct: 3,
+                exp: "Dừng lại ở nhiều điểm khác nhau -> <b>various</b> stops."
+            },
+            {
+                q: "The sanctuary protects ______ species from poaching and habitat loss.",
+                qVi: "Khu bảo tồn bảo vệ các loài _______ khỏi nạn săn trộm và mất môi trường sống.",
+                key: ["species", "from poaching"],
+                opts: ["endangered", "remote", "comfortable", "adventurous"],
+                optsVi: ["có nguy cơ tuyệt chủng", "xa xôi", "thoải mái", "thích phiêu lưu"],
+                correct: 0,
+                exp: "Động vật có nguy cơ tuyệt chủng -> <b>endangered</b> species."
+            },
+            {
+                q: "The researchers are concerned that the construction work might ______ the nesting sites of local birds.",
+                qVi: "Các nhà nghiên cứu lo ngại rằng công việc xây dựng có thể _______ các địa điểm làm tổ của các loài chim địa phương.",
+                key: ["construction work might", "the nesting sites"],
+                opts: ["rent", "book", "produce", "disturb"],
+                optsVi: ["thuê", "đặt", "sản xuất", "làm phiền/xáo trộn"],
+                correct: 3,
+                exp: "Làm ảnh hưởng, xáo trộn môi trường sống -> <b>disturb</b>."
+            },
+            {
+                q: "Eco-friendly ______ include recycling and using reusable bags.",
+                qVi: "Những _______ thân thiện với môi trường bao gồm tái chế và sử dụng túi có thể tái sử dụng.",
+                key: ["Eco-friendly", "recycling and using reusable bags"],
+                opts: ["habitats", "landfills", "suggestions", "routines"],
+                optsVi: ["môi trường sống", "bãi rác", "gợi ý", "thói quen"],
+                correct: 3,
+                exp: "Việc làm lặp đi lặp lại hàng ngày -> eco-friendly <b>routines</b> (thói quen thân thiện với môi trường)."
+            },
+            {
+                q: "The campaign aimed to raise ______ about ocean pollution.",
+                qVi: "Chiến dịch nhằm mục đích nâng cao _______ về ô nhiễm đại dương.",
+                key: ["raise", "about ocean pollution"],
+                opts: ["itinerary", "accommodation", "brochure", "awareness"],
+                optsVi: ["lịch trình", "chỗ ở", "tờ rơi", "nhận thức"],
+                correct: 3,
+                exp: "Nâng cao nhận thức -> raise <b>awareness</b>."
+            },
+            {
+                q: "Recent ______ have affected several homes in the low-lying areas.",
+                qVi: "Những trận _______ gần đây đã ảnh hưởng đến một số ngôi nhà ở các khu vực trũng thấp.",
+                key: ["affected homes", "low-lying areas"],
+                opts: ["droughts", "floods", "litter", "rubbish"],
+                optsVi: ["hạn hán", "lũ lụt", "rác vứt bừa bãi", "rác thải"],
+                correct: 1,
+                exp: "Khu vực trũng thấp thường bị ảnh hưởng bởi lũ lụt -> <b>floods</b>."
+            },
+            {
+                q: "Please make sure to dispose of your ______ in the provided bins.",
+                qVi: "Vui lòng đảm bảo vứt _______ của bạn vào các thùng được cung cấp.",
+                key: ["dispose of", "in the provided bins"],
+                opts: ["plants", "rubbish", "traffic", "factory"],
+                optsVi: ["cây cối", "rác thải", "giao thông", "nhà máy"],
+                correct: 1,
+                exp: "Vứt rác vào thùng -> dispose of <b>rubbish</b>."
+            },
+            {
+                q: "It's important to ______ local customs when travelling abroad.",
+                qVi: "Điều quan trọng là phải _______ phong tục địa phương khi đi du lịch nước ngoài.",
+                key: ["local customs", "travelling abroad"],
+                opts: ["admire", "discover", "respect", "explore"],
+                optsVi: ["chiêm ngưỡng", "khám phá", "tôn trọng", "thám hiểm"],
+                correct: 2,
+                exp: "Tôn trọng văn hóa, phong tục nơi mình đến -> <b>respect</b> local customs."
+            },
+            {
+                q: "The heavy rainfall caused significant ______ to the forests.",
+                qVi: "Lượng mưa lớn đã gây ra _______ đáng kể cho các khu rừng.",
+                key: ["caused significant", "to the forests"],
+                opts: ["waste", "energy", "damage", "accommodation"],
+                optsVi: ["chất thải", "năng lượng", "thiệt hại", "chỗ ở"],
+                correct: 2,
+                exp: "Gây thiệt hại -> cause <b>damage</b> to."
+            },
+            {
+                q: "The city is investing in ______ energy sources to cut down on emissions.",
+                qVi: "Thành phố đang đầu tư vào các nguồn năng lượng _______ để cắt giảm khí thải.",
+                key: ["energy sources", "cut down on emissions"],
+                opts: ["urgent", "appealing", "renewable", "fixed"],
+                optsVi: ["khẩn cấp", "hấp dẫn", "có thể tái tạo", "cố định"],
+                correct: 2,
+                exp: "Năng lượng tái tạo (gió, mặt trời) -> <b>renewable</b> energy."
+            },
+            {
+                q: "Efforts to reduce waste help lessen the pressure on ______.",
+                qVi: "Nỗ lực giảm thiểu chất thải giúp làm giảm áp lực lên các _______.",
+                key: ["reduce waste", "pressure on"],
+                opts: ["brochures", "destinations", "routes", "landfills"],
+                optsVi: ["tờ rơi", "điểm đến", "tuyến đường", "bãi rác"],
+                correct: 3,
+                exp: "Giảm lượng rác thải sẽ giảm áp lực chứa rác cho các bãi rác -> <b>landfills</b>."
+            },
+            {
+                q: "Each person has a ______ to reduce their environmental impact.",
+                qVi: "Mỗi người đều có _______ giảm thiểu tác động đến môi trường của mình.",
+                key: ["has a", "reduce environmental impact"],
+                opts: ["vacation", "cost", "budget", "responsibility"],
+                optsVi: ["kỳ nghỉ", "chi phí", "ngân sách", "trách nhiệm"],
+                correct: 3,
+                exp: "Có trách nhiệm làm việc gì -> have a <b>responsibility</b> to."
+            },
+            {
+                q: "All recyclable materials were carefully ______ before being sent for processing.",
+                qVi: "Tất cả các vật liệu có thể tái chế đã được _______ cẩn thận trước khi được gửi đi xử lý.",
+                key: ["recyclable materials", "before being sent for processing"],
+                opts: ["sorted", "preserved", "estimated", "hunted"],
+                optsVi: ["phân loại", "bảo quản", "ước tính", "săn bắt"],
+                correct: 0,
+                exp: "Phân loại rác thải -> <b>sorted</b>."
+            },
+            {
+                q: "Banning ______ plastics is crucial for reducing ocean pollution.",
+                qVi: "Cấm nhựa _______ là rất quan trọng để giảm thiểu ô nhiễm đại dương.",
+                key: ["plastics", "ocean pollution"],
+                opts: ["single-use", "remote", "endangered", "charming"],
+                optsVi: ["dùng một lần", "xa xôi", "có nguy cơ tuyệt chủng", "duyên dáng"],
+                correct: 0,
+                exp: "Đồ nhựa dùng một lần -> <b>single-use</b> plastics."
+            },
+            {
+                q: "Chemical spills can lead to severe ______ of water sources.",
+                qVi: "Các vụ tràn hóa chất có thể dẫn đến _______ nghiêm trọng đối với các nguồn nước.",
+                key: ["Chemical spills", "water sources"],
+                opts: ["tourism", "entrance", "biodiversity", "contamination"],
+                optsVi: ["du lịch", "lối vào", "đa dạng sinh học", "sự ô nhiễm"],
+                correct: 3,
+                exp: "Hóa chất đổ ra sông suối gây ô nhiễm nước -> <b>contamination</b> (pollution)."
+            },
+            {
+                q: "Protecting ______ is essential for maintaining biodiversity in natural habitats.",
+                qVi: "Bảo vệ _______ là điều cần thiết để duy trì sự đa dạng sinh học trong môi trường sống tự nhiên.",
+                key: ["Protecting", "maintaining biodiversity"],
+                opts: ["contamination", "wildlife", "vacation", "package"],
+                optsVi: ["sự ô nhiễm", "động vật hoang dã", "kỳ nghỉ", "gói"],
+                correct: 1,
+                exp: "Bảo vệ động thực vật hoang dã -> protecting <b>wildlife</b>."
+            },
+            {
+                q: "While ______ the local market, we found handmade souvenirs made from recycled materials.",
+                qVi: "Trong khi _______ khu chợ địa phương, chúng tôi đã tìm thấy những món đồ lưu niệm thủ công làm từ vật liệu tái chế.",
+                key: ["the local market", "found handmade souvenirs"],
+                opts: ["preserving", "browsing", "restoring", "hunting"],
+                optsVi: ["bảo tồn", "dạo xem/lướt", "phục hồi", "săn"],
+                correct: 1,
+                exp: "Đi dạo, xem hàng hóa ở chợ -> <b>browsing</b> the market."
+            },
+
+            // BATCH 2 (31 - 60)
+            {
+                q: "The ancient ______ in the middle of the park was a highlight of our trip.",
+                qVi: "_______ cổ kính ở giữa công viên là một điểm nhấn trong chuyến đi của chúng tôi.",
+                key: ["ancient", "middle of the park"],
+                opts: ["bakery", "dumpling", "monument", "vacation"],
+                optsVi: ["tiệm bánh", "bánh bao", "tượng đài/di tích", "kỳ nghỉ"],
+                correct: 2,
+                exp: "Công trình lịch sử cũ kỹ -> ancient <b>monument</b>."
+            },
+            {
+                q: "Remember to apply ______ before heading to the beach, as it's sunny.",
+                qVi: "Hãy nhớ thoa _______ trước khi ra bãi biển, vì trời rất nắng.",
+                key: ["apply", "beach, sunny"],
+                opts: ["sunblock", "suggestion", "safari", "accommodation"],
+                optsVi: ["kem chống nắng", "lời gợi ý", "chuyến đi săn/dã ngoại", "chỗ ở"],
+                correct: 0,
+                exp: "Bôi kem chống nắng bảo vệ da -> apply <b>sunblock</b>."
+            },
+            {
+                q: "As it was getting darker, we decided to stop for the night at a ______.",
+                qVi: "Khi trời bắt đầu tối, chúng tôi quyết định dừng lại nghỉ qua đêm tại một _______.",
+                key: ["stop for the night at a"],
+                opts: ["itinerary", "package", "journey", "hostel"],
+                optsVi: ["lịch trình", "gói", "hành trình", "nhà nghỉ"],
+                correct: 3,
+                exp: "Nơi để ngủ lại qua đêm -> <b>hostel</b>."
+            },
+            {
+                q: "A man snatched her fanny pack while she was ______ the crowded market.",
+                qVi: "Một người đàn ông đã giật chiếc túi đeo hông của cô ấy khi cô ấy đang _______ khu chợ đông đúc.",
+                key: ["while she was", "crowded market"],
+                opts: ["preserving", "hunting", "restoring", "browsing"],
+                optsVi: ["bảo tồn", "săn", "phục hồi", "dạo xem"],
+                correct: 3,
+                exp: "Đi xem hàng hóa, dạo quanh chợ -> <b>browsing</b>."
+            },
+            {
+                q: "John gave us some useful ______ for our first trip to a foreign country.",
+                qVi: "John đã cho chúng tôi một số _______ hữu ích cho chuyến đi đầu tiên của chúng tôi đến một quốc gia nước ngoài.",
+                key: ["gave us some useful", "for our first trip"],
+                opts: ["brochures", "suggestions", "souvenirs", "handicrafts"],
+                optsVi: ["tờ rơi", "lời gợi ý/khuyên", "đồ lưu niệm", "đồ thủ công"],
+                correct: 1,
+                exp: "Cho lời khuyên, gợi ý -> gave useful <b>suggestions</b>."
+            },
+            {
+                q: "We felt hungry in the middle of the night, so we went to the ______ store for some fast food.",
+                qVi: "Chúng tôi cảm thấy đói vào lúc nửa đêm, vì vậy chúng tôi đã đến cửa hàng _______ để mua một ít thức ăn nhanh.",
+                key: ["store for some fast food", "middle of the night"],
+                opts: ["pharmacy", "convenience", "embassy", "gallery"],
+                optsVi: ["hiệu thuốc", "tiện lợi", "đại sứ quán", "phòng tranh"],
+                correct: 1,
+                exp: "Cửa hàng tiện lợi thường mở cửa 24/7 -> <b>convenience</b> store."
+            },
+            {
+                q: "The idea of taking a self-guided tour to a ______ area of the country sounds fascinating.",
+                qVi: "Ý tưởng về một chuyến du lịch tự túc đến một khu vực _______ của đất nước nghe có vẻ hấp dẫn.",
+                key: ["area of the country"],
+                opts: ["liveable", "remote", "alert", "reliable"],
+                optsVi: ["đáng sống", "xa xôi/hẻo lánh", "cảnh giác", "đáng tin cậy"],
+                correct: 1,
+                exp: "Khu vực xa xôi, hẻo lánh -> <b>remote</b> area."
+            },
+            {
+                q: "While exploring the ancient town on foot, the tourists were impressed by its architecture from ______ periods.",
+                qVi: "Trong khi khám phá thị trấn cổ đi bộ, khách du lịch đã bị ấn tượng bởi kiến trúc của nó từ các thời kỳ _______.",
+                key: ["architecture from", "periods"],
+                opts: ["additional", "delicious", "luxurious", "various"],
+                optsVi: ["bổ sung", "ngon", "sang trọng", "nhiều/khác nhau"],
+                correct: 3,
+                exp: "Từ nhiều thời kỳ khác nhau -> <b>various</b> periods."
+            },
+            {
+                q: "Spending a few hours ______ on the beach offers some healing benefits.",
+                qVi: "Dành vài giờ _______ trên bãi biển mang lại một số lợi ích chữa lành.",
+                key: ["hours", "on the beach"],
+                opts: ["sunbathing", "preserving", "booking", "arranging"],
+                optsVi: ["tắm nắng", "bảo tồn", "đặt chỗ", "sắp xếp"],
+                correct: 0,
+                exp: "Tắm nắng trên bãi biển -> <b>sunbathing</b>."
+            },
+            {
+                q: "The city's nightlife is ______, offering a wide range of interesting activities for both locals and tourists.",
+                qVi: "Cuộc sống về đêm của thành phố rất _______, cung cấp một loạt các hoạt động thú vị cho cả người dân địa phương và khách du lịch.",
+                key: ["nightlife is", "interesting activities"],
+                opts: ["quiet", "liveable", "vibrant", "remote"],
+                optsVi: ["yên tĩnh", "đáng sống", "sôi động/náo nhiệt", "xa xôi"],
+                correct: 2,
+                exp: "Cuộc sống về đêm nhộn nhịp, nhiều hoạt động vui chơi -> <b>vibrant</b> nightlife."
+            },
+            {
+                q: "We didn’t have time for ______ during our business trip to Tokyo last month.",
+                qVi: "Chúng tôi không có thời gian để _______ trong chuyến công tác đến Tokyo vào tháng trước.",
+                key: ["didn't have time for", "business trip"],
+                opts: ["sightseeing", "itinerary", "budget", "guide"],
+                optsVi: ["ngắm cảnh/tham quan", "lịch trình", "ngân sách", "hướng dẫn"],
+                correct: 0,
+                exp: "Đi công tác nên bận rộn, không có thời gian tham quan -> <b>sightseeing</b>."
+            },
+            {
+                q: "Many teenagers choose to spend their summer break doing ______ work.",
+                qVi: "Nhiều thanh thiếu niên chọn dành kỳ nghỉ hè của mình để làm công việc _______.",
+                key: ["doing", "work"],
+                opts: ["cruise", "luxurious", "exploration", "voluntary"],
+                optsVi: ["du thuyền", "sang trọng", "khám phá", "tình nguyện"],
+                correct: 3,
+                exp: "Làm công tác từ thiện, tình nguyện -> <b>voluntary</b> work."
+            },
+            {
+                q: "Our flight to Da Nang was scheduled to ______ at 3 P.M., but it was delayed by 30 minutes.",
+                qVi: "Chuyến bay của chúng tôi đến Đà Nẵng được lên lịch _______ lúc 3 giờ chiều, nhưng nó bị hoãn 30 phút.",
+                key: ["flight", "at 3 P.M."],
+                opts: ["recognise", "hunt", "depart", "estimate"],
+                optsVi: ["công nhận", "săn", "khởi hành", "ước tính"],
+                correct: 2,
+                exp: "Máy bay cất cánh, chuyến bay khởi hành -> <b>depart</b>."
+            },
+            {
+                q: "We always prefer visiting natural wonders because they are unique and ______.",
+                qVi: "Chúng tôi luôn thích đến thăm các kỳ quan thiên nhiên vì chúng độc đáo và _______.",
+                key: ["natural wonders", "unique and"],
+                opts: ["historical", "charming", "remote", "adventurous"],
+                optsVi: ["thuộc lịch sử", "quyến rũ/hấp dẫn", "xa xôi", "thích phiêu lưu"],
+                correct: 1,
+                exp: "Kỳ quan thiên nhiên mang vẻ đẹp say đắm lòng người -> <b>charming</b>."
+            },
+            {
+                q: "The growth of mass tourism can harm the environment by causing pollution, soil ______, and habitat destruction.",
+                qVi: "Sự phát triển của du lịch đại chúng có thể gây hại cho môi trường bằng cách gây ra ô nhiễm, _______ đất và phá hủy môi trường sống.",
+                key: ["harm the environment", "soil"],
+                opts: ["guide", "entrance", "brochure", "erosion"],
+                optsVi: ["hướng dẫn", "lối vào", "tờ rơi", "sự xói mòn"],
+                correct: 3,
+                exp: "Đất bị bạc màu, sạt lở -> soil <b>erosion</b> (xói mòn đất)."
+            },
+            {
+                q: "While climbing the mountain for a better view, the tourists ______ the native birds.",
+                qVi: "Trong khi leo núi để có tầm nhìn tốt hơn, khách du lịch đã _______ những con chim bản địa.",
+                key: ["the native birds"],
+                opts: ["rented", "booked", "produced", "disturbed"],
+                optsVi: ["thuê", "đặt", "sản xuất", "làm phiền/xáo trộn"],
+                correct: 3,
+                exp: "Hoạt động du lịch làm ảnh hưởng đến động vật -> <b>disturbed</b>."
+            },
+            {
+                q: "Laws should be enacted to require people to ______ the natural habitats of various species.",
+                qVi: "Cần ban hành luật để yêu cầu mọi người _______ môi trường sống tự nhiên của các loài khác nhau.",
+                key: ["natural habitats"],
+                opts: ["admire", "discover", "respect", "explore"],
+                optsVi: ["chiêm ngưỡng", "khám phá", "tôn trọng", "thám hiểm"],
+                correct: 2,
+                exp: "Bảo vệ, không xâm phạm đến thiên nhiên -> <b>respect</b> natural habitats."
+            },
+            {
+                q: "It’s crucial to raise public ______ of the importance of preserving natural wonders.",
+                qVi: "Điều quan trọng là phải nâng cao _______ của công chúng về tầm quan trọng của việc bảo tồn các kỳ quan thiên nhiên.",
+                key: ["raise public"],
+                opts: ["brochure", "accommodation", "itinerary", "awareness"],
+                optsVi: ["tờ rơi", "chỗ ở", "lịch trình", "nhận thức"],
+                correct: 3,
+                exp: "Nâng cao nhận thức cộng đồng -> raise public <b>awareness</b>."
+            },
+            {
+                q: "The growth of mass tourism can threaten the survival of many ______ species.",
+                qVi: "Sự phát triển của du lịch đại chúng có thể đe dọa sự sống còn của nhiều loài _______.",
+                key: ["threaten the survival", "species"],
+                opts: ["endangered", "remote", "comfortable", "adventurous"],
+                optsVi: ["có nguy cơ tuyệt chủng", "xa xôi", "thoải mái", "phiêu lưu"],
+                correct: 0,
+                exp: "Các loài vật quý hiếm sắp biến mất -> <b>endangered</b> species."
+            },
+            {
+                q: "After the concert, the streets were filled with ______, giving off an unpleasant smell.",
+                qVi: "Sau buổi hòa nhạc, đường phố tràn ngập _______, bốc ra một mùi khó chịu.",
+                key: ["streets were filled with", "unpleasant smell"],
+                opts: ["plants", "traffic", "rubbish", "factory"],
+                optsVi: ["cây", "giao thông", "rác thải", "nhà máy"],
+                correct: 2,
+                exp: "Rác bị vứt đầy đường bốc mùi hôi thối -> <b>rubbish</b>."
+            },
+            {
+                q: "Household waste should be ______ into different categories before being recycled.",
+                qVi: "Rác thải sinh hoạt nên được _______ thành các loại khác nhau trước khi được tái chế.",
+                key: ["into different categories"],
+                opts: ["sorted", "preserved", "estimated", "hunted"],
+                optsVi: ["phân loại", "bảo tồn", "ước tính", "săn bắn"],
+                correct: 0,
+                exp: "Phân loại rác -> <b>sorted</b>."
+            },
+            {
+                q: "Extreme weather conditions can cause great ______ to plants and animals.",
+                qVi: "Điều kiện thời tiết khắc nghiệt có thể gây ra _______ lớn đối với thực vật và động vật.",
+                key: ["cause great", "to plants and animals"],
+                opts: ["waste", "energy", "damage", "accommodation"],
+                optsVi: ["rác thải", "năng lượng", "sự thiệt hại", "chỗ ở"],
+                correct: 2,
+                exp: "Gây thiệt hại, tàn phá -> cause <b>damage</b> to."
+            },
+            {
+                q: "Rising sea levels can cause ______ that destroy homes and natural habitats.",
+                qVi: "Mực nước biển dâng cao có thể gây ra _______ phá hủy nhà cửa và môi trường sống tự nhiên.",
+                key: ["Rising sea levels cause", "destroy homes"],
+                opts: ["droughts", "floods", "litter", "rubbish"],
+                optsVi: ["hạn hán", "lũ lụt", "xả rác", "rác thải"],
+                correct: 1,
+                exp: "Nước biển dâng dẫn đến ngập lụt -> <b>floods</b>."
+            },
+            {
+                q: "The smell of waste in nearby ______ made me feel sick.",
+                qVi: "Mùi chất thải ở các _______ gần đó khiến tôi cảm thấy buồn nôn.",
+                key: ["smell of waste in nearby"],
+                opts: ["brochures", "destinations", "routes", "landfills"],
+                optsVi: ["tờ rơi", "điểm đến", "tuyến đường", "bãi rác"],
+                correct: 3,
+                exp: "Nơi chứa rác bốc mùi -> <b>landfills</b> (bãi chôn lấp rác)."
+            },
+            {
+                q: "Protecting our natural environment while traveling is a shared ______.",
+                qVi: "Bảo vệ môi trường tự nhiên của chúng ta khi đi du lịch là một _______ chung.",
+                key: ["a shared"],
+                opts: ["vacation", "cost", "budget", "responsibility"],
+                optsVi: ["kỳ nghỉ", "chi phí", "ngân sách", "trách nhiệm"],
+                correct: 3,
+                exp: "Bảo vệ môi trường là trách nhiệm của tất cả mọi người -> shared <b>responsibility</b>."
+            },
+            {
+                q: "It’s important to clean plastic bottles before recycling to avoid ______.",
+                qVi: "Điều quan trọng là phải làm sạch chai nhựa trước khi tái chế để tránh _______.",
+                key: ["avoid"],
+                opts: ["tourism", "entrance", "contamination", "biodiversity"],
+                optsVi: ["du lịch", "lối vào", "sự ô nhiễm", "đa dạng sinh học"],
+                correct: 2,
+                exp: "Rửa sạch đồ nhựa để đồ tái chế không bị dính bẩn/tạp chất -> avoid <b>contamination</b>."
+            },
+            {
+                q: "Although ______ plastic bags are convenient, they can be harmful to the environment.",
+                qVi: "Mặc dù túi nhựa _______ rất tiện lợi, nhưng chúng có thể gây hại cho môi trường.",
+                key: ["plastic bags", "harmful"],
+                opts: ["single-use", "remote", "endangered", "charming"],
+                optsVi: ["dùng một lần", "xa xôi", "có nguy cơ tuyệt chủng", "duyên dáng"],
+                correct: 0,
+                exp: "Túi nilon dùng 1 lần gây ô nhiễm -> <b>single-use</b> plastic bags."
+            },
+            {
+                q: "By making small changes to our daily ______, we can help protect our planet.",
+                qVi: "Bằng cách thực hiện những thay đổi nhỏ đối với _______ hàng ngày của mình, chúng ta có thể giúp bảo vệ hành tinh của chúng ta.",
+                key: ["daily", "changes to"],
+                opts: ["habitats", "landfills", "suggestions", "routines"],
+                optsVi: ["môi trường sống", "bãi rác", "lời khuyên", "thói quen/lịch trình"],
+                correct: 3,
+                exp: "Những thói quen sinh hoạt hàng ngày -> daily <b>routines</b>."
+            },
+            {
+                q: "The construction of hotels to accommodate more tourists can endanger ______.",
+                qVi: "Việc xây dựng khách sạn để đáp ứng nhiều khách du lịch hơn có thể gây nguy hiểm cho _______.",
+                key: ["endanger"],
+                opts: ["contamination", "wildlife", "vacation", "package"],
+                optsVi: ["sự ô nhiễm", "động vật hoang dã", "kỳ nghỉ", "gói du lịch"],
+                correct: 1,
+                exp: "Xây khách sạn làm mất môi trường sống của động vật -> endanger <b>wildlife</b>."
+            },
+            {
+                q: "The homestay is praised for its efforts to go green by using ______ energy sources.",
+                qVi: "Homestay này được khen ngợi vì những nỗ lực sống xanh bằng cách sử dụng các nguồn năng lượng _______.",
+                key: ["go green", "energy sources"],
+                opts: ["urgent", "appealing", "renewable", "fixed"],
+                optsVi: ["khẩn cấp", "hấp dẫn", "có thể tái tạo", "cố định"],
+                correct: 2,
+                exp: "Sống xanh thì phải sử dụng năng lượng tái tạo (điện mặt trời, gió...) -> <b>renewable</b> energy."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
