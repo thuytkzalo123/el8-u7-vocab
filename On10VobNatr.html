@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Nature & Landscapes (90 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Nature & Landscapes (90 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">90</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">90</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // BATCH 1 (30 Câu)
+            {
+                q: "Ha Long Bay is one of the most famous natural ______ in northern Vietnam.",
+                qVi: "Vịnh Hạ Long là một trong những _______ thiên nhiên nổi tiếng nhất ở miền Bắc Việt Nam.",
+                key: ["famous natural"],
+                opts: ["experiences", "monuments", "handicrafts", "wonders"],
+                optsVi: ["trải nghiệm", "tượng đài", "đồ thủ công", "kỳ quan"],
+                correct: 3,
+                exp: "Kỳ quan thiên nhiên -> natural <b>wonders</b>."
+            },
+            {
+                q: "As soon as we received permission from the tour guide, we eagerly set out to ______ the cave.",
+                qVi: "Ngay sau khi nhận được sự cho phép từ hướng dẫn viên du lịch, chúng tôi háo hức bắt đầu _______ hang động.",
+                key: ["set out to", "the cave"],
+                opts: ["maintain", "manage", "explore", "accomplish"],
+                optsVi: ["duy trì", "quản lý", "khám phá", "hoàn thành"],
+                correct: 2,
+                exp: "Khám phá hang động -> <b>explore</b> the cave."
+            },
+            {
+                q: "During our last summer holiday, we drove through a vast ______, with nothing but dry earth and distant mountains in sight.",
+                qVi: "Trong kỳ nghỉ hè trước, chúng tôi đã lái xe qua một _______ rộng lớn, không có gì ngoài đất khô và những ngọn núi ở phía xa.",
+                key: ["vast", "dry earth and distant mountains"],
+                opts: ["landscape", "priority", "distraction", "congestion"],
+                optsVi: ["phong cảnh/cảnh quan", "sự ưu tiên", "sự xao nhãng", "sự tắc nghẽn"],
+                correct: 0,
+                exp: "Cảnh quan thiên nhiên rộng lớn -> vast <b>landscape</b>."
+            },
+            {
+                q: "Tourists are fascinated by snow-covered peaks and ______ rivers of the area.",
+                qVi: "Khách du lịch bị cuốn hút bởi những đỉnh núi phủ tuyết và những dòng sông _______ của khu vực.",
+                key: ["fascinated by", "rivers"],
+                opts: ["charming", "bustling", "balanced", "crowded"],
+                optsVi: ["quyến rũ/duyên dáng", "nhộn nhịp", "cân bằng", "đông đúc"],
+                correct: 0,
+                exp: "Dòng sông đẹp, quyến rũ -> <b>charming</b> rivers."
+            },
+            {
+                q: "We stood by the river bank for a few moments to ______ the glorious sunset.",
+                qVi: "Chúng tôi đứng bên bờ sông vài phút để _______ cảnh hoàng hôn rực rỡ.",
+                key: ["the glorious sunset"],
+                opts: ["suffer", "overcome", "admire", "concentrate"],
+                optsVi: ["chịu đựng", "vượt qua", "chiêm ngưỡng", "tập trung"],
+                correct: 2,
+                exp: "Ngắm nhìn, chiêm ngưỡng cảnh đẹp -> <b>admire</b>."
+            },
+            {
+                q: "Many natural heritage sites are at serious ______ due to the bad effects of human activities.",
+                qVi: "Nhiều di sản thiên nhiên đang gặp _______ nghiêm trọng do tác động xấu của các hoạt động con người.",
+                key: ["at serious", "bad effects"],
+                opts: ["line", "risk", "place", "mark"],
+                optsVi: ["hàng", "rủi ro/nguy hiểm", "nơi", "dấu ấn"],
+                correct: 1,
+                exp: "Gặp nguy hiểm -> at serious <b>risk</b>."
+            },
+            {
+                q: "Raising public awareness and promoting ______ development are crucial in preserving natural wonders.",
+                qVi: "Nâng cao nhận thức cộng đồng và thúc đẩy sự phát triển _______ là rất quan trọng trong việc bảo tồn các kỳ quan thiên nhiên.",
+                key: ["promoting", "development", "preserving"],
+                opts: ["sustainable", "additional", "appropriate", "optimistic"],
+                optsVi: ["bền vững", "bổ sung", "thích hợp", "lạc quan"],
+                correct: 0,
+                exp: "Phát triển bền vững (vừa phát triển vừa bảo vệ môi trường) -> <b>sustainable</b> development."
+            },
+            {
+                q: "Providing eco-tours can help ______ local tourism, thereby contributing to the growth of the local economy.",
+                qVi: "Cung cấp các tour du lịch sinh thái có thể giúp _______ du lịch địa phương, từ đó đóng góp vào sự tăng trưởng của nền kinh tế địa phương.",
+                key: ["help", "local tourism", "growth"],
+                opts: ["suggest", "boost", "explore", "process"],
+                optsVi: ["đề xuất", "thúc đẩy/tăng cường", "khám phá", "xử lý"],
+                correct: 1,
+                exp: "Thúc đẩy, làm tăng trưởng -> <b>boost</b>."
+            },
+            {
+                q: "They don't ______ touching the statue for fear of damaging its original beauty.",
+                qVi: "Họ không _______ việc chạm vào bức tượng vì sợ làm hỏng vẻ đẹp nguyên bản của nó.",
+                key: ["don't", "touching the statue"],
+                opts: ["protect", "preserve", "permit", "widen"],
+                optsVi: ["bảo vệ", "bảo tồn", "cho phép", "mở rộng"],
+                correct: 2,
+                exp: "Cho phép làm gì (permit + V-ing) -> don't <b>permit</b> touching."
+            },
+            {
+                q: "The bay is a ______, renowned for its unspoiled beauty and refreshing air.",
+                qVi: "Vịnh này là một _______, nổi tiếng với vẻ đẹp hoang sơ và không khí trong lành.",
+                key: ["unspoiled beauty", "refreshing air"],
+                opts: ["custom", "structure", "paradise", "gratitude"],
+                optsVi: ["phong tục", "cấu trúc", "thiên đường", "lòng biết ơn"],
+                correct: 2,
+                exp: "Nơi có cảnh quan tuyệt đẹp được ví như <b>paradise</b> (thiên đường)."
+            },
+            {
+                q: "The ______ festival marks the beginning of a week-long holiday.",
+                qVi: "Lễ hội _______ đánh dấu sự bắt đầu của một kỳ nghỉ kéo dài một tuần.",
+                key: ["festival"],
+                opts: ["annual", "complex", "sustainable", "occupied"],
+                optsVi: ["hàng năm", "phức tạp/quần thể", "bền vững", "bị chiếm đóng"],
+                correct: 0,
+                exp: "Lễ hội được tổ chức mỗi năm một lần -> <b>annual</b> festival."
+            },
+            {
+                q: "The rich biological ______ of the rainforest captivates every explorer.",
+                qVi: "Sự _______ sinh học phong phú của rừng nhiệt đới làm say đắm mọi nhà thám hiểm.",
+                key: ["biological", "rich"],
+                opts: ["heritage", "fragrance", "ingredient", "diversity"],
+                optsVi: ["di sản", "hương thơm", "thành phần", "sự đa dạng"],
+                correct: 3,
+                exp: "Đa dạng sinh học -> biological <b>diversity</b> (biodiversity)."
+            },
+            {
+                q: "There is easy ______ to the rainforest by road, but travel can be dangerous on rainy days.",
+                qVi: "Có sự _______ dễ dàng đến rừng nhiệt đới bằng đường bộ, nhưng việc đi lại có thể nguy hiểm vào những ngày mưa.",
+                key: ["easy", "to the rainforest by road"],
+                opts: ["pride", "access", "ritual", "paradise"],
+                optsVi: ["niềm tự hào", "sự tiếp cận/đường vào", "nghi lễ", "thiên đường"],
+                correct: 1,
+                exp: "Đường vào, lối vào, sự đi tới -> easy <b>access</b> to."
+            },
+            {
+                q: "The local authorities have taken ______ measures to prevent the beach from becoming polluted.",
+                qVi: "Các cơ quan chức năng địa phương đã thực hiện các biện pháp _______ để ngăn bãi biển bị ô nhiễm.",
+                key: ["measures", "prevent"],
+                opts: ["historic", "ancient", "urgent", "peaceful"],
+                optsVi: ["có tính lịch sử", "cổ kính", "khẩn cấp", "yên bình"],
+                correct: 2,
+                exp: "Cần hành động ngay lập tức -> <b>urgent</b> measures (biện pháp khẩn cấp)."
+            },
+            {
+                q: "Trang An Landscape Complex is ______ in Ninh Binh Province, in northern Vietnam.",
+                qVi: "Quần thể danh thắng Tràng An _______ ở tỉnh Ninh Bình, miền Bắc Việt Nam.",
+                key: ["in Ninh Binh Province"],
+                opts: ["located", "explored", "admired", "observed"],
+                optsVi: ["tọa lạc/nằm ở", "được khám phá", "được chiêm ngưỡng", "được quan sát"],
+                correct: 0,
+                exp: "Chỉ vị trí địa lý -> be <b>located</b> in."
+            },
+            {
+                q: "When we suggested travelling to Ha Long Bay by car, he agreed without _______.",
+                qVi: "Khi chúng tôi đề nghị đi ô tô đến Vịnh Hạ Long, anh ấy đã đồng ý mà không _______.",
+                key: ["agreed without"],
+                opts: ["beauty", "hesitation", "contribution", "distraction"],
+                optsVi: ["vẻ đẹp", "sự do dự", "sự đóng góp", "sự xao nhãng"],
+                correct: 1,
+                exp: "Đồng ý ngay lập tức, không đắn đo -> without <b>hesitation</b>."
+            },
+            {
+                q: "The way down the hill is quite ______, so remember to wear appropriate shoes.",
+                qVi: "Đường xuống đồi khá _______, vì vậy hãy nhớ đi giày phù hợp.",
+                key: ["down the hill", "wear appropriate shoes"],
+                opts: ["proper", "alert", "skilled", "slippery"],
+                optsVi: ["thích hợp", "cảnh giác", "lành nghề", "trơn trượt"],
+                correct: 3,
+                exp: "Đường đồi cần đi giày chống trượt vì nó <b>slippery</b> (trơn trượt)."
+            },
+            {
+                q: "Our family is ______ visiting Trang An Landscape Complex on Independence Day to enjoy its scenic beauty.",
+                qVi: "Gia đình chúng tôi đang _______ việc đến thăm Quần thể Danh thắng Tràng An vào Ngày Quốc khánh để thưởng thức vẻ đẹp phong cảnh của nó.",
+                key: ["visiting (V-ing)"],
+                opts: ["considering", "gaining", "suffering", "purchasing"],
+                optsVi: ["cân nhắc", "thu được", "chịu đựng", "mua"],
+                correct: 0,
+                exp: "Xem xét, cân nhắc làm gì -> <b>considering</b> + V-ing."
+            },
+            {
+                q: "Ha Long Bay is the only natural heritage site to be ______ twice by UNESCO.",
+                qVi: "Vịnh Hạ Long là di sản thiên nhiên duy nhất được UNESCO _______ hai lần.",
+                key: ["twice by UNESCO"],
+                opts: ["permitted", "preserved", "recognised", "located"],
+                optsVi: ["được cho phép", "được bảo tồn", "được công nhận", "tọa lạc"],
+                correct: 2,
+                exp: "Được tổ chức UNESCO công nhận -> <b>recognised</b>."
+            },
+            {
+                q: "The mountain range is a ______ site that receives millions of tourists each year.",
+                qVi: "Dãy núi là một địa điểm _______ đón hàng triệu khách du lịch mỗi năm.",
+                key: ["mountain range", "site"],
+                opts: ["convenient", "modern", "reliable", "majestic"],
+                optsVi: ["tiện lợi", "hiện đại", "đáng tin cậy", "hùng vĩ/tráng lệ"],
+                correct: 3,
+                exp: "Cảnh núi non to lớn, đẹp đẽ -> <b>majestic</b>."
+            },
+            {
+                q: "The bike race through the valley, which ______ annually, is an important feature of the region.",
+                qVi: "Cuộc đua xe đạp qua thung lũng, được _______ hàng năm, là một nét đặc trưng quan trọng của khu vực.",
+                key: ["annually"],
+                opts: ["maintains", "delays", "promotes", "occurs"],
+                optsVi: ["duy trì", "trì hoãn", "thúc đẩy", "xảy ra/diễn ra"],
+                correct: 3,
+                exp: "Sự kiện diễn ra hàng năm -> <b>occurs</b>."
+            },
+            {
+                q: "Deforestation poses a threat to the ______ of the tropical rainforest.",
+                qVi: "Nạn phá rừng gây ra mối đe dọa đối với _______ của rừng mưa nhiệt đới.",
+                key: ["tropical rainforest", "threat to"],
+                opts: ["generation", "biodiversity", "tradition", "craft"],
+                optsVi: ["thế hệ", "đa dạng sinh học", "truyền thống", "nghề thủ công"],
+                correct: 1,
+                exp: "Phá rừng làm mất đi môi trường sống của động thực vật -> đe dọa <b>biodiversity</b> (sự đa dạng sinh học)."
+            },
+            {
+                q: "Establishing natural parks could play a crucial role in ______ damaged ecosystems.",
+                qVi: "Việc thành lập các công viên tự nhiên có thể đóng vai trò quan trọng trong việc _______ các hệ sinh thái bị hư hại.",
+                key: ["damaged ecosystems"],
+                opts: ["restoring", "destroying", "associating", "accomplishing"],
+                optsVi: ["khôi phục/phục hồi", "phá hủy", "liên kết", "hoàn thành"],
+                correct: 0,
+                exp: "Phục hồi lại hệ sinh thái đã hỏng -> <b>restoring</b>."
+            },
+            {
+                q: "The Great Barrier Reef is an ideal travel ______ for those seeking adventure.",
+                qVi: "Rạn san hô Great Barrier là một _______ du lịch lý tưởng cho những ai tìm kiếm sự phiêu lưu.",
+                key: ["ideal travel"],
+                opts: ["heritage", "diet", "advice", "destination"],
+                optsVi: ["di sản", "chế độ ăn", "lời khuyên", "điểm đến"],
+                correct: 3,
+                exp: "Điểm đến du lịch -> travel <b>destination</b>."
+            },
+            {
+                q: "Unlike other boys his age, my 13-year-old is ______ about exploring marine life.",
+                qVi: "Không giống như những cậu bé khác cùng tuổi, đứa con 13 tuổi của tôi rất _______ khám phá sinh vật biển.",
+                key: ["___ about exploring"],
+                opts: ["interested", "crazy", "leisure", "pricey"],
+                optsVi: ["quan tâm (đi với in)", "phát cuồng/rất thích", "thư giãn", "đắt đỏ"],
+                correct: 1,
+                exp: "Cấu trúc: be <b>crazy</b> about (rất thích, đam mê cái gì)."
+            },
+            {
+                q: "Trang An Landscape Complex ______ a unique natural feature unmatched by any other place in Vietnam.",
+                qVi: "Quần thể Danh thắng Tràng An _______ một nét đặc trưng tự nhiên độc đáo không nơi nào khác ở Việt Nam sánh kịp.",
+                key: ["a unique natural feature"],
+                opts: ["recognises", "restores", "possesses", "explores"],
+                optsVi: ["công nhận", "phục hồi", "sở hữu", "khám phá"],
+                correct: 2,
+                exp: "Có, sở hữu đặc điểm gì -> <b>possesses</b>."
+            },
+            {
+                q: "When we reached the ______ of the mountain, we saw countless plastic bags and water bottles.",
+                qVi: "Khi chúng tôi lên đến _______ của ngọn núi, chúng tôi đã nhìn thấy vô số túi nilon và chai nước.",
+                key: ["reached the", "of the mountain"],
+                opts: ["peak", "possession", "wonder", "fragrance"],
+                optsVi: ["đỉnh", "sự sở hữu", "kỳ quan", "hương thơm"],
+                correct: 0,
+                exp: "Đỉnh núi -> the <b>peak</b>."
+            },
+            {
+                q: "Massive rock ______ and deep canyons create a magnificent landscape.",
+                qVi: "Các _______ đá khổng lồ và hẻm núi sâu tạo nên một cảnh quan tráng lệ.",
+                key: ["rock"],
+                opts: ["diets", "rituals", "formations", "customs"],
+                optsVi: ["chế độ ăn", "nghi lễ", "hệ tầng/sự hình thành", "phong tục"],
+                correct: 2,
+                exp: "Khối đá, cấu trúc đá tự nhiên -> rock <b>formations</b>."
+            },
+            {
+                q: "Upon reaching the summit, we were amazed by the ______ view below.",
+                qVi: "Khi lên đến đỉnh, chúng tôi vô cùng kinh ngạc trước quang cảnh _______ bên dưới.",
+                key: ["amazed by", "view"],
+                opts: ["spectacular", "historic", "narrow", "local"],
+                optsVi: ["ngoạn mục/hùng vĩ", "lịch sử", "hẹp", "địa phương"],
+                correct: 0,
+                exp: "Cảnh đẹp hùng vĩ, tuyệt vời -> <b>spectacular</b> view."
+            },
+            {
+                q: "As the world's largest cave, Son Doong Cave features many areas that are not easily ______.",
+                qVi: "Là hang động lớn nhất thế giới, hang Sơn Đoòng có nhiều khu vực không dễ dàng _______.",
+                key: ["not easily"],
+                opts: ["pricey", "accessible", "convenient", "modern"],
+                optsVi: ["đắt đỏ", "có thể tiếp cận/đi vào", "tiện lợi", "hiện đại"],
+                correct: 1,
+                exp: "Hang động sâu và hiểm trở nên khó đi vào -> not easily <b>accessible</b>."
+            },
+            
+            // BATCH 2 (30 Câu)
+            {
+                q: "While ______ along the river, tourists can admire the fantastic rock formations.",
+                qVi: "Trong khi _______ dọc theo dòng sông, du khách có thể chiêm ngưỡng những khối đá tuyệt đẹp.",
+                key: ["along the river"],
+                opts: ["shining", "carrying", "floating", "reaching"],
+                optsVi: ["tỏa sáng", "mang vác", "trôi nổi/thả trôi", "chạm tới"],
+                correct: 2,
+                exp: "Đi thuyền trôi dọc theo sông -> <b>floating</b>."
+            },
+            {
+                q: "People will be subject to a heavy fine for ______ at the beach.",
+                qVi: "Mọi người sẽ bị phạt nặng vì tội _______ ở bãi biển.",
+                key: ["heavy fine for"],
+                opts: ["littering", "exploring", "admiring", "observing"],
+                optsVi: ["xả rác", "khám phá", "chiêm ngưỡng", "quan sát"],
+                correct: 0,
+                exp: "Bị phạt tiền do hành vi xấu là xả rác bừa bãi -> <b>littering</b>."
+            },
+            {
+                q: "Tourists are not allowed to enter the ancient rainforest for fear of ______ it.",
+                qVi: "Khách du lịch không được phép vào khu rừng nhiệt đới cổ xưa vì sợ _______ nó.",
+                key: ["fear of"],
+                opts: ["spoiling", "occupying", "promoting", "memorising"],
+                optsVi: ["làm hỏng", "chiếm đóng", "thúc đẩy", "ghi nhớ"],
+                correct: 0,
+                exp: "Làm hỏng, phá hoại vẻ đẹp tự nhiên -> <b>spoiling</b>."
+            },
+            {
+                q: "Don't touch or ______ any ancient artefacts on display at the exhibition.",
+                qVi: "Không chạm vào hoặc _______ bất kỳ đồ tạo tác cổ nào được trưng bày tại triển lãm.",
+                key: ["Don't touch or", "artefacts"],
+                opts: ["fine", "disturb", "pursue", "promise"],
+                optsVi: ["phạt", "làm phiền/xáo trộn", "theo đuổi", "hứa"],
+                correct: 1,
+                exp: "Làm xáo trộn, di dời hiện vật -> <b>disturb</b>."
+            },
+            {
+                q: "Though it's illegal to ______ wild animals, many people still commit the offence.",
+                qVi: "Mặc dù _______ động vật hoang dã là bất hợp pháp, nhiều người vẫn vi phạm.",
+                key: ["illegal", "wild animals"],
+                opts: ["explore", "promote", "litter", "hunt"],
+                optsVi: ["khám phá", "thúc đẩy", "xả rác", "săn bắt"],
+                correct: 3,
+                exp: "Săn bắt động vật hoang dã -> <b>hunt</b>."
+            },
+            {
+                q: "The ______ asked the tourists not to start any fires in the forest.",
+                qVi: "_______ đã yêu cầu du khách không đốt bất kỳ ngọn lửa nào trong rừng.",
+                key: ["fires in the forest"],
+                opts: ["agent", "artisan", "ranger", "explorer"],
+                optsVi: ["đại lý", "nghệ nhân", "kiểm lâm", "nhà thám hiểm"],
+                correct: 2,
+                exp: "Người bảo vệ và quản lý rừng -> forest <b>ranger</b> (kiểm lâm)."
+            },
+            {
+                q: "The local government has taken ______ to preserve the original architecture of the old town.",
+                qVi: "Chính quyền địa phương đã thực hiện _______ để bảo tồn kiến trúc nguyên bản của khu phố cổ.",
+                key: ["taken", "to preserve"],
+                opts: ["recognition", "handicrafts", "measures", "trends"],
+                optsVi: ["sự công nhận", "đồ thủ công", "biện pháp", "xu hướng"],
+                correct: 2,
+                exp: "Áp dụng, thực hiện biện pháp -> take <b>measures</b>."
+            },
+            {
+                q: "The number of tourists to the Great Barrier Reef is ______ to protect it from damage.",
+                qVi: "Số lượng khách du lịch đến Rạn san hô Great Barrier bị _______ để bảo vệ nó khỏi bị hư hại.",
+                key: ["number of tourists", "to protect it"],
+                opts: ["extended", "urgent", "majestic", "limited"],
+                optsVi: ["mở rộng", "khẩn cấp", "hùng vĩ", "hạn chế"],
+                correct: 3,
+                exp: "Giới hạn số lượng người để bảo tồn -> <b>limited</b>."
+            },
+            {
+                q: "Hundreds of tourists visit Bản Giốc Waterfall to admire its ______ views.",
+                qVi: "Hàng trăm khách du lịch ghé thăm Thác Bản Giốc để chiêm ngưỡng quang cảnh _______ của nó.",
+                key: ["admire its", "views"],
+                opts: ["affordable", "breathtaking", "memorable", "sustainable"],
+                optsVi: ["giá cả phải chăng", "ngoạn mục/đẹp đến nghẹt thở", "đáng nhớ", "bền vững"],
+                correct: 1,
+                exp: "Cảnh đẹp ngoạn mục -> <b>breathtaking</b> views."
+            },
+            {
+                q: "While local foods on Phú Quốc Island are ______, they can be quite pricey.",
+                qVi: "Mặc dù các món ăn địa phương trên đảo Phú Quốc rất _______, nhưng chúng có thể khá đắt đỏ.",
+                key: ["foods", "While", "pricey"],
+                opts: ["tasty", "affordable", "friendly", "spectacular"],
+                optsVi: ["ngon", "giá cả phải chăng", "thân thiện", "ngoạn mục"],
+                correct: 0,
+                exp: "Món ăn thì mang tính chất <b>tasty</b> (ngon miệng)."
+            },
+            {
+                q: "Tourists can swim in a ______ underground lake within the cave.",
+                qVi: "Du khách có thể bơi trong một hồ nước ngầm _______ bên trong hang động.",
+                key: ["swim in a"],
+                opts: ["bustling", "refreshing", "safe", "dangerous"],
+                optsVi: ["nhộn nhịp", "mát mẻ/sảng khoái", "an toàn", "nguy hiểm"],
+                correct: 1,
+                exp: "Nước mát mẻ, tạo cảm giác sảng khoái -> <b>refreshing</b>."
+            },
+            {
+                q: "Many tourists ______ boats to explore the vibrant life at the floating market.",
+                qVi: "Nhiều khách du lịch _______ thuyền để khám phá cuộc sống sôi động tại chợ nổi.",
+                key: ["boats to explore"],
+                opts: ["rented", "promoted", "occupied", "damaged"],
+                optsVi: ["thuê", "quảng bá", "chiếm đóng", "làm hỏng"],
+                correct: 0,
+                exp: "Thuê thuyền đi dạo -> <b>rented</b> boats."
+            },
+            {
+                q: "One of the most ______ features of this cave is its depth.",
+                qVi: "Một trong những đặc điểm _______ nhất của hang động này là độ sâu của nó.",
+                key: ["features"],
+                opts: ["memorable", "limited", "historic", "outstanding"],
+                optsVi: ["đáng nhớ", "hạn chế", "có tính lịch sử", "nổi bật/xuất sắc"],
+                correct: 3,
+                exp: "Đặc điểm nổi bật, dễ nhận thấy nhất -> <b>outstanding</b> features."
+            },
+            {
+                q: "The rock formations at Phong Nha – Ke Bang Cave create an impressive ______.",
+                qVi: "Các khối đá tại Hang Phong Nha – Kẻ Bàng tạo ra một _______ ấn tượng.",
+                key: ["rock formations", "create an impressive"],
+                opts: ["craft", "trend", "sight", "experience"],
+                optsVi: ["nghề thủ công", "xu hướng", "cảnh tượng/tầm nhìn", "trải nghiệm"],
+                correct: 2,
+                exp: "Cảnh tượng đẹp mắt -> impressive <b>sight</b>."
+            },
+            {
+                q: "Over time, water has ______ the rock into the canyon that impresses every tourist.",
+                qVi: "Theo thời gian, nước đã _______ đá thành hẻm núi khiến mọi du khách đều ấn tượng.",
+                key: ["water has", "the rock into"],
+                opts: ["stretched", "interacted", "processed", "carved"],
+                optsVi: ["kéo dài", "tương tác", "xử lý", "bào mòn/chạm khắc"],
+                correct: 3,
+                exp: "Dòng nước chảy lâu ngày tạo hình/bào mòn đá -> <b>carved</b>."
+            },
+            {
+                q: "When explorers first discovered the cave, they were unable to enter due to the ______ rocks blocking the entrance.",
+                qVi: "Khi các nhà thám hiểm lần đầu tiên phát hiện ra hang động, họ không thể vào do các tảng đá _______ chặn lối vào.",
+                key: ["rocks blocking the entrance"],
+                opts: ["urgent", "massive", "dusty", "itchy"],
+                optsVi: ["khẩn cấp", "khổng lồ/to lớn", "bụi bặm", "ngứa"],
+                correct: 1,
+                exp: "Tảng đá to lớn chắn đường -> <b>massive</b> rocks."
+            },
+            {
+                q: "Many tourists prefer a hotel in a beautiful mountain ______.",
+                qVi: "Nhiều du khách thích một khách sạn trong một _______ núi non tuyệt đẹp.",
+                key: ["in a beautiful mountain"],
+                opts: ["complex", "structure", "priority", "setting"],
+                optsVi: ["khu phức hợp", "cấu trúc", "sự ưu tiên", "bối cảnh/khung cảnh"],
+                correct: 3,
+                exp: "Khung cảnh núi non -> mountain <b>setting</b>."
+            },
+            {
+                q: "There is growing ______ that it is important to protect natural wonders from damage.",
+                qVi: "Có một sự _______ ngày càng tăng rằng việc bảo vệ các kỳ quan thiên nhiên khỏi bị hư hại là điều quan trọng.",
+                key: ["There is growing"],
+                opts: ["distraction", "confidence", "recognition", "performance"],
+                optsVi: ["sự xao nhãng", "sự tự tin", "sự công nhận/nhận thức", "màn trình diễn"],
+                correct: 2,
+                exp: "Nhận thức của mọi người dần tăng lên -> growing <b>recognition</b>."
+            },
+            {
+                q: "The resort is beautifully situated in a quiet ______ near the river.",
+                qVi: "Khu nghỉ dưỡng tọa lạc tuyệt đẹp tại một _______ yên tĩnh gần sông.",
+                key: ["situated in a quiet"],
+                opts: ["spot", "campus", "monument", "takeaway"],
+                optsVi: ["địa điểm/nơi", "khuôn viên", "tượng đài", "đồ ăn mang đi"],
+                correct: 0,
+                exp: "Địa điểm, nơi chốn -> <b>spot</b>."
+            },
+            {
+                q: "The island is located close to a fishing village with a ______ harbour.",
+                qVi: "Hòn đảo nằm gần một làng chài với một bến cảng _______.",
+                key: ["harbour"],
+                opts: ["urgent", "basic", "picturesque", "memorable"],
+                optsVi: ["khẩn cấp", "cơ bản", "đẹp như tranh vẽ", "đáng nhớ"],
+                correct: 2,
+                exp: "Cảnh đẹp như tranh -> <b>picturesque</b>."
+            },
+            {
+                q: "The width of Sơn Đoòng Cave is ______ – it's very hard to believe.",
+                qVi: "Chiều rộng của Hang Sơn Đoòng thật _______ – rất khó tin.",
+                key: ["hard to believe"],
+                opts: ["administrative", "picturesque", "geological", "astounding"],
+                optsVi: ["thuộc hành chính", "đẹp như tranh vẽ", "thuộc địa chất", "đáng kinh ngạc"],
+                correct: 3,
+                exp: "Đáng kinh ngạc, gây sửng sốt -> <b>astounding</b>."
+            },
+            {
+                q: "Located in central Vietnam, Thien Duong, or Paradise Cave is a great ______ spot.",
+                qVi: "Nằm ở miền Trung Việt Nam, Động Thiên Đường là một địa điểm _______ tuyệt vời.",
+                key: ["spot"],
+                opts: ["barefoot", "sight-seeing", "thrilling", "unpleasant"],
+                optsVi: ["chân trần", "ngắm cảnh", "hồi hộp", "khó chịu"],
+                correct: 1,
+                exp: "Địa điểm ngắm cảnh/tham quan -> <b>sight-seeing</b> spot."
+            },
+            {
+                q: "The ______ of this man-made wonder have captivated tourists from around the world.",
+                qVi: "Những _______ của kỳ quan nhân tạo này đã làm say đắm khách du lịch từ khắp nơi trên thế giới.",
+                key: ["man-made wonder"],
+                opts: ["trends", "handicrafts", "ruins", "reefs"],
+                optsVi: ["xu hướng", "đồ thủ công", "tàn tích/phế tích", "rạn san hô"],
+                correct: 2,
+                exp: "Kỳ quan nhân tạo xưa cũ còn sót lại -> <b>ruins</b> (tàn tích)."
+            },
+            {
+                q: "Viewed from any angle, Ha Long Bay looks like a ______ of art.",
+                qVi: "Nhìn từ góc độ nào, Vịnh Hạ Long cũng giống như một _______ nghệ thuật.",
+                key: ["___ of art"],
+                opts: ["skill", "work", "theme", "trend"],
+                optsVi: ["kỹ năng", "tác phẩm", "chủ đề", "xu hướng"],
+                correct: 1,
+                exp: "Cụm từ: <b>work</b> of art (tác phẩm nghệ thuật)."
+            },
+            {
+                q: "Visiting Ha Long Bay was ______ because of its impressive natural beauty and delicious food.",
+                qVi: "Đến thăm Vịnh Hạ Long thật _______ vì vẻ đẹp tự nhiên ấn tượng và những món ăn ngon của nó.",
+                key: ["impressive natural beauty"],
+                opts: ["unforgettable", "grand", "basic", "ancient"],
+                optsVi: ["không thể nào quên", "to lớn/hùng vĩ", "cơ bản", "cổ kính"],
+                correct: 0,
+                exp: "Trải nghiệm tuyệt vời, không thể quên -> <b>unforgettable</b>."
+            },
+            {
+                q: "Exploring this dark and ______ cave provides memorable experiences.",
+                qVi: "Khám phá hang động tối tăm và _______ này mang lại những trải nghiệm đáng nhớ.",
+                key: ["dark and", "cave"],
+                opts: ["urgent", "limited", "mysterious", "geological"],
+                optsVi: ["khẩn cấp", "hạn chế", "bí ẩn", "địa chất"],
+                correct: 2,
+                exp: "Hang động tối tăm thường mang vẻ <b>mysterious</b> (bí ẩn)."
+            },
+            {
+                q: "The Royal Citadel in Hue, a UNESCO World Heritage Site, is definitely ______ visiting.",
+                qVi: "Hoàng Thành Huế, một Di sản Thế giới được UNESCO công nhận, chắc chắn _______ để ghé thăm.",
+                key: ["definitely", "visiting"],
+                opts: ["urgent", "memorable", "barefoot", "worth"],
+                optsVi: ["khẩn cấp", "đáng nhớ", "chân trần", "đáng giá"],
+                correct: 3,
+                exp: "Cấu trúc: be <b>worth</b> V-ing (đáng để làm gì)."
+            },
+            {
+                q: "The island's tropical green jungle with ______ waterfalls attracts every tourist.",
+                qVi: "Khu rừng nhiệt đới xanh tươi của hòn đảo với những thác nước _______ thu hút mọi khách du lịch.",
+                key: ["waterfalls", "attracts"],
+                opts: ["affordable", "tasty", "gorgeous", "crowded"],
+                optsVi: ["giá phải chăng", "ngon", "tuyệt đẹp/lộng lẫy", "đông đúc"],
+                correct: 2,
+                exp: "Thác nước tuyệt đẹp -> <b>gorgeous</b> waterfalls."
+            },
+            {
+                q: "Snorkelling during your visit to Phú Quốc Island offers a ______ experience.",
+                qVi: "Lặn với ống thở trong chuyến thăm Đảo Phú Quốc mang đến một trải nghiệm _______.",
+                key: ["offers a", "experience"],
+                opts: ["basic", "unique", "liveable", "congested"],
+                optsVi: ["cơ bản", "độc đáo", "đáng sống", "tắc nghẽn"],
+                correct: 1,
+                exp: "Một trải nghiệm độc đáo, khác biệt -> <b>unique</b> experience."
+            },
+            {
+                q: "At Cúc Phương National Park, tourists have the chance to observe a ______ range of plants and animals.",
+                qVi: "Tại Vườn quốc gia Cúc Phương, khách du lịch có cơ hội quan sát một phạm vi _______ các loài thực vật và động vật.",
+                key: ["a ___ range of"],
+                opts: ["memorable", "historic", "sustainable", "diverse"],
+                optsVi: ["đáng nhớ", "lịch sử", "bền vững", "đa dạng"],
+                correct: 3,
+                exp: "Cụm từ: a <b>diverse</b> range of (sự đa dạng/nhiều chủng loại)."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
