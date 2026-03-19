@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Technology & Education (50 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Technology & Education (50 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">50</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">50</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "In an ______, students can stay at home and join the lesson through a computer.",
+                qVi: "Trong một _______, học sinh có thể ở nhà và tham gia bài học thông qua máy tính.",
+                key: ["stay at home", "through a computer"],
+                opts: ["face-to-face class", "online class", "breakout room", "invention"],
+                optsVi: ["lớp học trực tiếp", "lớp học trực tuyến", "phòng chia nhỏ (trong Zoom)", "phát minh"],
+                correct: 1,
+                exp: "Học qua máy tính ở nhà là tham gia <b>online class</b> (lớp học trực tuyến)."
+            },
+            {
+                q: "Traditional ______ learning allows students to talk directly to their teachers.",
+                qVi: "Học _______ truyền thống cho phép học sinh nói chuyện trực tiếp với giáo viên của mình.",
+                key: ["Traditional", "talk directly"],
+                opts: ["digital", "face-to-face", "online", "convenient"],
+                optsVi: ["kỹ thuật số", "trực tiếp (mặt đối mặt)", "trực tuyến", "thuận tiện"],
+                correct: 1,
+                exp: "Học tập truyền thống, gặp mặt trực tiếp là <b>face-to-face</b> learning."
+            },
+            {
+                q: "It’s hard to ______ on the lesson when there is too much noise outside.",
+                qVi: "Rất khó để _______ vào bài học khi có quá nhiều tiếng ồn bên ngoài.",
+                key: ["hard to", "on the lesson", "noise"],
+                opts: ["interact", "concentrate", "develop", "invent"],
+                optsVi: ["tương tác", "tập trung", "phát triển", "phát minh"],
+                correct: 1,
+                exp: "Cấu trúc: <b>concentrate</b> on (tập trung vào)."
+            },
+            {
+                q: "In the future, a ______ might replace a human teacher to mark students' work.",
+                qVi: "Trong tương lai, một _______ có thể thay thế giáo viên con người để chấm bài của học sinh.",
+                key: ["replace a human teacher", "mark students' work"],
+                opts: ["inventor", "robot teacher", "platform", "light bulb"],
+                optsVi: ["nhà phát minh", "giáo viên robot", "nền tảng", "bóng đèn"],
+                correct: 1,
+                exp: "Thay thế giáo viên con người là <b>robot teacher</b>."
+            },
+            {
+                q: "Teachers often ______ by writing notes on students' essays.",
+                qVi: "Giáo viên thường _______ bằng cách viết các ghi chú trên bài luận của học sinh.",
+                key: ["writing notes on students' essays"],
+                opts: ["check the attendance", "give feedback", "carry out", "discover"],
+                optsVi: ["điểm danh", "đưa ra phản hồi/nhận xét", "thực hiện", "khám phá"],
+                correct: 1,
+                exp: "Viết ghi chú, nhận xét để giúp học sinh sửa sai gọi là <b>give feedback</b>."
+            },
+            {
+                q: "Zoom is a popular ______ for hosting online meetings and classes.",
+                qVi: "Zoom là một _______ phổ biến để tổ chức các cuộc họp và lớp học trực tuyến.",
+                key: ["Zoom is a popular", "hosting online meetings"],
+                opts: ["platform", "device", "experiment", "solution"],
+                optsVi: ["nền tảng", "thiết bị", "thí nghiệm", "giải pháp"],
+                correct: 0,
+                exp: "Zoom, Google Meet, MS Teams được gọi là các <b>platform</b> (nền tảng)."
+            },
+            {
+                q: "During the lesson, the teacher divided us into small groups in a ______.",
+                qVi: "Trong suốt bài học, giáo viên đã chia chúng tôi thành các nhóm nhỏ trong một _______.",
+                key: ["divided us into small groups"],
+                opts: ["computer screen", "3D contact lens", "breakout room", "vaccine"],
+                optsVi: ["màn hình máy tính", "kính áp tròng 3D", "phòng chia nhỏ (khi học online)", "vắc-xin"],
+                correct: 2,
+                exp: "Trong các phần mềm học trực tuyến, giáo viên dùng <b>breakout room</b> để chia nhóm nhỏ."
+            },
+            {
+                q: "Digital technology helps students ______ their classmates more easily.",
+                qVi: "Công nghệ kỹ thuật số giúp học sinh _______ với bạn cùng lớp dễ dàng hơn.",
+                key: ["helps students", "classmates"],
+                opts: ["interact with", "get ill", "mark the work", "invent"],
+                optsVi: ["tương tác với", "bị ốm", "chấm bài", "phát minh"],
+                correct: 0,
+                exp: "Giao tiếp, trao đổi qua lại -> <b>interact with</b>."
+            },
+            {
+                q: "To prevent ______, many schools use software to see if students copy work from the Internet.",
+                qVi: "Để ngăn chặn _______, nhiều trường học sử dụng phần mềm để xem liệu học sinh có sao chép bài từ Internet hay không.",
+                key: ["prevent", "copy work from the Internet"],
+                opts: ["truancy", "cheating", "technology", "solution"],
+                optsVi: ["sự trốn học", "sự gian lận", "công nghệ", "giải pháp"],
+                correct: 1,
+                exp: "Hành động sao chép (copy) bài là <b>cheating</b> (gian lận)."
+            },
+            {
+                q: "The teacher uses a tablet to ______ every morning to see who is absent.",
+                qVi: "Giáo viên sử dụng máy tính bảng để _______ mỗi sáng để xem ai vắng mặt.",
+                key: ["see who is absent"],
+                opts: ["give feedback", "mark the work", "check the attendance", "create"],
+                optsVi: ["đưa ra phản hồi", "chấm bài", "kiểm tra sĩ số/điểm danh", "tạo ra"],
+                correct: 2,
+                exp: "Kiểm tra xem ai vắng mặt là hành động <b>check the attendance</b> (điểm danh)."
+            },
+            {
+                q: "Some students prefer online learning because it is ______ and saves time.",
+                qVi: "Một số học sinh thích học trực tuyến vì nó _______ và tiết kiệm thời gian.",
+                key: ["prefer", "saves time"],
+                opts: ["inconvenient", "convenient", "bad weather", "absent"],
+                optsVi: ["bất tiện", "thuận tiện", "thời tiết xấu", "vắng mặt"],
+                correct: 1,
+                exp: "Học online giúp tiết kiệm thời gian đi lại nên rất <b>convenient</b> (thuận tiện)."
+            },
+            {
+                q: "Watching a ______ for too long can make your eyes feel dry and tired.",
+                qVi: "Nhìn vào _______ quá lâu có thể khiến mắt bạn cảm thấy khô và mệt mỏi.",
+                key: ["Watching", "eyes feel dry"],
+                opts: ["light bulb", "computer screen", "fingerprint scanner", "solution"],
+                optsVi: ["bóng đèn", "màn hình máy tính", "máy quét vân tay", "giải pháp"],
+                correct: 1,
+                exp: "Nhìn vào <b>computer screen</b> (màn hình máy tính) lâu gây mỏi mắt."
+            },
+            {
+                q: "______ is a problem when students stay away from school without permission.",
+                qVi: "_______ là một vấn đề khi học sinh nghỉ học mà không xin phép.",
+                key: ["stay away from school without permission"],
+                opts: ["Truancy", "Interaction", "Experiment", "Invention"],
+                optsVi: ["Sự trốn học", "Sự tương tác", "Thí nghiệm", "Sự phát minh"],
+                correct: 0,
+                exp: "Nghỉ học không phép (cúp học) gọi là <b>Truancy</b>."
+            },
+            {
+                q: "If a student is ______, they are not at school when they should be.",
+                qVi: "Nếu một học sinh _______, họ không có mặt ở trường khi đáng lẽ họ phải có mặt.",
+                key: ["not at school"],
+                opts: ["available", "absent", "convenient", "digital"],
+                optsVi: ["có sẵn/rảnh rỗi", "vắng mặt", "tiện lợi", "kỹ thuật số"],
+                correct: 1,
+                exp: "Không có mặt ở trường -> <b>absent</b> (vắng mặt)."
+            },
+            {
+                q: "Scientists hope to ______ new ways to make online learning more interesting.",
+                qVi: "Các nhà khoa học hy vọng sẽ _______ những cách mới để làm cho việc học trực tuyến trở nên thú vị hơn.",
+                key: ["new ways"],
+                opts: ["create", "get tired", "get ill", "absent"],
+                optsVi: ["tạo ra", "mệt mỏi", "bị ốm", "vắng mặt"],
+                correct: 0,
+                exp: "Tìm ra/tạo ra những cách thức mới -> <b>create</b> new ways."
+            },
+            {
+                q: "Thomas Edison was a great ______ who invented the light bulb.",
+                qVi: "Thomas Edison là một _______ vĩ đại người đã phát minh ra bóng đèn.",
+                key: ["Thomas Edison", "invented"],
+                opts: ["invention", "inventor", "developer", "discoverer"],
+                optsVi: ["sự phát minh", "nhà phát minh", "nhà phát triển", "người khám phá"],
+                correct: 1,
+                exp: "Người tạo ra các phát minh gọi là <b>inventor</b> (nhà phát minh)."
+            },
+            {
+                q: "Marie Curie managed to ______ two new chemical elements: radium and polonium.",
+                qVi: "Marie Curie đã xoay sở để _______ hai nguyên tố hóa học mới: radium và polonium.",
+                key: ["two new chemical elements"],
+                opts: ["invent", "discover", "create", "develop"],
+                optsVi: ["phát minh", "khám phá/tìm ra", "tạo ra", "phát triển"],
+                correct: 1,
+                exp: "Đối với các nguyên tố hóa học có sẵn trong tự nhiên, ta dùng từ <b>discover</b> (khám phá/tìm ra) chứ không phải invent (tạo ra cái chưa từng có)."
+            },
+            {
+                q: "The ______ of the telephone changed the way people communicate forever.",
+                qVi: "_______ điện thoại đã thay đổi cách mọi người giao tiếp mãi mãi.",
+                key: ["telephone changed the way"],
+                opts: ["inventor", "invention", "experiment", "technology"],
+                optsVi: ["nhà phát minh", "sự phát minh/phát minh", "thí nghiệm", "công nghệ"],
+                correct: 1,
+                exp: "Sự phát minh ra điện thoại -> The <b>invention</b> of."
+            },
+            {
+                q: "Radium and polonium are two important ______ in chemistry.",
+                qVi: "Radium và polonium là hai _______ quan trọng trong hóa học.",
+                key: ["Radium and polonium", "in chemistry"],
+                opts: ["medicines", "chemical elements", "devices", "platforms"],
+                optsVi: ["thuốc", "nguyên tố hóa học", "thiết bị", "nền tảng"],
+                correct: 1,
+                exp: "Radium và Polonium là các <b>chemical elements</b> (nguyên tố hóa học)."
+            },
+            {
+                q: "Scientists are trying to find a ______ to save millions of lives.",
+                qVi: "Các nhà khoa học đang cố gắng tìm ra _______ để cứu sống hàng triệu người.",
+                key: ["find a", "save millions of lives"],
+                opts: ["cure for cancer", "light bulb", "robot teacher", "computer screen"],
+                optsVi: ["phương thuốc chữa bệnh ung thư", "bóng đèn", "giáo viên robot", "màn hình máy tính"],
+                correct: 0,
+                exp: "Thứ cứu sống sinh mạng con người -> <b>cure for cancer</b>."
+            },
+            {
+                q: "Before a new drug is sold, scientists must ______ many experiments.",
+                qVi: "Trước khi một loại thuốc mới được bán ra, các nhà khoa học phải _______ nhiều thí nghiệm.",
+                key: ["experiments"],
+                opts: ["carry out", "interact with", "check", "develop"],
+                optsVi: ["thực hiện/tiến hành", "tương tác với", "kiểm tra", "phát triển"],
+                correct: 0,
+                exp: "Tiến hành thí nghiệm -> <b>carry out</b> experiments."
+            },
+            {
+                q: "We hope that scientists will ______ a vaccine for the new virus soon.",
+                qVi: "Chúng tôi hy vọng rằng các nhà khoa học sẽ sớm _______ một loại vắc-xin cho loại vi-rút mới.",
+                key: ["a vaccine"],
+                opts: ["invent", "develop", "comment", "interact"],
+                optsVi: ["phát minh", "phát triển/điều chế", "bình luận", "tương tác"],
+                correct: 1,
+                exp: "Nghiên cứu và tạo ra vắc-xin thường dùng động từ <b>develop</b> a vaccine."
+            },
+            {
+                q: "The lab is where students can do a scientific ______ to test their ideas.",
+                qVi: "Phòng thí nghiệm là nơi học sinh có thể thực hiện một _______ khoa học để kiểm tra ý tưởng của họ.",
+                key: ["lab", "test their ideas"],
+                opts: ["invention", "experiment", "solution", "platform"],
+                optsVi: ["sự phát minh", "thí nghiệm", "giải pháp", "nền tảng"],
+                correct: 1,
+                exp: "Thực hiện thí nghiệm -> do a scientific <b>experiment</b>."
+            },
+            {
+                q: "Alexander Fleming discovered penicillin, a very important type of ______.",
+                qVi: "Alexander Fleming đã phát hiện ra penicillin, một loại _______ rất quan trọng.",
+                key: ["penicillin"],
+                opts: ["vaccine", "medicine", "chemical element", "technology"],
+                optsVi: ["vắc-xin", "thuốc", "nguyên tố hóa học", "công nghệ"],
+                correct: 1,
+                exp: "Penicillin là một loại kháng sinh, được xếp vào nhóm <b>medicine</b> (thuốc men)."
+            },
+            {
+                q: "The ______ helps us see and work in the dark.",
+                qVi: "_______ giúp chúng ta nhìn và làm việc trong bóng tối.",
+                key: ["see and work in the dark"],
+                opts: ["3D contact lens", "light bulb", "fingerprint scanner", "eye-tracking"],
+                optsVi: ["kính áp tròng 3D", "bóng đèn", "máy quét vân tay", "theo dõi chuyển động mắt"],
+                correct: 1,
+                exp: "Phát sáng trong đêm tối -> <b>light bulb</b>."
+            },
+            {
+                q: "Many people believe that ______ will be able to do everything for humans in the future.",
+                qVi: "Nhiều người tin rằng _______ sẽ có thể làm mọi thứ cho con người trong tương lai.",
+                key: ["do everything for humans"],
+                opts: ["inventions", "inventors", "technology", "chemicals"],
+                optsVi: ["các phát minh", "nhà phát minh", "công nghệ", "hóa chất"],
+                correct: 2,
+                exp: "Máy móc, AI, robot... gọi chung là <b>technology</b> (công nghệ)."
+            },
+            {
+                q: "______ were very different from what we have now; there were no smartphones.",
+                qVi: "_______ rất khác so với những gì chúng ta có bây giờ; không hề có điện thoại thông minh.",
+                key: ["very different from what we have now"],
+                opts: ["In the past", "In the future", "Online classes", "Experiments"],
+                optsVi: ["Trong quá khứ (Những thứ trong quá khứ)", "Trong tương lai", "Lớp học trực tuyến", "Thí nghiệm"],
+                correct: 0,
+                exp: "So sánh với hiện tại ('what we have now') -> <b>In the past</b> (Mặc dù 'In the past' đóng vai trò trạng ngữ, nhưng trong một số ngữ cảnh bài tập tiếng Việt, nó được hiểu ngầm như một chủ thể chỉ 'Mọi thứ trong quá khứ')."
+            },
+            {
+                q: "We don't know exactly what life will be like ______.",
+                qVi: "Chúng ta không biết chính xác cuộc sống sẽ như thế nào _______.",
+                key: ["life will be like"],
+                opts: ["in the past", "in the future", "face-to-face", "available"],
+                optsVi: ["trong quá khứ", "trong tương lai", "trực tiếp", "có sẵn"],
+                correct: 1,
+                exp: "Dự đoán về điều chưa diễn ra (will be) -> <b>in the future</b>."
+            },
+            {
+                q: "To find a ______ for a difficult problem, we need to think creatively.",
+                qVi: "Để tìm ra _______ cho một vấn đề khó khăn, chúng ta cần suy nghĩ sáng tạo.",
+                key: ["find a", "difficult problem"],
+                opts: ["solution", "device", "vaccine", "truancy"],
+                optsVi: ["giải pháp", "thiết bị", "vắc-xin", "sự trốn học"],
+                correct: 0,
+                exp: "Tìm hướng giải quyết vấn đề -> find a <b>solution</b>."
+            },
+            {
+                q: "Scientists are working hard to ______ new technologies for space travel.",
+                qVi: "Các nhà khoa học đang làm việc chăm chỉ để _______ các công nghệ mới cho du hành vũ trụ.",
+                key: ["new technologies"],
+                opts: ["invent", "comment", "get tired", "absent"],
+                optsVi: ["phát minh/tạo ra", "bình luận", "bị mệt", "vắng mặt"],
+                correct: 0,
+                exp: "Tạo ra công nghệ mới -> <b>invent</b>."
+            },
+            {
+                q: "A ______ can identify a person by looking at the lines on their fingers.",
+                qVi: "Một _______ có thể nhận dạng một người bằng cách nhìn vào các đường vân trên ngón tay của họ.",
+                key: ["identify a person", "lines on their fingers"],
+                opts: ["face recognition", "fingerprint scanner", "eye-tracking", "3D contact lens"],
+                optsVi: ["nhận dạng khuôn mặt", "máy quét dấu vân tay", "theo dõi ánh mắt", "kính áp tròng 3D"],
+                correct: 1,
+                exp: "Nhận dạng qua ngón tay -> <b>fingerprint scanner</b>."
+            },
+            {
+                q: "Modern smartphones use ______ to unlock the screen by looking at your face.",
+                qVi: "Điện thoại thông minh hiện đại sử dụng _______ để mở khóa màn hình bằng cách nhìn vào khuôn mặt của bạn.",
+                key: ["unlock the screen", "looking at your face"],
+                opts: ["biometric application", "face recognition", "video conference", "experiment"],
+                optsVi: ["ứng dụng sinh trắc học", "nhận diện khuôn mặt", "hội nghị truyền hình", "thí nghiệm"],
+                correct: 1,
+                exp: "Mở khóa bằng khuôn mặt (Face ID) -> <b>face recognition</b>."
+            },
+            {
+                q: "______ technology can follow where your eyes are looking on the screen.",
+                qVi: "Công nghệ _______ có thể theo dõi xem mắt bạn đang nhìn vào đâu trên màn hình.",
+                key: ["follow where your eyes are looking"],
+                opts: ["Eye-tracking", "Face-to-face", "Digital", "Convenient"],
+                optsVi: ["Theo dõi cử động mắt", "Trực tiếp", "Kỹ thuật số", "Thuận tiện"],
+                correct: 0,
+                exp: "Công nghệ theo dõi mắt -> <b>Eye-tracking</b>."
+            },
+            {
+                q: "Fingerprint scanners and face recognition are examples of ______.",
+                qVi: "Máy quét dấu vân tay và nhận dạng khuôn mặt là những ví dụ về _______.",
+                key: ["Fingerprint scanners and face recognition"],
+                opts: ["chemical elements", "biometric applications", "breakout rooms", "medicines"],
+                optsVi: ["nguyên tố hóa học", "ứng dụng sinh trắc học", "phòng chia nhỏ", "thuốc"],
+                correct: 1,
+                exp: "Dùng đặc điểm cơ thể (vân tay, khuôn mặt, mống mắt) để nhận diện gọi là <b>biometric applications</b>."
+            },
+            {
+                q: "Using a ______ allows people in different countries to see and talk to each other.",
+                qVi: "Việc sử dụng _______ cho phép những người ở các quốc gia khác nhau nhìn thấy và nói chuyện với nhau.",
+                key: ["see and talk to each other", "different countries"],
+                opts: ["video conference", "light bulb", "fingerprint scanner", "vaccine"],
+                optsVi: ["hội nghị truyền hình", "bóng đèn", "máy quét vân tay", "vắc-xin"],
+                correct: 0,
+                exp: "Họp trực tuyến qua video -> <b>video conference</b>."
+            },
+            {
+                q: "Emails and social media are forms of ______ in the modern world.",
+                qVi: "Email và phương tiện truyền thông xã hội là các hình thức _______ trong thế giới hiện đại.",
+                key: ["Emails and social media", "forms of"],
+                opts: ["face-to-face", "digital communication", "truancy", "epidemic"],
+                optsVi: ["trực tiếp", "giao tiếp kỹ thuật số", "trốn học", "dịch bệnh"],
+                correct: 1,
+                exp: "Giao tiếp qua mạng internet -> <b>digital communication</b>."
+            },
+            {
+                q: "A smartphone is a multi-functional ______ that can do many tasks.",
+                qVi: "Điện thoại thông minh là một _______ đa chức năng có thể thực hiện nhiều tác vụ.",
+                key: ["smartphone is a"],
+                opts: ["inventor", "device", "experiment", "chemical element"],
+                optsVi: ["nhà phát minh", "thiết bị", "thí nghiệm", "nguyên tố hóa học"],
+                correct: 1,
+                exp: "Điện thoại, máy tính là các <b>device</b> (thiết bị)."
+            },
+            {
+                q: "My ______ is very weak, so I can't download this video.",
+                qVi: "_______ của tôi rất yếu, vì vậy tôi không thể tải xuống video này.",
+                key: ["weak", "can't download"],
+                opts: ["internet connection", "breakout room", "robot teacher", "invention"],
+                optsVi: ["kết nối internet", "phòng chia nhỏ", "giáo viên robot", "phát minh"],
+                correct: 0,
+                exp: "Mạng yếu không thể tải dữ liệu -> <b>internet connection</b>."
+            },
+            {
+                q: "People might wear ______ to see virtual information right in front of their eyes.",
+                qVi: "Mọi người có thể đeo _______ để xem thông tin ảo ngay trước mắt họ.",
+                key: ["wear", "see virtual information"],
+                opts: ["3D contact lenses", "fingerprint scanners", "light bulbs", "medicines"],
+                optsVi: ["kính áp tròng 3D", "máy quét vân tay", "bóng đèn", "thuốc"],
+                correct: 0,
+                exp: "Thiết bị đeo ở mắt để xem thông tin -> <b>3D contact lenses</b>."
+            },
+            {
+                q: "If the computer doesn't ______, you should restart it.",
+                qVi: "Nếu máy tính không _______, bạn nên khởi động lại nó.",
+                key: ["computer", "restart it"],
+                opts: ["get ill", "work well", "get tired", "interact with"],
+                optsVi: ["bị ốm", "hoạt động tốt", "bị mệt", "tương tác với"],
+                correct: 1,
+                exp: "Máy móc gặp trục trặc, không chạy mượt mà -> doesn't <b>work well</b>."
+            },
+            {
+                q: "During the ______, many schools were closed, and students learned online.",
+                qVi: "Trong thời gian _______, nhiều trường học đã đóng cửa và học sinh phải học trực tuyến.",
+                key: ["schools were closed", "learned online"],
+                opts: ["good weather", "epidemic", "solution", "invention"],
+                optsVi: ["thời tiết tốt", "dịch bệnh", "giải pháp", "phát minh"],
+                correct: 1,
+                exp: "Đại dịch khiến các trường phải đóng cửa (như COVID-19) -> <b>epidemic</b>."
+            },
+            {
+                q: "Online classes are great when there is ______ and we cannot go to school.",
+                qVi: "Lớp học trực tuyến rất tuyệt khi có _______ và chúng ta không thể đến trường.",
+                key: ["cannot go to school"],
+                opts: ["good weather", "bad weather", "available", "face-to-face"],
+                optsVi: ["thời tiết tốt", "thời tiết xấu", "có sẵn", "trực tiếp"],
+                correct: 1,
+                exp: "Mưa bão, bão tuyết khiến học sinh không thể tới trường -> <b>bad weather</b>."
+            },
+            {
+                q: "If you look at the screen for 5 hours without a break, you will ______.",
+                qVi: "Nếu bạn nhìn vào màn hình trong 5 giờ mà không nghỉ ngơi, bạn sẽ _______.",
+                key: ["look at the screen for 5 hours", "without a break"],
+                opts: ["work well", "get tired", "discover", "create"],
+                optsVi: ["hoạt động tốt", "bị mệt mỏi", "khám phá", "tạo ra"],
+                correct: 1,
+                exp: "Nhìn màn hình quá lâu gây mỏi mắt, mệt mỏi -> <b>get tired</b>."
+            },
+            {
+                q: "You should wash your hands often so that you don't ______.",
+                qVi: "Bạn nên rửa tay thường xuyên để không _______.",
+                key: ["wash your hands often"],
+                opts: ["get ill", "get tired", "interact with", "concentrate"],
+                optsVi: ["bị ốm", "bị mệt", "tương tác với", "tập trung"],
+                correct: 0,
+                exp: "Rửa tay để diệt vi khuẩn, tránh bị bệnh -> <b>get ill</b>."
+            },
+            {
+                q: "This new software is now ______ for everyone to download for free.",
+                qVi: "Phần mềm mới này hiện _______ cho mọi người tải xuống miễn phí.",
+                key: ["new software is now", "download for free"],
+                opts: ["absent", "available", "inconvenient", "digital"],
+                optsVi: ["vắng mặt", "có sẵn", "bất tiện", "kỹ thuật số"],
+                correct: 1,
+                exp: "Sẵn sàng để sử dụng/tải về -> <b>available</b>."
+            },
+            {
+                q: "\"I think robot teachers will be better than human teachers.\" - \"That's an interesting ______.\"",
+                qVi: "\"Tôi nghĩ giáo viên robot sẽ giỏi hơn giáo viên con người.\" - \"Đó là một _______ thú vị.\"",
+                key: ["That's an interesting"],
+                opts: ["comment", "invention", "medicine", "vaccine"],
+                optsVi: ["lời bình luận/ý kiến", "phát minh", "thuốc", "vắc-xin"],
+                correct: 0,
+                exp: "Đáp lại lời nhận định của ai đó -> That's an interesting <b>comment</b> (ý kiến hay)."
+            },
+            {
+                q: "Computers can ______ huge amounts of data in a very short time.",
+                qVi: "Máy tính có thể _______ lượng dữ liệu khổng lồ trong thời gian rất ngắn.",
+                key: ["huge amounts of data"],
+                opts: ["learn", "study", "interact", "develop"],
+                optsVi: ["học/tiếp thu", "nghiên cứu", "tương tác", "phát triển"],
+                correct: 0,
+                exp: "Máy tính (AI) có khả năng học hỏi từ dữ liệu (Machine Learning) -> <b>learn</b>."
+            },
+            {
+                q: "My father uses a ______ to join his company's meeting from home.",
+                qVi: "Bố tôi sử dụng _______ để tham gia cuộc họp của công ty từ nhà.",
+                key: ["join meeting from home"],
+                opts: ["video conference", "light bulb", "chemical element", "radium"],
+                optsVi: ["hội nghị truyền hình/ứng dụng họp video", "bóng đèn", "nguyên tố hóa học", "radium"],
+                correct: 0,
+                exp: "Tham gia cuộc họp online thông qua <b>video conference</b>."
+            },
+            {
+                q: "Technology is ______ so fast that we have to learn every day to keep up.",
+                qVi: "Công nghệ đang _______ quá nhanh khiến chúng ta phải học hỏi mỗi ngày để theo kịp.",
+                key: ["Technology is", "so fast"],
+                opts: ["inventing", "discovering", "developing", "creating"],
+                optsVi: ["phát minh", "khám phá", "phát triển", "tạo ra"],
+                correct: 2,
+                exp: "Sự tiến bộ, phát triển của công nghệ -> <b>developing</b>."
+            },
+            {
+                q: "Finding a ______ to environmental problems is a top priority for scientists.",
+                qVi: "Tìm ra _______ cho các vấn đề môi trường là ưu tiên hàng đầu của các nhà khoa học.",
+                key: ["Finding a", "to environmental problems"],
+                opts: ["solution", "truancy", "cheating", "breakout room"],
+                optsVi: ["giải pháp", "sự trốn học", "gian lận", "phòng chia nhỏ"],
+                correct: 0,
+                exp: "Tìm hướng giải quyết vấn đề -> find a <b>solution</b>."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(97 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                // Sidebar nav item
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            for (let i = 0; i < 4; i++) {
+                const optTrans = document.getElementById(`trans-opt-${index}-${i}`);
+                if(optTrans) optTrans.classList.toggle('show');
+            }
+            
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
