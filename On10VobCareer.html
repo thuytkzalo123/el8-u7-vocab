@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Career & Jobs (30 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Career & Jobs (30 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">30</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">30</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "All senior students are required to attend the career _______.",
+                qVi: "Tất cả sinh viên năm cuối đều được yêu cầu tham dự buổi _______ nghề nghiệp.",
+                key: ["career"],
+                opts: ["exchange", "orientation", "model", "standard"],
+                optsVi: ["trao đổi", "định hướng", "mô hình", "tiêu chuẩn"],
+                correct: 1,
+                exp: "Cụm từ: <b>career orientation</b> (định hướng nghề nghiệp)."
+            },
+            {
+                q: "The job fair which took place at school last week was very _______.",
+                qVi: "Hội chợ việc làm diễn ra tại trường tuần trước rất _______.",
+                key: ["job fair", "was very"],
+                opts: ["informative", "rusty", "fluent", "official"],
+                optsVi: ["cung cấp nhiều thông tin hữu ích", "han gỉ/lục nghề", "lưu loát", "chính thức"],
+                correct: 0,
+                exp: "Hội chợ việc làm mang lại nhiều thông tin bổ ích cho sinh viên -> <b>informative</b>."
+            },
+            {
+                q: "Some school-leavers opt for taking _______ training courses instead of going to college.",
+                qVi: "Một số học sinh mới rời trường chọn tham gia các khóa đào tạo _______ thay vì học đại học.",
+                key: ["training courses", "instead of going to college"],
+                opts: ["competent", "livable", "crowded", "vocational"],
+                optsVi: ["có năng lực", "đáng sống", "đông đúc", "nghề nghiệp"],
+                correct: 3,
+                exp: "Khóa đào tạo học nghề, học việc -> <b>vocational</b> training courses."
+            },
+            {
+                q: "He _______ a living by working part-time as a bartender.",
+                qVi: "Anh ấy _______ sống bằng cách làm việc bán thời gian như một nhân viên pha chế.",
+                key: ["a living by working"],
+                opts: ["filled", "brought", "earned", "went"],
+                optsVi: ["lấp đầy", "mang", "kiếm", "đi"],
+                correct: 2,
+                exp: "Cụm từ cố định: <b>earn</b> a living (kiếm sống)."
+            },
+            {
+                q: "My son learnt bartending after finishing 9 and now he is a _______ bartender.",
+                qVi: "Con trai tôi học pha chế sau khi học xong lớp 9 và bây giờ nó là một nhân viên pha chế _______.",
+                key: ["bartender"],
+                opts: ["vocational", "skilful", "rusty", "natural"],
+                optsVi: ["nghề nghiệp", "khéo léo/lành nghề", "lục nghề", "tự nhiên"],
+                correct: 1,
+                exp: "Đã qua đào tạo nên trở thành người thợ lành nghề -> <b>skilful</b>."
+            },
+            {
+                q: "If you don't enjoy learning _______ subjects, vocational education is suitable for you.",
+                qVi: "Nếu bạn không thích học các môn _______, giáo dục nghề nghiệp rất phù hợp với bạn.",
+                key: ["learning", "subjects", "vocational education is suitable"],
+                opts: ["balanced", "additional", "academic", "distracted"],
+                optsVi: ["cân bằng", "bổ sung", "học thuật/lý thuyết", "xao nhãng"],
+                correct: 2,
+                exp: "Môn học thiên về lý thuyết sách vở (trái ngược với học nghề) -> <b>academic</b> subjects."
+            },
+            {
+                q: "Mary wants to be a fashion designer because she has a good _______ of style.",
+                qVi: "Mary muốn trở thành một nhà thiết kế thời trang vì cô ấy có _______ tốt về phong cách.",
+                key: ["has a good", "of style"],
+                opts: ["community", "mood", "anxiety", "sense"],
+                optsVi: ["cộng đồng", "tâm trạng", "sự lo âu", "giác quan/cảm giác"],
+                correct: 3,
+                exp: "Cụm từ: have a good <b>sense</b> of style (có gu thẩm mỹ/phong cách ăn mặc tốt)."
+            },
+            {
+                q: "Joey finally _______ his dream of attending college.",
+                qVi: "Cuối cùng thì Joey cũng đã _______ ước mơ vào học đại học của mình.",
+                key: ["his dream"],
+                opts: ["achieved", "delayed", "minimised", "observed"],
+                optsVi: ["đạt được", "trì hoãn", "giảm thiểu", "quan sát"],
+                correct: 0,
+                exp: "Đạt được ước mơ, thành tựu -> <b>achieved</b> his dream."
+            },
+            {
+                q: "You should consider your skills and _______ when applying for a job.",
+                qVi: "Bạn nên xem xét các kỹ năng và _______ của mình khi nộp đơn xin việc.",
+                key: ["skills and"],
+                opts: ["assignments", "deadlines", "distractions", "passions"],
+                optsVi: ["bài tập/nhiệm vụ", "hạn chót", "sự xao nhãng", "đam mê"],
+                correct: 3,
+                exp: "Xin việc thì cần cân nhắc kỹ năng và sở thích/đam mê của bản thân -> <b>passions</b>."
+            },
+            {
+                q: "He works as a(n) _______ at a local car repair shop.",
+                qVi: "Anh ấy làm _______ tại một tiệm sửa chữa ô tô ở địa phương.",
+                key: ["car repair shop"],
+                opts: ["hairdresser", "mechanic", "bartender", "garment worker"],
+                optsVi: ["thợ cắt tóc", "thợ cơ khí/thợ sửa máy", "nhân viên pha chế", "công nhân may mặc"],
+                correct: 1,
+                exp: "Làm việc ở tiệm sửa xe ô tô -> <b>mechanic</b> (thợ sửa máy)."
+            },
+            {
+                q: "It's difficult to raise three children on such a low _______.",
+                qVi: "Thật khó để nuôi ba đứa trẻ với mức _______ thấp như vậy.",
+                key: ["raise three children", "low"],
+                opts: ["takeaway", "salary", "duty", "counsellor"],
+                optsVi: ["đồ ăn mang đi", "tiền lương", "nhiệm vụ", "người cố vấn"],
+                correct: 1,
+                exp: "Để nuôi con cái cần tiền, mức lương thấp gây khó khăn -> low <b>salary</b>."
+            },
+            {
+                q: "To get _______ artistic training, you must go to an art college.",
+                qVi: "Để được đào tạo nghệ thuật một cách _______, bạn phải vào một trường cao đẳng nghệ thuật.",
+                key: ["artistic training", "go to an art college"],
+                opts: ["formal", "balanced", "skilful", "additional"],
+                optsVi: ["chính quy/bài bản", "cân bằng", "lành nghề", "bổ sung"],
+                correct: 0,
+                exp: "Đào tạo bài bản qua trường lớp -> <b>formal</b> training."
+            },
+            {
+                q: "I had my trousers shortened by an experienced _______.",
+                qVi: "Tôi đã nhờ một _______ giàu kinh nghiệm cắt ngắn quần tây của mình.",
+                key: ["trousers shortened"],
+                opts: ["bartender", "mechanic", "tailor", "surgeon"],
+                optsVi: ["nhân viên pha chế", "thợ cơ khí", "thợ may", "bác sĩ phẫu thuật"],
+                correct: 2,
+                exp: "Người làm công việc cắt may, sửa chữa quần áo -> <b>tailor</b>."
+            },
+            {
+                q: "_______ workers are required to put the shelves together.",
+                qVi: "Những công nhân _______ được yêu cầu lắp ráp các kệ hàng lại với nhau.",
+                key: ["put the shelves together"],
+                opts: ["Assembly", "Surgeon", "Hairdresser", "Tailor"],
+                optsVi: ["Lắp ráp", "Bác sĩ phẫu thuật", "Thợ cắt tóc", "Thợ may"],
+                correct: 0,
+                exp: "Công nhân làm công việc ghép/lắp ráp các bộ phận -> <b>Assembly</b> workers."
+            },
+            {
+                q: "The _______ scanned the products and placed them all in a plastic bag.",
+                qVi: "_______ đã quét mã sản phẩm và xếp tất cả chúng vào túi ni lông.",
+                key: ["scanned the products"],
+                opts: ["mechanic", "bartender", "surgeon", "cashier"],
+                optsVi: ["thợ cơ khí", "người pha chế", "bác sĩ phẫu thuật", "nhân viên thu ngân"],
+                correct: 3,
+                exp: "Người làm nhiệm vụ quét mã hàng hóa và tính tiền -> <b>cashier</b>."
+            },
+            {
+                q: "This job is quite _______, but it can teach you some valuable skills.",
+                qVi: "Công việc này khá _______, nhưng nó có thể dạy cho bạn một số kỹ năng có giá trị.",
+                key: ["quite", "but it can teach you"],
+                opts: ["creative", "decisive", "repetitive", "effective"],
+                optsVi: ["sáng tạo", "kiên quyết", "lặp đi lặp lại/nhàm chán", "hiệu quả"],
+                correct: 2,
+                exp: "Mang nghĩa trái ngược với việc học được kỹ năng giá trị (dùng từ 'but') -> công việc nhàm chán do lặp đi lặp lại -> <b>repetitive</b>."
+            },
+            {
+                q: "Those who don't receive formal education find it hard to get a _______ job.",
+                qVi: "Những người không nhận được giáo dục chính quy cảm thấy khó khăn để có được một công việc _______.",
+                key: ["don't receive formal education", "hard to get a"],
+                opts: ["boring", "well-paid", "difficult", "distracted"],
+                optsVi: ["nhàm chán", "trả lương cao", "khó khăn", "xao nhãng"],
+                correct: 1,
+                exp: "Không có bằng cấp thì khó tìm được công việc lương cao -> a <b>well-paid</b> job."
+            },
+            {
+                q: "Teaching young learners can be a very _______ and stressful job.",
+                qVi: "Việc dạy những học sinh nhỏ tuổi có thể là một công việc rất _______ và căng thẳng.",
+                key: ["Teaching", "and stressful job"],
+                opts: ["additional", "rewarding", "demanding", "balanced"],
+                optsVi: ["bổ sung", "bổ ích/đáng giá", "đòi hỏi khắt khe", "cân bằng"],
+                correct: 2,
+                exp: "Từ mang sắc thái tương tự và đi kèm với 'stressful' (căng thẳng) là <b>demanding</b> (đòi hỏi cao, vất vả)."
+            },
+            {
+                q: "Teaching is a _______ career, especially when your students show improvement.",
+                qVi: "Giảng dạy là một sự nghiệp _______, đặc biệt là khi học sinh của bạn cho thấy sự tiến bộ.",
+                key: ["students show improvement"],
+                opts: ["basic", "rewarding", "decisive", "creative"],
+                optsVi: ["cơ bản", "thỏa mãn/xứng đáng", "kiên quyết", "sáng tạo"],
+                correct: 1,
+                exp: "Công việc mang lại cảm giác có ý nghĩa, đáng giá -> <b>rewarding</b>."
+            },
+            {
+                q: "_______ tasks can lead to boredom and decreased productivity over time.",
+                qVi: "Những công việc _______ có thể dẫn đến sự nhàm chán và giảm năng suất theo thời gian.",
+                key: ["boredom", "decreased productivity"],
+                opts: ["Creative", "Decisive", "Repetitive", "Effective"],
+                optsVi: ["Sáng tạo", "Kiên quyết", "Lặp đi lặp lại", "Hiệu quả"],
+                correct: 2,
+                exp: "Việc lặp lại mãi một kiểu gây nhàm chán -> <b>Repetitive</b> tasks."
+            },
+            {
+                q: "He pursued a(n) _______ in engineering to work in the aerospace industry.",
+                qVi: "Anh ấy đã theo đuổi một _______ kỹ sư để làm việc trong ngành công nghiệp hàng không vũ trụ.",
+                key: ["pursued a(n)", "in engineering"],
+                opts: ["degree", "salary", "assignment", "skill"],
+                optsVi: ["bằng cấp", "tiền lương", "bài tập/nhiệm vụ", "kỹ năng"],
+                correct: 0,
+                exp: "Học tập để lấy bằng cấp trong lĩnh vực nào đó -> pursue a <b>degree</b> in."
+            },
+            {
+                q: "They plan to _______ the old equipment with more advanced technology.",
+                qVi: "Họ dự định _______ các thiết bị cũ bằng công nghệ tiên tiến hơn.",
+                key: ["the old equipment with"],
+                opts: ["delay", "distract", "preserve", "replace"],
+                optsVi: ["trì hoãn", "xao nhãng", "bảo tồn", "thay thế"],
+                correct: 3,
+                exp: "Cấu trúc: <b>replace</b> something with something (thay thế cái gì bằng cái gì)."
+            },
+            {
+                q: "Effective _______ requires clear communication and mutual respect among members.",
+                qVi: "Sự _______ hiệu quả đòi hỏi sự giao tiếp rõ ràng và tôn trọng lẫn nhau giữa các thành viên.",
+                key: ["among members", "clear communication"],
+                opts: ["community", "mood", "salary", "teamwork"],
+                optsVi: ["cộng đồng", "tâm trạng", "tiền lương", "làm việc nhóm"],
+                correct: 3,
+                exp: "Sự phối hợp giữa các thành viên -> <b>teamwork</b>."
+            },
+            {
+                q: "Successful companies often _______ with partners to expand their market share.",
+                qVi: "Các công ty thành công thường _______ với các đối tác để mở rộng thị phần của họ.",
+                key: ["with partners", "expand"],
+                opts: ["accomplish", "hire", "collaborate", "recognise"],
+                optsVi: ["hoàn thành", "thuê mướn", "hợp tác", "nhận ra/công nhận"],
+                correct: 2,
+                exp: "Cấu trúc: <b>collaborate</b> with somebody (hợp tác với ai)."
+            },
+            {
+                q: "Strong communication skills are a _______ for any customer service role.",
+                qVi: "Kỹ năng giao tiếp tốt là một _______ đối với bất kỳ vai trò dịch vụ khách hàng nào.",
+                key: ["are a", "for any customer service role"],
+                opts: ["salary", "must", "pressure", "mood"],
+                optsVi: ["tiền lương", "sự bắt buộc/điều bắt buộc", "áp lực", "tâm trạng"],
+                correct: 1,
+                exp: "Danh từ 'a <b>must</b>' nghĩa là một điều kiện bắt buộc, một thứ nhất định phải có."
+            },
+            {
+                q: "She followed a different career _______ instead of working as a teacher like her mom.",
+                qVi: "Cô ấy đã đi theo một _______ sự nghiệp khác thay vì làm giáo viên giống như mẹ cô ấy.",
+                key: ["career"],
+                opts: ["path", "pressure", "priority", "humour"],
+                optsVi: ["con đường", "áp lực", "sự ưu tiên", "sự hài hước"],
+                correct: 0,
+                exp: "Cụm từ: career <b>path</b> (con đường sự nghiệp)."
+            },
+            {
+                q: "Working part-time can give you a lot of practical _______.",
+                qVi: "Làm việc bán thời gian có thể mang lại cho bạn rất nhiều _______ thực tế.",
+                key: ["give you a lot of practical"],
+                opts: ["duty", "orientation", "experience", "priority"],
+                optsVi: ["nhiệm vụ", "định hướng", "kinh nghiệm", "sự ưu tiên"],
+                correct: 2,
+                exp: "Làm việc thực tế giúp tích lũy kinh nghiệm -> practical <b>experience</b>."
+            },
+            {
+                q: "_______ is necessary when organizing group activities and events.",
+                qVi: "Sự _______ là cần thiết khi tổ chức các sự kiện và hoạt động nhóm.",
+                key: ["organizing group activities"],
+                opts: ["Coordination", "Pressure", "Humour", "Orientation"],
+                optsVi: ["Sự phối hợp/Sự điều phối", "Áp lực", "Sự hài hước", "Định hướng"],
+                correct: 0,
+                exp: "Làm việc nhóm thì cần có sự phối hợp ăn ý -> <b>Coordination</b>."
+            },
+            {
+                q: "Employers often seek candidates with a(n) _______ mindset and a desire to grow.",
+                qVi: "Các nhà tuyển dụng thường tìm kiếm những ứng viên có tư duy _______ và mong muốn phát triển.",
+                key: ["mindset", "desire to grow"],
+                opts: ["basic", "inquiring", "additional", "repetitive"],
+                optsVi: ["cơ bản", "ham học hỏi/hay tìm tòi", "bổ sung", "lặp đi lặp lại"],
+                correct: 1,
+                exp: "Tư duy muốn tìm hiểu, học hỏi điều mới -> <b>inquiring</b> mindset."
+            },
+            {
+                q: "Everyone considers John _______ as he often comes up with great ideas.",
+                qVi: "Mọi người coi John là một người _______ vì anh ấy thường đưa ra những ý tưởng tuyệt vời.",
+                key: ["comes up with great ideas"],
+                opts: ["creative", "rewarding", "repetitive", "demanding"],
+                optsVi: ["sáng tạo", "bổ ích", "lặp đi lặp lại", "đòi hỏi khắt khe"],
+                correct: 0,
+                exp: "Người hay có nhiều ý tưởng hay là người <b>creative</b> (sáng tạo)."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1;
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                // Sidebar nav item
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            for (let i = 0; i < 4; i++) {
+                const optTrans = document.getElementById(`trans-opt-${index}-${i}`);
+                if(optTrans) optTrans.classList.toggle('show');
+            }
+            
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
