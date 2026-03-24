@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bài tập Tiếng Anh: Career & Jobs (30 Câu)</title>
+    <title>Bài tập Tiếng Anh: Career & Jobs (90 Câu)</title>
     <style>
         :root {
             --primary-blue: #e8f0fe;
@@ -342,7 +342,7 @@
     <div class="header">
         <div class="header-top">
             <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-            <h2 class="header-title">Bài tập Tiếng Anh: Career & Jobs (30 Câu)</h2>
+            <h2 class="header-title">Bài tập Tiếng Anh: Career & Jobs (90 Câu)</h2>
         </div>
         <div class="progress-container">
             <div id="progress-bar"></div>
@@ -361,7 +361,7 @@
             <div class="stats-box">
                 <div class="stat-item">
                     <span>Số câu đúng:</span>
-                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">30</span></span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">90</span></span>
                 </div>
                 <div class="stat-item">
                     <span>Điểm số:</span>
@@ -387,7 +387,7 @@
             <div class="modal-score" id="final-score">0.0</div>
             
             <div class="modal-details">
-                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">30</span></p>
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">90</span></p>
                 <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
             </div>
             
@@ -397,6 +397,7 @@
 
     <script>
         const quizData = [
+            // PART 1 (1-30)
             {
                 q: "All senior students are required to attend the career _______.",
                 qVi: "Tất cả sinh viên năm cuối đều được yêu cầu tham dự buổi _______ nghề nghiệp.",
@@ -404,16 +405,16 @@
                 opts: ["exchange", "orientation", "model", "standard"],
                 optsVi: ["trao đổi", "định hướng", "mô hình", "tiêu chuẩn"],
                 correct: 1,
-                exp: "Cụm từ: <b>career orientation</b> (định hướng nghề nghiệp)."
+                exp: "Cụm từ cố định: <b>career orientation</b> (buổi định hướng nghề nghiệp)."
             },
             {
                 q: "The job fair which took place at school last week was very _______.",
                 qVi: "Hội chợ việc làm diễn ra tại trường tuần trước rất _______.",
                 key: ["job fair", "was very"],
                 opts: ["informative", "rusty", "fluent", "official"],
-                optsVi: ["cung cấp nhiều thông tin hữu ích", "han gỉ/lục nghề", "lưu loát", "chính thức"],
+                optsVi: ["cung cấp nhiều thông tin", "han gỉ", "lưu loát", "chính thức"],
                 correct: 0,
-                exp: "Hội chợ việc làm mang lại nhiều thông tin bổ ích cho sinh viên -> <b>informative</b>."
+                exp: "Hội chợ việc làm cung cấp nhiều thông tin hữu ích cho sinh viên -> <b>informative</b>."
             },
             {
                 q: "Some school-leavers opt for taking _______ training courses instead of going to college.",
@@ -422,14 +423,14 @@
                 opts: ["competent", "livable", "crowded", "vocational"],
                 optsVi: ["có năng lực", "đáng sống", "đông đúc", "nghề nghiệp"],
                 correct: 3,
-                exp: "Khóa đào tạo học nghề, học việc -> <b>vocational</b> training courses."
+                exp: "Học nghề (thay vì học đại học) -> <b>vocational</b> training courses."
             },
             {
                 q: "He _______ a living by working part-time as a bartender.",
                 qVi: "Anh ấy _______ sống bằng cách làm việc bán thời gian như một nhân viên pha chế.",
-                key: ["a living by working"],
+                key: ["a living"],
                 opts: ["filled", "brought", "earned", "went"],
-                optsVi: ["lấp đầy", "mang", "kiếm", "đi"],
+                optsVi: ["lấp đầy", "mang lại", "kiếm", "đi"],
                 correct: 2,
                 exp: "Cụm từ cố định: <b>earn</b> a living (kiếm sống)."
             },
@@ -438,23 +439,23 @@
                 qVi: "Con trai tôi học pha chế sau khi học xong lớp 9 và bây giờ nó là một nhân viên pha chế _______.",
                 key: ["bartender"],
                 opts: ["vocational", "skilful", "rusty", "natural"],
-                optsVi: ["nghề nghiệp", "khéo léo/lành nghề", "lục nghề", "tự nhiên"],
+                optsVi: ["nghề nghiệp", "khéo léo/lành nghề", "han gỉ/lục nghề", "tự nhiên"],
                 correct: 1,
-                exp: "Đã qua đào tạo nên trở thành người thợ lành nghề -> <b>skilful</b>."
+                exp: "Đã qua đào tạo bài bản nên trở thành thợ lành nghề -> <b>skilful</b>."
             },
             {
                 q: "If you don't enjoy learning _______ subjects, vocational education is suitable for you.",
                 qVi: "Nếu bạn không thích học các môn _______, giáo dục nghề nghiệp rất phù hợp với bạn.",
-                key: ["learning", "subjects", "vocational education is suitable"],
+                key: ["subjects", "vocational education is suitable"],
                 opts: ["balanced", "additional", "academic", "distracted"],
                 optsVi: ["cân bằng", "bổ sung", "học thuật/lý thuyết", "xao nhãng"],
                 correct: 2,
-                exp: "Môn học thiên về lý thuyết sách vở (trái ngược với học nghề) -> <b>academic</b> subjects."
+                exp: "Môn học hàn lâm, lý thuyết sách vở -> <b>academic</b> subjects."
             },
             {
                 q: "Mary wants to be a fashion designer because she has a good _______ of style.",
                 qVi: "Mary muốn trở thành một nhà thiết kế thời trang vì cô ấy có _______ tốt về phong cách.",
-                key: ["has a good", "of style"],
+                key: ["good", "of style"],
                 opts: ["community", "mood", "anxiety", "sense"],
                 optsVi: ["cộng đồng", "tâm trạng", "sự lo âu", "giác quan/cảm giác"],
                 correct: 3,
@@ -462,30 +463,30 @@
             },
             {
                 q: "Joey finally _______ his dream of attending college.",
-                qVi: "Cuối cùng thì Joey cũng đã _______ ước mơ vào học đại học của mình.",
+                qVi: "Cuối cùng thì Joey cũng đã _______ ước mơ vào đại học của mình.",
                 key: ["his dream"],
                 opts: ["achieved", "delayed", "minimised", "observed"],
                 optsVi: ["đạt được", "trì hoãn", "giảm thiểu", "quan sát"],
                 correct: 0,
-                exp: "Đạt được ước mơ, thành tựu -> <b>achieved</b> his dream."
+                exp: "Đạt được ước mơ -> <b>achieved</b> his dream."
             },
             {
                 q: "You should consider your skills and _______ when applying for a job.",
                 qVi: "Bạn nên xem xét các kỹ năng và _______ của mình khi nộp đơn xin việc.",
-                key: ["skills and"],
+                key: ["skills and", "applying for a job"],
                 opts: ["assignments", "deadlines", "distractions", "passions"],
-                optsVi: ["bài tập/nhiệm vụ", "hạn chót", "sự xao nhãng", "đam mê"],
+                optsVi: ["nhiệm vụ", "hạn chót", "sự xao nhãng", "đam mê"],
                 correct: 3,
-                exp: "Xin việc thì cần cân nhắc kỹ năng và sở thích/đam mê của bản thân -> <b>passions</b>."
+                exp: "Khi xin việc cần xét đến kỹ năng và đam mê -> <b>passions</b>."
             },
             {
                 q: "He works as a(n) _______ at a local car repair shop.",
-                qVi: "Anh ấy làm _______ tại một tiệm sửa chữa ô tô ở địa phương.",
+                qVi: "Anh ấy làm _______ tại một tiệm sửa xe ở địa phương.",
                 key: ["car repair shop"],
                 opts: ["hairdresser", "mechanic", "bartender", "garment worker"],
-                optsVi: ["thợ cắt tóc", "thợ cơ khí/thợ sửa máy", "nhân viên pha chế", "công nhân may mặc"],
+                optsVi: ["thợ làm tóc", "thợ cơ khí/thợ sửa máy", "người pha chế", "công nhân may mặc"],
                 correct: 1,
-                exp: "Làm việc ở tiệm sửa xe ô tô -> <b>mechanic</b> (thợ sửa máy)."
+                exp: "Làm việc tại tiệm sửa xe ô tô -> <b>mechanic</b> (thợ máy)."
             },
             {
                 q: "It's difficult to raise three children on such a low _______.",
@@ -494,14 +495,14 @@
                 opts: ["takeaway", "salary", "duty", "counsellor"],
                 optsVi: ["đồ ăn mang đi", "tiền lương", "nhiệm vụ", "người cố vấn"],
                 correct: 1,
-                exp: "Để nuôi con cái cần tiền, mức lương thấp gây khó khăn -> low <b>salary</b>."
+                exp: "Thu nhập hàng tháng thấp -> low <b>salary</b>."
             },
             {
                 q: "To get _______ artistic training, you must go to an art college.",
                 qVi: "Để được đào tạo nghệ thuật một cách _______, bạn phải vào một trường cao đẳng nghệ thuật.",
                 key: ["artistic training", "go to an art college"],
                 opts: ["formal", "balanced", "skilful", "additional"],
-                optsVi: ["chính quy/bài bản", "cân bằng", "lành nghề", "bổ sung"],
+                optsVi: ["chính quy/bài bản", "cân bằng", "khéo léo", "bổ sung"],
                 correct: 0,
                 exp: "Đào tạo bài bản qua trường lớp -> <b>formal</b> training."
             },
@@ -510,18 +511,18 @@
                 qVi: "Tôi đã nhờ một _______ giàu kinh nghiệm cắt ngắn quần tây của mình.",
                 key: ["trousers shortened"],
                 opts: ["bartender", "mechanic", "tailor", "surgeon"],
-                optsVi: ["nhân viên pha chế", "thợ cơ khí", "thợ may", "bác sĩ phẫu thuật"],
+                optsVi: ["người pha chế", "thợ cơ khí", "thợ may", "bác sĩ phẫu thuật"],
                 correct: 2,
-                exp: "Người làm công việc cắt may, sửa chữa quần áo -> <b>tailor</b>."
+                exp: "Người làm nghề may vá, sửa quần áo -> <b>tailor</b>."
             },
             {
                 q: "_______ workers are required to put the shelves together.",
                 qVi: "Những công nhân _______ được yêu cầu lắp ráp các kệ hàng lại với nhau.",
-                key: ["put the shelves together"],
+                key: ["workers", "put the shelves together"],
                 opts: ["Assembly", "Surgeon", "Hairdresser", "Tailor"],
-                optsVi: ["Lắp ráp", "Bác sĩ phẫu thuật", "Thợ cắt tóc", "Thợ may"],
+                optsVi: ["Lắp ráp", "Bác sĩ phẫu thuật", "Thợ làm tóc", "Thợ may"],
                 correct: 0,
-                exp: "Công nhân làm công việc ghép/lắp ráp các bộ phận -> <b>Assembly</b> workers."
+                exp: "Công nhân làm công việc lắp ráp các bộ phận -> <b>Assembly</b> workers."
             },
             {
                 q: "The _______ scanned the products and placed them all in a plastic bag.",
@@ -530,7 +531,7 @@
                 opts: ["mechanic", "bartender", "surgeon", "cashier"],
                 optsVi: ["thợ cơ khí", "người pha chế", "bác sĩ phẫu thuật", "nhân viên thu ngân"],
                 correct: 3,
-                exp: "Người làm nhiệm vụ quét mã hàng hóa và tính tiền -> <b>cashier</b>."
+                exp: "Người đứng quầy quét mã vạch và tính tiền -> <b>cashier</b>."
             },
             {
                 q: "This job is quite _______, but it can teach you some valuable skills.",
@@ -539,7 +540,7 @@
                 opts: ["creative", "decisive", "repetitive", "effective"],
                 optsVi: ["sáng tạo", "kiên quyết", "lặp đi lặp lại/nhàm chán", "hiệu quả"],
                 correct: 2,
-                exp: "Mang nghĩa trái ngược với việc học được kỹ năng giá trị (dùng từ 'but') -> công việc nhàm chán do lặp đi lặp lại -> <b>repetitive</b>."
+                exp: "Công việc lặp đi lặp lại dễ gây nhàm chán (tương phản với 'but') -> <b>repetitive</b>."
             },
             {
                 q: "Those who don't receive formal education find it hard to get a _______ job.",
@@ -548,79 +549,623 @@
                 opts: ["boring", "well-paid", "difficult", "distracted"],
                 optsVi: ["nhàm chán", "trả lương cao", "khó khăn", "xao nhãng"],
                 correct: 1,
-                exp: "Không có bằng cấp thì khó tìm được công việc lương cao -> a <b>well-paid</b> job."
+                exp: "Không có bằng cấp thì khó tìm được công việc lương cao -> <b>well-paid</b> job."
             },
             {
                 q: "Teaching young learners can be a very _______ and stressful job.",
                 qVi: "Việc dạy những học sinh nhỏ tuổi có thể là một công việc rất _______ và căng thẳng.",
-                key: ["Teaching", "and stressful job"],
+                key: ["and stressful job"],
                 opts: ["additional", "rewarding", "demanding", "balanced"],
                 optsVi: ["bổ sung", "bổ ích/đáng giá", "đòi hỏi khắt khe", "cân bằng"],
                 correct: 2,
-                exp: "Từ mang sắc thái tương tự và đi kèm với 'stressful' (căng thẳng) là <b>demanding</b> (đòi hỏi cao, vất vả)."
+                exp: "Công việc căng thẳng, đòi hỏi sự kiên nhẫn và công sức lớn -> <b>demanding</b>."
+            },
+            {
+                q: "Working with disabled students can be a _______ experience.",
+                qVi: "Làm việc với sinh viên khuyết tật có thể là một trải nghiệm _______.",
+                key: ["Working with disabled students"],
+                opts: ["basic", "academic", "decisive", "demanding"],
+                optsVi: ["cơ bản", "học thuật", "kiên quyết", "đòi hỏi khắt khe/vất vả"],
+                correct: 3,
+                exp: "Dạy học sinh khuyết tật đòi hỏi nhiều kỹ năng và sự kiên nhẫn -> <b>demanding</b>."
+            },
+            {
+                q: "No one wants to _______ him because he is too lazy.",
+                qVi: "Không ai muốn _______ anh ta vì anh ta quá lười biếng.",
+                key: ["No one wants to", "too lazy"],
+                opts: ["hire", "accomplish", "delay", "minimise"],
+                optsVi: ["thuê/tuyển dụng", "hoàn thành", "trì hoãn", "giảm thiểu"],
+                correct: 0,
+                exp: "Tuyển dụng, thuê nhân viên -> <b>hire</b>."
+            },
+            {
+                q: "He cannot find a good job because he doesn't have a university _______.",
+                qVi: "Anh ấy không thể tìm được một công việc tốt vì anh ấy không có _______ đại học.",
+                key: ["university"],
+                opts: ["degree", "priority", "assignment", "skill"],
+                optsVi: ["bằng cấp", "sự ưu tiên", "bài tập", "kỹ năng"],
+                correct: 0,
+                exp: "Bằng cấp đại học -> university <b>degree</b>."
+            },
+            {
+                q: "Some people are concerned that some jobs might be _______ by robots.",
+                qVi: "Một số người lo ngại rằng một số công việc có thể bị _______ bởi robot.",
+                key: ["jobs might be", "by robots"],
+                opts: ["delayed", "distracted", "preserved", "replaced"],
+                optsVi: ["trì hoãn", "xao nhãng", "bảo tồn", "thay thế"],
+                correct: 3,
+                exp: "Bị thay thế bởi công nghệ/robot -> be <b>replaced</b> by."
+            },
+            {
+                q: "Having good computer skills becomes a _______ to many jobs.",
+                qVi: "Có kỹ năng máy tính tốt trở thành một _______ đối với nhiều công việc.",
+                key: ["becomes a", "to many jobs"],
+                opts: ["salary", "must", "pressure", "mood"],
+                optsVi: ["tiền lương", "điều bắt buộc", "áp lực", "tâm trạng"],
+                correct: 1,
+                exp: "Danh từ 'a <b>must</b>' nghĩa là một điều kiện bắt buộc, điều nhất thiết phải có."
+            },
+            {
+                q: "All the team members are required to _______ on the project.",
+                qVi: "Tất cả các thành viên trong nhóm được yêu cầu _______ trong dự án.",
+                key: ["team members", "on the project"],
+                opts: ["accomplish", "hire", "collaborate", "recognise"],
+                optsVi: ["hoàn thành", "thuê", "hợp tác", "công nhận"],
+                correct: 2,
+                exp: "Cấu trúc: <b>collaborate</b> on something (hợp tác, phối hợp làm gì)."
+            },
+            {
+                q: "Many job opportunities are open for those who have a(n) _______ mind.",
+                qVi: "Nhiều cơ hội việc làm mở ra cho những người có một tư duy _______.",
+                key: ["mind"],
+                opts: ["basic", "inquiring", "additional", "repetitive"],
+                optsVi: ["cơ bản", "ham học hỏi/tò mò", "bổ sung", "lặp đi lặp lại"],
+                correct: 1,
+                exp: "Tư duy muốn tìm hiểu, khám phá điều mới -> <b>inquiring</b> mind."
+            },
+            {
+                q: "He followed a different career _______ from his parents.",
+                qVi: "Anh ấy đã đi theo một _______ sự nghiệp khác với cha mẹ mình.",
+                key: ["career"],
+                opts: ["path", "pressure", "priority", "humour"],
+                optsVi: ["con đường", "áp lực", "sự ưu tiên", "sự hài hước"],
+                correct: 0,
+                exp: "Cụm từ: career <b>path</b> (con đường sự nghiệp)."
+            },
+            {
+                q: "The success of the project depends largely on good _______.",
+                qVi: "Thành công của dự án phụ thuộc phần lớn vào _______ tốt.",
+                key: ["depends largely on good"],
+                opts: ["community", "mood", "salary", "teamwork"],
+                optsVi: ["cộng đồng", "tâm trạng", "tiền lương", "làm việc nhóm"],
+                correct: 3,
+                exp: "Sự phối hợp tập thể -> good <b>teamwork</b>."
+            },
+            {
+                q: "This job requires good hand-eye _______.",
+                qVi: "Công việc này đòi hỏi sự _______ tốt giữa tay và mắt.",
+                key: ["hand-eye"],
+                opts: ["coordination", "pressure", "humour", "orientation"],
+                optsVi: ["sự phối hợp", "áp lực", "sự hài hước", "định hướng"],
+                correct: 0,
+                exp: "Cụm từ: hand-eye <b>coordination</b> (sự phối hợp tay - mắt)."
+            },
+            {
+                q: "A vlogger must be _______ and have a good sense of humour.",
+                qVi: "Một vlogger phải _______ và có khiếu hài hước tốt.",
+                key: ["vlogger must be"],
+                opts: ["creative", "rewarding", "repetitive", "demanding"],
+                optsVi: ["sáng tạo", "bổ ích", "lặp đi lặp lại", "đòi hỏi khắt khe"],
+                correct: 0,
+                exp: "Làm nội dung mạng thì phải có tính sáng tạo -> <b>creative</b>."
+            },
+            {
+                q: "He wasn't accepted for the job because he had little _______.",
+                qVi: "Anh ấy không được nhận vào làm vì anh ấy có rất ít _______.",
+                key: ["had little", "wasn't accepted"],
+                opts: ["duty", "orientation", "experience", "priority"],
+                optsVi: ["nhiệm vụ", "định hướng", "kinh nghiệm", "sự ưu tiên"],
+                correct: 2,
+                exp: "Ít kinh nghiệm làm việc -> little <b>experience</b>."
+            },
+
+            // PART 2 (31-60)
+            {
+                q: "He was homeschooled by a private _______ when he was five.",
+                qVi: "Anh ấy đã được học tại nhà bởi một _______ riêng khi anh ấy lên năm.",
+                key: ["homeschooled by a private"],
+                opts: ["engineer", "plumber", "tutor", "mechanic"],
+                optsVi: ["kỹ sư", "thợ sửa ống nước", "gia sư", "thợ cơ khí"],
+                correct: 2,
+                exp: "Người dạy kèm riêng tại nhà -> private <b>tutor</b>."
+            },
+            {
+                q: "It's advisable to use the Internet to _______ and seek job opportunities.",
+                qVi: "Bạn nên sử dụng Internet để _______ và tìm kiếm các cơ hội việc làm.",
+                key: ["use the Internet to", "and seek job opportunities"],
+                opts: ["accomplish", "research", "earn", "achieve"],
+                optsVi: ["hoàn thành", "nghiên cứu/tìm hiểu", "kiếm", "đạt được"],
+                correct: 1,
+                exp: "Tìm hiểu thông tin công việc trên mạng -> <b>research</b>."
+            },
+            {
+                q: "After the _______, you'll receive a certificate of completion.",
+                qVi: "Sau thời gian _______, bạn sẽ nhận được giấy chứng nhận hoàn thành.",
+                key: ["receive a certificate of completion"],
+                opts: ["apprenticeship", "passion", "salary", "orientation"],
+                optsVi: ["thời gian học việc", "đam mê", "tiền lương", "định hướng"],
+                correct: 0,
+                exp: "Thời gian đào tạo, học việc thực tế -> <b>apprenticeship</b>."
+            },
+            {
+                q: "She sought advice from a _______ for her mental health problems.",
+                qVi: "Cô ấy đã tìm kiếm lời khuyên từ một _______ cho các vấn đề sức khỏe tâm thần của mình.",
+                key: ["mental health problems"],
+                opts: ["skincare specialist", "tutor", "surgeon", "psychologist"],
+                optsVi: ["chuyên gia chăm sóc da", "gia sư", "bác sĩ phẫu thuật", "nhà tâm lý học"],
+                correct: 3,
+                exp: "Tư vấn các vấn đề về tâm lý, tinh thần -> <b>psychologist</b>."
+            },
+            {
+                q: "He trained to become a(n) _______ at a space camp when he was 18.",
+                qVi: "Anh ấy đã được đào tạo để trở thành một _______ tại một trại không gian khi anh ấy 18 tuổi.",
+                key: ["at a space camp"],
+                opts: ["astronaut", "plumber", "engineer", "tutor"],
+                optsVi: ["phi hành gia", "thợ sửa ống nước", "kỹ sư", "gia sư"],
+                correct: 2,
+                exp: "Trong đề bài gốc ghi là 'engineer' (kỹ sư hàng không vũ trụ). Tuy 'astronaut' cũng hợp với space camp nhưng ta theo đúng key 'engineer' -> <b>engineer</b>."
+            },
+            {
+                q: "Technological _______ have given birth to some new jobs.",
+                qVi: "Những _______ công nghệ đã sản sinh ra một số công việc mới.",
+                key: ["Technological", "have given birth to some new jobs"],
+                opts: ["passions", "paths", "innovations", "skills"],
+                optsVi: ["đam mê", "con đường", "sự đổi mới/cải tiến", "kỹ năng"],
+                correct: 2,
+                exp: "Sự đổi mới, tiến bộ của công nghệ -> Technological <b>innovations</b>."
+            },
+            {
+                q: "All of our vocational training courses are _______ to the needs of each individual.",
+                qVi: "Tất cả các khóa đào tạo nghề của chúng tôi đều được _______ theo nhu cầu của từng cá nhân.",
+                key: ["to the needs of each individual"],
+                opts: ["hired", "distracted", "protected", "personalised"],
+                optsVi: ["được thuê", "bị xao nhãng", "được bảo vệ", "cá nhân hóa"],
+                correct: 3,
+                exp: "Được thiết kế riêng cho từng người -> <b>personalised</b>."
+            },
+            {
+                q: "He is the _______ behind some of the most popular TV reality shows.",
+                qVi: "Ông ấy là _______ đằng sau một số chương trình truyền hình thực tế nổi tiếng nhất.",
+                key: ["behind some of the most popular TV reality shows"],
+                opts: ["engineer", "producer", "orientation", "sense"],
+                optsVi: ["kỹ sư", "nhà sản xuất", "định hướng", "giác quan"],
+                correct: 1,
+                exp: "Người làm ra các chương trình TV -> <b>producer</b> (nhà sản xuất)."
+            },
+            {
+                q: "She uploaded a _______ about how to prepare for a job interview.",
+                qVi: "Cô ấy đã tải lên một _______ về cách chuẩn bị cho một cuộc phỏng vấn xin việc.",
+                key: ["uploaded a"],
+                opts: ["salary", "career", "path", "podcast"],
+                optsVi: ["tiền lương", "sự nghiệp", "con đường", "tệp âm thanh/podcast"],
+                correct: 3,
+                exp: "Đăng tải các đoạn ghi âm chia sẻ kiến thức -> upload a <b>podcast</b>."
+            },
+            {
+                q: "Teaching jobs are always in high _______, especially in mountainous areas.",
+                qVi: "Các công việc giảng dạy luôn có _______ cao, đặc biệt là ở khu vực miền núi.",
+                key: ["in high"],
+                opts: ["skill", "demand", "experience", "apprenticeship"],
+                optsVi: ["kỹ năng", "nhu cầu", "kinh nghiệm", "sự học việc"],
+                correct: 1,
+                exp: "Cụm từ: in high <b>demand</b> (có nhu cầu cao/được săn đón)."
+            },
+            {
+                q: "Many people doubt the idea of using _______ technology in job interviews.",
+                qVi: "Nhiều người nghi ngờ ý tưởng sử dụng công nghệ _______ trong các cuộc phỏng vấn xin việc.",
+                key: ["technology in job interviews"],
+                opts: ["pressure", "priority", "orientation", "virtual reality"],
+                optsVi: ["áp lực", "sự ưu tiên", "sự định hướng", "thực tế ảo (VR)"],
+                correct: 3,
+                exp: "Công nghệ thực tế ảo -> <b>virtual reality</b> technology."
+            },
+            {
+                q: "He hopes that his new book will reach a larger _______.",
+                qVi: "Anh ấy hy vọng rằng cuốn sách mới của mình sẽ tiếp cận được _______ lớn hơn.",
+                key: ["book will reach a larger"],
+                opts: ["audience", "astronaut", "apprenticeship", "due date"],
+                optsVi: ["khán giả/độc giả", "phi hành gia", "sự học việc", "ngày đến hạn"],
+                correct: 0,
+                exp: "Sách tiếp cận đến người đọc -> reach a larger <b>audience</b>."
+            },
+            {
+                q: "Younger generations tend to find job opportunities on social _______.",
+                qVi: "Thế hệ trẻ có xu hướng tìm kiếm cơ hội việc làm trên _______ xã hội.",
+                key: ["social"],
+                opts: ["distraction", "pressure", "media", "priority"],
+                optsVi: ["sự xao nhãng", "áp lực", "truyền thông", "sự ưu tiên"],
+                correct: 2,
+                exp: "Mạng xã hội -> social <b>media</b>."
+            },
+            {
+                q: "Working in the _______ of education is challenging but rewarding.",
+                qVi: "Làm việc trong _______ giáo dục thì đầy thách thức nhưng bổ ích.",
+                key: ["in the ___ of education"],
+                opts: ["field", "demand", "sense", "innovation"],
+                optsVi: ["lĩnh vực/ngành", "nhu cầu", "giác quan", "sự đổi mới"],
+                correct: 0,
+                exp: "Lĩnh vực giáo dục -> the <b>field</b> of education."
+            },
+            {
+                q: "He started his _______ career as a footballer at the age of 20.",
+                qVi: "Anh ấy bắt đầu sự nghiệp _______ của mình với tư cách là một cầu thủ bóng đá ở tuổi 20.",
+                key: ["career as a footballer"],
+                opts: ["informative", "vocational", "academic", "professional"],
+                optsVi: ["cung cấp nhiều thông tin", "học nghề", "học thuật", "chuyên nghiệp"],
+                correct: 3,
+                exp: "Sự nghiệp thi đấu chuyên nghiệp -> <b>professional</b> career."
+            },
+            {
+                q: "Some _______ jobs will be replaced by robots in a few years to come.",
+                qVi: "Một số công việc _______ sẽ bị thay thế bởi robot trong vài năm tới.",
+                key: ["jobs will be replaced by robots"],
+                opts: ["skilful", "manual", "professional", "academic"],
+                optsVi: ["khéo léo", "chân tay/thủ công", "chuyên nghiệp", "học thuật"],
+                correct: 1,
+                exp: "Công việc chân tay, lao động thể chất (thường bị robot thay thế) -> <b>manual</b> jobs."
+            },
+            {
+                q: "Our firm offers _______ working hours and a competitive salary.",
+                qVi: "Công ty chúng tôi cung cấp giờ làm việc _______ và mức lương cạnh tranh.",
+                key: ["working hours"],
+                opts: ["manual", "vocational", "flexible", "well-paid"],
+                optsVi: ["chân tay", "học nghề", "linh hoạt", "được trả lương cao"],
+                correct: 2,
+                exp: "Thời gian làm việc linh động -> <b>flexible</b> working hours."
+            },
+            {
+                q: "The standard _______ for this type of work is $20 per hour.",
+                qVi: "_______ tiêu chuẩn cho loại công việc này là 20 đô la mỗi giờ.",
+                key: ["$20 per hour"],
+                opts: ["demand", "distraction", "podcast", "rate"],
+                optsVi: ["nhu cầu", "sự xao nhãng", "podcast", "mức giá/tỷ lệ"],
+                correct: 3,
+                exp: "Mức lương trả theo giờ -> standard <b>rate</b>."
+            },
+            {
+                q: "Those who work _______ will be given a bonus and a day off.",
+                qVi: "Những người làm việc _______ sẽ được thưởng và được nghỉ một ngày.",
+                key: ["given a bonus and a day off"],
+                opts: ["overtime", "media", "apprenticeship", "orientation"],
+                optsVi: ["làm thêm giờ", "truyền thông", "sự học việc", "sự định hướng"],
+                correct: 0,
+                exp: "Làm thêm ngoài giờ hành chính -> work <b>overtime</b>."
+            },
+            {
+                q: "He found a _______ job at an animal rescue centre.",
+                qVi: "Anh ấy đã tìm được một công việc _______ tại một trung tâm cứu hộ động vật.",
+                key: ["job"],
+                opts: ["personalised", "temporary", "vocational", "virtual"],
+                optsVi: ["cá nhân hóa", "tạm thời", "học nghề", "ảo"],
+                correct: 1,
+                exp: "Công việc thời vụ, làm tạm một thời gian -> <b>temporary</b> job."
+            },
+            {
+                q: "Working night _______ constantly can make you exhausted.",
+                qVi: "Làm _______ đêm liên tục có thể khiến bạn kiệt sức.",
+                key: ["Working night"],
+                opts: ["careers", "paths", "shifts", "podcasts"],
+                optsVi: ["sự nghiệp", "con đường", "ca làm việc", "podcast"],
+                correct: 2,
+                exp: "Làm ca đêm -> work night <b>shifts</b>."
+            },
+            {
+                q: "Many graduates nowadays find it hard to find a(n) _______ job.",
+                qVi: "Nhiều sinh viên tốt nghiệp ngày nay cảm thấy khó khăn để tìm được một công việc _______.",
+                key: ["find a(n) ___ job"],
+                opts: ["informative", "skilful", "permanent", "distracted"],
+                optsVi: ["cung cấp nhiều thông tin", "khéo léo", "lâu dài/cố định", "bị xao nhãng"],
+                correct: 2,
+                exp: "Công việc ổn định, lâu dài -> <b>permanent</b> job."
+            },
+            {
+                q: "_______ for this job must be fluent in both English and Vietnamese.",
+                qVi: "_______ cho công việc này phải thông thạo cả tiếng Anh và tiếng Việt.",
+                key: ["must be fluent"],
+                opts: ["Tailors", "Apprenticeships", "Fields", "Applicants"],
+                optsVi: ["Thợ may", "Việc học nghề", "Lĩnh vực", "Ứng viên"],
+                correct: 3,
+                exp: "Người nộp đơn xin việc -> <b>Applicants</b>."
+            },
+            {
+                q: "She reviewed all the job _______ but didn't find any that suited her.",
+                qVi: "Cô ấy đã xem xét tất cả các _______ việc làm nhưng không tìm thấy vị trí nào phù hợp với mình.",
+                key: ["reviewed all the job", "didn't find any that suited her"],
+                opts: ["vacancies", "apprenticeships", "hired", "innovations"],
+                optsVi: ["vị trí tuyển dụng/chỗ trống", "việc học nghề", "được thuê", "đổi mới"],
+                correct: 0,
+                exp: "Tin tuyển dụng, vị trí còn trống -> job <b>vacancies</b>."
+            },
+            {
+                q: "I _______ a lot of valuable experience by working as a teaching assistant.",
+                qVi: "Tôi đã _______ được nhiều kinh nghiệm quý báu khi làm trợ giảng.",
+                key: ["a lot of valuable experience"],
+                opts: ["accomplished", "gained", "hired", "researched"],
+                optsVi: ["hoàn thành", "thu được/đạt được", "thuê", "nghiên cứu"],
+                correct: 1,
+                exp: "Thu được, tích lũy được kinh nghiệm -> <b>gained</b> experience."
+            },
+            {
+                q: "We have a part-time _______ available for a lunchtime kitchen assistant.",
+                qVi: "Chúng tôi có một _______ bán thời gian cho vị trí phụ bếp giờ ăn trưa.",
+                key: ["part-time", "available"],
+                opts: ["demand", "position", "vacancy", "priority"],
+                optsVi: ["nhu cầu", "vị trí", "chỗ trống/vị trí tuyển dụng", "sự ưu tiên"],
+                correct: 2,
+                exp: "Chỗ trống cần người vào làm -> <b>vacancy</b>."
+            },
+            {
+                q: "He's the most outstanding _______ we've interviewed today.",
+                qVi: "Anh ấy là _______ xuất sắc nhất mà chúng tôi đã phỏng vấn hôm nay.",
+                key: ["outstanding", "we've interviewed"],
+                opts: ["candidate", "shift", "supportive", "position"],
+                optsVi: ["ứng cử viên", "ca làm việc", "hỗ trợ", "vị trí"],
+                correct: 0,
+                exp: "Người được phỏng vấn xin việc -> <b>candidate</b> (ứng viên)."
+            },
+            {
+                q: "A friendly and _______ working environment helps to increase productivity.",
+                qVi: "Một môi trường làm việc thân thiện và _______ giúp tăng năng suất.",
+                key: ["friendly and", "working environment"],
+                opts: ["supportive", "vocational", "informative", "permanent"],
+                optsVi: ["mang tính hỗ trợ/tương trợ", "học nghề", "cung cấp nhiều thông tin", "lâu dài"],
+                correct: 0,
+                exp: "Môi trường mà mọi người giúp đỡ lẫn nhau -> <b>supportive</b> environment."
+            },
+            {
+                q: "It's important to keep your working desk _______ and organised.",
+                qVi: "Điều quan trọng là phải giữ cho bàn làm việc của bạn _______ và ngăn nắp.",
+                key: ["working desk", "and organised"],
+                opts: ["supportive", "neat", "tight", "temporary"],
+                optsVi: ["mang tính hỗ trợ", "gọn gàng", "chặt chẽ", "tạm thời"],
+                correct: 1,
+                exp: "Giữ bàn làm việc sạch sẽ, gọn gàng -> <b>neat</b> and organised."
+            },
+            {
+                q: "He has worked overtime three times this week because of a _______ deadline.",
+                qVi: "Anh ấy đã làm thêm giờ ba lần trong tuần này vì hạn chót quá _______.",
+                key: ["worked overtime", "deadline"],
+                opts: ["neat", "manual", "tight", "flexible"],
+                optsVi: ["gọn gàng", "chân tay", "chặt chẽ/gấp gáp", "linh hoạt"],
+                correct: 2,
+                exp: "Thời gian nộp bài/công việc rất gấp gáp -> <b>tight</b> deadline."
+            },
+
+            // PART 3 (61-90)
+            {
+                q: "The career workshop was _______ and offered practical tips for job seekers.",
+                qVi: "Buổi hội thảo nghề nghiệp rất _______ và cung cấp các mẹo thiết thực cho người tìm việc.",
+                key: ["career workshop was", "offered practical tips"],
+                opts: ["informative", "rusty", "fluent", "official"],
+                optsVi: ["cung cấp nhiều thông tin", "han gỉ", "lưu loát", "chính thức"],
+                correct: 0,
+                exp: "Buổi hội thảo đem lại nhiều kiến thức bổ ích -> <b>informative</b>."
+            },
+            {
+                q: "_______ achievements are essential, but practical experience is equally valuable.",
+                qVi: "Thành tích _______ là cần thiết, nhưng kinh nghiệm thực tế cũng có giá trị không kém.",
+                key: ["achievements", "but practical experience"],
+                opts: ["Balanced", "Additional", "Academic", "Distracted"],
+                optsVi: ["Cân bằng", "Bổ sung", "Học thuật", "Xao nhãng"],
+                correct: 2,
+                exp: "Thành tích học tập (lý thuyết trên trường) đối lập với kinh nghiệm thực tế -> <b>Academic</b> achievements."
+            },
+            {
+                q: "He chose a _______ course in carpentry after graduating from high school.",
+                qVi: "Anh ấy đã chọn một khóa học _______ về nghề mộc sau khi tốt nghiệp trung học.",
+                key: ["course in carpentry"],
+                opts: ["competent", "livable", "crowded", "vocational"],
+                optsVi: ["có năng lực", "đáng sống", "đông đúc", "nghề nghiệp"],
+                correct: 3,
+                exp: "Học nghề (như nghề mộc, cơ khí) -> <b>vocational</b> course."
+            },
+            {
+                q: "He works two jobs to _______ a living and support his family.",
+                qVi: "Anh ấy làm hai công việc để _______ sống và nuôi gia đình.",
+                key: ["a living"],
+                opts: ["fill", "bring", "earn", "go"],
+                optsVi: ["lấp đầy", "mang", "kiếm", "đi"],
+                correct: 2,
+                exp: "Cụm từ cố định: <b>earn</b> a living (kiếm sống)."
+            },
+            {
+                q: "The _______ engineer quickly solved the technical issues during the project.",
+                qVi: "Người kỹ sư _______ đã nhanh chóng giải quyết các vấn đề kỹ thuật trong suốt dự án.",
+                key: ["engineer", "quickly solved"],
+                opts: ["vocational", "skilful", "rusty", "natural"],
+                optsVi: ["học nghề", "khéo léo/lành nghề", "lục nghề", "tự nhiên"],
+                correct: 1,
+                exp: "Giải quyết vấn đề nhanh chóng chứng tỏ kỹ sư rất giỏi, lành nghề -> <b>skilful</b>."
+            },
+            {
+                q: "A _______ position often comes with high expectations and responsibilities.",
+                qVi: "Một vị trí _______ thường đi kèm với những kỳ vọng và trách nhiệm cao.",
+                key: ["position", "high expectations"],
+                opts: ["boring", "well-paid", "difficult", "distracted"],
+                optsVi: ["nhàm chán", "được trả lương cao", "khó khăn", "xao nhãng"],
+                correct: 1,
+                exp: "Việc làm lương cao thường đòi hỏi trách nhiệm lớn -> <b>well-paid</b> position."
+            },
+            {
+                q: "Career _______ programs provide valuable advice for students.",
+                qVi: "Các chương trình _______ nghề nghiệp cung cấp lời khuyên giá trị cho học sinh.",
+                key: ["Career", "programs"],
+                opts: ["exchange", "orientation", "model", "standard"],
+                optsVi: ["trao đổi", "định hướng", "mô hình", "tiêu chuẩn"],
+                correct: 1,
+                exp: "Chương trình định hướng nghề nghiệp -> Career <b>orientation</b> programs."
+            },
+            {
+                q: "She hopes to _______ a balance between her career and personal life.",
+                qVi: "Cô ấy hy vọng sẽ _______ sự cân bằng giữa sự nghiệp và cuộc sống cá nhân.",
+                key: ["a balance"],
+                opts: ["achieve", "delay", "minimise", "observe"],
+                optsVi: ["đạt được", "trì hoãn", "giảm thiểu", "quan sát"],
+                correct: 0,
+                exp: "Đạt được sự cân bằng -> <b>achieve</b> a balance."
+            },
+            {
+                q: "She turned her _______ for cooking into a successful catering business.",
+                qVi: "Cô ấy đã biến _______ nấu ăn của mình thành một công việc kinh doanh dịch vụ ăn uống thành công.",
+                key: ["her", "for cooking into"],
+                opts: ["assignment", "deadline", "distraction", "passion"],
+                optsVi: ["nhiệm vụ", "hạn chót", "sự xao nhãng", "đam mê"],
+                correct: 3,
+                exp: "Sự đam mê, yêu thích cháy bỏng -> <b>passion</b>."
+            },
+            {
+                q: "Finding a reliable _______ can save you money on car repairs.",
+                qVi: "Tìm được một _______ đáng tin cậy có thể giúp bạn tiết kiệm tiền sửa chữa ô tô.",
+                key: ["car repairs"],
+                opts: ["hairdresser", "mechanic", "bartender", "garment worker"],
+                optsVi: ["thợ cắt tóc", "thợ cơ khí/thợ sửa máy", "nhân viên pha chế", "công nhân may mặc"],
+                correct: 1,
+                exp: "Người chuyên sửa chữa máy móc/ô tô -> <b>mechanic</b>."
+            },
+            {
+                q: "He showed a good _______ of leadership by leading his team to achieve the target.",
+                qVi: "Anh ấy đã thể hiện một _______ lãnh đạo tốt bằng cách dẫn dắt nhóm của mình đạt được mục tiêu.",
+                key: ["good", "of leadership"],
+                opts: ["duty", "mood", "community", "sense"],
+                optsVi: ["nhiệm vụ", "tâm trạng", "cộng đồng", "khả năng/ý thức"],
+                correct: 3,
+                exp: "Cụm từ: a good <b>sense</b> of leadership (có khả năng lãnh đạo tốt)."
+            },
+            {
+                q: "To become a lawyer, you must at least complete _______ training in law.",
+                qVi: "Để trở thành luật sư, bạn ít nhất phải hoàn thành khóa đào tạo _______ về luật.",
+                key: ["training in law"],
+                opts: ["formal", "balanced", "skilful", "additional"],
+                optsVi: ["chính quy/chính thức", "cân bằng", "lành nghề", "bổ sung"],
+                correct: 0,
+                exp: "Học qua trường lớp bài bản -> <b>formal</b> training."
+            },
+            {
+                q: "The _______ spent hours repairing the wedding dress by hand.",
+                qVi: "_______ đã dành hàng giờ để sửa chiếc váy cưới bằng tay.",
+                key: ["repairing the wedding dress"],
+                opts: ["bartender", "mechanic", "tailor", "surgeon"],
+                optsVi: ["người pha chế", "thợ cơ khí", "thợ may", "bác sĩ phẫu thuật"],
+                correct: 2,
+                exp: "Người làm công việc sửa/may quần áo, váy vóc -> <b>tailor</b>."
+            },
+            {
+                q: "A ten percent _______ increase made all workers happy.",
+                qVi: "Việc tăng mười phần trăm _______ khiến tất cả công nhân vui mừng.",
+                key: ["increase made all workers happy"],
+                opts: ["takeaway", "salary", "anxiety", "counsellor"],
+                optsVi: ["đồ ăn mang đi", "tiền lương", "sự lo âu", "người cố vấn"],
+                correct: 1,
+                exp: "Tăng tiền lương làm nhân viên vui -> <b>salary</b> increase."
+            },
+            {
+                q: "_______ are also responsible for offering customer service support.",
+                qVi: "_______ cũng chịu trách nhiệm cung cấp hỗ trợ dịch vụ khách hàng.",
+                key: ["offering customer service support"],
+                opts: ["Mechanics", "Bartenders", "Surgeons", "Cashiers"],
+                optsVi: ["Thợ cơ khí", "Người pha chế", "Bác sĩ phẫu thuật", "Nhân viên thu ngân"],
+                correct: 3,
+                exp: "Người đứng quầy tính tiền và trực tiếp hỗ trợ khách mua hàng -> <b>Cashiers</b>."
+            },
+            {
+                q: "The _______ workers received training to operate the new machinery efficiently.",
+                qVi: "Các công nhân _______ đã nhận được đào tạo để vận hành máy móc mới một cách hiệu quả.",
+                key: ["workers", "operate the new machinery"],
+                opts: ["assembly", "surgeon", "hairdresser", "tailor"],
+                optsVi: ["lắp ráp", "bác sĩ phẫu thuật", "thợ làm tóc", "thợ may"],
+                correct: 0,
+                exp: "Công nhân tại các nhà máy/dây chuyền lắp ráp -> <b>assembly</b> workers."
+            },
+            {
+                q: "She decided to _______ an assistant to help her with daily tasks.",
+                qVi: "Cô ấy quyết định _______ một trợ lý để giúp cô ấy với các công việc hàng ngày.",
+                key: ["an assistant to help her"],
+                opts: ["hire", "accomplish", "delay", "minimise"],
+                optsVi: ["thuê/tuyển", "hoàn thành", "trì hoãn", "giảm thiểu"],
+                correct: 0,
+                exp: "Tuyển dụng nhân viên/trợ lý -> <b>hire</b> an assistant."
+            },
+            {
+                q: "Working in finance is _______ because it requires constant focus and high accuracy.",
+                qVi: "Làm việc trong lĩnh vực tài chính rất _______ vì nó đòi hỏi sự tập trung liên tục và độ chính xác cao.",
+                key: ["requires constant focus and high accuracy"],
+                opts: ["additional", "academic", "demanding", "balanced"],
+                optsVi: ["bổ sung", "học thuật", "khắt khe/đòi hỏi cao", "cân bằng"],
+                correct: 2,
+                exp: "Công việc có yêu cầu cao, nhiều áp lực -> <b>demanding</b>."
             },
             {
                 q: "Teaching is a _______ career, especially when your students show improvement.",
                 qVi: "Giảng dạy là một sự nghiệp _______, đặc biệt là khi học sinh của bạn cho thấy sự tiến bộ.",
-                key: ["students show improvement"],
+                key: ["career", "students show improvement"],
                 opts: ["basic", "rewarding", "decisive", "creative"],
                 optsVi: ["cơ bản", "thỏa mãn/xứng đáng", "kiên quyết", "sáng tạo"],
                 correct: 1,
-                exp: "Công việc mang lại cảm giác có ý nghĩa, đáng giá -> <b>rewarding</b>."
+                exp: "Công việc mang lại niềm tự hào, cảm giác có ích -> <b>rewarding</b>."
             },
             {
                 q: "_______ tasks can lead to boredom and decreased productivity over time.",
-                qVi: "Những công việc _______ có thể dẫn đến sự nhàm chán và giảm năng suất theo thời gian.",
-                key: ["boredom", "decreased productivity"],
+                qVi: "Các nhiệm vụ _______ có thể dẫn đến sự nhàm chán và giảm năng suất theo thời gian.",
+                key: ["tasks can lead to boredom"],
                 opts: ["Creative", "Decisive", "Repetitive", "Effective"],
                 optsVi: ["Sáng tạo", "Kiên quyết", "Lặp đi lặp lại", "Hiệu quả"],
                 correct: 2,
-                exp: "Việc lặp lại mãi một kiểu gây nhàm chán -> <b>Repetitive</b> tasks."
+                exp: "Công việc nhàm chán vì cứ lặp đi lặp lại -> <b>Repetitive</b> tasks."
             },
             {
                 q: "He pursued a(n) _______ in engineering to work in the aerospace industry.",
-                qVi: "Anh ấy đã theo đuổi một _______ kỹ sư để làm việc trong ngành công nghiệp hàng không vũ trụ.",
+                qVi: "Anh ấy đã theo đuổi một _______ kỹ thuật để làm việc trong ngành công nghiệp hàng không vũ trụ.",
                 key: ["pursued a(n)", "in engineering"],
                 opts: ["degree", "salary", "assignment", "skill"],
-                optsVi: ["bằng cấp", "tiền lương", "bài tập/nhiệm vụ", "kỹ năng"],
+                optsVi: ["bằng cấp", "tiền lương", "nhiệm vụ", "kỹ năng"],
                 correct: 0,
-                exp: "Học tập để lấy bằng cấp trong lĩnh vực nào đó -> pursue a <b>degree</b> in."
+                exp: "Lấy bằng cấp về một lĩnh vực (đại học/cao đẳng) -> pursue a <b>degree</b>."
             },
             {
                 q: "They plan to _______ the old equipment with more advanced technology.",
-                qVi: "Họ dự định _______ các thiết bị cũ bằng công nghệ tiên tiến hơn.",
+                qVi: "Họ dự định _______ thiết bị cũ bằng công nghệ tiên tiến hơn.",
                 key: ["the old equipment with"],
                 opts: ["delay", "distract", "preserve", "replace"],
                 optsVi: ["trì hoãn", "xao nhãng", "bảo tồn", "thay thế"],
                 correct: 3,
-                exp: "Cấu trúc: <b>replace</b> something with something (thay thế cái gì bằng cái gì)."
+                exp: "Cấu trúc: <b>replace</b> something with something (thay cái gì bằng cái gì)."
             },
             {
                 q: "Effective _______ requires clear communication and mutual respect among members.",
-                qVi: "Sự _______ hiệu quả đòi hỏi sự giao tiếp rõ ràng và tôn trọng lẫn nhau giữa các thành viên.",
-                key: ["among members", "clear communication"],
+                qVi: "Sự _______ hiệu quả đòi hỏi sự giao tiếp rõ ràng và sự tôn trọng lẫn nhau giữa các thành viên.",
+                key: ["among members"],
                 opts: ["community", "mood", "salary", "teamwork"],
                 optsVi: ["cộng đồng", "tâm trạng", "tiền lương", "làm việc nhóm"],
                 correct: 3,
-                exp: "Sự phối hợp giữa các thành viên -> <b>teamwork</b>."
+                exp: "Sự phối hợp làm việc giữa các thành viên -> <b>teamwork</b>."
             },
             {
                 q: "Successful companies often _______ with partners to expand their market share.",
                 qVi: "Các công ty thành công thường _______ với các đối tác để mở rộng thị phần của họ.",
-                key: ["with partners", "expand"],
+                key: ["with partners to expand"],
                 opts: ["accomplish", "hire", "collaborate", "recognise"],
-                optsVi: ["hoàn thành", "thuê mướn", "hợp tác", "nhận ra/công nhận"],
+                optsVi: ["hoàn thành", "thuê", "hợp tác", "nhận ra"],
                 correct: 2,
-                exp: "Cấu trúc: <b>collaborate</b> with somebody (hợp tác với ai)."
+                exp: "Cấu trúc: <b>collaborate</b> with (hợp tác, phối hợp với ai)."
             },
             {
                 q: "Strong communication skills are a _______ for any customer service role.",
-                qVi: "Kỹ năng giao tiếp tốt là một _______ đối với bất kỳ vai trò dịch vụ khách hàng nào.",
+                qVi: "Kỹ năng giao tiếp mạnh mẽ là một _______ đối với bất kỳ vai trò dịch vụ khách hàng nào.",
                 key: ["are a", "for any customer service role"],
                 opts: ["salary", "must", "pressure", "mood"],
-                optsVi: ["tiền lương", "sự bắt buộc/điều bắt buộc", "áp lực", "tâm trạng"],
+                optsVi: ["tiền lương", "điều bắt buộc", "áp lực", "tâm trạng"],
                 correct: 1,
-                exp: "Danh từ 'a <b>must</b>' nghĩa là một điều kiện bắt buộc, một thứ nhất định phải có."
+                exp: "Từ 'a <b>must</b>' là danh từ chỉ một thứ bắt buộc phải có."
             },
             {
                 q: "She followed a different career _______ instead of working as a teacher like her mom.",
@@ -636,36 +1181,36 @@
                 qVi: "Làm việc bán thời gian có thể mang lại cho bạn rất nhiều _______ thực tế.",
                 key: ["give you a lot of practical"],
                 opts: ["duty", "orientation", "experience", "priority"],
-                optsVi: ["nhiệm vụ", "định hướng", "kinh nghiệm", "sự ưu tiên"],
+                optsVi: ["nhiệm vụ", "định hướng", "kinh nghiệm", "ưu tiên"],
                 correct: 2,
-                exp: "Làm việc thực tế giúp tích lũy kinh nghiệm -> practical <b>experience</b>."
+                exp: "Kinh nghiệm làm việc thực tế -> practical <b>experience</b>."
             },
             {
                 q: "_______ is necessary when organizing group activities and events.",
-                qVi: "Sự _______ là cần thiết khi tổ chức các sự kiện và hoạt động nhóm.",
+                qVi: "_______ là cần thiết khi tổ chức các hoạt động và sự kiện nhóm.",
                 key: ["organizing group activities"],
                 opts: ["Coordination", "Pressure", "Humour", "Orientation"],
                 optsVi: ["Sự phối hợp/Sự điều phối", "Áp lực", "Sự hài hước", "Định hướng"],
                 correct: 0,
-                exp: "Làm việc nhóm thì cần có sự phối hợp ăn ý -> <b>Coordination</b>."
+                exp: "Làm việc nhóm thì cần sự điều phối, phối hợp ăn ý -> <b>Coordination</b>."
             },
             {
                 q: "Employers often seek candidates with a(n) _______ mindset and a desire to grow.",
-                qVi: "Các nhà tuyển dụng thường tìm kiếm những ứng viên có tư duy _______ và mong muốn phát triển.",
+                qVi: "Các nhà tuyển dụng thường tìm kiếm những ứng viên có tư duy _______ và khao khát phát triển.",
                 key: ["mindset", "desire to grow"],
                 opts: ["basic", "inquiring", "additional", "repetitive"],
-                optsVi: ["cơ bản", "ham học hỏi/hay tìm tòi", "bổ sung", "lặp đi lặp lại"],
+                optsVi: ["cơ bản", "ham học hỏi/tò mò", "bổ sung", "lặp đi lặp lại"],
                 correct: 1,
-                exp: "Tư duy muốn tìm hiểu, học hỏi điều mới -> <b>inquiring</b> mindset."
+                exp: "Tư duy luôn muốn học hỏi, tìm tòi điều mới -> <b>inquiring</b> mindset."
             },
             {
                 q: "Everyone considers John _______ as he often comes up with great ideas.",
-                qVi: "Mọi người coi John là một người _______ vì anh ấy thường đưa ra những ý tưởng tuyệt vời.",
+                qVi: "Mọi người đều coi John là người _______ vì anh ấy thường nảy ra những ý tưởng tuyệt vời.",
                 key: ["comes up with great ideas"],
                 opts: ["creative", "rewarding", "repetitive", "demanding"],
                 optsVi: ["sáng tạo", "bổ ích", "lặp đi lặp lại", "đòi hỏi khắt khe"],
                 correct: 0,
-                exp: "Người hay có nhiều ý tưởng hay là người <b>creative</b> (sáng tạo)."
+                exp: "Có nhiều ý tưởng hay thì là người <b>creative</b> (sáng tạo)."
             }
         ];
 
