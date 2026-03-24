@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Language & Communication (90 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Language & Communication (90 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">90</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">90</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // BATCH 1 (1 - 30)
+            {
+                q: "Our high school has a(n) _______ programme with a school in Japan.",
+                qVi: "Trường trung học của chúng tôi có một chương trình _______ với một trường học ở Nhật Bản.",
+                key: ["programme with a school in Japan"],
+                opts: ["exchange", "uniform", "difference", "recognition"],
+                optsVi: ["trao đổi", "đồng phục", "sự khác biệt", "sự công nhận"],
+                correct: 0,
+                exp: "Chương trình trao đổi học sinh giữa các trường -> <b>exchange</b> programme."
+            },
+            {
+                q: "British English and American English share similarities in certain aspects, but there are also significant _______.",
+                qVi: "Tiếng Anh Anh và Tiếng Anh Mỹ có những điểm tương đồng ở những khía cạnh nhất định, nhưng cũng có những _______ đáng kể.",
+                key: ["share similarities", "but there are also"],
+                opts: ["souvenirs", "handicrafts", "differences", "brochures"],
+                optsVi: ["đồ lưu niệm", "đồ thủ công", "sự khác biệt", "tờ rơi"],
+                correct: 2,
+                exp: "Tương phản với 'similarities' (điểm tương đồng) là <b>differences</b> (sự khác biệt)."
+            },
+            {
+                q: "Brazilian _______ in New York have made efforts to preserve their language.",
+                qVi: "Những _______ người Brazil ở New York đã nỗ lực để bảo tồn ngôn ngữ của họ.",
+                key: ["Brazilian", "in New York"],
+                opts: ["guides", "immigrants", "itineraries", "rangers"],
+                optsVi: ["hướng dẫn viên", "người nhập cư", "lịch trình", "kiểm lâm"],
+                correct: 1,
+                exp: "Người từ nước này sang nước khác sinh sống -> <b>immigrants</b> (người nhập cư)."
+            },
+            {
+                q: "One of the most difficult aspects of learning a foreign language is building _______.",
+                qVi: "Một trong những khía cạnh khó khăn nhất của việc học ngoại ngữ là xây dựng _______.",
+                key: ["learning a foreign language", "building"],
+                opts: ["vocabulary", "accommodation", "entrance", "package"],
+                optsVi: ["từ vựng", "chỗ ở", "lối vào", "gói"],
+                correct: 0,
+                exp: "Học ngoại ngữ thì cần xây dựng vốn từ -> building <b>vocabulary</b>."
+            },
+            {
+                q: "'Sidewalk' in American English _______ 'pavement' in British English.",
+                qVi: "'Sidewalk' trong tiếng Anh Mỹ _______ 'pavement' trong tiếng Anh Anh.",
+                key: ["American English", "British English"],
+                opts: ["books", "hunts", "estimates", "means"],
+                optsVi: ["đặt chỗ", "săn bắt", "ước tính", "có nghĩa là"],
+                correct: 3,
+                exp: "Từ này có nghĩa tương đương với từ kia -> <b>means</b> (có nghĩa là)."
+            },
+            {
+                q: "Her _______ is Vietnamese, but she can also speak Thai.",
+                qVi: "_______ của cô ấy là tiếng Việt, nhưng cô ấy cũng có thể nói tiếng Thái.",
+                key: ["Vietnamese", "also speak Thai"],
+                opts: ["skilled language", "brief language", "first language", "appealing language"],
+                optsVi: ["ngôn ngữ thành thạo", "ngôn ngữ ngắn gọn", "ngôn ngữ mẹ đẻ/ngôn ngữ thứ nhất", "ngôn ngữ hấp dẫn"],
+                correct: 2,
+                exp: "Ngôn ngữ mẹ đẻ -> <b>first language</b> (hoặc mother tongue)."
+            },
+            {
+                q: "Some expressions we use in everyday conversations are _______ from French.",
+                qVi: "Một số cách diễn đạt chúng ta sử dụng trong các cuộc trò chuyện hàng ngày được _______ từ tiếng Pháp.",
+                key: ["expressions", "from French"],
+                opts: ["exchanged", "protected", "rented", "borrowed"],
+                optsVi: ["được trao đổi", "được bảo vệ", "được thuê", "được mượn/vay mượn"],
+                correct: 3,
+                exp: "Từ vựng hoặc cách diễn đạt được vay mượn từ ngôn ngữ khác -> <b>borrowed</b> from."
+            },
+            {
+                q: "He can speak English _______ because his mother is Australian.",
+                qVi: "Anh ấy có thể nói tiếng Anh _______ vì mẹ anh ấy là người Úc.",
+                key: ["speak English", "mother is Australian"],
+                opts: ["flexibly", "fluently", "deliciously", "domestically"],
+                optsVi: ["một cách linh hoạt", "lưu loát/trôi chảy", "ngon miệng", "trong nước"],
+                correct: 1,
+                exp: "Nói một ngôn ngữ trôi chảy -> speak <b>fluently</b>."
+            },
+            {
+                q: "There are different _______ of English that are used worldwide.",
+                qVi: "Có nhiều _______ tiếng Anh khác nhau được sử dụng trên toàn thế giới.",
+                key: ["different", "of English"],
+                opts: ["brochures", "wonders", "varieties", "itineraries"],
+                optsVi: ["tờ rơi", "kỳ quan", "biến thể/loại", "lịch trình"],
+                correct: 2,
+                exp: "Tiếng Anh có nhiều biến thể (Anh-Anh, Anh-Mỹ, Anh-Úc...) -> <b>varieties</b> of English."
+            },
+            {
+                q: "James is _______; he is fluent in English and Chinese.",
+                qVi: "James là người _______; anh ấy thông thạo tiếng Anh và tiếng Trung.",
+                key: ["fluent in English and Chinese"],
+                opts: ["bilingual", "ancient", "ideal", "flexible"],
+                optsVi: ["song ngữ (biết 2 thứ tiếng)", "cổ kính", "lý tưởng", "linh hoạt"],
+                correct: 0,
+                exp: "Người thông thạo hai ngôn ngữ được gọi là <b>bilingual</b>."
+            },
+            {
+                q: "Though Filipino and English are considered the _______ languages in the Philippines, people tend to use English more often.",
+                qVi: "Mặc dù tiếng Philipin và tiếng Anh được coi là các ngôn ngữ _______ ở Philippines, mọi người có xu hướng sử dụng tiếng Anh thường xuyên hơn.",
+                key: ["languages in the Philippines"],
+                opts: ["fluent", "flexible", "bilingual", "official"],
+                optsVi: ["lưu loát", "linh hoạt", "song ngữ", "chính thức"],
+                correct: 3,
+                exp: "Ngôn ngữ chính thức của một quốc gia -> <b>official</b> languages."
+            },
+            {
+                q: "He used an AI system to _______ this text into Vietnamese and then edited it for a smoother flow.",
+                qVi: "Anh ấy đã sử dụng hệ thống AI để _______ văn bản này sang tiếng Việt và sau đó chỉnh sửa lại cho mượt mà hơn.",
+                key: ["AI system to", "this text into Vietnamese"],
+                opts: ["preserve", "explore", "discover", "translate"],
+                optsVi: ["bảo tồn", "khám phá", "khám phá/tìm ra", "dịch"],
+                correct: 3,
+                exp: "Chuyển ngữ văn bản -> <b>translate</b> ... into ..."
+            },
+            {
+                q: "She _______ English while selling merchandise at the local market.",
+                qVi: "Cô ấy đã _______ tiếng Anh trong khi bán hàng hóa tại khu chợ địa phương.",
+                key: ["English while selling"],
+                opts: ["looked up", "picked up", "made up", "turned up"],
+                optsVi: ["tra cứu", "học lỏm/tiếp thu tự nhiên", "bịa đặt/trang điểm", "xuất hiện"],
+                correct: 1,
+                exp: "Học một ngôn ngữ một cách tự nhiên qua giao tiếp thực tế (học lỏm) -> <b>picked up</b>."
+            },
+            {
+                q: "The teacher advised us to _______ the grammatical points in the textbook before doing the task.",
+                qVi: "Giáo viên khuyên chúng tôi nên _______ các điểm ngữ pháp trong sách giáo khoa trước khi làm bài tập.",
+                key: ["grammatical points in the textbook"],
+                opts: ["go over", "copy", "pick up", "translate"],
+                optsVi: ["ôn tập/xem lại", "sao chép", "học lỏm/nhặt lên", "phiên dịch"],
+                correct: 0,
+                exp: "Xem lại, ôn lại bài -> <b>go over</b>."
+            },
+            {
+                q: "Her ability to _______ herself in English is impressive, especially considering that she is Vietnamese.",
+                qVi: "Khả năng _______ bản thân bằng tiếng Anh của cô ấy rất ấn tượng, đặc biệt khi xét đến việc cô ấy là người Việt Nam.",
+                key: ["herself in English"],
+                opts: ["translate", "mean", "exchange", "express"],
+                optsVi: ["dịch", "có nghĩa", "trao đổi", "diễn đạt/thể hiện"],
+                correct: 3,
+                exp: "Diễn đạt ý nghĩ của bản thân -> <b>express</b> oneself."
+            },
+            {
+                q: "What is the _______ of the word 'has' in this sentence?",
+                qVi: "_______ của từ 'has' trong câu này là gì?",
+                key: ["of the word"],
+                opts: ["immigrant", "difference", "function", "vocabulary"],
+                optsVi: ["người nhập cư", "sự khác biệt", "chức năng", "từ vựng"],
+                correct: 2,
+                exp: "Vai trò, chức năng ngữ pháp của một từ -> the <b>function</b> of the word."
+            },
+            {
+                q: "Our students are encouraged to _______ with each other in English during breaks.",
+                qVi: "Học sinh của chúng tôi được khuyến khích _______ với nhau bằng tiếng Anh trong giờ giải lao.",
+                key: ["with each other in English"],
+                opts: ["communicate", "promote", "occupy", "contribute"],
+                optsVi: ["giao tiếp", "thúc đẩy", "chiếm giữ", "đóng góp"],
+                correct: 0,
+                exp: "Nói chuyện, trao đổi thông tin với nhau -> <b>communicate</b> with each other."
+            },
+            {
+                q: "They have difficulty conducting business with each other because they don't share a _______ language.",
+                qVi: "Họ gặp khó khăn trong việc tiến hành công việc kinh doanh với nhau vì họ không có _______ ngôn ngữ.",
+                key: ["don't share a"],
+                opts: ["official", "flexible", "first", "common"],
+                optsVi: ["chính thức", "linh hoạt", "thứ nhất", "chung"],
+                correct: 3,
+                exp: "Ngôn ngữ dùng chung cho những người khác tiếng mẹ đẻ -> <b>common</b> language."
+            },
+            {
+                q: "Teachers at this foreign language centre must be _______ in sign language.",
+                qVi: "Giáo viên tại trung tâm ngoại ngữ này phải _______ ngôn ngữ ký hiệu.",
+                key: ["must be", "in sign language"],
+                opts: ["official", "effective", "bilingual", "proficient"],
+                optsVi: ["chính thức", "hiệu quả", "song ngữ", "thành thạo/lưu loát"],
+                correct: 3,
+                exp: "Sử dụng thành thạo một ngôn ngữ -> be <b>proficient</b> in."
+            },
+            {
+                q: "The use of English helps to _______ significant scientific advancements.",
+                qVi: "Việc sử dụng tiếng Anh giúp _______ những tiến bộ khoa học quan trọng.",
+                key: ["helps to", "advancements"],
+                opts: ["appear", "associate", "encourage", "observe"],
+                optsVi: ["xuất hiện", "liên kết", "khuyến khích/thúc đẩy", "quan sát"],
+                correct: 2,
+                exp: "Thúc đẩy sự phát triển -> <b>encourage</b> advancements."
+            },
+            {
+                q: "English _______ students from developing countries to access high-quality education.",
+                qVi: "Tiếng Anh _______ cho sinh viên từ các nước đang phát triển tiếp cận nền giáo dục chất lượng cao.",
+                key: ["students from developing countries to access"],
+                opts: ["occupies", "enables", "expresses", "means"],
+                optsVi: ["chiếm giữ", "cho phép/giúp", "diễn đạt", "có nghĩa là"],
+                correct: 1,
+                exp: "Cấu trúc: <b>enable</b> somebody to do something (giúp/cho phép ai làm gì)."
+            },
+            {
+                q: "In international forums, English is _______ for ease of information sharing.",
+                qVi: "Tại các diễn đàn quốc tế, tiếng Anh được _______ để dễ dàng chia sẻ thông tin.",
+                key: ["English is", "for ease of information sharing"],
+                opts: ["exchanged", "expressed", "enabled", "employed"],
+                optsVi: ["trao đổi", "diễn đạt", "kích hoạt", "sử dụng/thuê"],
+                correct: 3,
+                exp: "Được dùng, được sử dụng (formal) -> be <b>employed</b> (used)."
+            },
+            {
+                q: "Humans have not yet found a(n) _______ to English as an international language.",
+                qVi: "Con người vẫn chưa tìm thấy một _______ cho tiếng Anh với tư cách là một ngôn ngữ quốc tế.",
+                key: ["not yet found a(n)", "to English"],
+                opts: ["alternative", "exchange", "function", "means"],
+                optsVi: ["sự thay thế", "sự trao đổi", "chức năng", "phương tiện"],
+                correct: 0,
+                exp: "Tìm ra giải pháp/ngôn ngữ thay thế -> an <b>alternative</b> to."
+            },
+            {
+                q: "English is a _______ means of communication, connecting the world effectively.",
+                qVi: "Tiếng Anh là một phương tiện giao tiếp _______, kết nối thế giới một cách hiệu quả.",
+                key: ["means of communication", "connecting the world"],
+                opts: ["fluent", "proficient", "universal", "bilingual"],
+                optsVi: ["lưu loát", "thành thạo", "phổ quát/toàn cầu", "song ngữ"],
+                correct: 2,
+                exp: "Được sử dụng phổ biến trên toàn thế giới -> <b>universal</b> means."
+            },
+            {
+                q: "Many students struggle to find an effective _______ for memorising English words.",
+                qVi: "Nhiều học sinh gặp khó khăn trong việc tìm ra một _______ hiệu quả để ghi nhớ các từ tiếng Anh.",
+                key: ["effective", "for memorising"],
+                opts: ["variety", "difference", "function", "method"],
+                optsVi: ["sự đa dạng", "sự khác biệt", "chức năng", "phương pháp"],
+                correct: 3,
+                exp: "Phương pháp, cách thức học tập -> effective <b>method</b>."
+            },
+            {
+                q: "You may _______ interesting words or phrases while reading an English book.",
+                qVi: "Bạn có thể _______ những từ hoặc cụm từ thú vị khi đọc một cuốn sách tiếng Anh.",
+                key: ["interesting words or phrases", "while reading"],
+                opts: ["go over", "look after", "come across", "turn down"],
+                optsVi: ["ôn tập", "chăm sóc", "tình cờ gặp/thấy", "từ chối"],
+                correct: 2,
+                exp: "Tình cờ bắt gặp từ vựng mới -> <b>come across</b>."
+            },
+            {
+                q: "He enjoys watching Brazilian films on Netflix with English _______.",
+                qVi: "Anh ấy thích xem phim Brazil trên Netflix với _______ tiếng Anh.",
+                key: ["films on Netflix with English"],
+                opts: ["functions", "subtitles", "varieties", "differences"],
+                optsVi: ["chức năng", "phụ đề", "sự đa dạng/biến thể", "sự khác biệt"],
+                correct: 1,
+                exp: "Xem phim có chữ chạy bên dưới dịch nghĩa -> <b>subtitles</b> (phụ đề)."
+            },
+            {
+                q: "Learning the lyrics of English songs by heart can help you expand your vocabulary _______.",
+                qVi: "Học thuộc lòng lời bài hát tiếng Anh có thể giúp bạn mở rộng _______ từ vựng của mình.",
+                key: ["expand your vocabulary"],
+                opts: ["flexibility", "variety", "method", "difference"],
+                optsVi: ["sự linh hoạt", "sự đa dạng/lượng", "phương pháp", "sự khác biệt"],
+                correct: 1,
+                exp: "Mở rộng sự phong phú, đa dạng của vốn từ -> vocabulary <b>variety</b>."
+            },
+            {
+                q: "A good _______ of English is essential for international business.",
+                qVi: "Sự _______ tiếng Anh tốt là điều cần thiết cho kinh doanh quốc tế.",
+                key: ["good", "of English is essential"],
+                opts: ["grasp", "means", "exchange", "range"],
+                optsVi: ["sự hiểu biết/nắm bắt", "phương tiện", "sự trao đổi", "phạm vi"],
+                correct: 0,
+                exp: "Nắm vững, am hiểu một ngôn ngữ -> a good <b>grasp</b> of."
+            },
+            {
+                q: "To study _______, you need to speak and write English fluently.",
+                qVi: "Để học tập _______, bạn cần nói và viết tiếng Anh trôi chảy.",
+                key: ["To study"],
+                opts: ["locally", "overseas", "skilfully", "appropriately"],
+                optsVi: ["tại địa phương", "ở nước ngoài", "một cách khéo léo", "một cách phù hợp"],
+                correct: 1,
+                exp: "Đi du học nước ngoài -> study <b>overseas</b>."
+            },
+
+            // BATCH 2 (31 - 60)
+            {
+                q: "You need to be fluent in English if you want to live in a(n) _______ country.",
+                qVi: "Bạn cần phải thông thạo tiếng Anh nếu muốn sống ở một quốc gia _______.",
+                key: ["country"],
+                opts: ["foreign", "international", "essential", "bilingual"],
+                optsVi: ["nước ngoài", "quốc tế", "thiết yếu", "song ngữ"],
+                correct: 0,
+                exp: "Đất nước khác không phải quê hương mình -> <b>foreign</b> country."
+            },
+            {
+                q: "A good _______ of English will open up many job opportunities.",
+                qVi: "Việc _______ tiếng Anh tốt sẽ mở ra nhiều cơ hội việc làm.",
+                key: ["good", "of English"],
+                opts: ["expression", "variety", "method", "command"],
+                optsVi: ["sự diễn đạt", "sự đa dạng", "phương pháp", "sự làm chủ/sự thành thạo"],
+                correct: 3,
+                exp: "Cụm từ: have a good <b>command</b> of (thành thạo, nắm vững ngôn ngữ nào đó)."
+            },
+            {
+                q: "Learning English is essential for your future _______ because many jobs require it.",
+                qVi: "Học tiếng Anh là rất cần thiết cho _______ tương lai của bạn vì nhiều công việc yêu cầu nó.",
+                key: ["future", "many jobs require it"],
+                opts: ["career", "difference", "grasp", "variety"],
+                optsVi: ["sự nghiệp", "sự khác biệt", "sự nắm bắt", "sự đa dạng"],
+                correct: 0,
+                exp: "Tiếng Anh phục vụ cho công việc sau này -> future <b>career</b>."
+            },
+            {
+                q: "He practises English every day in an effort to communicate like a(n) _______ speaker.",
+                qVi: "Anh ấy luyện tập tiếng Anh mỗi ngày với nỗ lực giao tiếp giống như một người bản xứ.",
+                key: ["communicate like a", "speaker"],
+                opts: ["fluent", "essential", "native", "flexible"],
+                optsVi: ["lưu loát", "thiết yếu", "bản xứ", "linh hoạt"],
+                correct: 2,
+                exp: "Người nói tiếng mẹ đẻ -> <b>native</b> speaker."
+            },
+            {
+                q: "Many IELTS candidates find it difficult to understand the Indian English _______ during the speaking test.",
+                qVi: "Nhiều thí sinh IELTS cảm thấy khó hiểu _______ tiếng Anh Ấn Độ trong bài thi nói.",
+                key: ["Indian English", "during the speaking test"],
+                opts: ["range", "accent", "difference", "command"],
+                optsVi: ["phạm vi", "giọng điệu/chất giọng", "sự khác biệt", "sự thành thạo"],
+                correct: 1,
+                exp: "Cách phát âm đặc trưng của từng vùng miền/quốc gia -> <b>accent</b>."
+            },
+            {
+                q: "Candidates are evaluated based on their language fluency and _______.",
+                qVi: "Ứng viên được đánh giá dựa trên sự trôi chảy ngôn ngữ và _______ của họ.",
+                key: ["language fluency and"],
+                opts: ["degree", "variety", "exchange", "accuracy"],
+                optsVi: ["bằng cấp", "sự đa dạng", "sự trao đổi", "sự chính xác"],
+                correct: 3,
+                exp: "Trôi chảy (fluency) thường đi đôi với sự chính xác (về ngữ pháp/từ vựng) -> <b>accuracy</b>."
+            },
+            {
+                q: "The documentary features a variety of Yorkshire _______ words and expressions.",
+                qVi: "Bộ phim tài liệu có nhiều từ và cách diễn đạt _______ của vùng Yorkshire.",
+                key: ["Yorkshire", "words and expressions"],
+                opts: ["command", "dialect", "grasp", "accent"],
+                optsVi: ["sự thành thạo", "phương ngữ/tiếng địa phương", "sự nắm bắt", "giọng điệu"],
+                correct: 1,
+                exp: "Từ vựng đặc thù của một vùng miền -> <b>dialect</b> words."
+            },
+            {
+                q: "Experts are concerned that some _______ languages may become extinct soon.",
+                qVi: "Các chuyên gia lo ngại rằng một số ngôn ngữ _______ có thể sớm tuyệt chủng.",
+                key: ["languages may become extinct"],
+                opts: ["variety", "exchange", "accuracy", "minority"],
+                optsVi: ["sự đa dạng", "sự trao đổi", "sự chính xác", "thiểu số"],
+                correct: 3,
+                exp: "Ngôn ngữ của các dân tộc ít người (nguy cơ biến mất) -> <b>minority</b> languages."
+            },
+            {
+                q: "In English, statements often have a falling _______.",
+                qVi: "Trong tiếng Anh, các câu trần thuật thường có _______ đi xuống.",
+                key: ["statements often have a falling"],
+                opts: ["range", "intonation", "minority", "dialect"],
+                optsVi: ["phạm vi", "ngữ điệu", "thiểu số", "phương ngữ"],
+                correct: 1,
+                exp: "Sự lên xuống giọng khi nói -> <b>intonation</b> (ngữ điệu)."
+            },
+            {
+                q: "Sometimes, it's difficult to find equivalent expressions when translating a text into the _______ language.",
+                qVi: "Đôi khi, rất khó để tìm các cách diễn đạt tương đương khi dịch một văn bản sang ngôn ngữ _______.",
+                key: ["translating a text into the"],
+                opts: ["official", "dialect", "bilingual", "target"],
+                optsVi: ["chính thức", "phương ngữ", "song ngữ", "mục tiêu (đích)"],
+                correct: 3,
+                exp: "Ngôn ngữ mà văn bản được dịch sang gọi là ngôn ngữ đích -> <b>target</b> language."
+            },
+            {
+                q: "The tourist was able to understand their story and talk to them in their _______.",
+                qVi: "Khách du lịch đã có thể hiểu câu chuyện của họ và nói chuyện với họ bằng _______ của họ.",
+                key: ["talk to them in their"],
+                opts: ["mother tongue", "variety", "command", "accuracy"],
+                optsVi: ["tiếng mẹ đẻ", "sự đa dạng", "sự thành thạo", "sự chính xác"],
+                correct: 0,
+                exp: "Ngôn ngữ bản xứ, tiếng mẹ đẻ -> <b>mother tongue</b>."
+            },
+            {
+                q: "Watching foreign films can help you _______ a language more effectively.",
+                qVi: "Xem phim nước ngoài có thể giúp bạn _______ một ngôn ngữ hiệu quả hơn.",
+                key: ["a language more effectively"],
+                opts: ["observe", "contribute", "acquire", "enable"],
+                optsVi: ["quan sát", "đóng góp", "tiếp thu/lĩnh hội", "cho phép"],
+                correct: 2,
+                exp: "Tiếp thu, học được một ngôn ngữ (thường qua trải nghiệm tự nhiên) -> <b>acquire</b> a language."
+            },
+            {
+                q: "A poor grasp of English can be a(n) _______ to communication in business.",
+                qVi: "Việc nắm kém tiếng Anh có thể là một _______ đối với giao tiếp trong kinh doanh.",
+                key: ["poor grasp of English can be a", "to communication"],
+                opts: ["method", "dialect", "accent", "barrier"],
+                optsVi: ["phương pháp", "phương ngữ", "giọng điệu", "rào cản"],
+                correct: 3,
+                exp: "Sự cản trở, trở ngại -> language <b>barrier</b> (rào cản ngôn ngữ)."
+            },
+            {
+                q: "Beginners may _______ difficulties during their first week of learning English.",
+                qVi: "Những người mới bắt đầu có thể _______ những khó khăn trong tuần đầu tiên học tiếng Anh.",
+                key: ["difficulties"],
+                opts: ["explore", "encounter", "encourage", "acquire"],
+                optsVi: ["khám phá", "chạm trán/gặp phải", "khuyến khích", "tiếp thu"],
+                correct: 1,
+                exp: "Gặp phải khó khăn -> <b>encounter</b> difficulties."
+            },
+            {
+                q: "There are some _______ differences in pronunciation and vocabulary between British English and American English.",
+                qVi: "Có một số khác biệt _______ về phát âm và từ vựng giữa Anh-Anh và Anh-Mỹ.",
+                key: ["differences in pronunciation and vocabulary"],
+                opts: ["native", "fluent", "notable", "bilingual"],
+                optsVi: ["bản xứ", "lưu loát", "đáng chú ý/rõ rệt", "song ngữ"],
+                correct: 2,
+                exp: "Sự khác biệt dễ nhận thấy, rõ ràng -> <b>notable</b> differences."
+            },
+            {
+                q: "Some expressions in English are _______ and used only in spoken language.",
+                qVi: "Một số cách diễn đạt trong tiếng Anh là _______ và chỉ được sử dụng trong văn nói.",
+                key: ["used only in spoken language"],
+                opts: ["bilingual", "foreign", "official", "informal"],
+                optsVi: ["song ngữ", "nước ngoài", "chính thức", "không thân mật/suồng sã"],
+                correct: 3,
+                exp: "Ngôn ngữ nói thường mang tính thoải mái, không trang trọng -> <b>informal</b>."
+            },
+            {
+                q: "Private English classes are in high _______ in many parts of the world these days.",
+                qVi: "Các lớp học tiếng Anh tư nhân đang có _______ cao ở nhiều nơi trên thế giới ngày nay.",
+                key: ["are in high"],
+                opts: ["accent", "demand", "dialect", "variation"],
+                optsVi: ["giọng điệu", "nhu cầu", "phương ngữ", "sự biến đổi"],
+                correct: 1,
+                exp: "Được nhiều người cần đến -> be in high <b>demand</b>."
+            },
+            {
+                q: "For those struggling to find suitable English _______ for self-study, this online library is an excellent option.",
+                qVi: "Đối với những người đang loay hoay tìm _______ tiếng Anh phù hợp để tự học, thư viện trực tuyến này là một lựa chọn tuyệt vời.",
+                key: ["suitable English", "for self-study"],
+                opts: ["resources", "intonation", "accents", "barriers"],
+                optsVi: ["tài nguyên/tài liệu", "ngữ điệu", "giọng", "rào cản"],
+                correct: 0,
+                exp: "Tài liệu để học tập -> English <b>resources</b>."
+            },
+            {
+                q: "Joining conversation groups and practising communication in English can help students _______ their skills.",
+                qVi: "Tham gia các nhóm hội thoại và thực hành giao tiếp bằng tiếng Anh có thể giúp học sinh _______ kỹ năng của họ.",
+                key: ["help students", "their skills"],
+                opts: ["encounter", "enhance", "enable", "discover"],
+                optsVi: ["chạm trán", "nâng cao/cải thiện", "cho phép", "khám phá"],
+                correct: 1,
+                exp: "Cải thiện, nâng cao kỹ năng -> <b>enhance</b> skills."
+            },
+            {
+                q: "Despite having a wide range of vocabulary, he struggled to _______ his ideas in English.",
+                qVi: "Mặc dù có vốn từ vựng phong phú, anh ấy vẫn phải vật lộn để _______ ý tưởng của mình bằng tiếng Anh.",
+                key: ["struggled to", "his ideas in English"],
+                opts: ["convey", "acquire", "encounter", "promote"],
+                optsVi: ["truyền đạt", "tiếp thu", "chạm trán", "thúc đẩy"],
+                correct: 0,
+                exp: "Truyền tải, diễn đạt ý nghĩ -> <b>convey</b> ideas."
+            },
+            {
+                q: "Learning English can _______ your brainpower because it can improve your memory skills.",
+                qVi: "Học tiếng Anh có thể _______ trí tuệ của bạn vì nó có thể cải thiện trí nhớ của bạn.",
+                key: ["your brainpower"],
+                opts: ["acquire", "convey", "boost", "enable"],
+                optsVi: ["tiếp thu", "truyền đạt", "thúc đẩy/tăng cường", "cho phép"],
+                correct: 2,
+                exp: "Làm tăng năng lực trí não -> <b>boost</b> your brainpower."
+            },
+            {
+                q: "English has become a(n) _______ language, widely used in various fields.",
+                qVi: "Tiếng Anh đã trở thành một ngôn ngữ _______, được sử dụng rộng rãi trong nhiều lĩnh vực.",
+                key: ["widely used in various fields"],
+                opts: ["fluent", "dominant", "informal", "notable"],
+                optsVi: ["lưu loát", "thống trị/có ưu thế", "không trang trọng", "đáng chú ý"],
+                correct: 1,
+                exp: "Ngôn ngữ chiếm ưu thế, được dùng rộng rãi nhất -> <b>dominant</b> language."
+            },
+            {
+                q: "After years of not speaking French, her language skills became quite _______ .",
+                qVi: "Sau nhiều năm không nói tiếng Pháp, kỹ năng ngôn ngữ của cô ấy trở nên khá _______.",
+                key: ["years of not speaking", "language skills became"],
+                opts: ["rusty", "informal", "native", "foreign"],
+                optsVi: ["han gỉ/lục nghề/mai một", "không trang trọng", "bản xứ", "nước ngoài"],
+                correct: 0,
+                exp: "Kỹ năng bị mai một, kém đi do lâu không luyện tập -> <b>rusty</b>."
+            },
+            {
+                q: "Phillips can just about _______ in Thai, enough to handle everyday conversations.",
+                qVi: "Phillips chỉ có thể _______ bằng tiếng Thái, đủ để xử lý các cuộc trò chuyện hàng ngày.",
+                key: ["just about", "enough to handle everyday conversations"],
+                opts: ["pick up", "go over", "look up", "get by"],
+                optsVi: ["học lỏm", "ôn lại", "tra cứu", "xoay xở/vừa đủ dùng"],
+                correct: 3,
+                exp: "Biết sơ sơ để xoay xở giao tiếp cơ bản -> <b>get by</b> in Thai."
+            },
+            {
+                q: "Don't rush to look up the meaning of a new word; try to _______ it first.",
+                qVi: "Đừng vội tra nghĩa của từ mới; hãy cố gắng _______ nó trước.",
+                key: ["look up the meaning", "try to"],
+                opts: ["copy", "encounter", "guess", "enhance"],
+                optsVi: ["sao chép", "chạm trán", "đoán", "nâng cao"],
+                correct: 2,
+                exp: "Đoán nghĩa của từ dựa vào ngữ cảnh -> <b>guess</b> it."
+            },
+            {
+                q: "Shadowing involves _______ the pronunciation, stress, and intonation of the speaker.",
+                qVi: "Phương pháp Shadowing (Nhại giọng) liên quan đến việc _______ phát âm, trọng âm và ngữ điệu của người nói.",
+                key: ["pronunciation, stress, and intonation of the speaker"],
+                opts: ["conveying", "boosting", "imitating", "acquiring"],
+                optsVi: ["truyền đạt", "thúc đẩy", "bắt chước", "tiếp thu"],
+                correct: 2,
+                exp: "Bắt chước, nhại lại giọng nói -> <b>imitating</b>."
+            },
+            {
+                q: "American English often emphasises the _______ of words.",
+                qVi: "Tiếng Anh Mỹ thường nhấn mạnh vào tính _______ của từ.",
+                key: ["emphasises the", "of words"],
+                opts: ["openness", "simplicity", "barrier", "demand"],
+                optsVi: ["sự cởi mở", "sự đơn giản/giản dị", "rào cản", "nhu cầu"],
+                correct: 1,
+                exp: "Người Mỹ chuộng cách nói/viết ngắn gọn, đơn giản -> <b>simplicity</b>."
+            },
+            {
+                q: "English words have a high degree of _______ because many of them can function in different forms.",
+                qVi: "Các từ tiếng Anh có mức độ _______ cao vì nhiều từ trong số chúng có thể đóng vai trò ở các từ loại khác nhau.",
+                key: ["degree of", "function in different forms"],
+                opts: ["barrier", "accuracy", "flexibility", "simplicity"],
+                optsVi: ["rào cản", "sự chính xác", "sự linh hoạt", "sự đơn giản"],
+                correct: 2,
+                exp: "Có thể dùng linh hoạt làm danh từ, động từ, tính từ -> <b>flexibility</b> (sự linh hoạt)."
+            },
+            {
+                q: "It's not advisable to teach young learners and beginners English technical _______.",
+                qVi: "Không nên dạy những người học nhỏ tuổi và người mới bắt đầu các _______ kỹ thuật bằng tiếng Anh.",
+                key: ["technical"],
+                opts: ["targets", "barriers", "functions", "terms"],
+                optsVi: ["mục tiêu", "rào cản", "chức năng", "thuật ngữ"],
+                correct: 3,
+                exp: "Từ chuyên ngành, thuật ngữ kỹ thuật -> technical <b>terms</b>."
+            },
+            {
+                q: "This word is _______ from the French word meaning 'welcome'.",
+                qVi: "Từ này được _______ từ từ tiếng Pháp có nghĩa là 'chào mừng'.",
+                key: ["from the French word"],
+                opts: ["derived", "imitated", "boosted", "guessed"],
+                optsVi: ["bắt nguồn/xuất phát", "bắt chước", "thúc đẩy", "đoán"],
+                correct: 0,
+                exp: "Từ vựng có nguồn gốc, xuất xứ từ ngôn ngữ nào đó -> be <b>derived</b> from."
+            },
+
+            // BATCH 3 (61 - 90)
+            {
+                q: "Learning a(n) _______ language can open up new opportunities for travel and work.",
+                qVi: "Học một ngôn ngữ _______ có thể mở ra những cơ hội mới để đi du lịch và làm việc.",
+                key: ["language"],
+                opts: ["essential", "notable", "foreign", "bilingual"],
+                optsVi: ["thiết yếu", "đáng chú ý", "nước ngoài/ngoại ngữ", "song ngữ"],
+                correct: 2,
+                exp: "Học ngoại ngữ -> learn a <b>foreign</b> language."
+            },
+            {
+                q: "Alex has a good _______ of several languages, including Spanish and French.",
+                qVi: "Alex _______ tốt một số ngôn ngữ, bao gồm tiếng Tây Ban Nha và tiếng Pháp.",
+                key: ["has a good", "of several languages"],
+                opts: ["expression", "method", "variety", "command"],
+                optsVi: ["sự biểu đạt", "phương pháp", "sự đa dạng", "sự thành thạo"],
+                correct: 3,
+                exp: "Cụm từ: have a good <b>command</b> of (sử dụng thành thạo)."
+            },
+            {
+                q: "Mastering English has significantly advanced her _______ in international diplomacy.",
+                qVi: "Thành thạo tiếng Anh đã thúc đẩy đáng kể _______ của cô trong ngoại giao quốc tế.",
+                key: ["advanced her", "in international diplomacy"],
+                opts: ["grasp", "difference", "career", "variety"],
+                optsVi: ["sự hiểu biết", "sự khác biệt", "sự nghiệp", "sự đa dạng"],
+                correct: 2,
+                exp: "Thúc đẩy sự nghiệp -> advance her <b>career</b>."
+            },
+            {
+                q: "It's helpful to practice speaking with a(n) _______ speaker to improve fluency.",
+                qVi: "Sẽ rất hữu ích khi thực hành nói chuyện với người _______ để cải thiện sự trôi chảy.",
+                key: ["practice speaking with a", "speaker"],
+                opts: ["fluent", "flexible", "native", "essential"],
+                optsVi: ["lưu loát", "linh hoạt", "bản địa/bản xứ", "thiết yếu"],
+                correct: 2,
+                exp: "Người nói tiếng mẹ đẻ -> <b>native</b> speaker."
+            },
+            {
+                q: "Even though he has a strong French _______, his English is very clear.",
+                qVi: "Mặc dù anh ấy có _______ tiếng Pháp đặc sệt, nhưng tiếng Anh của anh ấy rất rõ ràng.",
+                key: ["strong French"],
+                opts: ["command", "accent", "difference", "range"],
+                optsVi: ["sự thành thạo", "chất giọng", "sự khác biệt", "phạm vi"],
+                correct: 1,
+                exp: "Giọng vùng miền hoặc giọng của người nước ngoài nói tiếng Anh -> strong <b>accent</b>."
+            },
+            {
+                q: "In most language tests, _______ in spelling and grammar is essential for a high score.",
+                qVi: "Trong hầu hết các bài kiểm tra ngôn ngữ, _______ về chính tả và ngữ pháp là điều cần thiết để đạt điểm cao.",
+                key: ["in spelling and grammar"],
+                opts: ["accuracy", "variety", "exchange", "degree"],
+                optsVi: ["sự chính xác", "sự đa dạng", "sự trao đổi", "bằng cấp/mức độ"],
+                correct: 0,
+                exp: "Không viết sai chính tả và ngữ pháp là sự chính xác -> <b>accuracy</b>."
+            },
+            {
+                q: "Different regions in Italy have their own distinct _______ which can be difficult to understand.",
+                qVi: "Các khu vực khác nhau ở Ý có _______ riêng biệt có thể khó hiểu.",
+                key: ["Different regions", "distinct"],
+                opts: ["command", "grasp", "dialects", "accents"],
+                optsVi: ["sự thành thạo", "sự nắm bắt", "tiếng địa phương/phương ngữ", "chất giọng"],
+                correct: 2,
+                exp: "Ngôn ngữ có từ vựng và ngữ pháp khác nhau theo từng vùng gọi là <b>dialects</b>."
+            },
+            {
+                q: "The _______ languages in some countries are at risk of disappearing due to globalisation.",
+                qVi: "Các ngôn ngữ _______ ở một số quốc gia có nguy cơ biến mất do toàn cầu hóa.",
+                key: ["languages", "at risk of disappearing"],
+                opts: ["accuracy", "exchange", "variety", "minority"],
+                optsVi: ["sự chính xác", "sự trao đổi", "sự đa dạng", "thiểu số"],
+                correct: 3,
+                exp: "Ngôn ngữ của nhóm người nhỏ dễ bị mất đi -> <b>minority</b> languages."
+            },
+            {
+                q: "Paying attention to the _______ in a new language can help you sound more natural.",
+                qVi: "Chú ý đến _______ trong một ngôn ngữ mới có thể giúp bạn nghe tự nhiên hơn.",
+                key: ["sound more natural"],
+                opts: ["range", "minority", "intonation", "command"],
+                optsVi: ["phạm vi", "thiểu số", "ngữ điệu", "sự thành thạo"],
+                correct: 2,
+                exp: "Nhấn nhá lên xuống giọng -> <b>intonation</b>."
+            },
+            {
+                q: "The students are required to translate this text into the _______ language.",
+                qVi: "Học sinh được yêu cầu dịch văn bản này sang ngôn ngữ _______.",
+                key: ["translate this text into the"],
+                opts: ["official", "target", "bilingual", "dialect"],
+                optsVi: ["chính thức", "mục tiêu/đích", "song ngữ", "phương ngữ"],
+                correct: 1,
+                exp: "Ngôn ngữ mà văn bản được dịch sang -> <b>target</b> language."
+            },
+            {
+                q: "The local community has started a project to _______ their unique dialect for future generations.",
+                qVi: "Cộng đồng địa phương đã bắt đầu một dự án để _______ phương ngữ độc đáo của họ cho các thế hệ tương lai.",
+                key: ["their unique dialect", "future generations"],
+                opts: ["exchange", "preserve", "mean", "express"],
+                optsVi: ["trao đổi", "bảo tồn/gìn giữ", "có nghĩa", "bày tỏ"],
+                correct: 1,
+                exp: "Bảo tồn ngôn ngữ -> <b>preserve</b> dialect."
+            },
+            {
+                q: "Many scientific journals are published in English to _______ a global audience.",
+                qVi: "Nhiều tạp chí khoa học được xuất bản bằng tiếng Anh để _______ độc giả toàn cầu.",
+                key: ["a global audience"],
+                opts: ["reach", "translate", "discover", "explore"],
+                optsVi: ["tiếp cận", "dịch", "khám phá", "khám phá"],
+                correct: 0,
+                exp: "Tiếp cận người đọc -> <b>reach</b> an audience."
+            },
+            {
+                q: "She managed to _______ some useful phrases in Spanish during her two-week holiday in Madrid.",
+                qVi: "Cô ấy đã xoay sở để _______ một số cụm từ hữu ích bằng tiếng Tây Ban Nha trong kỳ nghỉ hai tuần ở Madrid.",
+                key: ["phrases in Spanish during her holiday"],
+                opts: ["look up", "pick up", "make up", "turn up"],
+                optsVi: ["tra cứu", "học lỏm/tiếp thu", "bịa đặt/trang điểm", "xuất hiện"],
+                correct: 1,
+                exp: "Học từ vựng một cách tự nhiên trong quá trình sinh sống, đi chơi -> <b>pick up</b>."
+            },
+            {
+                q: "You should _______ your notes carefully before the final English exam.",
+                qVi: "Bạn nên _______ các ghi chú của mình cẩn thận trước bài kiểm tra tiếng Anh cuối kỳ.",
+                key: ["notes carefully before the exam"],
+                opts: ["go over", "copy", "pick up", "translate"],
+                optsVi: ["ôn tập/xem lại", "sao chép", "học lỏm", "dịch"],
+                correct: 0,
+                exp: "Ôn lại bài -> <b>go over</b>."
+            },
+            {
+                q: "It can be difficult to _______ complex emotions in a language that is not your mother tongue.",
+                qVi: "Có thể rất khó để _______ những cảm xúc phức tạp bằng một ngôn ngữ không phải là tiếng mẹ đẻ của bạn.",
+                key: ["complex emotions in a language"],
+                opts: ["translate", "mean", "exchange", "express"],
+                optsVi: ["dịch", "có nghĩa", "trao đổi", "diễn đạt/bày tỏ"],
+                correct: 3,
+                exp: "Diễn đạt cảm xúc, suy nghĩ -> <b>express</b> emotions."
+            },
+            {
+                q: "What is the primary _______ of a conjunction in a sentence?",
+                qVi: "_______ chính của một liên từ trong câu là gì?",
+                key: ["primary", "of a conjunction"],
+                opts: ["immigrant", "difference", "function", "vocabulary"],
+                optsVi: ["người nhập cư", "sự khác biệt", "chức năng", "từ vựng"],
+                correct: 2,
+                exp: "Chức năng, vai trò ngữ pháp -> <b>function</b>."
+            },
+            {
+                q: "The workshop provides an opportunity for students to _______ with experts in the field.",
+                qVi: "Hội thảo cung cấp một cơ hội để sinh viên _______ với các chuyên gia trong lĩnh vực này.",
+                key: ["with experts"],
+                opts: ["communicate", "promote", "occupy", "contribute"],
+                optsVi: ["giao tiếp", "thúc đẩy", "chiếm đóng", "đóng góp"],
+                correct: 0,
+                exp: "Giao tiếp, nói chuyện với ai -> <b>communicate</b> with."
+            },
+            {
+                q: "In aviation, English is the _______ language used by pilots and air traffic controllers worldwide.",
+                qVi: "Trong hàng không, tiếng Anh là ngôn ngữ _______ được sử dụng bởi các phi công và kiểm soát viên không lưu trên toàn thế giới.",
+                key: ["language used by pilots"],
+                opts: ["official", "flexible", "first", "common"],
+                optsVi: ["chính thức", "linh hoạt", "thứ nhất", "chung/phổ biến"],
+                correct: 3,
+                exp: "Ngôn ngữ chung quy ước cho nhiều quốc gia -> <b>common</b> language."
+            },
+            {
+                q: "To work as a translator, you must be _______ in at least two languages.",
+                qVi: "Để làm việc với tư cách là một phiên dịch viên, bạn phải _______ ít nhất hai ngôn ngữ.",
+                key: ["in at least two languages"],
+                opts: ["official", "effective", "bilingual", "proficient"],
+                optsVi: ["chính thức", "hiệu quả", "song ngữ", "thành thạo/giỏi"],
+                correct: 3,
+                exp: "Thành thạo ngôn ngữ nào -> be <b>proficient</b> in."
+            },
+            {
+                q: "International travel can _______ people to learn about different cultures and languages.",
+                qVi: "Du lịch quốc tế có thể _______ mọi người tìm hiểu về các nền văn hóa và ngôn ngữ khác nhau.",
+                key: ["people to learn about"],
+                opts: ["appear", "associate", "encourage", "observe"],
+                optsVi: ["xuất hiện", "liên kết", "khuyến khích", "quan sát"],
+                correct: 2,
+                exp: "Cấu trúc: <b>encourage</b> somebody to V (khuyến khích ai làm gì)."
+            },
+            {
+                q: "Joining a language exchange group can significantly _______ your confidence in speaking.",
+                qVi: "Tham gia một nhóm trao đổi ngôn ngữ có thể _______ đáng kể sự tự tin của bạn trong việc nói.",
+                key: ["your confidence"],
+                opts: ["convey", "enable", "boost", "encourage"],
+                optsVi: ["truyền đạt", "cho phép", "thúc đẩy/làm tăng", "khuyến khích"],
+                correct: 2,
+                exp: "Làm tăng sự tự tin -> <b>boost</b> confidence."
+            },
+            {
+                q: "For decades, English has remained the _______ language of international business.",
+                qVi: "Trong nhiều thập kỷ, tiếng Anh vẫn là ngôn ngữ _______ của kinh doanh quốc tế.",
+                key: ["language of international business"],
+                opts: ["fluent", "dominant", "informal", "notable"],
+                optsVi: ["lưu loát", "thống trị/chủ đạo", "không trang trọng", "đáng chú ý"],
+                correct: 1,
+                exp: "Ngôn ngữ được sử dụng mạnh mẽ và chiếm ưu thế nhất -> <b>dominant</b> language."
+            },
+            {
+                q: "If you leave a language unused for an extended period, your proficiency will get quite _______.",
+                qVi: "Nếu bạn để một ngôn ngữ không được sử dụng trong một thời gian dài, trình độ của bạn sẽ trở nên khá _______.",
+                key: ["leave a language unused", "proficiency will get"],
+                opts: ["rusty", "informal", "native", "foreign"],
+                optsVi: ["han gỉ/mai một", "không trang trọng", "bản xứ", "nước ngoài"],
+                correct: 0,
+                exp: "Lâu không dùng nên bị kém đi, quên đi -> get <b>rusty</b>."
+            },
+            {
+                q: "Even though my Japanese was not perfect, I managed to _______ while living in Tokyo.",
+                qVi: "Mặc dù tiếng Nhật của tôi không hoàn hảo, tôi đã xoay sở để _______ trong khi sống ở Tokyo.",
+                key: ["managed to", "not perfect"],
+                opts: ["pick up", "get by", "look up", "go over"],
+                optsVi: ["học lỏm", "xoay xở được", "tra cứu", "ôn tập"],
+                correct: 1,
+                exp: "Tuy không giỏi nhưng vẫn có thể giao tiếp cơ bản để sống -> <b>get by</b>."
+            },
+            {
+                q: "When not knowing a word in a new language, sometimes you must _______ its meaning from the context.",
+                qVi: "Khi không biết một từ trong một ngôn ngữ mới, đôi khi bạn phải _______ ý nghĩa của nó từ ngữ cảnh.",
+                key: ["not knowing a word", "its meaning from the context"],
+                opts: ["copy", "encounter", "guess", "enhance"],
+                optsVi: ["sao chép", "chạm trán", "đoán", "nâng cao"],
+                correct: 2,
+                exp: "Không biết nghĩa thì phải dựa vào ngữ cảnh để <b>guess</b> (đoán)."
+            },
+            {
+                q: "Children naturally _______ the sounds they hear, which helps them learn languages quickly.",
+                qVi: "Trẻ em bắt _______ các âm thanh mà chúng nghe thấy một cách tự nhiên, điều này giúp chúng học ngôn ngữ nhanh chóng.",
+                key: ["naturally", "the sounds they hear"],
+                opts: ["convey", "acquire", "imitate", "boost"],
+                optsVi: ["truyền đạt", "tiếp thu", "bắt chước", "thúc đẩy"],
+                correct: 2,
+                exp: "Nghe rồi nhại lại/bắt chước lại âm thanh -> <b>imitate</b>."
+            },
+            {
+                q: "_______ is key in daily conversations, as it allows people to clearly exchange their messages.",
+                qVi: "_______ là chìa khóa trong các cuộc trò chuyện hàng ngày, vì nó cho phép mọi người trao đổi thông điệp của họ một cách rõ ràng.",
+                key: ["is key in daily conversations", "clearly exchange"],
+                opts: ["Openness", "Simplicity", "Barrier", "Demand"],
+                optsVi: ["Sự cởi mở", "Sự đơn giản/ngắn gọn", "Rào cản", "Nhu cầu"],
+                correct: 1,
+                exp: "Trong giao tiếp hàng ngày, sự đơn giản, dễ hiểu là quan trọng nhất -> <b>Simplicity</b>."
+            },
+            {
+                q: "English words offer great _______ as many of them can function in different forms.",
+                qVi: "Các từ tiếng Anh mang lại sự _______ lớn vì nhiều từ có thể có chức năng ở các dạng khác nhau.",
+                key: ["offer great", "function in different forms"],
+                opts: ["barrier", "accuracy", "flexibility", "simplicity"],
+                optsVi: ["rào cản", "sự chính xác", "sự linh hoạt", "sự đơn giản"],
+                correct: 2,
+                exp: "Có thể dùng linh động (vừa làm danh từ vừa làm động từ) -> <b>flexibility</b>."
+            },
+            {
+                q: "The professor explained that the _______ \"cognate\" refers to words that have a common linguistic origin.",
+                qVi: "Giáo sư giải thích rằng _______ \"cognate\" dùng để chỉ những từ có chung nguồn gốc ngôn ngữ.",
+                key: ["the", "\"cognate\" refers to"],
+                opts: ["target", "barrier", "function", "term"],
+                optsVi: ["mục tiêu", "rào cản", "chức năng", "thuật ngữ"],
+                correct: 3,
+                exp: "Một khái niệm chuyên ngành, một từ vựng học thuật -> <b>term</b> (thuật ngữ)."
+            },
+            {
+                q: "Many English words _______ from Greek, especially in science and medicine.",
+                qVi: "Nhiều từ tiếng Anh _______ từ tiếng Hy Lạp, đặc biệt là trong khoa học và y học.",
+                key: ["from Greek"],
+                opts: ["derive", "imitate", "boost", "guess"],
+                optsVi: ["bắt nguồn/xuất phát", "bắt chước", "thúc đẩy", "đoán"],
+                correct: 0,
+                exp: "Bắt nguồn từ đâu đó -> <b>derive</b> from."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
