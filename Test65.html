@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu Trả Lời Trắc Nghiệm Tự Động</title>
+    <style>
+        :root {
+            --bg-body: #f4f7f6;
+            --bg-card: #ffffff;
+            --primary: #007bff;
+            --text-main: #333333;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ----- MOBILE HEADER (Chỉ hiện trên điện thoại) ----- */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 90;
+            align-items: center;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+        .menu-toggle {
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #333;
+            padding: 5px;
+        }
+        .mobile-header-title {
+            margin-left: 15px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Lớp phủ mờ nền khi mở menu trên mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ----- SIDEBAR (Cột điều hướng) ----- */
+        .sidebar {
+            width: 300px;
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .close-sidebar {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .user-info {
+            text-align: center;
+            padding: 20px 10px 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .user-info h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #000;
+        }
+        .user-info .change-name {
+            font-size: 13px;
+            color: #888;
+            cursor: pointer;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .sidebar-title {
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            margin: 15px 0 10px;
+        }
+
+        .question-nav-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0 20px 20px;
+        }
+
+        .question-nav {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .question-nav a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px; /* Bo góc vuông hơi bo tròn giống ảnh 3 */
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #555;
+            font-size: 14px;
+            background-color: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .question-nav a:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Trạng thái khi ĐANG LÀM bài */
+        .question-nav a.answered {
+            background-color: #e6f7ff;
+            border-color: #1890ff;
+            color: #1890ff;
+            font-weight: bold;
+        }
+
+        /* Trạng thái KẾT QUẢ */
+        .question-nav a.wrong { background-color: #9e9e9e !important; border-color: #7f8c8d !important; color: white !important; font-weight: bold; }
+        .question-nav a.correct-certain { background-color: #27ae60 !important; border-color: #2ecc71 !important; color: white !important; font-weight: bold; }
+        .question-nav a.correct-uncertain { background-color: #2980b9 !important; border-color: #3498db !important; color: white !important; font-weight: bold; }
+        .question-nav a.correct-guess { background-color: #e74c3c !important; border-color: #c0392b !important; color: white !important; font-weight: bold; }
+
+        .legend-box {
+            display: none;
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            background: #fafafa;
+            font-size: 12px;
+        }
+        .legend-item { display: flex; align-items: center; margin-bottom: 5px; }
+        .legend-color { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+
+        /* Nút Nộp bài trong Sidebar (dành cho mobile) */
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background: #fff;
+            display: none; /* Chỉ hiện trên mobile */
+        }
+        .btn-blue {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* ----- MAIN CONTENT ----- */
+        .main-content {
+            margin-left: 300px;
+            padding: 30px;
+            flex-grow: 1;
+            max-width: 900px;
+        }
+
+        .question-card {
+            background: var(--bg-card);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+            scroll-margin-top: 80px; /* Căn lề khi cuộn trang */
+        }
+
+        .question-title { font-weight: bold; font-size: 18px; margin-bottom: 20px; }
+
+        .options-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            background: #fff;
+        }
+        .option-label:hover { border-color: var(--primary); }
+        .option-label input { margin-right: 10px; cursor: pointer; }
+
+        .confidence-section {
+            background: #fdfdfd; padding: 15px; border-radius: 8px; border: 1px dashed #ccc;
+        }
+        .confidence-title { font-size: 14px; color: #666; margin-bottom: 10px; display: block; font-style: italic; }
+        .confidence-group { display: flex; gap: 20px; flex-wrap: wrap; }
+        .confidence-group label { cursor: pointer; font-size: 14px; display: flex; align-items: center; }
+        .confidence-group input { margin-right: 5px; }
+
+        .submit-btn {
+            width: 100%; padding: 15px; background-color: #27ae60; color: white;
+            font-size: 18px; font-weight: bold; border: none; border-radius: 8px;
+            cursor: pointer; margin-top: 20px;
+        }
+
+        .result-box {
+            display: none; background-color: #fff; padding: 25px; margin-top: 30px;
+            border-radius: 8px; border-left: 6px solid #27ae60; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .result-box h2 { margin-top: 0; color: #27ae60; }
+        .result-item { font-size: 16px; margin: 10px 0; display: flex; justify-content: space-between; max-width: 400px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
+        .highlight { font-weight: bold; color: #e74c3c; font-size: 18px;}
+
+        /* ----- RESPONSIVE (ĐIỆN THOẠI) ----- */
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .main-content { margin-left: 0; padding: 15px; margin-top: 60px; } /* Đẩy nội dung xuống dưới header */
+            
+            /* Sidebar ẩn đi dạng Drawer */
+            .sidebar {
+                transform: translateX(-100%); /* Giấu sang trái */
+                width: 85%; /* Chiếm 85% màn hình */
+                max-width: 350px;
+            }
+            .sidebar.active { transform: translateX(0); } /* Trượt ra khi mở */
+            .close-sidebar { display: block; }
+            .sidebar-footer { display: block; }
+            .question-nav { grid-template-columns: repeat(6, 1fr); gap: 8px;}
+            
+            .options-group { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="mobile-header-title">Bài tập Tiếng Anh Tổng Hợp</div>
+    </div>
+
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
+        <div class="user-info">
+            <h2>Tên: Học sinh Test</h2>
+            <span class="change-name" onclick="renameUser()">[Đổi tên]</span>
+        </div>
+        <div class="sidebar-title">Danh sách câu hỏi</div>
+        <div class="question-nav-container">
+            <div class="question-nav" id="sidebar-nav"></div>
+        </div>
+        
+        <div class="legend-box" id="legendBox">
+            <strong>Chú thích:</strong>
+            <div class="legend-item" style="margin-top:8px"><div class="legend-color" style="background:#27ae60"></div> Đúng + Chắc chắn</div>
+            <div class="legend-item"><div class="legend-color" style="background:#2980b9"></div> Đúng + Không chắc</div>
+            <div class="legend-item"><div class="legend-color" style="background:#e74c3c"></div> Đúng + Chọn bừa</div>
+            <div class="legend-item"><div class="legend-color" style="background:#9e9e9e"></div> Sai / Chưa làm</div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="btn-blue" onclick="gradeQuiz(); toggleSidebar();">Nộp bài</button>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <form id="quizForm">
+            <div id="questions-container"></div>
+            <button type="button" class="submit-btn" onclick="gradeQuiz()">Nộp Bài & Chấm Điểm</button>
+        </form>
+
+        <div id="resultBox" class="result-box">
+            <h2>Kết Quả Đánh Giá</h2>
+            <div class="result-item"><span>Tổng số câu đúng:</span> <span id="res-total" class="highlight">0</span></div>
+            <div class="result-item"><span>Đúng do (Chắc chắn):</span> <span id="res-certain" style="color: #27ae60; font-weight:bold;">0</span></div>
+            <div class="result-item"><span>Đúng do (Không chắc):</span> <span id="res-uncertain" style="color: #2980b9; font-weight:bold;">0</span></div>
+            <div class="result-item"><span>Đúng do (Chọn bừa):</span> <span id="res-guess" style="color: #e74c3c; font-weight:bold;">0</span></div>
+        </div>
+    </div>
+
+    <script>
+        // Đáp án Đề số 27
+       const answerKey = {
+    1: 'B', 2: 'B', 3: 'C', 4: 'C', 5: 'B', 6: 'D', 7: 'D', 8: 'A', 9: 'B', 10: 'B',
+    11: 'A', 12: 'B', 13: 'A', 14: 'A', 15: 'B', 16: 'D', 17: 'C', 18: 'B', 19: 'C', 20: 'A',
+    21: 'A', 22: 'B', 23: 'C', 24: 'D', 25: 'C', 26: 'B', 27: 'C', 28: 'A', 29: 'B', 30: 'C',
+    31: 'B', 32: 'C', 33: 'A', 34: 'D', 35: 'C', 36: 'C', 37: 'B', 38: 'B', 39: 'A', 40: 'C'
+};
+
+        const totalQuestions = 40;
+
+        // Đóng/Mở Menu trên điện thoại
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function renameUser() {
+            let newName = prompt("Nhập tên của bạn:");
+            if (newName) {
+                document.querySelector('.user-info h2').textContent = "Tên: " + newName;
+            }
+        }
+
+        // Tạo giao diện
+        function generateUI() {
+            const sidebarNav = document.getElementById('sidebar-nav');
+            const container = document.getElementById('questions-container');
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                // Nút trên Sidebar
+                const link = document.createElement('a');
+                link.href = `#q${i}`;
+                link.textContent = i;
+                link.id = `nav-q${i}`;
+                // Khi click vào câu hỏi trên đt, tự động đóng menu lại cho dễ nhìn
+                link.onclick = function() { if(window.innerWidth <= 768) toggleSidebar(); };
+                sidebarNav.appendChild(link);
+
+                // Khung câu hỏi
+                const qCard = document.createElement('div');
+                qCard.className = 'question-card';
+                qCard.id = `q${i}`;
+
+                // Thay đổi "checked" vào lựa chọn "chọn bừa"
+                qCard.innerHTML = `
+                    <div class="question-title">Question ${i}</div>
+                    
+                    <div class="options-group">
+                        <label class="option-label"><input type="radio" name="ans_${i}" value="A" onchange="markAnswered(${i})"> A</label>
+                        <label class="option-label"><input type="radio" name="ans_${i}" value="B" onchange="markAnswered(${i})"> B</label>
+                        <label class="option-label"><input type="radio" name="ans_${i}" value="C" onchange="markAnswered(${i})"> C</label>
+                        <label class="option-label"><input type="radio" name="ans_${i}" value="D" onchange="markAnswered(${i})"> D</label>
+                    </div>
+
+                    <div class="confidence-section">
+                        <span class="confidence-title">Mức độ tự tin:</span>
+                        <div class="confidence-group">
+                            <label><input type="radio" name="conf_${i}" value="chắc chắn"> Chắc chắn</label>
+                            <label><input type="radio" name="conf_${i}" value="không chắc"> Không chắc</label>
+                            <label><input type="radio" name="conf_${i}" value="chọn bừa" checked> Chọn bừa</label>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(qCard);
+            }
+        }
+
+        // Đánh dấu đã trả lời
+        function markAnswered(qNumber) {
+            const navItem = document.getElementById(`nav-q${qNumber}`);
+            if (navItem && !navItem.classList.contains('wrong') && !navItem.classList.contains('correct-certain')) {
+                navItem.classList.add('answered');
+            }
+        }
+
+        // Chấm điểm
+        function gradeQuiz() {
+            let totalCorrect = 0;
+            let correctCertain = 0;
+            let correctUncertain = 0;
+            let correctGuess = 0;
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const ansElement = document.querySelector(`input[name="ans_${i}"]:checked`);
+                const confElement = document.querySelector(`input[name="conf_${i}"]:checked`);
+
+                const studentAns = ansElement ? ansElement.value : null;
+                const studentConf = confElement ? confElement.value : "không chọn";
+
+                const navItem = document.getElementById(`nav-q${i}`);
+                navItem.classList.remove('answered', 'wrong', 'correct-certain', 'correct-uncertain', 'correct-guess');
+
+                if (studentAns === answerKey[i]) {
+                    totalCorrect++;
+                    if (studentConf === "chắc chắn") {
+                        correctCertain++;
+                        navItem.classList.add('correct-certain');
+                    } else if (studentConf === "không chắc") {
+                        correctUncertain++;
+                        navItem.classList.add('correct-uncertain');
+                    } else if (studentConf === "chọn bừa") {
+                        correctGuess++;
+                        navItem.classList.add('correct-guess');
+                    }
+                } else {
+                    navItem.classList.add('wrong');
+                }
+            }
+
+            // Cập nhật kết quả
+            document.getElementById('res-total').textContent = totalCorrect + " / " + totalQuestions;
+            document.getElementById('res-certain').textContent = correctCertain;
+            document.getElementById('res-uncertain').textContent = correctUncertain;
+            document.getElementById('res-guess').textContent = correctGuess;
+            
+            document.getElementById('resultBox').style.display = 'block';
+            document.getElementById('legendBox').style.display = 'block';
+
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.onload = generateUI;
+    </script>
+</body>
+</html>
