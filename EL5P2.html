@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dictation Mobile Friendly</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --success: #27ae60;
+            --bg: #f8f9fa;
+            --text: #2c3e50;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 20px 0;
+        }
+
+        .score-board {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #d35400;
+            background: rgba(255, 245, 230, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #ffe0b3;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+
+        .btn-audio {
+            background: var(--primary);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 28px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 15px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-audio:active {
+            transform: scale(0.9);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px; /* Tránh iOS tự động zoom khi focus */
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-check {
+            width: 100%;
+            padding: 14px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-check:disabled {
+            background: #bdc3c7;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            display: none;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        .reload-btn {
+            width: 100%;
+            padding: 15px;
+            background: #34495e;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            margin-top: 10px;
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h1>🎧 Listening Quiz</h1>
+    <div id="total-score" class="score-board">Điểm: 0/10</div>
+    
+    <div id="quiz-list"></div>
+
+    <button class="reload-btn" onclick="location.reload()">Trộn câu hỏi & Làm lại</button>
+</div>
+
+<script>
+    const rawData = [
+        { q: "How did she cook?", a: "She cooked well" },
+        { q: "How did he work?", a: "He worked hard" },
+        { q: "How did he run?", a: "He ran fast" },
+        { q: "How did he sing?", a: "He sang beautifully" }
+    ];
+
+    const data = rawData.sort(() => Math.random() - 0.5);
+    let scores = new Array(data.length).fill(0);
+
+    function initApp() {
+        const quizList = document.getElementById('quiz-list');
+        data.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <div style="color: #95a5a6; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold;">CÂU ${index + 1}</div>
+                <button class="btn-audio" onclick="playAudio('${item.q.replace(/'/g, "\\'")}')">🔊</button>
+                <div class="input-group">
+                    <input type="text" id="input-${index}" placeholder="Viết lại câu bạn nghe được..." autocomplete="off" autocapitalize="none">
+                    <button class="btn-check" id="btn-${index}" onclick="checkAnswer(${index}, '${item.a}')">KIỂM TRA</button>
+                </div>
+                <div class="feedback" id="feedback-${index}"></div>
+            `;
+            quizList.appendChild(card);
+        });
+    }
+
+    window.playAudio = (text) => {
+        window.speechSynthesis.cancel(); // Dừng âm thanh đang phát trước đó
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85; 
+        window.speechSynthesis.speak(utterance);
+    };
+
+    window.checkAnswer = (index, expected) => {
+        const inputField = document.getElementById(`input-${index}`);
+        const feedback = document.getElementById(`feedback-${index}`);
+        const btn = document.getElementById(`btn-${index}`);
+        const userAnswer = inputField.value.trim();
+
+        const clean = (str) => str.toLowerCase().replace(/[.,?]/g, "").split(/\s+/).filter(x => x.length > 0);
+        const userWords = clean(userAnswer);
+        const expectedWords = clean(expected);
+        
+        let correctCount = 0;
+        expectedWords.forEach((word, i) => {
+            if (userWords[i] === word) correctCount++;
+        });
+
+        const score = (correctCount / expectedWords.length) * 10;
+        const roundedScore = Math.round(score * 10) / 10;
+        scores[index] = roundedScore;
+        
+        feedback.style.display = "block";
+        feedback.style.background = roundedScore === 10 ? "#e8f9ed" : "#fff5f5";
+        feedback.style.border = `1px solid ${roundedScore === 10 ? "#2ecc71" : "#fab1a0"}`;
+        
+        feedback.innerHTML = `
+            <strong>Điểm: ${roundedScore}/10</strong><br>
+            <small style="color: #666">Đáp án: ${expected}</small>
+        `;
+
+        btn.disabled = true;
+        inputField.disabled = true;
+        updateOverallScore();
+    };
+
+    function updateOverallScore() {
+        const avg = scores.reduce((a, b) => a + b, 0) / data.length;
+        document.getElementById('total-score').innerText = `Tổng điểm: ${avg.toFixed(1)}/10`;
+    }
+
+    initApp();
+</script>
+
+</body>
+</html>
