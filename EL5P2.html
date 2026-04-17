@@ -222,12 +222,27 @@
         });
     }
 
-    window.playAudio = (text) => {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.85; 
-        window.speechSynthesis.speak(utterance);
+   window.playAudio = (text) => {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Lấy danh sách tất cả các giọng đọc có trên thiết bị
+    const voices = window.speechSynthesis.getVoices();
+    
+    // Ưu tiên chọn các giọng đọc chất lượng cao (thường có tên Google hoặc Samantha)
+    const selectedVoice = voices.find(v => 
+        (v.name.includes('Google') && v.lang.includes('en-US')) || 
+        v.name.includes('Samantha') || 
+        v.name.includes('Premium')
+    ) || voices.find(v => v.lang.includes('en-US'));
+
+    if (selectedVoice) utterance.voice = selectedVoice;
+
+    utterance.lang = 'en-US';
+    utterance.rate = 0.85; // Tốc độ vừa phải để học sinh dễ nghe
+    utterance.pitch = 1.1; // Tăng một chút độ cao để giọng nghe trẻ trung, thân thiện hơn
+    
+    window.speechSynthesis.speak(utterance);
     };
 
     window.checkAnswer = (index, expected) => {
