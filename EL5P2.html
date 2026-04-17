@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dictation Mobile Friendly</title>
+    <title>English Dictation Practice</title>
     <style>
         :root {
             --primary: #3498db;
             --success: #27ae60;
-            --bg: #f8f9fa;
+            --bg: #f4f7f9;
             --text: #2c3e50;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
@@ -31,8 +31,9 @@
 
         h1 {
             text-align: center;
-            font-size: 1.5rem;
-            margin: 20px 0;
+            font-size: 1.4rem;
+            color: #2980b9;
+            margin: 15px 0;
         }
 
         .score-board {
@@ -40,87 +41,80 @@
             top: 10px;
             z-index: 100;
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
-            color: #d35400;
-            background: rgba(255, 245, 230, 0.95);
-            padding: 15px;
+            color: #e67e22;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px;
             border-radius: 12px;
             border: 1px solid #ffe0b3;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
         }
 
         .question-card {
             background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 18px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             text-align: center;
         }
 
         .btn-audio {
             background: var(--primary);
             color: white;
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
-            font-size: 28px;
+            font-size: 26px;
             border: none;
             cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .btn-audio:active {
-            transform: scale(0.9);
-        }
+        .btn-audio:active { transform: scale(0.9); }
 
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 2px solid #ddd;
             border-radius: 10px;
-            font-size: 16px; /* Tránh iOS tự động zoom khi focus */
+            font-size: 16px; 
             box-sizing: border-box;
             outline: none;
         }
 
-        input[type="text"]:focus {
-            border-color: var(--primary);
-        }
+        input[type="text"]:focus { border-color: var(--primary); }
 
         .btn-check {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: var(--success);
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
         }
 
-        .btn-check:disabled {
-            background: #bdc3c7;
-        }
+        .btn-check:disabled { background: #bdc3c7; }
 
         .feedback {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 0.95rem;
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
             display: none;
             text-align: left;
-            word-wrap: break-word;
         }
 
         .reload-btn {
@@ -131,28 +125,80 @@
             border: none;
             border-radius: 12px;
             font-size: 1rem;
-            margin-top: 10px;
-            margin-bottom: 40px;
+            margin-top: 5px;
+            margin-bottom: 50px;
         }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <h1>🎧 Listening Quiz</h1>
-    <div id="total-score" class="score-board">Điểm: 0/10</div>
-    
+    <h1>🎧 Nghe và Viết Tiếng Anh</h1>
+    <div id="total-score" class="score-board">Điểm trung bình: 0/10</div>
     <div id="quiz-list"></div>
-
     <button class="reload-btn" onclick="location.reload()">Trộn câu hỏi & Làm lại</button>
 </div>
 
 <script>
     const rawData = [
-        { q: "How did she cook?", a: "She cooked well" },
-        { q: "How did he work?", a: "He worked hard" },
-        { q: "How did he run?", a: "He ran fast" },
-        { q: "How did he sing?", a: "He sang beautifully" }
+        { q: "Who are the main characters in the story Snow White?", a: "They're Snow White and the seven dwarfs" },
+        { q: "Who are the main characters in the story?", a: "They're the ant and the grasshopper" },
+        { q: "Who are the main characters in the story?", a: "They're the tortoise and the hare" },
+        { q: "Who are the main characters in the story?", a: "They're the fox and the crow" },
+        { q: "How did Snow White cook?", a: "She cooked well" },
+        { q: "How did the ant work?", a: "He worked hard" },
+        { q: "How did the grasshopper work?", a: "He worked lazily" },
+        { q: "How did the tortoise run?", a: "He ran slowly" },
+        { q: "How did the hare run?", a: "He ran fast" },
+        { q: "How did the crow sing?", a: "He sang beautifully" },
+        { q: "Did you swim with your mother?", a: "Yes, I did. I swam with my mother" },
+        { q: "Did you take photos with your father?", a: "Yes, I did. I took photos with my father" },
+        { q: "Did you collect seashells with your brother?", a: "Yes, I did. I collected seashells with my brother" },
+        { q: "Did you walk on the beach with your family?", a: "Yes, I did. I walked on the beach with my family" },
+        { q: "What did your family do in Ha Long Bay?", a: "We took a boat trip around the bay" },
+        { q: "What did your family do in Nha Trang?", a: "We ate seafood" },
+        { q: "What did your family do in Sydney?", a: "We saw some interesting places" },
+        { q: "What did your family do in Singapore?", a: "We bought souvenirs" },
+        { q: "Will you decorate the house for Tet?", a: "Yes, I will" },
+        { q: "Will you do the shopping for Tet?", a: "Yes, I will" },
+        { q: "Will you make banh chung for Tet?", a: "No, I won't. I'll make spring rolls" },
+        { q: "Will you buy roses for Tet?", a: "No, I won't. I'll buy a branch of peach blossoms" },
+        { q: "Where will you go at Tet?", a: "I'll go to my grandparents' house" },
+        { q: "Where will you go at Tet?", a: "I'll go to a fireworks show" },
+        { q: "Where will you go at Tet?", a: "I'll go to a New Year party" },
+        { q: "Where will you go at Tet?", a: "I'll go to a flower festival" },
+        { q: "What will you do on Children's Day?", a: "We'll dance" },
+        { q: "What will you do on Teachers' Day?", a: "We'll sing" },
+        { q: "What will you do on Sports Day?", a: "We'll play badminton" },
+        { q: "What will you do at Mid-Autumn Festival?", a: "We'll have a party" },
+        { q: "What food will you have at the party?", a: "We'll have pizza" },
+        { q: "What food will you have at the party?", a: "We'll have burgers" },
+        { q: "What drinks will you have at the party?", a: "We'll have milk tea" },
+        { q: "What drinks will you have at the party?", a: "We'll have apple juice" },
+        { q: "How does she stay healthy?", a: "She does morning exercise" },
+        { q: "How does he stay healthy?", a: "He plays sports" },
+        { q: "How does she stay healthy?", a: "She drinks fresh juice" },
+        { q: "How does he stay healthy?", a: "He eats healthy food" },
+        { q: "How often does she do yoga?", a: "She does yoga once a week" },
+        { q: "How often does he play badminton?", a: "He plays badminton twice a week" },
+        { q: "How often does he drink orange juice?", a: "He drinks orange juice three times a week" },
+        { q: "How often does she eat vegetables?", a: "She eats vegetables every day" },
+        { q: "What's the matter?", a: "I have a toothache" },
+        { q: "What's the matter?", a: "I have a headache" },
+        { q: "What's the matter?", a: "I have a sore throat" },
+        { q: "What's the matter?", a: "I have a stomach ache" },
+        { q: "You should go to the dentist.", a: "Thanks for your advice" },
+        { q: "You should have a rest.", a: "Thanks for your advice" },
+        { q: "You should drink warm water.", a: "Thanks for your advice" },
+        { q: "You should take some medicine.", a: "Thanks for your advice" },
+        { q: "How's the weather in Ha Noi in summer?", a: "It's hot" },
+        { q: "How's the weather in Ha Noi in autumn?", a: "It's cool" },
+        { q: "How's the weather in Ha Noi in winter?", a: "It's cold" },
+        { q: "How's the weather in Ha Noi in spring?", a: "It's warm" },
+        { q: "What do you usually wear in spring?", a: "I wear a blouse" },
+        { q: "What do you usually wear in summer?", a: "I wear trousers" },
+        { q: "What do you usually wear in autumn?", a: "I wear jeans" },
+        { q: "What do you usually wear in winter?", a: "I wear a jumper" }
     ];
 
     const data = rawData.sort(() => Math.random() - 0.5);
@@ -164,11 +210,11 @@
             const card = document.createElement('div');
             card.className = 'question-card';
             card.innerHTML = `
-                <div style="color: #95a5a6; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold;">CÂU ${index + 1}</div>
+                <div style="color: #95a5a6; font-size: 0.8rem; margin-bottom: 8px;">CÂU ${index + 1} / ${data.length}</div>
                 <button class="btn-audio" onclick="playAudio('${item.q.replace(/'/g, "\\'")}')">🔊</button>
                 <div class="input-group">
-                    <input type="text" id="input-${index}" placeholder="Viết lại câu bạn nghe được..." autocomplete="off" autocapitalize="none">
-                    <button class="btn-check" id="btn-${index}" onclick="checkAnswer(${index}, '${item.a}')">KIỂM TRA</button>
+                    <input type="text" id="input-${index}" placeholder="Viết đáp án tại đây..." autocomplete="off" autocapitalize="none">
+                    <button class="btn-check" id="btn-${index}" onclick="checkAnswer(${index}, '${item.a.replace(/'/g, "\\'")}')">KIỂM TRA</button>
                 </div>
                 <div class="feedback" id="feedback-${index}"></div>
             `;
@@ -177,7 +223,7 @@
     }
 
     window.playAudio = (text) => {
-        window.speechSynthesis.cancel(); // Dừng âm thanh đang phát trước đó
+        window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
         utterance.rate = 0.85; 
@@ -218,8 +264,9 @@
     };
 
     function updateOverallScore() {
-        const avg = scores.reduce((a, b) => a + b, 0) / data.length;
-        document.getElementById('total-score').innerText = `Tổng điểm: ${avg.toFixed(1)}/10`;
+        const totalPoints = scores.reduce((a, b) => a + b, 0);
+        const avg = totalPoints / data.length;
+        document.getElementById('total-score').innerText = `Điểm trung bình: ${avg.toFixed(1)}/10`;
     }
 
     initApp();
