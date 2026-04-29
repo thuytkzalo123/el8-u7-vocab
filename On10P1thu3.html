@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Tổng hợp (71 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Tổng hợp (71 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">71</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">71</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "The old man, ______ has lived in this village all his life, is a well-known craftsman.",
+                qVi: "Ông lão, ______ đã sống ở ngôi làng này cả đời, là một thợ thủ công nổi tiếng.",
+                key: ["The old man", "has lived"],
+                opts: ["whose", "who", "which", "whom"],
+                optsVi: ["của người mà", "người mà (S)", "cái mà", "người mà (O)"],
+                correct: 1,
+                exp: "Đại từ quan hệ thay thế cho danh từ chỉ người (The old man) và làm chủ ngữ cho động từ 'has lived' -> <b>who</b>."
+            },
+            {
+                q: "My parents ______ in this city for twenty years.",
+                qVi: "Bố mẹ tôi ______ ở thành phố này được hai mươi năm rồi.",
+                key: ["for twenty years", "Present Perfect"],
+                opts: ["lived", "are living", "live", "have lived"],
+                optsVi: ["đã sống (QKĐ)", "đang sống", "sống", "đã sống (HTHT)"],
+                correct: 3,
+                exp: "Dấu hiệu 'for + khoảng thời gian' (for twenty years) -> Dùng thì Hiện tại hoàn thành (<b>have lived</b>)."
+            },
+            {
+                q: "It is necessary ______ plastic bags to protect the environment.",
+                qVi: "Thật cần thiết phải ______ túi nilon để bảo vệ môi trường.",
+                key: ["It is necessary"],
+                opts: ["reduce", "that we reduce", "to reduce", "reducing"],
+                optsVi: ["giảm", "rằng chúng ta giảm", "để giảm", "giảm (V-ing)"],
+                correct: 2,
+                exp: "Cấu trúc: It is + adj (necessary) + <b>to V</b> (cần thiết phải làm gì)."
+            },
+            {
+                q: "The more you practice, ______ you become.",
+                qVi: "Bạn càng rèn luyện nhiều, bạn càng trở nên ______.",
+                key: ["The more", "Double comparative"],
+                opts: ["the better", "good", "the good", "better"],
+                optsVi: ["càng tốt hơn", "tốt", "cái tốt", "tốt hơn"],
+                correct: 0,
+                exp: "So sánh kép: The + so sánh hơn + S + V, <b>the + so sánh hơn + S + V</b> -> the better."
+            },
+            {
+                q: "We were all surprised ______ his sudden arrival.",
+                qVi: "Tất cả chúng tôi đều ngạc nhiên ______ sự xuất hiện đột ngột của anh ấy.",
+                key: ["surprised"],
+                opts: ["at", "for", "by", "with"],
+                optsVi: ["với/vào", "cho", "bởi", "với"],
+                correct: 0,
+                exp: "Cấu trúc: be surprised <b>at</b> / by something (ngạc nhiên về điều gì). Thông dụng nhất thường dùng 'at'."
+            },
+            {
+                q: "The book ______ on the table belongs to my sister.",
+                qVi: "Cuốn sách ______ trên bàn thuộc về chị gái tôi.",
+                key: ["The book", "on the table belongs"],
+                opts: ["that is lying", "lying", "which lies", "which is lying"],
+                optsVi: ["cái mà đang nằm", "nằm (V-ing rút gọn)", "cái mà nằm", "cái mà đang nằm"],
+                correct: 1,
+                exp: "Đây là câu rút gọn mệnh đề quan hệ mang nghĩa chủ động. Câu đầy đủ: 'The book which is lying...' -> rút gọn thành V-ing: <b>lying</b>."
+            },
+            {
+                q: "Despite ______ hard, he didn't pass the exam.",
+                qVi: "Mặc dù ______ chăm chỉ, anh ấy vẫn không vượt qua kỳ thi.",
+                key: ["Despite"],
+                opts: ["he works", "to work", "working", "he worked"],
+                optsVi: ["anh ấy làm việc", "để làm việc", "làm việc (V-ing)", "anh ấy đã làm việc"],
+                correct: 2,
+                exp: "Sau 'Despite' dùng Danh từ hoặc <b>V-ing</b> -> working."
+            },
+            {
+                q: "My mother suggested ______ a traditional Vietnamese cooking class.",
+                qVi: "Mẹ tôi gợi ý ______ một lớp học nấu ăn truyền thống của Việt Nam.",
+                key: ["suggested", "verb form"],
+                opts: ["that I take", "taking", "to take", "take"],
+                optsVi: ["rằng tôi nên tham gia", "tham gia (V-ing)", "để tham gia", "tham gia"],
+                correct: 1,
+                exp: "Cấu trúc thông dụng: suggest + <b>V-ing</b> (gợi ý cùng làm gì hoặc làm một việc nói chung). (Lưu ý: 'that I take' cũng đúng theo cấu trúc giả định, nhưng 'taking' thường là đáp án phổ quát nhất ở mức độ cơ bản)."
+            },
+            {
+                q: "She asked me ______ I had ever visited Hue.",
+                qVi: "Cô ấy hỏi tôi ______ tôi đã từng đến thăm Huế chưa.",
+                key: ["asked me", "Yes/No question reported"],
+                opts: ["C or B", "if", "whether", "that"],
+                optsVi: ["C hoặc B", "liệu", "liệu", "rằng"],
+                correct: 0,
+                exp: "Trong câu tường thuật dạng câu hỏi Yes/No, ta có thể dùng <b>if</b> hoặc <b>whether</b>. Vì vậy đáp án 'C or B' là chính xác."
+            },
+            {
+                q: "He wishes he ______ enough money to buy a new laptop.",
+                qVi: "Anh ấy ước mình ______ đủ tiền để mua một chiếc máy tính xách tay mới.",
+                key: ["wishes", "present unreal"],
+                opts: ["have", "has", "had", "will have"],
+                optsVi: ["có", "có (số ít)", "đã có (QKĐ)", "sẽ có"],
+                correct: 2,
+                exp: "Câu điều ước trái ngược với hiện tại, động từ phải lùi về thì Quá khứ đơn -> <b>had</b>."
+            },
+            {
+                q: "If it ______ tomorrow, we will go for a picnic.",
+                qVi: "Nếu ngày mai trời ______ mưa, chúng ta sẽ đi dã ngoại.",
+                key: ["If", "tomorrow", "Type 1"],
+                opts: ["didn't rain", "doesn't rain", "won't rain", "hadn't rained"],
+                optsVi: ["đã không mưa", "không mưa (HTĐ)", "sẽ không mưa", "đã không mưa (QKHT)"],
+                correct: 1,
+                exp: "Câu điều kiện loại 1 (sự việc có thể xảy ra trong tương lai): If + S + <b>V(HTĐ)</b>, S + will + V. Chủ ngữ 'it' dùng <b>doesn't rain</b>."
+            },
+            {
+                q: "The project will be finished ______ the end of next month.",
+                qVi: "Dự án sẽ được hoàn thành ______ cuối tháng tới.",
+                key: ["the end of next month", "deadline"],
+                opts: ["on", "in", "at", "by"],
+                optsVi: ["vào", "trong", "tại", "trước/chậm nhất là"],
+                correct: 3,
+                exp: "Chỉ thời hạn hoàn thành công việc (deadline) dùng <b>by</b> (trước hoặc vào lúc đó)."
+            },
+            {
+                q: "The ______ workers managed to finish the construction project on time.",
+                qVi: "Những công nhân ______ đã cố gắng hoàn thành dự án xây dựng đúng hạn.",
+                key: ["workers", "adjective needed"],
+                opts: ["electrical", "electricals", "electrician", "electricity"],
+                optsVi: ["thuộc về điện (adj)", "sai chính tả", "thợ điện (n)", "điện (n)"],
+                correct: 0,
+                exp: "Bổ nghĩa cho danh từ 'workers' cần tính từ -> <b>electrical</b> (electrical workers = công nhân điện)."
+            },
+            {
+                q: "The new community center has excellent ______, including a library and a gym.",
+                qVi: "Trung tâm cộng đồng mới có ______ tuyệt vời, bao gồm một thư viện và một phòng tập thể dục.",
+                key: ["excellent", "including a library and a gym"],
+                opts: ["facilities", "facility", "facilitating", "facilitates"],
+                optsVi: ["cơ sở vật chất (số nhiều)", "cơ sở vật chất (số ít)", "tạo điều kiện", "tạo điều kiện (V)"],
+                correct: 0,
+                exp: "Vì bao gồm nhiều thứ (a library and a gym) nên dùng danh từ số nhiều -> <b>facilities</b>."
+            },
+            {
+                q: "The ______ of the town's heritage is important for future generations.",
+                qVi: "Sự ______ di sản của thị trấn là quan trọng cho các thế hệ tương lai.",
+                key: ["The", "of the town's heritage"],
+                opts: ["preserve", "preservation", "preserving", "preserved"],
+                optsVi: ["bảo tồn (v)", "sự bảo tồn (n)", "bảo tồn (V-ing)", "được bảo tồn"],
+                correct: 1,
+                exp: "Cấu trúc: The + <b>Noun</b> + of. Danh từ của preserve là <b>preservation</b>."
+            },
+            {
+                q: "She is an ______ speaker, giving advice to others with great enthusiasm.",
+                qVi: "Cô ấy là một diễn giả ______, đưa ra lời khuyên cho người khác với sự nhiệt tình tuyệt vời.",
+                key: ["an", "speaker"],
+                opts: ["inspire", "inspired", "inspiring", "inspiration"],
+                optsVi: ["truyền cảm hứng (v)", "được truyền cảm hứng (adj)", "truyền cảm hứng (adj - chủ động)", "nguồn cảm hứng (n)"],
+                correct: 2,
+                exp: "Tính từ chỉ bản chất của một người gây tác động lên người khác (chủ động) dùng đuôi -ing -> <b>inspiring</b> speaker (người diễn giả truyền cảm hứng)."
+            },
+            {
+                q: "It's important to ______ the traffic rules when driving in busy areas.",
+                qVi: "Điều quan trọng là phải ______ luật giao thông khi lái xe trong các khu vực đông đúc.",
+                key: ["the traffic rules"],
+                opts: ["obey", "break", "follow", "ignore"],
+                optsVi: ["tuân theo/chấp hành", "phá vỡ", "theo dõi", "bỏ qua"],
+                correct: 0,
+                exp: "Chấp hành luật lệ giao thông -> <b>obey</b> the rules (follow the rules cũng đúng, nhưng obey mang tính bắt buộc mạnh hơn)."
+            },
+            {
+                q: "We need to ______ the report before the deadline tomorrow.",
+                qVi: "Chúng ta cần ______ bản báo cáo trước thời hạn vào ngày mai.",
+                key: ["the report before the deadline"],
+                opts: ["give up", "get on with", "look after", "look for"],
+                optsVi: ["từ bỏ", "tiếp tục/bắt tay vào làm", "chăm sóc", "tìm kiếm"],
+                correct: 1,
+                exp: "Bắt tay vào làm, tiếp tục công việc -> <b>get on with</b>."
+            },
+            {
+                q: "I'm interested ______ learning more about local traditions and cultures.",
+                qVi: "Tôi quan tâm ______ việc tìm hiểu thêm về các truyền thống và văn hóa địa phương.",
+                key: ["interested"],
+                opts: ["on", "for", "in", "about"],
+                optsVi: ["...", "...", "trong/tới", "..."],
+                correct: 2,
+                exp: "Cấu trúc cố định: be interested <b>in</b> (quan tâm, thích thú với cái gì)."
+            },
+            {
+                q: "There are ______ traditional festivals held in our village every year.",
+                qVi: "Có ______ lễ hội truyền thống được tổ chức trong làng của chúng tôi mỗi năm.",
+                key: ["festivals (plural countable noun)"],
+                opts: ["a few", "little", "much", "a little"],
+                optsVi: ["một vài", "rất ít (không đếm được)", "nhiều (không đếm được)", "một chút (không đếm được)"],
+                correct: 0,
+                exp: "'festivals' là danh từ đếm được số nhiều -> dùng <b>a few</b>."
+            },
+            {
+                q: "While the children ______ marbles, their grandparents were telling stories about the past.",
+                qVi: "Trong khi bọn trẻ ______ bắn bi, ông bà của chúng đang kể những câu chuyện về quá khứ.",
+                key: ["While", "their grandparents were telling"],
+                opts: ["play", "were playing", "played", "have played"],
+                optsVi: ["chơi (HTĐ)", "đang chơi (QKTD)", "đã chơi (QKĐ)", "đã chơi (HTHT)"],
+                correct: 1,
+                exp: "Hai hành động đang xảy ra song song trong quá khứ -> Cùng dùng thì Quá khứ tiếp diễn -> <b>were playing</b>."
+            },
+            {
+                q: "The teacher advised us ______ harder if we wanted to pass the final test.",
+                qVi: "Giáo viên khuyên chúng tôi ______ chăm chỉ hơn nếu chúng tôi muốn vượt qua bài kiểm tra cuối kỳ.",
+                key: ["advised us"],
+                opts: ["to study", "studying", "study", "studied"],
+                optsVi: ["để học", "học (V-ing)", "học", "đã học"],
+                correct: 0,
+                exp: "Cấu trúc: advise somebody <b>to V</b> (khuyên ai làm gì)."
+            },
+            {
+                q: "The ancient house ______ we visited yesterday is well-preserved.",
+                qVi: "Ngôi nhà cổ ______ chúng tôi đã đến thăm ngày hôm qua được bảo tồn rất tốt.",
+                key: ["The ancient house", "we visited"],
+                opts: ["which", "where", "who", "whose"],
+                optsVi: ["cái mà", "nơi mà", "người mà", "của vật mà"],
+                correct: 0,
+                exp: "Đại từ quan hệ thay thế cho danh từ chỉ vật (The ancient house) và làm tân ngữ cho động từ 'visited' -> <b>which</b>."
+            },
+            {
+                q: "Students ______ respect and preserve the country's cultural heritage.",
+                qVi: "Học sinh ______ tôn trọng và bảo tồn di sản văn hóa của đất nước.",
+                key: ["respect and preserve", "obligation"],
+                opts: ["must", "has to", "is", "was"],
+                optsVi: ["phải", "phải (số ít)", "là", "đã là"],
+                correct: 0,
+                exp: "Chỉ một bổn phận, nghĩa vụ mạnh mẽ. Chủ ngữ số nhiều 'Students' đi với <b>must</b> ('has to' chia số ít là sai ngữ pháp)."
+            },
+            {
+                q: "The beautiful architecture of that old town reminded him ______ his home town.",
+                qVi: "Kiến trúc tuyệt đẹp của khu phố cổ đó khiến anh nhớ ______ quê hương mình.",
+                key: ["reminded him"],
+                opts: ["in", "on", "at", "of"],
+                optsVi: ["trong", "trên", "tại", "về"],
+                correct: 3,
+                exp: "Cấu trúc: remind somebody <b>of</b> something (gợi nhớ cho ai về điều gì)."
+            },
+            {
+                q: "What ______ while I was washing my car in the garden?",
+                qVi: "Bạn ______ gì trong khi tôi đang rửa xe trong vườn?",
+                key: ["What", "while I was washing"],
+                opts: ["did you do", "would you do", "do you do", "were you doing"],
+                optsVi: ["đã làm", "sẽ làm", "làm", "đang làm"],
+                correct: 3,
+                exp: "Hành động song song đang diễn ra trong quá khứ -> Dùng Quá khứ tiếp diễn -> <b>were you doing</b>."
+            },
+            {
+                q: "Mark wishes he ______ enough money to buy his favourite lego.",
+                qVi: "Mark ước mình ______ đủ tiền để mua bộ lego yêu thích của mình.",
+                key: ["wishes", "present unreal"],
+                opts: ["had", "has", "was having", "will have"],
+                optsVi: ["đã có (QKĐ)", "có", "đang có", "sẽ có"],
+                correct: 0,
+                exp: "Câu ước trái ngược với hiện tại, động từ phải lùi về thì Quá khứ đơn -> <b>had</b>."
+            },
+            {
+                q: "If they train a little harder, they ______ win the match.",
+                qVi: "Nếu họ tập luyện chăm chỉ hơn một chút, họ ______ thắng trận đấu.",
+                key: ["If they train (Type 1)"],
+                opts: ["must", "may", "should", "have to"],
+                optsVi: ["phải", "có thể (khả năng)", "nên", "phải"],
+                correct: 1,
+                exp: "Câu điều kiện loại 1 chỉ khả năng có thể xảy ra ở tương lai -> dùng <b>may</b> (hoặc will/can)."
+            },
+            {
+                q: "Students often prefer to study in the school library to avoid many ______ at home.",
+                qVi: "Học sinh thường thích học trong thư viện trường để tránh nhiều ______ ở nhà.",
+                key: ["avoid many", "at home"],
+                opts: ["distractions", "priorities", "attentions", "generations"],
+                optsVi: ["sự xao nhãng", "sự ưu tiên", "sự chú ý", "thế hệ"],
+                correct: 0,
+                exp: "Ở nhà thường có nhiều thứ làm ồn, gây mất tập trung -> <b>distractions</b>."
+            },
+            {
+                q: "My father promised ______ me to the exhibition of traditional games.",
+                qVi: "Bố tôi hứa ______ tôi đến triển lãm các trò chơi truyền thống.",
+                key: ["promised", "verb form"],
+                opts: ["taking", "to take", "took", "takes"],
+                optsVi: ["đưa (V-ing)", "đưa (to V)", "đã đưa", "đưa"],
+                correct: 1,
+                exp: "Cấu trúc: promise + <b>to V</b> (hứa làm gì)."
+            },
+            {
+                q: "I ______ this film so many times that I can remember the style of each character.",
+                qVi: "Tôi ______ bộ phim này quá nhiều lần đến mức tôi có thể nhớ phong cách của từng nhân vật.",
+                key: ["so many times", "Present Perfect"],
+                opts: ["saw", "have seen", "sees", "will see"],
+                optsVi: ["đã xem (QKĐ)", "đã xem (HTHT)", "xem", "sẽ xem"],
+                correct: 1,
+                exp: "Diễn tả hành động lặp lại nhiều lần từ quá khứ đến hiện tại (so many times) -> Dùng thì Hiện tại hoàn thành (<b>have seen</b>)."
+            },
+            {
+                q: "Children nowadays have more freedom to ______ their interests.",
+                qVi: "Trẻ em ngày nay có nhiều tự do hơn để ______ sở thích của chúng.",
+                key: ["their interests"],
+                opts: ["pay", "get", "know", "pursue"],
+                optsVi: ["trả tiền", "lấy", "biết", "theo đuổi"],
+                correct: 3,
+                exp: "Theo đuổi đam mê, sở thích -> <b>pursue</b> interests."
+            },
+            {
+                q: "Being ______ can lead to making healthier decisions.",
+                qVi: "Trở nên ______ có thể dẫn đến việc đưa ra những quyết định lành mạnh hơn.",
+                key: ["lead to making healthier decisions"],
+                opts: ["stressed out", "optimistic", "distracted", "encouraged"],
+                optsVi: ["căng thẳng", "lạc quan", "xao nhãng", "được khuyến khích"],
+                correct: 1,
+                exp: "Tư duy tích cực, lạc quan mang lại quyết định tốt cho sức khỏe -> <b>optimistic</b>."
+            },
+            {
+                q: "Each of the students ______ responsible for cleaning the classroom.",
+                qVi: "Mỗi học sinh ______ chịu trách nhiệm làm sạch lớp học.",
+                key: ["Each of the students", "subject agreement"],
+                opts: ["are", "is", "were", "have been"],
+                optsVi: ["là (số nhiều)", "là (số ít)", "đã là", "đã từng là"],
+                correct: 1,
+                exp: "Chủ ngữ bắt đầu bằng 'Each of + Danh từ số nhiều' thì động từ chia ở dạng số ít -> <b>is</b>."
+            },
+            {
+                q: "I need to ______ the train schedule so I can plan my journey and ensure timely arrival at my destination.",
+                qVi: "Tôi cần ______ lịch trình xe lửa để tôi có thể lên kế hoạch cho hành trình của mình và đảm bảo đến đích kịp thời.",
+                key: ["the train schedule"],
+                opts: ["remind of", "run out of", "find out", "hand out"],
+                optsVi: ["nhắc nhở về", "hết/cạn kiệt", "tìm hiểu/tra cứu", "phân phát"],
+                correct: 2,
+                exp: "Tìm hiểu thông tin, tra cứu lịch trình -> <b>find out</b>."
+            },
+            {
+                q: "Children nowadays have more freedom to ______ their interests. (Câu trùng lặp)",
+                qVi: "Trẻ em ngày nay có nhiều tự do hơn để ______ sở thích của chúng.",
+                key: ["their interests"],
+                opts: ["pay for", "replace", "know", "pursue"],
+                optsVi: ["trả tiền cho", "thay thế", "biết", "theo đuổi"],
+                correct: 3,
+                exp: "Tương tự câu trên: Theo đuổi đam mê, sở thích -> <b>pursue</b> interests."
+            },
+            {
+                q: "I wish I ______ able to speak more than a language.",
+                qVi: "Tôi ước mình ______ có thể nói nhiều hơn một ngôn ngữ.",
+                key: ["wish", "present unreal"],
+                opts: ["is", "be", "am", "was"],
+                optsVi: ["là", "nguyên mẫu", "là", "đã là (QKĐ)"],
+                correct: 3,
+                exp: "Câu điều ước ở hiện tại, to be lùi về Quá khứ đơn (were hoặc was đều được chấp nhận trong tiếng Anh hiện đại) -> <b>was</b>."
+            },
+            {
+                q: "The bicycle ______ my parents gave me on my birthday was stolen yesterday.",
+                qVi: "Chiếc xe đạp ______ bố mẹ tôi tặng vào ngày sinh nhật đã bị đánh cắp ngày hôm qua.",
+                key: ["The bicycle", "my parents gave me"],
+                opts: ["which", "who", "what", "whom"],
+                optsVi: ["cái mà", "người mà (S)", "cái gì", "người mà (O)"],
+                correct: 0,
+                exp: "Đại từ quan hệ thay thế cho vật (The bicycle) -> <b>which</b>."
+            },
+            {
+                q: "She suggested that we ______ money for the poor in the neighbourhood.",
+                qVi: "Cô ấy đề nghị rằng chúng ta ______ tiền cho người nghèo trong khu phố.",
+                key: ["suggested that we"],
+                opts: ["raising", "should raise", "to raise", "would raise"],
+                optsVi: ["quyên góp (V-ing)", "nên quyên góp", "để quyên góp", "sẽ quyên góp"],
+                correct: 1,
+                exp: "Cấu trúc giả định: suggest that + S + (<b>should</b>) + V(nguyên thể)."
+            },
+            {
+                q: "My father loves ______ sightseeing in new places in the central part of Vietnam.",
+                qVi: "Bố tôi thích ______ ngắm cảnh ở những địa điểm mới ở miền Trung Việt Nam.",
+                key: ["sightseeing"],
+                opts: ["making", "going", "looking", "taking"],
+                optsVi: ["làm", "đi", "nhìn", "lấy"],
+                correct: 1,
+                exp: "Cụm từ cố định: <b>go</b> sightseeing (đi tham quan ngắm cảnh)."
+            },
+            {
+                q: "______ the city is, the more polluted the air becomes.",
+                qVi: "Thành phố càng ______, không khí càng trở nên ô nhiễm.",
+                key: ["the more polluted", "Double comparative"],
+                opts: ["The crowded", "The more crowded", "crowded", "more crowded"],
+                optsVi: ["Đông đúc", "Càng đông đúc", "Đông đúc", "Đông đúc hơn"],
+                correct: 1,
+                exp: "So sánh kép: <b>The + so sánh hơn</b>, the + so sánh hơn -> The more crowded."
+            },
+            {
+                q: "A ______ is a tropical storm with strong winds.",
+                qVi: "_______ là một cơn bão nhiệt đới với gió mạnh.",
+                key: ["tropical storm with strong winds"],
+                opts: ["typhoon", "tornado", "volcano", "tsunami"],
+                optsVi: ["bão nhiệt đới (ở châu Á)", "lốc xoáy", "núi lửa", "sóng thần"],
+                correct: 0,
+                exp: "Bão nhiệt đới có gió mạnh quét qua vùng biển Thái Bình Dương -> <b>typhoon</b>."
+            },
+            {
+                q: "He will get good marks if he ______ hard.",
+                qVi: "Anh ấy sẽ đạt điểm cao nếu anh ấy ______ chăm chỉ.",
+                key: ["will get", "If Type 1"],
+                opts: ["studying", "studied", "will study", "studies"],
+                optsVi: ["học (V-ing)", "đã học (QKĐ)", "sẽ học", "học (HTĐ số ít)"],
+                correct: 3,
+                exp: "Câu điều kiện loại 1: S + will + V if S + <b>V(HTĐ)</b> -> <b>studies</b>."
+            },
+            {
+                q: "Tom's eyes are weak. ______, he has to wear glasses.",
+                qVi: "Mắt của Tom yếu. ______, cậu ấy phải đeo kính.",
+                key: ["weak", "wear glasses"],
+                opts: ["But", "However", "Therefore", "And"],
+                optsVi: ["Nhưng", "Tuy nhiên", "Vì vậy/Do đó", "Và"],
+                correct: 2,
+                exp: "Chỉ quan hệ nguyên nhân - kết quả -> <b>Therefore</b> (Vì thế)."
+            },
+            {
+                q: "Some people make decisions based on ______ rather than logic, which can lead to making the wrong choice.",
+                qVi: "Một số người đưa ra quyết định dựa trên ______ thay vì logic, điều này có thể dẫn đến lựa chọn sai lầm.",
+                key: ["rather than logic"],
+                opts: ["emotion", "opinion", "guidance", "courage"],
+                optsVi: ["cảm xúc", "ý kiến", "sự hướng dẫn", "lòng can đảm"],
+                correct: 0,
+                exp: "Trái ngược với logic (lý trí) là đưa ra quyết định bằng cảm tính -> <b>emotion</b>."
+            },
+            {
+                q: "He rarely goes jogging, ______ ?",
+                qVi: "Anh ấy hiếm khi đi chạy bộ, ______ ?",
+                key: ["rarely", "Tag question"],
+                opts: ["doesn't he", "is he", "does he", "isn't he"],
+                optsVi: ["không phải anh ấy", "có phải anh ấy", "phải không", "không phải anh ấy"],
+                correct: 2,
+                exp: "Câu hỏi đuôi: Động từ 'goes' (HTĐ) mượn trợ động từ 'does'. Từ 'rarely' mang nghĩa phủ định nên phần đuôi phải ở dạng khẳng định -> <b>does he</b>."
+            },
+            {
+                q: "Gold ______ in California in the 19th century.",
+                qVi: "Vàng được ______ ở California vào thế kỷ 19.",
+                key: ["Gold", "in the 19th century"],
+                opts: ["was discovered", "is discovered", "was discover", "has been discovered"],
+                optsVi: ["đã được phát hiện (Bị động QKĐ)", "được phát hiện (Bị động HTĐ)", "sai ngữ pháp", "đã được phát hiện (Bị động HTHT)"],
+                correct: 0,
+                exp: "Sự việc xảy ra ở thế kỷ 19 (quá khứ). Câu bị động thì Quá khứ đơn: S + was/were + V3/ed -> <b>was discovered</b>."
+            },
+            {
+                q: "Mi suggested ______ for a walk after dinner.",
+                qVi: "Mi gợi ý ______ đi dạo sau bữa tối.",
+                key: ["suggested", "verb form"],
+                opts: ["going", "to go", "go", "gone"],
+                optsVi: ["đi (V-ing)", "để đi", "đi", "đã đi"],
+                correct: 0,
+                exp: "Cấu trúc: suggest + <b>V-ing</b> (gợi ý làm việc gì)."
+            },
+            {
+                q: "Everyone should protect their ______ information online by using strong passwords.",
+                qVi: "Mọi người nên bảo vệ thông tin ______ của họ trên mạng bằng cách sử dụng mật khẩu mạnh.",
+                key: ["information", "adjective needed"],
+                opts: ["person", "personally", "personal", "personalize"],
+                optsVi: ["người (n)", "về mặt cá nhân (adv)", "cá nhân (adj)", "cá nhân hóa (v)"],
+                correct: 2,
+                exp: "Bổ nghĩa cho danh từ 'information' cần một tính từ -> <b>personal</b> information (thông tin cá nhân)."
+            },
+            {
+                q: "Tim ______ all his assignments yet.",
+                qVi: "Tim vẫn chưa ______ tất cả bài tập của mình.",
+                key: ["yet", "Present Perfect"],
+                opts: ["didn't finish", "hasn't finished", "doesn't finish", "won't finish"],
+                optsVi: ["đã không hoàn thành", "chưa hoàn thành (HTHT)", "không hoàn thành", "sẽ không hoàn thành"],
+                correct: 1,
+                exp: "Dấu hiệu 'yet' dùng trong thì Hiện tại hoàn thành phủ định -> <b>hasn't finished</b>."
+            },
+            {
+                q: "My brother ______ come with us tonight, but I'm not sure.",
+                qVi: "Anh trai tôi ______ đi cùng chúng ta tối nay, nhưng tôi không chắc chắn.",
+                key: ["not sure", "modal verb"],
+                opts: ["must", "may", "can", "should"],
+                optsVi: ["phải", "có thể (khả năng)", "có thể (năng lực)", "nên"],
+                correct: 1,
+                exp: "Diễn tả một khả năng có thể xảy ra trong tương lai nhưng không chắc chắn (not sure) -> dùng <b>may</b>."
+            },
+            {
+                q: "People need to ______ the amount of plastic they use to save the Earth.",
+                qVi: "Mọi người cần ______ lượng nhựa họ sử dụng để cứu Trái đất.",
+                key: ["amount of plastic", "save the Earth"],
+                opts: ["cut down on", "look after", "run out of", "take over"],
+                optsVi: ["cắt giảm", "chăm sóc", "hết/cạn kiệt", "tiếp quản"],
+                correct: 0,
+                exp: "Giảm bớt lượng sử dụng -> <b>cut down on</b>."
+            },
+            {
+                q: "We have only ______ homework today, so we can watch a movie.",
+                qVi: "Hôm nay chúng ta chỉ có ______ bài tập về nhà, vì vậy chúng ta có thể xem phim.",
+                key: ["homework (uncountable noun)", "only"],
+                opts: ["little", "a little", "few", "a few"],
+                optsVi: ["rất ít (không đếm được, tiêu cực)", "một chút (không đếm được, khẳng định)", "rất ít (đếm được)", "một vài (đếm được)"],
+                correct: 1,
+                exp: "Homework là danh từ không đếm được. 'only a little' mang nghĩa chỉ có một chút thôi (ít bài nên rảnh để đi xem phim) -> <b>a little</b>."
+            },
+            {
+                q: "It was a great experience watching the local artisans make things ______ clay.",
+                qVi: "Đó là một trải nghiệm tuyệt vời khi xem các nghệ nhân địa phương làm ra các vật dụng ______ đất sét.",
+                key: ["make things", "clay"],
+                opts: ["on", "for", "by", "from"],
+                optsVi: ["trên", "cho", "bằng", "từ"],
+                correct: 3,
+                exp: "Được làm từ nguyên liệu gì (biến đổi tính chất/hình dạng) -> make <b>from</b>."
+            },
+            {
+                q: "We are talking about the writer ______ latest book was one of the best-sellers last year.",
+                qVi: "Chúng tôi đang nói về nhà văn ______ cuốn sách mới nhất là một trong những cuốn sách bán chạy nhất năm ngoái.",
+                key: ["the writer", "latest book (noun belonging to the writer)"],
+                opts: ["which", "whom", "who", "whose"],
+                optsVi: ["cái mà", "người mà (O)", "người mà (S)", "của người mà"],
+                correct: 3,
+                exp: "Đại từ quan hệ chỉ sở hữu (cuốn sách của nhà văn đó) -> <b>whose</b>."
+            },
+            {
+                q: "I tried to recall her name, but my mind ______ blank.",
+                qVi: "Tôi cố gắng nhớ lại tên cô ấy, nhưng đầu óc tôi trở nên trống rỗng.",
+                key: ["mind", "blank"],
+                opts: ["went", "ran", "turned", "changed"],
+                optsVi: ["đã đi/trở nên", "đã chạy", "đã xoay", "đã thay đổi"],
+                correct: 0,
+                exp: "Thành ngữ: one's mind <b>went</b> blank (đầu óc trống rỗng, không nhớ ra gì)."
+            },
+            {
+                q: "Nowadays, companies often hold ______ meetings, so their employees can work from home.",
+                qVi: "Ngày nay, các công ty thường tổ chức các cuộc họp ______, vì vậy nhân viên của họ có thể làm việc tại nhà.",
+                key: ["meetings", "work from home"],
+                opts: ["offline", "virtual", "formal", "outdoor"],
+                optsVi: ["ngoại tuyến/trực tiếp", "ảo/trực tuyến", "chính thức", "ngoài trời"],
+                correct: 1,
+                exp: "Họp trực tuyến qua mạng -> <b>virtual</b> meetings."
+            },
+            {
+                q: "The more ______ a neighbourhood has, the more appealing it is.",
+                qVi: "Một khu phố càng có nhiều ______, nó càng hấp dẫn.",
+                key: ["more appealing"],
+                opts: ["public amenities", "dusty roads", "homeless people", "traffic congestion"],
+                optsVi: ["tiện ích công cộng", "đường đầy bụi", "người vô gia cư", "tắc nghẽn giao thông"],
+                correct: 0,
+                exp: "Các yếu tố làm khu phố trở nên hấp dẫn -> <b>public amenities</b> (tiện ích công cộng như công viên, bể bơi...)."
+            },
+            {
+                q: "The travel agent gave us a ______ to help us choose a suitable tour.",
+                qVi: "Đại lý du lịch đã đưa cho chúng tôi một cuốn ______ để giúp chúng tôi chọn một tour phù hợp.",
+                key: ["choose a suitable tour"],
+                opts: ["holiday", "passport", "recipe", "brochure"],
+                optsVi: ["kỳ nghỉ", "hộ chiếu", "công thức", "cuốn sách mỏng/tờ rơi quảng cáo"],
+                correct: 3,
+                exp: "Tài liệu quảng cáo, giới thiệu tour du lịch -> <b>brochure</b>."
+            },
+            {
+                q: "______ you study, the better results you will get.",
+                qVi: "Bạn học càng ______, kết quả bạn nhận được sẽ càng tốt.",
+                key: ["Double comparative", "the better results"],
+                opts: ["The hard", "The harder", "Harder", "The more hard"],
+                optsVi: ["...", "Càng chăm chỉ", "...", "..."],
+                correct: 1,
+                exp: "So sánh kép: <b>The + so sánh hơn</b>, the + so sánh hơn. -> <b>The harder</b>."
+            },
+            {
+                q: "My teacher advised me ______ harder if I wanted to pass the exam.",
+                qVi: "Giáo viên của tôi khuyên tôi ______ chăm chỉ hơn nếu tôi muốn vượt qua kỳ thi.",
+                key: ["advised me", "verb form"],
+                opts: ["study", "studying", "to study", "studied"],
+                optsVi: ["học", "học (V-ing)", "để học", "đã học"],
+                correct: 2,
+                exp: "Cấu trúc: advise somebody <b>to V</b> (khuyên ai làm gì)."
+            },
+            {
+                q: "Lan said that she ______ to Ho Chi Minh City the following week.",
+                qVi: "Lan nói rằng cô ấy ______ đến Thành phố Hồ Chí Minh vào tuần tới.",
+                key: ["said that", "the following week", "Reported speech"],
+                opts: ["travels", "travelled", "was traveling", "would travel"],
+                optsVi: ["đi du lịch (HTĐ)", "đã đi (QKĐ)", "đang đi (QKTD)", "sẽ đi (TL trong QK)"],
+                correct: 3,
+                exp: "'The following week' là dấu hiệu của tương lai trong câu tường thuật -> 'will travel' phải lùi thì thành <b>would travel</b>."
+            },
+            {
+                q: "Smartphones have brought many ______ changes to our daily communication.",
+                qVi: "Điện thoại thông minh đã mang lại nhiều thay đổi mang tính ______ cho việc giao tiếp hàng ngày của chúng ta.",
+                key: ["changes (Noun)", "adjective needed"],
+                opts: ["technology", "technological", "technologically", "technologist"],
+                optsVi: ["công nghệ (n)", "thuộc về công nghệ (adj)", "về mặt công nghệ (adv)", "kỹ thuật gia (n)"],
+                correct: 1,
+                exp: "Bổ nghĩa cho danh từ 'changes' cần một tính từ -> <b>technological</b>."
+            },
+            {
+                q: "______ she is very young, she can speak English fluently.",
+                qVi: "______ cô ấy còn rất trẻ, cô ấy có thể nói tiếng Anh lưu loát.",
+                key: ["very young", "can speak fluently"],
+                opts: ["Because", "Although", "Unless", "Since"],
+                optsVi: ["Bởi vì", "Mặc dù", "Trừ khi", "Vì"],
+                correct: 1,
+                exp: "Hai vế mang ý nghĩa tương phản -> Dùng <b>Although</b>."
+            },
+            {
+                q: "I will call you as soon as I ______ at the airport.",
+                qVi: "Tôi sẽ gọi cho bạn ngay khi tôi ______ tại sân bay.",
+                key: ["as soon as", "future time clause"],
+                opts: ["arrive", "arrived", "arriving", "will arrive"],
+                optsVi: ["đến (HTĐ)", "đã đến (QKĐ)", "đến (V-ing)", "sẽ đến"],
+                correct: 0,
+                exp: "Trong mệnh đề trạng ngữ chỉ thời gian bắt đầu bằng 'as soon as' mang nghĩa tương lai, động từ chia ở thì Hiện tại đơn -> <b>arrive</b>."
+            },
+            {
+                q: "After class, the students usually ______ together at the canteen.",
+                qVi: "Sau giờ học, các sinh viên thường ______ cùng nhau tại căng tin.",
+                key: ["together at the canteen"],
+                opts: ["go out", "hang out", "look up", "get on"],
+                optsVi: ["đi ra ngoài", "tụ tập/đi chơi", "tra cứu", "lên xe/hòa thuận"],
+                correct: 1,
+                exp: "Tụ tập, la cà cùng bạn bè -> <b>hang out</b>."
+            },
+            {
+                q: "Students ______ wear uniforms when they go to school.",
+                qVi: "Học sinh ______ mặc đồng phục khi đến trường.",
+                key: ["wear uniforms", "obligation"],
+                opts: ["can", "must", "may", "could"],
+                optsVi: ["có thể", "phải", "có lẽ", "có thể (QK)"],
+                correct: 1,
+                exp: "Thể hiện nội quy, sự bắt buộc -> <b>must</b>."
+            },
+            {
+                q: "The teacher asked us to list all the ______ used to make this cake.",
+                qVi: "Giáo viên yêu cầu chúng tôi liệt kê tất cả các ______ được sử dụng để làm chiếc bánh này.",
+                key: ["used to make this cake"],
+                opts: ["ingredients", "elements", "materials", "components"],
+                optsVi: ["thành phần/nguyên liệu (nấu ăn)", "nguyên tố", "vật liệu (xây dựng, quần áo...)", "thành phần/bộ phận (máy móc)"],
+                correct: 0,
+                exp: "Nguyên liệu để nấu ăn/làm bánh -> <b>ingredients</b>."
+            },
+            {
+                q: "Minh is a very kind boy who really ______ about other people's feelings.",
+                qVi: "Minh là một cậu bé rất tốt bụng, người thực sự ______ đến cảm xúc của người khác.",
+                key: ["about other people's feelings"],
+                opts: ["knows", "cares", "sees", "hears"],
+                optsVi: ["biết", "quan tâm", "thấy", "nghe"],
+                correct: 1,
+                exp: "Quan tâm đến ai/cái gì -> <b>cares</b> about."
+            },
+            {
+                q: "The Internet has a great ______ on the way students learn nowadays.",
+                qVi: "Internet có một _______ lớn đối với cách học sinh học ngày nay.",
+                key: ["has a great", "on the way"],
+                opts: ["influence", "consequence", "relation", "affect"],
+                optsVi: ["sự ảnh hưởng (n)", "hậu quả", "mối quan hệ", "ảnh hưởng (v)"],
+                correct: 0,
+                exp: "Cấu trúc: have an <b>influence</b> on (có sự ảnh hưởng lên cái gì). Lưu ý: 'affect' là động từ, không đứng sau mạo từ 'a/an'."
+            },
+            {
+                q: "Wi-Fi is now ______ in almost every café in the city.",
+                qVi: "Wi-Fi hiện đã _______ ở hầu hết các quán cà phê trong thành phố.",
+                key: ["Wi-Fi is now", "in almost every café"],
+                opts: ["available", "believable", "possible", "comparable"],
+                optsVi: ["có sẵn", "có thể tin được", "có thể", "có thể so sánh được"],
+                correct: 0,
+                exp: "Sẵn sàng để sử dụng, được cung cấp -> <b>available</b>."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                // Sidebar nav item
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
