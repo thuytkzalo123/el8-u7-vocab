@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Word Form (100 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Word Form (100 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">100</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">100</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // PHẦN 1: 50 CÂU TỪ FILE GỐC ĐẦU TIÊN
+            {
+                q: "We should do more to ________ the environment.",
+                qVi: "Chúng ta nên làm nhiều hơn nữa để ________ môi trường.",
+                key: ["to + V (infinitive)"],
+                opts: ["protect", "protection", "protective", "protectively"],
+                optsVi: ["bảo vệ (v)", "sự bảo vệ (n)", "bảo hộ (adj)", "một cách bảo vệ (adv)"],
+                correct: 0,
+                exp: "Sau giới từ 'to' chỉ mục đích cần một động từ nguyên thể -> <b>protect</b>."
+            },
+            {
+                q: "Wearing ________ clothing is necessary when working on a construction site.",
+                qVi: "Việc mặc quần áo ________ là cần thiết khi làm việc trên công trường xây dựng.",
+                key: ["Adj + Noun", "clothing"],
+                opts: ["protect", "protection", "protective", "protector"],
+                optsVi: ["bảo vệ (v)", "sự bảo vệ (n)", "bảo vệ/bảo hộ (adj)", "người bảo vệ (n)"],
+                correct: 2,
+                exp: "Trước danh từ 'clothing' cần một tính từ bổ nghĩa -> <b>protective</b> clothing (quần áo bảo hộ)."
+            },
+            {
+                q: "The ________ of ancient monuments is crucial for our heritage.",
+                qVi: "Sự ________ của các di tích cổ là rất quan trọng đối với di sản của chúng ta.",
+                key: ["The + Noun + of"],
+                opts: ["preserve", "preservation", "preservative", "preserved"],
+                optsVi: ["bảo tồn (v)", "sự bảo tồn (n)", "chất bảo quản (n)", "được bảo tồn (v-ed)"],
+                correct: 1,
+                exp: "Sau mạo từ 'The' và trước giới từ 'of' cần một danh từ. Sự gìn giữ, bảo tồn -> <b>preservation</b>."
+            },
+            {
+                q: "This canned food contains too many chemical ________.",
+                qVi: "Thức ăn đóng hộp này chứa quá nhiều ________ hóa học.",
+                key: ["too many + Plural Noun", "chemical"],
+                opts: ["preserve", "preservation", "preservatives", "preserves"],
+                optsVi: ["bảo tồn", "sự bảo tồn", "chất bảo quản (số nhiều)", "bảo tồn/mứt"],
+                correct: 2,
+                exp: "Sau lượng từ 'many' và tính từ 'chemical' cần một danh từ đếm được số nhiều -> <b>preservatives</b> (các chất bảo quản)."
+            },
+            {
+                q: "She made a significant ________ to the success of the project.",
+                qVi: "Cô ấy đã có một ________ đáng kể cho sự thành công của dự án.",
+                key: ["a + Adj + Noun", "significant"],
+                opts: ["contribute", "contribution", "contributory", "contributor"],
+                optsVi: ["đóng góp (v)", "sự đóng góp (n)", "đóng góp (adj)", "người đóng góp (n)"],
+                correct: 1,
+                exp: "Sau mạo từ 'a' và tính từ 'significant' cần một danh từ. Cấu trúc: make a <b>contribution</b> to (đóng góp vào)."
+            },
+            {
+                q: "Everyone should ________ to help the poor in our neighborhood.",
+                qVi: "Mọi người nên ________ để giúp đỡ người nghèo trong khu phố của chúng ta.",
+                key: ["Modal verb + V (bare)"],
+                opts: ["contribute", "contribution", "contributor", "contributed"],
+                optsVi: ["đóng góp (v)", "sự đóng góp (n)", "người đóng góp (n)", "đã đóng góp"],
+                correct: 0,
+                exp: "Sau động từ khuyết thiếu 'should' cần một động từ nguyên mẫu -> <b>contribute</b>."
+            },
+            {
+                q: "Effective ________ is the key to a successful relationship.",
+                qVi: "________ hiệu quả là chìa khóa cho một mối quan hệ thành công.",
+                key: ["Adj + Noun (Subject)"],
+                opts: ["communicate", "communication", "communicative", "communicatively"],
+                optsVi: ["giao tiếp (v)", "sự giao tiếp (n)", "cởi mở (adj)", "một cách cởi mở (adv)"],
+                correct: 1,
+                exp: "Đóng vai trò làm chủ ngữ sau tính từ 'Effective' cần một danh từ -> <b>communication</b>."
+            },
+            {
+                q: "He is a very ________ person; he loves talking to new people.",
+                qVi: "Anh ấy là một người rất ________; anh ấy thích nói chuyện với những người mới.",
+                key: ["a very + Adj + Noun", "person"],
+                opts: ["communicate", "communication", "communicative", "communicatively"],
+                optsVi: ["giao tiếp (v)", "sự giao tiếp (n)", "cởi mở/thích giao tiếp (adj)", "một cách cởi mở (adv)"],
+                correct: 2,
+                exp: "Trước danh từ 'person' cần một tính từ bổ nghĩa -> <b>communicative</b> (cởi mở, hòa đồng)."
+            },
+            {
+                q: "Don’t play with that knife; it is very ________.",
+                qVi: "Đừng chơi với con dao đó; nó rất ________.",
+                key: ["To be + very + Adj"],
+                opts: ["danger", "dangerous", "dangerously", "endanger"],
+                optsVi: ["sự nguy hiểm (n)", "nguy hiểm (adj)", "một cách nguy hiểm (adv)", "gây nguy hiểm (v)"],
+                correct: 1,
+                exp: "Sau động từ to be 'is' và trạng từ 'very' cần một tính từ -> <b>dangerous</b>."
+            },
+            {
+                q: "Many animals are ________ because of hunting and habitat loss.",
+                qVi: "Nhiều loài động vật đang ________ vì nạn săn bắt và mất môi trường sống.",
+                key: ["are + Adj/Participle", "hunting and habitat loss"],
+                opts: ["danger", "dangerous", "endangered", "dangerously"],
+                optsVi: ["sự nguy hiểm", "nguy hiểm", "có nguy cơ tuyệt chủng (adj)", "một cách nguy hiểm"],
+                correct: 2,
+                exp: "Chỉ tình trạng bị đe dọa sự sống của động vật, ta dùng tính từ -> <b>endangered</b> (đang có nguy cơ tuyệt chủng)."
+            },
+            {
+                q: "The local people were very ________ to us during our stay.",
+                qVi: "Người dân địa phương rất ________ với chúng tôi trong suốt thời gian chúng tôi ở lại.",
+                key: ["were very + Adj"],
+                opts: ["help", "helpful", "helpless", "helpfully"],
+                optsVi: ["giúp đỡ (v/n)", "hay giúp đỡ/tốt bụng (adj)", "bất lực (adj)", "một cách hữu ích (adv)"],
+                correct: 1,
+                exp: "Sau to be 'were' cần tính từ. Ngữ cảnh mang nghĩa tích cực (người dân tốt bụng, hay giúp đỡ) -> <b>helpful</b>."
+            },
+            {
+                q: "The baby looked ________ when his mother left the room.",
+                qVi: "Đứa bé trông có vẻ ________ khi mẹ rời khỏi phòng.",
+                key: ["Linking verb (looked) + Adj"],
+                opts: ["help", "helpful", "helpless", "helpfully"],
+                optsVi: ["giúp đỡ", "hữu ích", "bất lực/bơ vơ (adj)", "một cách hữu ích"],
+                correct: 2,
+                exp: "Sau động từ nối 'looked' cần tính từ. Em bé bị mẹ bỏ lại phòng thì có cảm giác bơ vơ, không tự lo được -> <b>helpless</b>."
+            },
+            {
+                q: "They are wearing their ________ costumes for the festival.",
+                qVi: "Họ đang mặc trang phục ________ của mình cho lễ hội.",
+                key: ["Adj + Noun", "costumes"],
+                opts: ["nation", "national", "nationality", "internationally"],
+                optsVi: ["quốc gia (n)", "thuộc về quốc gia/dân tộc (adj)", "quốc tịch (n)", "trên bình diện quốc tế (adv)"],
+                correct: 1,
+                exp: "Trước danh từ 'costumes' cần tính từ -> <b>national</b> (national costumes = trang phục truyền thống dân tộc)."
+            },
+            {
+                q: "What is your ________? - I am Vietnamese.",
+                qVi: "________ của bạn là gì? - Tôi là người Việt Nam.",
+                key: ["Possessive adj (your) + Noun"],
+                opts: ["nation", "national", "nationality", "native"],
+                optsVi: ["quốc gia", "thuộc về quốc gia", "quốc tịch (n)", "bản xứ"],
+                correct: 2,
+                exp: "Sau tính từ sở hữu 'your' cần một danh từ. Câu trả lời là 'Vietnamese' chỉ quốc tịch -> <b>nationality</b>."
+            },
+            {
+                q: "It is ________ for children to be curious about the world.",
+                qVi: "Việc trẻ em tò mò về thế giới là điều ________.",
+                key: ["It is + Adj + for sb to V"],
+                opts: ["nature", "natural", "naturally", "naturalist"],
+                optsVi: ["thiên nhiên (n)", "tự nhiên/bình thường (adj)", "một cách tự nhiên (adv)", "nhà tự nhiên học (n)"],
+                correct: 1,
+                exp: "Cấu trúc chủ ngữ giả: It is + tính từ -> <b>natural</b> (là điều tự nhiên/bình thường)."
+            },
+            {
+                q: "She has a ________ talent for singing.",
+                qVi: "Cô ấy có một tài năng ________ về ca hát.",
+                key: ["a + Adj + Noun", "talent"],
+                opts: ["nature", "natural", "naturally", "naturalist"],
+                optsVi: ["thiên nhiên", "tự nhiên/bẩm sinh (adj)", "một cách tự nhiên", "nhà tự nhiên học"],
+                correct: 1,
+                exp: "Trước danh từ 'talent' cần tính từ -> <b>natural</b> (natural talent = tài năng thiên bẩm)."
+            },
+            {
+                q: "Please read the ________ carefully before using the machine.",
+                qVi: "Vui lòng đọc kỹ ________ trước khi sử dụng máy.",
+                key: ["the + Noun"],
+                opts: ["instruct", "instruction", "instructional", "instructor"],
+                optsVi: ["hướng dẫn (v)", "sự hướng dẫn (n)", "mang tính hướng dẫn (adj)", "người hướng dẫn (n)"],
+                correct: 1,
+                exp: "Sau mạo từ 'the' cần một danh từ chỉ sự vật (lời hướng dẫn sử dụng) -> <b>instruction</b> (thường dùng số nhiều instructions)."
+            },
+            {
+                q: "Our gym ________ is very strict but professional.",
+                qVi: "________ phòng tập của chúng tôi rất nghiêm khắc nhưng chuyên nghiệp.",
+                key: ["Noun (Subject)"],
+                opts: ["instruct", "instruction", "instructive", "instructor"],
+                optsVi: ["hướng dẫn (v)", "sự hướng dẫn (n)", "truyền kiến thức (adj)", "người hướng dẫn/huấn luyện viên (n)"],
+                correct: 3,
+                exp: "Làm chủ ngữ chỉ người ('is very strict' - rất nghiêm khắc) -> <b>instructor</b> (huấn luyện viên)."
+            },
+            {
+                q: "The earthquake caused the ________ of many buildings.",
+                qVi: "Trận động đất đã gây ra sự ________ của nhiều tòa nhà.",
+                key: ["the + Noun + of"],
+                opts: ["destroy", "destruction", "destructive", "destructively"],
+                optsVi: ["phá hủy (v)", "sự phá hủy/tàn phá (n)", "có tính tàn phá (adj)", "một cách tàn phá (adv)"],
+                correct: 1,
+                exp: "Sau mạo từ 'the' và trước giới từ 'of' cần danh từ -> <b>destruction</b>."
+            },
+            {
+                q: "Modern weapons are becoming more and more ________.",
+                qVi: "Vũ khí hiện đại đang ngày càng trở nên ________.",
+                key: ["Linking verb (become) + Adj"],
+                opts: ["destroy", "destruction", "destructive", "destroyed"],
+                optsVi: ["phá hủy", "sự phá hủy", "có tính tàn phá (adj)", "bị phá hủy (v-ed)"],
+                correct: 2,
+                exp: "Sau 'becoming' cần một tính từ chỉ tính chất của sự vật -> <b>destructive</b>."
+            },
+            {
+                q: "Many species are facing ________ due to climate change.",
+                qVi: "Nhiều loài đang phải đối mặt với sự ________ do biến đổi khí hậu.",
+                key: ["Verb (face) + Noun (Object)"],
+                opts: ["extinct", "extinction", "extinctive", "extinguished"],
+                optsVi: ["tuyệt chủng (adj)", "sự tuyệt chủng (n)", "có khuynh hướng tuyệt chủng (adj)", "bị dập tắt (v-ed)"],
+                correct: 1,
+                exp: "Làm tân ngữ cho động từ 'facing' (đối mặt với) cần danh từ -> <b>extinction</b>."
+            },
+            {
+                q: "Dinosaurs have been ________ for millions of years.",
+                qVi: "Khủng long đã ________ hàng triệu năm rồi.",
+                key: ["To be + Adj"],
+                opts: ["extinct", "extinction", "extinctive", "extinguish"],
+                optsVi: ["tuyệt chủng (adj)", "sự tuyệt chủng (n)", "khuynh hướng tuyệt chủng", "dập tắt (v)"],
+                correct: 0,
+                exp: "Sau to be (have been) cần một tính từ chỉ trạng thái -> <b>extinct</b> (đã tuyệt chủng)."
+            },
+            {
+                q: "She looks ________ in her new dress.",
+                qVi: "Cô ấy trông thật ________ trong bộ váy mới.",
+                key: ["Linking verb (looks) + Adj"],
+                opts: ["beauty", "beautiful", "beautifully", "beautify"],
+                optsVi: ["vẻ đẹp (n)", "xinh đẹp (adj)", "một cách xinh đẹp (adv)", "làm đẹp (v)"],
+                correct: 1,
+                exp: "Sau động từ nối (linking verb) 'looks' cần tính từ -> <b>beautiful</b>."
+            },
+            {
+                q: "They are trying to ________ the city by planting more trees.",
+                qVi: "Họ đang cố gắng ________ thành phố bằng cách trồng nhiều cây hơn.",
+                key: ["to + V (infinitive)"],
+                opts: ["beauty", "beautiful", "beautifully", "beautify"],
+                optsVi: ["vẻ đẹp (n)", "xinh đẹp (adj)", "một cách xinh đẹp (adv)", "làm đẹp (v)"],
+                correct: 3,
+                exp: "Sau 'to' cần động từ nguyên mẫu chỉ mục đích -> <b>beautify</b> (tô điểm, làm đẹp)."
+            },
+            {
+                q: "Money cannot buy ________.",
+                qVi: "Tiền không thể mua được ________.",
+                key: ["Transitive Verb (buy) + Noun (Object)"],
+                opts: ["happy", "happiness", "happily", "unhappy"],
+                optsVi: ["hạnh phúc (adj)", "sự hạnh phúc (n)", "một cách hạnh phúc (adv)", "bất hạnh (adj)"],
+                correct: 1,
+                exp: "Làm tân ngữ cho động từ 'buy' cần danh từ -> <b>happiness</b>."
+            },
+            {
+                q: "She was ________ because she failed the driving test.",
+                qVi: "Cô ấy ________ vì cô ấy đã trượt bài kiểm tra lái xe.",
+                key: ["To be + Adj", "failed"],
+                opts: ["happy", "happiness", "unhappy", "happily"],
+                optsVi: ["vui vẻ", "sự hạnh phúc", "buồn bã/không vui (adj)", "một cách vui vẻ"],
+                correct: 2,
+                exp: "Trượt kỳ thi nên cảm xúc phải tiêu cực -> <b>unhappy</b>."
+            },
+            {
+                q: "He has a great ________ of rare stamps.",
+                qVi: "Anh ấy có một ________ tem quý hiếm rất lớn.",
+                key: ["a great + Noun"],
+                opts: ["collect", "collection", "collector", "collective"],
+                optsVi: ["sưu tầm (v)", "bộ sưu tập (n)", "nhà sưu tầm (n)", "tập thể (adj)"],
+                correct: 1,
+                exp: "Sau tính từ 'great' cần một danh từ chỉ sự vật -> <b>collection</b> (bộ sưu tập)."
+            },
+            {
+                q: "My brother is a passionate coin ________.",
+                qVi: "Anh trai tôi là một ________ tiền xu đam mê.",
+                key: ["Noun (person)"],
+                opts: ["collect", "collection", "collector", "collective"],
+                optsVi: ["sưu tầm (v)", "bộ sưu tập (n)", "nhà sưu tầm (n)", "tập thể (adj)"],
+                correct: 2,
+                exp: "Chỉ người có sở thích sưu tầm -> <b>collector</b>."
+            },
+            {
+                q: "We should try to save ________ at home.",
+                qVi: "Chúng ta nên cố gắng tiết kiệm ________ ở nhà.",
+                key: ["Verb (save) + Noun (Object)"],
+                opts: ["electric", "electrical", "electricity", "electrician"],
+                optsVi: ["chạy bằng điện (adj)", "thuộc về điện (adj)", "điện (n)", "thợ điện (n)"],
+                correct: 2,
+                exp: "Tiết kiệm cái gì đó (điện năng) -> <b>electricity</b>."
+            },
+            {
+                q: "If the light doesn't work, you should call an ________.",
+                qVi: "Nếu đèn không sáng, bạn nên gọi cho một ________.",
+                key: ["an + Noun (person)"],
+                opts: ["electric", "electrical", "electricity", "electrician"],
+                optsVi: ["chạy bằng điện (adj)", "thuộc về điện (adj)", "điện (n)", "thợ điện (n)"],
+                correct: 3,
+                exp: "Sau mạo từ 'an' và ngữ cảnh sửa đèn -> gọi người thợ điện -> <b>electrician</b>."
+            },
+            {
+                q: "This is a ________ occasion, so we should celebrate.",
+                qVi: "Đây là một dịp ________, vì vậy chúng ta nên ăn mừng.",
+                key: ["a + Adj + Noun"],
+                opts: ["special", "specialize", "specially", "specialty"],
+                optsVi: ["đặc biệt (adj)", "chuyên môn hóa (v)", "đặc biệt (adv)", "đặc sản (n)"],
+                correct: 0,
+                exp: "Trước danh từ 'occasion' cần một tính từ -> <b>special</b>."
+            },
+            {
+                q: "He decided to ________ in computer science at university.",
+                qVi: "Anh ấy quyết định ________ về khoa học máy tính tại trường đại học.",
+                key: ["to + V (infinitive)"],
+                opts: ["special", "specialize", "specialty", "specialisation"],
+                optsVi: ["đặc biệt (adj)", "chuyên môn hóa/chuyên về (v)", "đặc sản (n)", "sự chuyên môn hóa (n)"],
+                correct: 1,
+                exp: "Sau 'to' cần động từ nguyên thể -> <b>specialize</b>."
+            },
+            {
+                q: "________ is one of the main sources of income for this country.",
+                qVi: "________ là một trong những nguồn thu nhập chính của quốc gia này.",
+                key: ["Noun (Subject)"],
+                opts: ["tour", "tourist", "tourism", "touring"],
+                optsVi: ["chuyến tham quan", "khách du lịch", "ngành du lịch", "việc đi du lịch (v-ing)"],
+                correct: 2,
+                exp: "Làm chủ ngữ chỉ một ngành công nghiệp mang lại thu nhập -> <b>Tourism</b> (Ngành du lịch)."
+            },
+            {
+                q: "There are many ________ visiting the Great Wall today.",
+                qVi: "Có rất nhiều ________ đến thăm Vạn Lý Trường Thành hôm nay.",
+                key: ["many + Plural Noun (person)"],
+                opts: ["tour", "tourists", "tourism", "touring"],
+                optsVi: ["chuyến du lịch", "khách du lịch (số nhiều)", "ngành du lịch", "việc đi du lịch"],
+                correct: 1,
+                exp: "Sau 'many' cần danh từ đếm được số nhiều chỉ người đi tham quan -> <b>tourists</b>."
+            },
+            {
+                q: "The company is doing a lot to ________ their new product.",
+                qVi: "Công ty đang làm rất nhiều việc để ________ sản phẩm mới của họ.",
+                key: ["to + V (infinitive)"],
+                opts: ["promote", "promotion", "promotional", "promoter"],
+                optsVi: ["quảng bá/thúc đẩy (v)", "sự quảng bá/thăng chức (n)", "thuộc quảng cáo (adj)", "người tổ chức (n)"],
+                correct: 0,
+                exp: "Sau 'to' cần động từ nguyên mẫu chỉ mục đích -> <b>promote</b> (quảng bá)."
+            },
+            {
+                q: "He got a ________ after working hard for two years.",
+                qVi: "Anh ấy đã nhận được sự ________ sau hai năm làm việc chăm chỉ.",
+                key: ["a + Noun"],
+                opts: ["promote", "promotion", "promotional", "promoter"],
+                optsVi: ["thúc đẩy (v)", "sự thăng chức (n)", "thuộc quảng cáo (adj)", "người tổ chức (n)"],
+                correct: 1,
+                exp: "Sau mạo từ 'a' cần một danh từ -> <b>promotion</b> (sự thăng chức)."
+            },
+            {
+                q: "There is a growing ________ that we must protect the environment.",
+                qVi: "Có một sự ________ ngày càng tăng rằng chúng ta phải bảo vệ môi trường.",
+                key: ["a growing + Noun"],
+                opts: ["recognize", "recognition", "recognizable", "recognizably"],
+                optsVi: ["nhận ra (v)", "sự công nhận/nhận thức (n)", "có thể nhận ra (adj)", "một cách dễ nhận ra (adv)"],
+                correct: 1,
+                exp: "Sau tính từ 'growing' cần một danh từ -> <b>recognition</b> (sự nhận thức)."
+            },
+            {
+                q: "Her face is easily ________ in a crowd.",
+                qVi: "Khuôn mặt của cô ấy rất dễ ________ trong đám đông.",
+                key: ["is easily + Adj"],
+                opts: ["recognize", "recognition", "recognizable", "recognizably"],
+                optsVi: ["nhận ra", "sự nhận diện", "dễ nhận ra/có thể nhận ra (adj)", "một cách dễ nhận ra (adv)"],
+                correct: 2,
+                exp: "Sau to be 'is' và trạng từ 'easily' cần một tính từ -> <b>recognizable</b>."
+            },
+            {
+                q: "He is under ________ in the hospital.",
+                qVi: "Anh ấy đang được ________ tại bệnh viện.",
+                key: ["Preposition (under) + Noun"],
+                opts: ["observe", "observation", "observer", "observant"],
+                optsVi: ["quan sát (v)", "sự theo dõi/quan sát (n)", "người quan sát (n)", "tinh ý (adj)"],
+                correct: 1,
+                exp: "Cụm từ cố định: be under <b>observation</b> (đang được theo dõi y tế)."
+            },
+            {
+                q: "A good ________ should notice every small detail.",
+                qVi: "Một ________ giỏi nên chú ý đến từng chi tiết nhỏ.",
+                key: ["A good + Noun (person)"],
+                opts: ["observe", "observation", "observer", "observatory"],
+                optsVi: ["quan sát", "sự quan sát", "người quan sát (n)", "đài thiên văn (n)"],
+                correct: 2,
+                exp: "Chủ ngữ là người thực hiện hành động quan sát -> <b>observer</b>."
+            },
+            {
+                q: "What is your ________? - I am a teacher.",
+                qVi: "________ của bạn là gì? - Tôi là một giáo viên.",
+                key: ["Possessive adj (your) + Noun"],
+                opts: ["occupy", "occupation", "occupied", "occupational"],
+                optsVi: ["chiếm giữ (v)", "nghề nghiệp (n)", "bị chiếm đóng (adj)", "thuộc nghề nghiệp (adj)"],
+                correct: 1,
+                exp: "Câu hỏi về nghề nghiệp -> <b>occupation</b>."
+            },
+            {
+                q: "All the rooms in the hotel are ________.",
+                qVi: "Tất cả các phòng trong khách sạn đều đã ________.",
+                key: ["To be (are) + Adj/Participle"],
+                opts: ["occupy", "occupation", "occupied", "occupant"],
+                optsVi: ["chiếm giữ", "nghề nghiệp", "đã có người/bị chiếm giữ (adj)", "người cư ngụ"],
+                correct: 2,
+                exp: "Phòng khách sạn đã có khách ở -> <b>occupied</b>."
+            },
+            {
+                q: "The ________ of fresh water is limited in this area.",
+                qVi: "Sự ________ của nước ngọt bị hạn chế trong khu vực này.",
+                key: ["The + Noun + of"],
+                opts: ["available", "availability", "unavailable", "avail"],
+                optsVi: ["có sẵn (adj)", "sự có sẵn (n)", "không có sẵn (adj)", "giúp ích (v)"],
+                correct: 1,
+                exp: "Sau 'The' cần một danh từ -> <b>availability</b> (tính sẵn có/sự có sẵn)."
+            },
+            {
+                q: "I'm sorry, the manager is ________ at the moment.",
+                qVi: "Tôi xin lỗi, hiện tại người quản lý đang ________.",
+                key: ["is + Adj", "negative context"],
+                opts: ["available", "availability", "unavailable", "availably"],
+                optsVi: ["có rảnh/có mặt", "sự có mặt", "không rảnh/không có mặt (adj)", "sẵn sàng (adv)"],
+                correct: 2,
+                exp: "Sau to be cần tính từ. Quản lý đang bận, không thể gặp được -> <b>unavailable</b>."
+            },
+            {
+                q: "We need to find a way to ________ the forest.",
+                qVi: "Chúng ta cần tìm cách để ________ khu rừng.",
+                key: ["to + V (infinitive)"],
+                opts: ["protect", "protection", "protective", "protector"],
+                optsVi: ["bảo vệ (v)", "sự bảo vệ (n)", "bảo vệ (adj)", "người bảo vệ (n)"],
+                correct: 0,
+                exp: "Sau 'to' chỉ mục đích cần động từ nguyên mẫu -> <b>protect</b>."
+            },
+            {
+                q: "The forest fire was extremely ________.",
+                qVi: "Trận cháy rừng cực kỳ ________.",
+                key: ["was extremely + Adj"],
+                opts: ["destroy", "destruction", "destructive", "destructively"],
+                optsVi: ["phá hủy (v)", "sự tàn phá (n)", "có tính tàn phá (adj)", "một cách tàn phá (adv)"],
+                correct: 2,
+                exp: "Sau to be 'was' và trạng từ 'extremely' cần một tính từ -> <b>destructive</b>."
+            },
+            {
+                q: "She smiled ________ when she saw the gift.",
+                qVi: "Cô ấy mỉm cười ________ khi nhìn thấy món quà.",
+                key: ["Verb (smiled) + Adverb"],
+                opts: ["happy", "happiness", "happily", "unhappy"],
+                optsVi: ["vui vẻ (adj)", "sự hạnh phúc (n)", "một cách vui vẻ (adv)", "buồn bã (adj)"],
+                correct: 2,
+                exp: "Bổ nghĩa cho động từ thường 'smiled' cần một trạng từ -> <b>happily</b>."
+            },
+            {
+                q: "This book is very ________ for your research.",
+                qVi: "Cuốn sách này rất ________ cho nghiên cứu của bạn.",
+                key: ["is very + Adj"],
+                opts: ["instruct", "instruction", "instructive", "instructor"],
+                optsVi: ["hướng dẫn", "sự hướng dẫn", "cung cấp nhiều thông tin bổ ích (adj)", "người hướng dẫn"],
+                correct: 2,
+                exp: "Sau to be 'is' và trạng từ 'very' cần tính từ -> <b>instructive</b> (giàu thông tin, bổ ích)."
+            },
+            {
+                q: "He lives ________ in a small house by the sea.",
+                qVi: "Ông ấy sống ________ trong một ngôi nhà nhỏ cạnh biển.",
+                key: ["Verb (lives) + Adverb"],
+                opts: ["happy", "happiness", "happily", "unhappy"],
+                optsVi: ["vui vẻ (adj)", "hạnh phúc (n)", "một cách vui vẻ (adv)", "bất hạnh (adj)"],
+                correct: 2,
+                exp: "Bổ nghĩa cho động từ 'lives' cần một trạng từ -> <b>happily</b>."
+            },
+            {
+                q: "The ________ of this model is very high.",
+                qVi: "Sự ________ của mẫu xe này rất cao.",
+                key: ["The + Noun + of"],
+                opts: ["available", "availability", "unavailable", "availably"],
+                optsVi: ["có sẵn", "sự có sẵn/độ phổ biến (n)", "không có sẵn", "sẵn sàng"],
+                correct: 1,
+                exp: "Sau mạo từ 'The' và trước 'of' cần danh từ -> <b>availability</b>."
+            },
+
+            // PHẦN 2: 50 CÂU TỪ FILE GỐC THỨ HAI
+            {
+                q: "We should join hands to ________ the environment from pollution.",
+                qVi: "Chúng ta nên chung tay để ________ môi trường khỏi sự ô nhiễm.",
+                key: ["to + V (infinitive)"],
+                opts: ["protect", "protection", "protective", "protectively"],
+                optsVi: ["bảo vệ (v)", "sự bảo vệ (n)", "có tính bảo vệ (adj)", "một cách bảo vệ (adv)"],
+                correct: 0,
+                exp: "Sau 'to' cần một động từ nguyên thể -> <b>protect</b>."
+            },
+            {
+                q: "Wearing ________ gear is mandatory for all workers in this factory.",
+                qVi: "Việc mặc thiết bị ________ là bắt buộc đối với tất cả công nhân trong nhà máy này.",
+                key: ["Adj + Noun", "gear"],
+                opts: ["protect", "protection", "protective", "protectively"],
+                optsVi: ["bảo vệ", "sự bảo vệ", "bảo hộ (adj)", "một cách bảo vệ"],
+                correct: 2,
+                exp: "Trước danh từ 'gear' (thiết bị/đồ dùng) cần tính từ bổ nghĩa -> <b>protective</b> (protective gear = đồ bảo hộ)."
+            },
+            {
+                q: "Environmental ________ is the responsibility of everyone.",
+                qVi: "Sự ________ môi trường là trách nhiệm của mọi người.",
+                key: ["Adj (Environmental) + Noun (Subject)"],
+                opts: ["protect", "protection", "protective", "protectively"],
+                optsVi: ["bảo vệ", "sự bảo vệ (n)", "bảo hộ", "một cách bảo vệ"],
+                correct: 1,
+                exp: "Làm chủ ngữ, đứng sau tính từ 'Environmental' cần một danh từ -> <b>protection</b>."
+            },
+            {
+                q: "The local government is trying to ________ the old pagoda.",
+                qVi: "Chính quyền địa phương đang cố gắng ________ ngôi chùa cổ.",
+                key: ["trying to + V"],
+                opts: ["preserve", "preservation", "preservative", "preserved"],
+                optsVi: ["bảo tồn (v)", "sự bảo tồn", "chất bảo quản", "được bảo tồn"],
+                correct: 0,
+                exp: "Cấu trúc: try to + <b>V</b> (cố gắng làm gì) -> <b>preserve</b>."
+            },
+            {
+                q: "These fruits were kept fresh without using any ________.",
+                qVi: "Những loại trái cây này được giữ tươi mà không sử dụng bất kỳ ________ nào.",
+                key: ["any + Plural Noun/Uncountable Noun"],
+                opts: ["preserve", "preservation", "preservatives", "preserves"],
+                optsVi: ["bảo tồn", "sự bảo tồn", "chất bảo quản (số nhiều)", "bảo tồn/mứt"],
+                correct: 2,
+                exp: "Giữ cho trái cây tươi thường sử dụng chất bảo quản -> <b>preservatives</b>."
+            },
+            {
+                q: "The ________ of natural habitats is vital for endangered species.",
+                qVi: "Sự ________ các môi trường sống tự nhiên là rất quan trọng đối với các loài có nguy cơ tuyệt chủng.",
+                key: ["The + Noun + of"],
+                opts: ["preserve", "preservation", "preservative", "preserved"],
+                optsVi: ["bảo tồn", "sự bảo tồn (n)", "chất bảo quản", "được bảo tồn"],
+                correct: 1,
+                exp: "Sau mạo từ 'The' và trước giới từ 'of' cần một danh từ -> <b>preservation</b>."
+            },
+            {
+                q: "Everyone can ________ to the campaign by planting more trees.",
+                qVi: "Mọi người đều có thể ________ cho chiến dịch bằng cách trồng nhiều cây hơn.",
+                key: ["Modal verb (can) + V (bare)"],
+                opts: ["contribute", "contribution", "contributor", "contributory"],
+                optsVi: ["đóng góp (v)", "sự đóng góp (n)", "người đóng góp", "đóng góp (adj)"],
+                correct: 0,
+                exp: "Sau động từ khuyết thiếu 'can' cần động từ nguyên thể -> <b>contribute</b>."
+            },
+            {
+                q: "She was honored for her outstanding ________ to the charity.",
+                qVi: "Cô đã được vinh danh vì sự ________ xuất sắc của mình cho tổ chức từ thiện.",
+                key: ["her outstanding + Noun"],
+                opts: ["contribute", "contribution", "contributor", "contributory"],
+                optsVi: ["đóng góp", "sự đóng góp (n)", "người đóng góp", "đóng góp (adj)"],
+                correct: 1,
+                exp: "Sau tính từ sở hữu 'her' và tính từ 'outstanding' cần danh từ -> <b>contribution</b>."
+            },
+            {
+                q: "Who was the main ________ of this famous article?",
+                qVi: "Ai là ________ chính của bài báo nổi tiếng này?",
+                key: ["the main + Noun (person)"],
+                opts: ["contribute", "contribution", "contributor", "contributory"],
+                optsVi: ["đóng góp", "sự đóng góp", "người đóng góp/tác giả (n)", "đóng góp (adj)"],
+                correct: 2,
+                exp: "Cần một danh từ chỉ người cho phù hợp với 'Who' và 'article' -> <b>contributor</b>."
+            },
+            {
+                q: "Technology has improved the way we ________ with each other.",
+                qVi: "Công nghệ đã cải thiện cách chúng ta ________ với nhau.",
+                key: ["we + V (verb)"],
+                opts: ["communicate", "communication", "communicative", "communicatively"],
+                optsVi: ["giao tiếp (v)", "sự giao tiếp (n)", "cởi mở (adj)", "một cách cởi mở"],
+                correct: 0,
+                exp: "Sau chủ ngữ 'we' cần động từ chia thì -> <b>communicate</b>."
+            },
+            {
+                q: "Lack of ________ often leads to misunderstandings in a family.",
+                qVi: "Việc thiếu ________ thường dẫn đến những hiểu lầm trong gia đình.",
+                key: ["Lack of + Noun"],
+                opts: ["communicate", "communication", "communicative", "communicatively"],
+                optsVi: ["giao tiếp", "sự giao tiếp (n)", "cởi mở", "một cách cởi mở"],
+                correct: 1,
+                exp: "Sau giới từ 'of' cần một danh từ -> <b>communication</b>."
+            },
+            {
+                q: "He is not very ________; he rarely shares his feelings with others.",
+                qVi: "Anh ấy không ________ lắm; anh ấy hiếm khi chia sẻ cảm xúc của mình với người khác.",
+                key: ["is not very + Adj"],
+                opts: ["communicate", "communicative", "uncommunicative", "communication"],
+                optsVi: ["giao tiếp", "cởi mở/hay nói chuyện (adj)", "ít nói/ngại giao tiếp", "sự giao tiếp"],
+                correct: 1,
+                exp: "Sau to be 'is' và trạng từ 'very' cần tính từ. Đã có chữ 'not' ở trước -> not very <b>communicative</b> (không được cởi mở cho lắm)."
+            },
+            {
+                q: "Driving at high speed in residential areas is very ________.",
+                qVi: "Lái xe tốc độ cao trong các khu dân cư là rất ________.",
+                key: ["is very + Adj"],
+                opts: ["danger", "dangerous", "dangerously", "endanger"],
+                optsVi: ["sự nguy hiểm (n)", "nguy hiểm (adj)", "một cách nguy hiểm (adv)", "gây nguy hiểm (v)"],
+                correct: 1,
+                exp: "Sau to be 'is' và trạng từ 'very' cần tính từ -> <b>dangerous</b>."
+            },
+            {
+                q: "We must protect ________ species from becoming extinct.",
+                qVi: "Chúng ta phải bảo vệ các loài ________ khỏi nguy cơ tuyệt chủng.",
+                key: ["Adj + Noun (species)"],
+                opts: ["danger", "dangerous", "endangered", "dangerously"],
+                optsVi: ["nguy hiểm (n)", "nguy hiểm (adj)", "bị đe dọa/có nguy cơ tuyệt chủng (adj)", "một cách nguy hiểm"],
+                correct: 2,
+                exp: "Cụm từ cố định: <b>endangered</b> species (các loài có nguy cơ tuyệt chủng)."
+            },
+            {
+                q: "Don't go near that dog; it is ________.",
+                qVi: "Đừng đến gần con chó đó; nó rất ________.",
+                key: ["it is + Adj"],
+                opts: ["danger", "dangerous", "dangerously", "endangering"],
+                optsVi: ["sự nguy hiểm", "nguy hiểm (adj)", "một cách nguy hiểm", "gây nguy hiểm"],
+                correct: 1,
+                exp: "Sau to be 'is' cần tính từ mô tả đặc tính của con chó -> <b>dangerous</b>. (Trong đề gốc có từ 'biting people' ghép vào câu làm sai ngữ pháp, đáp án đúng đắn nhất chỉ là dangerous)."
+            },
+            {
+                q: "The map was very ________; we found the house easily.",
+                qVi: "Tấm bản đồ rất ________; chúng tôi tìm thấy ngôi nhà một cách dễ dàng.",
+                key: ["was very + Adj"],
+                opts: ["help", "helpful", "helpless", "helpfully"],
+                optsVi: ["giúp đỡ", "hữu ích (adj)", "bất lực", "một cách hữu ích"],
+                correct: 1,
+                exp: "Sau to be 'was' và trạng từ 'very' cần tính từ. Vì tìm nhà dễ dàng nên bản đồ rất hữu ích -> <b>helpful</b>."
+            },
+            {
+                q: "I felt ________ when I saw the little bird with a broken wing.",
+                qVi: "Tôi cảm thấy ________ khi nhìn thấy con chim nhỏ bị gãy cánh.",
+                key: ["Linking verb (felt) + Adj"],
+                opts: ["help", "helpful", "helpless", "helpfully"],
+                optsVi: ["giúp đỡ", "hữu ích", "bất lực (adj)", "một cách hữu ích"],
+                correct: 2,
+                exp: "Thấy chim gãy cánh nhưng không làm gì được nên cảm thấy <b>helpless</b> (bất lực)."
+            },
+            {
+                q: "The boy ________ offered to carry the heavy bags for the old lady.",
+                qVi: "Cậu bé đã ________ đề nghị xách những chiếc túi nặng cho bà cụ.",
+                key: ["Adverb + Verb (offered)"],
+                opts: ["help", "helpful", "helpless", "helpfully"],
+                optsVi: ["giúp đỡ", "hữu ích", "bất lực", "một cách nhiệt tình giúp đỡ (adv)"],
+                correct: 3,
+                exp: "Đứng trước và bổ nghĩa cho động từ thường 'offered' cần trạng từ -> <b>helpfully</b>."
+            },
+            {
+                q: "They are proud of their ________ culture and traditions.",
+                qVi: "Họ tự hào về văn hóa và truyền thống ________ của họ.",
+                key: ["Adj + Noun (culture)"],
+                opts: ["nation", "national", "nationality", "international"],
+                optsVi: ["quốc gia (n)", "thuộc về dân tộc/quốc gia (adj)", "quốc tịch", "quốc tế"],
+                correct: 1,
+                exp: "Trước danh từ 'culture' cần một tính từ -> <b>national</b>."
+            },
+            {
+                q: "What is your ________? - I’m Japanese.",
+                qVi: "________ của bạn là gì? - Tôi là người Nhật Bản.",
+                key: ["Possessive adj (your) + Noun"],
+                opts: ["nation", "national", "nationality", "native"],
+                optsVi: ["quốc gia", "thuộc quốc gia", "quốc tịch (n)", "bản xứ"],
+                correct: 2,
+                exp: "Câu trả lời là 'Japanese' chỉ quốc tịch -> <b>nationality</b>."
+            },
+            {
+                q: "English is an ________ language used all over the world.",
+                qVi: "Tiếng Anh là một ngôn ngữ ________ được sử dụng trên toàn thế giới.",
+                key: ["an + Adj + Noun"],
+                opts: ["nation", "national", "nationality", "international"],
+                optsVi: ["quốc gia", "thuộc quốc gia", "quốc tịch", "quốc tế (adj)"],
+                correct: 3,
+                exp: "Được dùng trên toàn thế giới nên nó là ngôn ngữ quốc tế -> <b>international</b>."
+            },
+            {
+                q: "It is ________ that she feels nervous before the big exam.",
+                qVi: "Việc cô ấy cảm thấy lo lắng trước kỳ thi lớn là điều ________.",
+                key: ["It is + Adj + that"],
+                opts: ["nature", "natural", "naturally", "naturalist"],
+                optsVi: ["thiên nhiên (n)", "tự nhiên/bình thường (adj)", "một cách tự nhiên", "nhà tự nhiên học"],
+                correct: 1,
+                exp: "Cấu trúc chủ ngữ giả It is + tính từ -> <b>natural</b> (là điều tự nhiên/bình thường)."
+            },
+            {
+                q: "He is a famous ________ who has spent years studying birds.",
+                qVi: "Ông là một ________ nổi tiếng người đã dành nhiều năm nghiên cứu các loài chim.",
+                key: ["a famous + Noun (person)"],
+                opts: ["nature", "natural", "naturally", "naturalist"],
+                optsVi: ["thiên nhiên", "thuộc tự nhiên", "một cách tự nhiên", "nhà tự nhiên học (n)"],
+                correct: 3,
+                exp: "Sau tính từ 'famous' và đại từ 'who' ở mệnh đề sau, ta cần danh từ chỉ người -> <b>naturalist</b>."
+            },
+            {
+                q: "Disaster struck ________, leaving no time for evacuation.",
+                qVi: "Thảm họa ập đến một cách ________, không để lại thời gian sơ tán.",
+                key: ["Verb (struck) + Adverb"],
+                opts: ["nature", "natural", "naturally", "naturalize"],
+                optsVi: ["thiên nhiên", "tự nhiên", "một cách tự nhiên/đột ngột (adv)", "nhập quốc tịch (v)"],
+                correct: 2,
+                exp: "Bổ nghĩa cho động từ 'struck' cần trạng từ -> <b>naturally</b>."
+            },
+            {
+                q: "Our ________ told us to open the textbook to page 50.",
+                qVi: "________ của chúng tôi đã bảo chúng tôi mở sách giáo khoa ra trang 50.",
+                key: ["Possessive adj (Our) + Noun (person)"],
+                opts: ["instruct", "instruction", "instructor", "instructive"],
+                optsVi: ["hướng dẫn (v)", "sự hướng dẫn", "người hướng dẫn/giảng viên (n)", "mang tính hướng dẫn"],
+                correct: 2,
+                exp: "Người bảo mở sách ra học -> <b>instructor</b> (người hướng dẫn/giảng viên)."
+            },
+            {
+                q: "You should follow the ________ on the box carefully.",
+                qVi: "Bạn nên làm theo ________ trên hộp một cách cẩn thận.",
+                key: ["the + Noun"],
+                opts: ["instruct", "instructions", "instructive", "instructively"],
+                optsVi: ["hướng dẫn", "những lời hướng dẫn (n)", "mang tính hướng dẫn", "một cách hướng dẫn"],
+                correct: 1,
+                exp: "Đọc hướng dẫn sử dụng in trên hộp -> <b>instructions</b>."
+            },
+            {
+                q: "That was a very ________ book about world history.",
+                qVi: "Đó là một cuốn sách rất ________ về lịch sử thế giới.",
+                key: ["a very + Adj + Noun"],
+                opts: ["instruct", "instruction", "instructive", "instructor"],
+                optsVi: ["hướng dẫn", "sự hướng dẫn", "bổ ích/nhiều thông tin (adj)", "người hướng dẫn"],
+                correct: 2,
+                exp: "Trước danh từ 'book' cần một tính từ -> <b>instructive</b>."
+            },
+            {
+                q: "Forest fires can ________ the entire ecosystem in a few days.",
+                qVi: "Cháy rừng có thể ________ toàn bộ hệ sinh thái trong vài ngày.",
+                key: ["can + V (bare)"],
+                opts: ["destroy", "destruction", "destructive", "destructively"],
+                optsVi: ["phá hủy (v)", "sự phá hủy (n)", "có tính tàn phá (adj)", "một cách tàn phá (adv)"],
+                correct: 0,
+                exp: "Sau động từ khuyết thiếu 'can' cần động từ nguyên thể -> <b>destroy</b>."
+            },
+            {
+                q: "The ________ caused by the storm was massive.",
+                qVi: "Sự ________ do cơn bão gây ra là rất lớn.",
+                key: ["The + Noun"],
+                opts: ["destroy", "destruction", "destructive", "destructively"],
+                optsVi: ["phá hủy", "sự tàn phá (n)", "có tính tàn phá", "một cách tàn phá"],
+                correct: 1,
+                exp: "Làm chủ ngữ, đứng sau mạo từ 'The' cần một danh từ -> <b>destruction</b>."
+            },
+            {
+                q: "High-power weapons are extremely ________.",
+                qVi: "Vũ khí công suất cao thì cực kỳ ________.",
+                key: ["are extremely + Adj"],
+                opts: ["destroy", "destruction", "destructive", "destructively"],
+                optsVi: ["phá hủy", "sự phá hủy", "có tính tàn phá/hủy diệt (adj)", "một cách tàn phá"],
+                correct: 2,
+                exp: "Sau to be 'are' và trạng từ 'extremely' cần một tính từ -> <b>destructive</b>."
+            },
+            {
+                q: "The ________ of many animals is caused by illegal hunting.",
+                qVi: "Sự ________ của nhiều loài động vật là do săn bắt bất hợp pháp gây ra.",
+                key: ["The + Noun + of"],
+                opts: ["extinct", "extinction", "extinctive", "extinguish"],
+                optsVi: ["tuyệt chủng (adj)", "sự tuyệt chủng (n)", "có tính tuyệt chủng", "dập tắt (v)"],
+                correct: 1,
+                exp: "Sau 'The' cần một danh từ -> <b>extinction</b>."
+            },
+            {
+                q: "Most of these rare plants are now ________ in the wild.",
+                qVi: "Hầu hết các loài thực vật quý hiếm này hiện đã ________ trong tự nhiên.",
+                key: ["are now + Adj"],
+                opts: ["extinct", "extinction", "extinctive", "extinguish"],
+                optsVi: ["tuyệt chủng (adj)", "sự tuyệt chủng", "có tính tuyệt chủng", "dập tắt"],
+                correct: 0,
+                exp: "Sau to be 'are' cần tính từ chỉ trạng thái -> <b>extinct</b>."
+            },
+            {
+                q: "She has the ________ to become a professional model.",
+                qVi: "Cô ấy có ________ để trở thành một người mẫu chuyên nghiệp.",
+                key: ["the + Noun"],
+                opts: ["beauty", "beautiful", "beautifully", "beautify"],
+                optsVi: ["vẻ đẹp (n)", "xinh đẹp (adj)", "một cách xinh đẹp", "làm đẹp (v)"],
+                correct: 0,
+                exp: "Sau mạo từ 'the' cần một danh từ -> <b>beauty</b>."
+            },
+            {
+                q: "The park was ________ decorated with colorful lights.",
+                qVi: "Công viên được trang trí ________ bằng những ánh đèn rực rỡ sắc màu.",
+                key: ["was + Adv + V3/ed"],
+                opts: ["beauty", "beautiful", "beautifully", "beautify"],
+                optsVi: ["vẻ đẹp", "xinh đẹp", "một cách xinh đẹp/tuyệt đẹp (adv)", "làm đẹp"],
+                correct: 2,
+                exp: "Đứng giữa to be (was) và V3 (decorated) cần một trạng từ -> <b>beautifully</b>."
+            },
+            {
+                q: "They plan to ________ the neighborhood by painting the walls.",
+                qVi: "Họ dự định ________ khu phố bằng cách sơn các bức tường.",
+                key: ["to + V (infinitive)"],
+                opts: ["beauty", "beautiful", "beautifully", "beautify"],
+                optsVi: ["vẻ đẹp", "xinh đẹp", "một cách xinh đẹp", "tô điểm/làm đẹp (v)"],
+                correct: 3,
+                exp: "Sau 'to' chỉ mục đích cần động từ nguyên mẫu -> <b>beautify</b>."
+            },
+            {
+                q: "________ is more important than money for a good life.",
+                qVi: "________ quan trọng hơn tiền bạc để có một cuộc sống tốt đẹp.",
+                key: ["Noun (Subject)"],
+                opts: ["happy", "happiness", "happily", "unhappy"],
+                optsVi: ["vui vẻ (adj)", "sự hạnh phúc (n)", "một cách vui vẻ", "bất hạnh"],
+                correct: 1,
+                exp: "Đứng đầu câu làm chủ ngữ cần một danh từ -> <b>Happiness</b>."
+            },
+            {
+                q: "They lived ________ ever after in a small cottage.",
+                qVi: "Họ sống ________ mãi mãi về sau trong một ngôi nhà tranh nhỏ.",
+                key: ["lived + Adv"],
+                opts: ["happy", "happiness", "happily", "unhappy"],
+                optsVi: ["vui vẻ", "sự hạnh phúc", "một cách hạnh phúc (adv)", "bất hạnh"],
+                correct: 2,
+                exp: "Bổ nghĩa cho động từ 'lived' cần trạng từ. Thành ngữ cổ tích: lived <b>happily</b> ever after (sống hạnh phúc mãi mãi về sau)."
+            },
+            {
+                q: "She was very ________ with the poor service at the restaurant.",
+                qVi: "Cô ấy rất ________ với dịch vụ tồi tệ tại nhà hàng.",
+                key: ["was very + Adj", "poor service"],
+                opts: ["happy", "happiness", "happily", "unhappy"],
+                optsVi: ["vui vẻ", "sự hạnh phúc", "một cách vui vẻ", "không vui/không hài lòng (adj)"],
+                correct: 3,
+                exp: "Dịch vụ tồi (poor service) mang lại cảm giác không hài lòng, buồn bực -> <b>unhappy</b>."
+            },
+            {
+                q: "He has an amazing ________ of old comic books.",
+                qVi: "Anh ấy có một ________ truyện tranh cũ rất tuyệt vời.",
+                key: ["an amazing + Noun"],
+                opts: ["collect", "collection", "collector", "collective"],
+                optsVi: ["sưu tầm", "bộ sưu tập (n)", "nhà sưu tầm", "tập thể"],
+                correct: 1,
+                exp: "Sau tính từ 'amazing' cần danh từ chỉ sự vật -> <b>collection</b>."
+            },
+            {
+                q: "We need a ________ effort to clean up the local beach.",
+                qVi: "Chúng ta cần một nỗ lực ________ để làm sạch bãi biển địa phương.",
+                key: ["a + Adj + Noun"],
+                opts: ["collect", "collection", "collector", "collective"],
+                optsVi: ["sưu tầm", "bộ sưu tập", "nhà sưu tầm", "tập thể/chung (adj)"],
+                correct: 3,
+                exp: "Trước danh từ 'effort' cần một tính từ -> <b>collective</b> (collective effort = nỗ lực chung của cả tập thể)."
+            },
+            {
+                q: "My father is an ________; he can fix any lamp in the house.",
+                qVi: "Bố tôi là một ________; ông ấy có thể sửa bất kỳ chiếc đèn nào trong nhà.",
+                key: ["an + Noun (person)"],
+                opts: ["electric", "electricity", "electrical", "electrician"],
+                optsVi: ["chạy bằng điện", "điện (n)", "thuộc về điện", "thợ điện (n)"],
+                correct: 3,
+                exp: "Người sửa chữa các đồ điện trong nhà -> <b>electrician</b>."
+            },
+            {
+                q: "Using ________ appliances saves a lot of time for housewives.",
+                qVi: "Sử dụng các thiết bị ________ giúp tiết kiệm nhiều thời gian cho các bà nội trợ.",
+                key: ["Adj + Noun (appliances)"],
+                opts: ["electric", "electricity", "electrical", "electrician"],
+                optsVi: ["chạy bằng điện", "điện (n)", "thuộc về điện (adj)", "thợ điện"],
+                correct: 2,
+                exp: "Thiết bị điện gia dụng nói chung -> <b>electrical</b> appliances (có thể dùng electric appliances)."
+            },
+            {
+                q: "This cake was ________ made for your birthday.",
+                qVi: "Chiếc bánh này được làm ________ cho sinh nhật của bạn.",
+                key: ["was + Adv + V3/ed"],
+                opts: ["special", "specially", "specialize", "specialty"],
+                optsVi: ["đặc biệt (adj)", "một cách đặc biệt (adv)", "chuyên môn hóa", "đặc sản"],
+                correct: 1,
+                exp: "Đứng giữa to be (was) và V3 (made) cần một trạng từ -> <b>specially</b>."
+            },
+            {
+                q: "He decided to ________ in marketing after graduation.",
+                qVi: "Anh ấy quyết định ________ về tiếp thị sau khi tốt nghiệp.",
+                key: ["to + V (infinitive)"],
+                opts: ["special", "specially", "specialize", "specialty"],
+                optsVi: ["đặc biệt", "một cách đặc biệt", "chuyên môn hóa/chuyên về (v)", "đặc sản"],
+                correct: 2,
+                exp: "Sau 'to' chỉ mục đích cần động từ nguyên mẫu -> <b>specialize</b>."
+            },
+            {
+                q: "________ brings a lot of money to this coastal city.",
+                qVi: "________ mang lại rất nhiều tiền cho thành phố ven biển này.",
+                key: ["Noun (Subject)"],
+                opts: ["tour", "tourist", "tourism", "touring"],
+                optsVi: ["chuyến tham quan", "khách du lịch", "ngành du lịch (n)", "việc đi tham quan"],
+                correct: 2,
+                exp: "Làm chủ ngữ, mang lại nguồn thu khổng lồ cho một thành phố -> <b>Tourism</b> (Ngành du lịch)."
+            },
+            {
+                q: "This area is always crowded with ________ during the summer.",
+                qVi: "Khu vực này luôn đông đúc ________ vào mùa hè.",
+                key: ["crowded with + Noun (people)"],
+                opts: ["tour", "tourists", "tourism", "touring"],
+                optsVi: ["chuyến tham quan", "khách du lịch (n - số nhiều)", "ngành du lịch", "việc đi du lịch"],
+                correct: 1,
+                exp: "Khu vực đông đúc người đi tham quan -> <b>tourists</b>."
+            },
+            {
+                q: "The school is doing a lot to ________ sports among students.",
+                qVi: "Trường học đang làm rất nhiều việc để ________ thể thao trong học sinh.",
+                key: ["to + V (infinitive)"],
+                opts: ["promote", "promotion", "promotional", "promoter"],
+                optsVi: ["thúc đẩy/đẩy mạnh (v)", "sự thăng tiến", "thuộc quảng cáo", "người tổ chức"],
+                correct: 0,
+                exp: "Sau 'to' chỉ mục đích cần động từ nguyên thể -> <b>promote</b>."
+            },
+            {
+                q: "He got a big ________ after his successful project.",
+                qVi: "Anh ấy đã nhận được sự ________ lớn sau dự án thành công của mình.",
+                key: ["a big + Noun"],
+                opts: ["promote", "promotion", "promotional", "promoter"],
+                optsVi: ["thúc đẩy", "sự thăng chức (n)", "thuộc quảng cáo", "người tổ chức"],
+                correct: 1,
+                exp: "Thành công trong công việc sẽ nhận được sự thăng chức -> <b>promotion</b>."
+            },
+            {
+                q: "There is a lack of ________ for the hard work she has done.",
+                qVi: "Có sự thiếu hụt sự ________ đối với những công việc khó khăn mà cô ấy đã làm.",
+                key: ["a lack of + Noun"],
+                opts: ["recognize", "recognition", "recognizable", "recognizably"],
+                optsVi: ["nhận ra/công nhận (v)", "sự công nhận (n)", "có thể nhận ra (adj)", "có thể nhận ra (adv)"],
+                correct: 1,
+                exp: "Sau giới từ 'of' cần một danh từ -> <b>recognition</b>."
+            },
+            {
+                q: "The ________ of the room is only for two people.",
+                qVi: "Sức ________ của căn phòng chỉ dành cho hai người.",
+                key: ["The + Noun + of"],
+                opts: ["occupy", "occupation", "occupancy", "occupant"],
+                optsVi: ["chiếm giữ (v)", "nghề nghiệp (n)", "sức chứa/sự cư ngụ (n)", "người cư ngụ (n)"],
+                correct: 2,
+                exp: "Số lượng người mà một phòng/tòa nhà có thể chứa -> <b>occupancy</b>."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                // Sidebar nav item
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
