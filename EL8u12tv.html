@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bài tập Tiếng Anh: Outer Space (50 Câu)</title>
+    <style>
+        :root {
+            --primary-blue: #e8f0fe;
+            --dark-blue: #1a73e8;
+            --border-color: #dadce0;
+            --correct-green: #1e8e3e;
+            --wrong-red: #d93025;
+            --trans-color: #5f6368;
+            --hint-bg: #fff8e1;
+            --hint-text: #f57f17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* === HEADER === */
+        .header {
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.2em;
+            color: #202124;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--dark-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .stats-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .q-num {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            background: #fff;
+        }
+
+        .q-num.done-correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); font-weight: bold; }
+        .q-num.done-wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); font-weight: bold; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* === QUIZ AREA === */
+        .quiz-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            padding-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #202124;
+        }
+
+        .btn-hint-toggle {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #ffb74d;
+            color: #f57f17;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #e65100;
+        }
+        .hint-content.show { display: block; animation: fadeIn 0.3s; }
+
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.4;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:active { background-color: #f1f3f4; }
+        .option-btn.disabled { cursor: default; opacity: 0.9; }
+        .option-btn.correct { background-color: #e6f4ea; border-color: var(--correct-green); color: var(--correct-green); }
+        .option-btn.wrong { background-color: #fce8e6; border-color: var(--wrong-red); color: var(--wrong-red); }
+
+        .btn-trans-toggle {
+            margin-top: 20px;
+            align-self: flex-start;
+            background: #f1f3f4;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .btn-trans-toggle:disabled { opacity: 0.5; background-color: #eee; }
+
+        .trans-text {
+            display: none;
+            color: var(--trans-color);
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 5px;
+            font-weight: normal;
+            border-top: 1px dashed #eee;
+            padding-top: 4px;
+        }
+        .trans-text.show { display: block; animation: fadeIn 0.3s; }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fffde7;
+            border-left: 4px solid #fbc02d;
+            display: none;
+            font-size: 0.95em;
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: zoomIn 0.3s;
+        }
+        .modal-score { font-size: 3.5em; font-weight: bold; color: var(--dark-blue); margin: 10px 0; }
+        .modal-details { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .modal-btn { padding: 12px 30px; background: var(--dark-blue); color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+
+        /* === RESPONSIVE FIXES === */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            body { height: auto; overflow: auto; }
+            .main-container { padding: 10px; display: block; height: auto; overflow: visible; }
+            .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; margin: 0; border-radius: 0; border: none; transform: translateX(-100%); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .quiz-area { padding: 0; height: auto; overflow: visible; margin-bottom: 50px; }
+            .question-card { padding: 15px; margin-bottom: 15px; }
+            .options-list { grid-template-columns: 1fr; }
+            .header-title { font-size: 1em; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 class="header-title">Bài tập Tiếng Anh: Outer Space (50 Câu)</h2>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0 0 10px 0; color:#444">Thống kê</h3>
+                <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.5em; color:#888; padding: 5px;" class="mobile-only">✕</span>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>Số câu đúng:</span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">50</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>Điểm số:</span>
+                    <span class="stat-value"><span id="stat-score">0.0</span>/10</span>
+                </div>
+            </div>
+
+            <div class="nav-container">
+                <h4 style="margin:0 0 10px 0;">Danh sách câu hỏi</h4>
+                <div class="question-grid" id="q-nav"></div>
+            </div>
+
+            <button class="btn-submit" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+
+        <div class="quiz-area" id="quiz-container"></div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: #444; margin-top:0">Kết Quả</h2>
+            <div>Điểm số của bạn</div>
+            <div class="modal-score" id="final-score">0.0</div>
+            
+            <div class="modal-details">
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">50</span></p>
+                <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
+            </div>
+            
+            <button class="modal-btn" onclick="closeModal()">Xem lại bài</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "Astronomers use a powerful ______ to observe distant stars and planets.",
+                qVi: "Các nhà thiên văn học sử dụng một _______ mạnh mẽ để quan sát các ngôi sao và hành tinh xa xôi.",
+                key: ["observe distant stars"],
+                opts: ["rocket", "telescope", "spaceship", "UFO"],
+                optsVi: ["tên lửa", "kính viễn vọng", "tàu vũ trụ", "UFO"],
+                correct: 1,
+                exp: "Thiết bị dùng để quan sát các vì sao xa xôi là <b>telescope</b> (kính viễn vọng)."
+            },
+            {
+                q: "The ______ is a large system of stars, including our solar system.",
+                qVi: "_______ là một hệ thống lớn các ngôi sao, bao gồm cả hệ mặt trời của chúng ta.",
+                key: ["large system of stars"],
+                opts: ["galaxy", "planet", "crater", "atmosphere"],
+                optsVi: ["thiên hà", "hành tinh", "miệng núi lửa/hố thiên thạch", "bầu khí quyển"],
+                correct: 0,
+                exp: "Hệ thống khổng lồ chứa hàng tỷ ngôi sao là <b>galaxy</b> (thiên hà)."
+            },
+            {
+                q: "Many people believe that an ______ is a living being from another planet.",
+                qVi: "Nhiều người tin rằng một _______ là một sinh vật sống đến từ hành tinh khác.",
+                key: ["living being from another planet"],
+                opts: ["officer", "alien", "object", "commander"],
+                optsVi: ["sĩ quan", "người ngoài hành tinh", "vật thể", "chỉ huy"],
+                correct: 1,
+                exp: "Sinh vật sống ngoài Trái đất -> <b>alien</b>."
+            },
+            {
+                q: "The ______ includes the Sun and all the planets that orbit it.",
+                qVi: "_______ bao gồm Mặt trời và tất cả các hành tinh quay quanh nó.",
+                key: ["Sun and all the planets"],
+                opts: ["outer space", "Milky Way", "solar system", "universe"],
+                optsVi: ["không gian ngoài vũ trụ", "dải Ngân hà", "hệ mặt trời", "vũ trụ"],
+                correct: 2,
+                exp: "Hệ thống gồm mặt trời và các hành tinh xung quanh là <b>solar system</b> (hệ mặt trời)."
+            },
+            {
+                q: "Mars is often called the \"Red ______\" because of its reddish appearance.",
+                qVi: "Sao Hỏa thường được gọi là \"_______ Đỏ\" vì vẻ ngoài hơi đỏ của nó.",
+                key: ["Mars is often called"],
+                opts: ["Moon", "Sun", "Planet", "Galaxy"],
+                optsVi: ["Mặt trăng", "Mặt trời", "Hành tinh", "Thiên hà"],
+                correct: 2,
+                exp: "Sao Hỏa là một hành tinh -> Red <b>Planet</b>."
+            },
+            {
+                q: "Scientists are looking for ______ of water on the surface of Mars.",
+                qVi: "Các nhà khoa học đang tìm kiếm _______ của nước trên bề mặt sao Hỏa.",
+                key: ["looking for", "of water"],
+                opts: ["liquid", "traces", "gravity", "life"],
+                optsVi: ["chất lỏng", "dấu vết", "trọng lực", "sự sống"],
+                correct: 1,
+                exp: "Tìm kiếm dấu vết sự tồn tại của nước -> <b>traces</b> of water[cite: 1]."
+            },
+            {
+                q: "A ______ is a large bowl-shaped hole on the surface of a planet or moon.",
+                qVi: "_______ là một cái hố hình cái bát lớn trên bề mặt của một hành tinh hoặc mặt trăng.",
+                key: ["large bowl-shaped hole"],
+                opts: ["crater", "object", "force", "atmosphere"],
+                optsVi: ["hố thiên thạch/miệng núi lửa", "vật thể", "lực", "bầu khí quyển"],
+                correct: 0,
+                exp: "Hố lõm khổng lồ trên bề mặt hành tinh do va chạm tạo ra là <b>crater</b>."
+            },
+            {
+                q: "Earth is the only planet known to support ______ so far.",
+                qVi: "Cho đến nay, Trái đất là hành tinh duy nhất được biết là có hỗ trợ _______.",
+                key: ["support"],
+                opts: ["alien", "life", "creature", "UFO"],
+                optsVi: ["người ngoài hành tinh", "sự sống", "sinh vật", "UFO"],
+                correct: 1,
+                exp: "Hỗ trợ/duy trì sự sống -> support <b>life</b>."
+            },
+            {
+                q: "The ______ is the layer of gases surrounding a planet.",
+                qVi: "_______ là lớp khí bao quanh một hành tinh.",
+                key: ["layer of gases surrounding"],
+                opts: ["surface", "climate", "atmosphere", "gravity"],
+                optsVi: ["bề mặt", "khí hậu", "bầu khí quyển", "trọng lực"],
+                correct: 2,
+                exp: "Lớp khí bao quanh hành tinh là <b>atmosphere</b>."
+            },
+            {
+                q: "Scientists hope to find a ______ planet where humans can live in the future.",
+                qVi: "Các nhà khoa học hy vọng tìm thấy một hành tinh _______ nơi con người có thể sống trong tương lai.",
+                key: ["planet where humans can live"],
+                opts: ["promising", "habitable", "liquid", "close to"],
+                optsVi: ["đầy hứa hẹn", "có thể ở được/sống được", "chất lỏng", "gần với"],
+                correct: 1,
+                exp: "Hành tinh có điều kiện cho sự sống -> <b>habitable</b> planet."
+            },
+            {
+                q: "The spaceship is scheduled to ______ the moon's surface at 10 PM.",
+                qVi: "Tàu vũ trụ dự kiến sẽ _______ bề mặt mặt trăng lúc 10 giờ tối.",
+                key: ["spaceship", "the moon's surface"],
+                opts: ["land on", "take over", "break down", "travel back"],
+                optsVi: ["đáp xuống/hạ cánh lên", "tiếp quản", "hỏng hóc", "du hành trở lại"],
+                correct: 0,
+                exp: "Hạ cánh xuống bề mặt -> <b>land on</b>."
+            },
+            {
+                q: "We need to ______ the engine before the spaceship can take off again.",
+                qVi: "Chúng ta cần phải _______ động cơ trước khi tàu vũ trụ có thể cất cánh trở lại.",
+                key: ["the engine", "take off again"],
+                opts: ["destroy", "repair", "oppose", "attack"],
+                optsVi: ["phá hủy", "sửa chữa", "phản đối", "tấn công"],
+                correct: 1,
+                exp: "Sửa động cơ để bay tiếp -> <b>repair</b> the engine."
+            },
+            {
+                q: "Our galaxy is also known as the ______.",
+                qVi: "Thiên hà của chúng ta còn được gọi là _______.",
+                key: ["Our galaxy is also known as"],
+                opts: ["Outer space", "Milky Way", "Solar system", "Jupiter"],
+                optsVi: ["Không gian bên ngoài", "Dải Ngân Hà", "Hệ mặt trời", "Sao Mộc"],
+                correct: 1,
+                exp: "Thiên hà chứa hệ mặt trời của chúng ta gọi là <b>Milky Way</b>."
+            },
+            {
+                q: "______ is the force that pulls objects toward the center of a planet.",
+                qVi: "_______ là lực kéo các vật thể về phía tâm của một hành tinh.",
+                key: ["force that pulls objects"],
+                opts: ["Atmosphere", "Gravity", "Climate", "Force"],
+                optsVi: ["Bầu khí quyển", "Trọng lực", "Khí hậu", "Lực"],
+                correct: 1,
+                exp: "Lực hấp dẫn kéo vật thể về tâm -> <b>Gravity</b>."
+            },
+            {
+                q: "Many sci-fi movies describe how aliens try to ______ Earth.",
+                qVi: "Nhiều bộ phim khoa học viễn tưởng mô tả cách người ngoài hành tinh cố gắng _______ Trái đất.",
+                key: ["aliens try to", "Earth"],
+                opts: ["land on", "return to", "take over", "repair"],
+                optsVi: ["hạ cánh", "trở về", "tiếp quản/chiếm đoạt", "sửa chữa"],
+                correct: 2,
+                exp: "Trong phim viễn tưởng, alien thường xâm lăng và chiếm đoạt Trái đất -> <b>take over</b>."
+            },
+            {
+                q: "The ______ gave orders to the crew to prepare for landing.",
+                qVi: "_______ đã ra lệnh cho phi hành đoàn chuẩn bị hạ cánh.",
+                key: ["gave orders"],
+                opts: ["creature", "commander", "officer", "alien"],
+                optsVi: ["sinh vật", "người chỉ huy", "sĩ quan", "người ngoài hành tinh"],
+                correct: 1,
+                exp: "Người ra lệnh cho phi hành đoàn -> <b>commander</b>."
+            },
+            {
+                q: "A ______ is a vehicle designed for travel or operation in outer space.",
+                qVi: "Một _______ là một phương tiện được thiết kế để du hành hoặc hoạt động trong không gian bên ngoài.",
+                key: ["vehicle designed for travel", "in outer space"],
+                opts: ["rocket", "telescope", "spaceship", "UFO"],
+                optsVi: ["tên lửa", "kính viễn vọng", "tàu vũ trụ", "UFO"],
+                correct: 2,
+                exp: "Phương tiện có người lái bay trong vũ trụ -> <b>spaceship</b> (tàu vũ trụ/phi thuyền)."
+            },
+            {
+                q: "Scientists are exploring the ______ that there might be life on Jupiter’s moons.",
+                qVi: "Các nhà khoa học đang khám phá _______ rằng có thể có sự sống trên các mặt trăng của Sao Mộc.",
+                key: ["that there might be life"],
+                opts: ["possibility", "promise", "trace", "climate"],
+                optsVi: ["khả năng", "lời hứa", "dấu vết", "khí hậu"],
+                correct: 0,
+                exp: "Khám phá khả năng xảy ra sự sống -> the <b>possibility</b>."
+            },
+            {
+                q: "Mercury is the planet ______ the Sun.",
+                qVi: "Sao Thủy là hành tinh _______ Mặt trời nhất.",
+                key: ["Mercury is the planet", "the Sun"],
+                opts: ["habitable", "close to", "promising", "liquid"],
+                optsVi: ["có thể ở được", "gần với", "đầy hứa hẹn", "chất lỏng"],
+                correct: 1,
+                exp: "Sao Thủy nằm gần mặt trời -> <b>close to</b>."
+            },
+            {
+                q: "An unidentified flying ______ (UFO) was spotted in the sky last night.",
+                qVi: "Một _______ bay không xác định (UFO) đã được phát hiện trên bầu trời đêm qua.",
+                key: ["unidentified flying"],
+                opts: ["object", "creature", "alien", "force"],
+                optsVi: ["vật thể", "sinh vật", "người ngoài hành tinh", "lực"],
+                correct: 0,
+                exp: "UFO là viết tắt của Unidentified Flying <b>Object</b> (Vật thể bay không xác định)."
+            },
+            {
+                q: "The ______ on Venus is extremely hot and dry.",
+                qVi: "_______ trên Sao Kim cực kỳ nóng và khô.",
+                key: ["hot and dry"],
+                opts: ["surface", "atmosphere", "climate", "gravity"],
+                optsVi: ["bề mặt", "bầu khí quyển", "khí hậu", "trọng lực"],
+                correct: 2,
+                exp: "Nóng và khô là các đặc điểm của thời tiết/khí hậu -> <b>climate</b>."
+            },
+            {
+                q: "Astronauts use a ______ to launch into space.",
+                qVi: "Các phi hành gia sử dụng một _______ để phóng vào không gian.",
+                key: ["launch into space"],
+                opts: ["rocket", "telescope", "crater", "creature"],
+                optsVi: ["tên lửa", "kính viễn vọng", "hố thiên thạch", "sinh vật"],
+                correct: 0,
+                exp: "Phương tiện có sức đẩy lớn để phóng vào vũ trụ -> <b>rocket</b>."
+            },
+            {
+                q: "It’s hard to imagine what kind of ______ might live on a planet with no oxygen.",
+                qVi: "Thật khó để tưởng tượng loại _______ nào có thể sống trên một hành tinh không có oxy.",
+                key: ["what kind of", "might live"],
+                opts: ["commander", "creature", "officer", "object"],
+                optsVi: ["người chỉ huy", "sinh vật", "sĩ quan", "vật thể"],
+                correct: 1,
+                exp: "Chỉ các loài sống trên hành tinh khác -> <b>creature</b> (sinh vật)."
+            },
+            {
+                q: "If the oxygen system ______ , the astronauts will be in great danger.",
+                qVi: "Nếu hệ thống oxy _______ , các phi hành gia sẽ gặp nguy hiểm lớn.",
+                key: ["oxygen system", "great danger"],
+                opts: ["repairs", "breaks down", "takes over", "land on"],
+                optsVi: ["sửa chữa", "bị hỏng hóc", "tiếp quản", "hạ cánh"],
+                correct: 1,
+                exp: "Hệ thống bị hỏng -> <b>breaks down</b>."
+            },
+            {
+                q: "We must ______ the local people from ______ the forest.",
+                qVi: "Chúng ta phải _______ người dân địa phương khỏi việc _______ rừng.",
+                key: ["from", "the forest"],
+                opts: ["stop / destroy", "stop / destroying", "oppose / destroy", "oppose / destroying"],
+                optsVi: ["...", "ngăn chặn / phá hủy (V-ing)", "...", "..."],
+                correct: 1,
+                exp: "Cấu trúc: <b>stop</b> somebody from <b>V-ing</b> (Ngăn chặn ai làm gì)."
+            },
+            {
+                q: "The ______ was sent to investigate the strange signals from space.",
+                qVi: "_______ đã được cử đi để điều tra các tín hiệu lạ từ không gian.",
+                key: ["was sent to investigate"],
+                opts: ["officer", "creature", "planet", "galaxy"],
+                optsVi: ["sĩ quan/nhân viên", "sinh vật", "hành tinh", "thiên hà"],
+                correct: 0,
+                exp: "Người được cử đi làm nhiệm vụ -> <b>officer</b>."
+            },
+            {
+                q: "Scientists found ______ water under the surface of the moon.",
+                qVi: "Các nhà khoa học đã tìm thấy nước ở dạng _______ dưới bề mặt của mặt trăng.",
+                key: ["water under the surface"],
+                opts: ["promising", "habitable", "liquid", "close to"],
+                optsVi: ["đầy hứa hẹn", "có thể sống được", "chất lỏng", "gần với"],
+                correct: 2,
+                exp: "Nước ở dạng lỏng -> <b>liquid</b> water."
+            },
+            {
+                q: "Neptune is the farthest ______ from the Sun in our solar system.",
+                qVi: "Sao Hải Vương là _______ xa Mặt trời nhất trong hệ mặt trời của chúng ta.",
+                key: ["Neptune is the farthest"],
+                opts: ["Earth", "planet", "galaxy", "moon"],
+                optsVi: ["Trái đất", "hành tinh", "thiên hà", "mặt trăng"],
+                correct: 1,
+                exp: "Sao Hải Vương là một <b>planet</b> (hành tinh)."
+            },
+            {
+                q: "Humans have always dreamed of exploring ______ .",
+                qVi: "Con người luôn mơ ước khám phá _______ .",
+                key: ["exploring"],
+                opts: ["outer space", "Milky Way", "solar system", "craters"],
+                optsVi: ["không gian ngoài vũ trụ", "dải Ngân hà", "hệ mặt trời", "hố thiên thạch"],
+                correct: 0,
+                exp: "Khám phá không gian vũ trụ nói chung -> <b>outer space</b>."
+            },
+            {
+                q: "Some people ______ the idea of sending humans to Mars because it's too dangerous.",
+                qVi: "Một số người _______ ý tưởng đưa con người lên sao Hỏa vì nó quá nguy hiểm.",
+                key: ["the idea of sending humans", "too dangerous"],
+                opts: ["repair", "oppose", "attack", "take over"],
+                optsVi: ["sửa chữa", "phản đối", "tấn công", "tiếp quản"],
+                correct: 1,
+                exp: "Vì nguy hiểm nên họ <b>oppose</b> (phản đối) ý tưởng đó."
+            },
+            {
+                q: "Jupiter is the largest planet in our ______ .",
+                qVi: "Sao Mộc là hành tinh lớn nhất trong _______ của chúng ta.",
+                key: ["largest planet in our"],
+                opts: ["Milky Way", "solar system", "atmosphere", "gravity"],
+                optsVi: ["dải Ngân hà", "hệ mặt trời", "bầu khí quyển", "trọng lực"],
+                correct: 1,
+                exp: "Hành tinh lớn nhất trong hệ mặt trời -> <b>solar system</b>."
+            },
+            {
+                q: "Saturn is famous for its beautiful rings and rocky ______ .",
+                qVi: "Sao Thổ nổi tiếng với những vành đai tuyệt đẹp và _______ đầy đá.",
+                key: ["rocky"],
+                opts: ["surface", "climate", "atmosphere", "trace"],
+                optsVi: ["bề mặt", "khí hậu", "bầu khí quyển", "dấu vết"],
+                correct: 0,
+                exp: "Bề mặt đất đá -> rocky <b>surface</b>."
+            },
+            {
+                q: "The discovery of a new planet with water is very ______ .",
+                qVi: "Việc phát hiện ra một hành tinh mới có nước là rất _______ .",
+                key: ["discovery of a new planet with water"],
+                opts: ["habitable", "promising", "close to", "liquid"],
+                optsVi: ["có thể ở được", "đầy hứa hẹn", "gần với", "chất lỏng"],
+                correct: 1,
+                exp: "Một phát hiện mang lại nhiều hy vọng -> <b>promising</b> (đầy hứa hẹn). (Đáp án D. liquid bị gõ sai ký tự '=' trong đề gốc, đã được sửa lại)."
+            },
+            {
+                q: "After the mission, the astronauts will ______ Earth.",
+                qVi: "Sau nhiệm vụ, các phi hành gia sẽ _______ Trái đất.",
+                key: ["After the mission", "Earth"],
+                opts: ["travel back", "return to", "land on", "both A & B are correct"],
+                optsVi: ["du hành về", "trở về", "hạ cánh xuống", "Cả A và B đều đúng"],
+                correct: 1,
+                exp: "Cấu trúc: <b>return to</b> Earth (trở về Trái Đất). (travel back TO Earth mới đúng)."
+            },
+            {
+                q: "Giant meteors could ______ an entire city if they hit Earth.",
+                qVi: "Các thiên thạch khổng lồ có thể _______ toàn bộ một thành phố nếu chúng đâm vào Trái đất.",
+                key: ["Giant meteors", "an entire city"],
+                opts: ["repair", "destroy", "oppose", "take over"],
+                optsVi: ["sửa chữa", "phá hủy", "phản đối", "chiếm đoạt"],
+                correct: 1,
+                exp: "Thiên thạch rơi sẽ phá hủy thành phố -> <b>destroy</b>."
+            },
+            {
+                q: "Uranus and ______ are known as the \"ice giants\".",
+                qVi: "Sao Thiên Vương và _______ được gọi là \"những người khổng lồ băng\".",
+                key: ["ice giants"],
+                opts: ["Neptune", "Saturn", "Jupiter", "Mars"],
+                optsVi: ["Sao Hải Vương", "Sao Thổ", "Sao Mộc", "Sao Hỏa"],
+                correct: 0,
+                exp: "Hai hành tinh xa nhất hệ mặt trời là hành tinh băng: Uranus và <b>Neptune</b>."
+            },
+            {
+                q: "Venus is often called Earth's twin because it is ______ size to Earth.",
+                qVi: "Sao Kim thường được gọi là chị em sinh đôi của Trái đất vì nó có kích thước _______ Trái đất.",
+                key: ["size to Earth"],
+                opts: ["close to", "promising", "habitable", "liquid"],
+                optsVi: ["gần bằng/tương tự", "đầy hứa hẹn", "có thể ở được", "chất lỏng"],
+                correct: 0,
+                exp: "Kích thước tương đương/gần bằng -> <b>close to</b>."
+            },
+            {
+                q: "There is a ______ of finding primitive life forms on other planets.",
+                qVi: "Có một _______ tìm thấy các dạng sống nguyên thủy trên các hành tinh khác.",
+                key: ["There is a"],
+                opts: ["possibility", "promise", "trace", "gravity"],
+                optsVi: ["khả năng", "lời hứa", "dấu vết", "trọng lực"],
+                correct: 0,
+                exp: "Khả năng xảy ra việc gì -> a <b>possibility</b> of."
+            },
+            {
+                q: "The military ______ was ready to defend the planet against an alien attack.",
+                qVi: "_______ quân sự đã sẵn sàng để bảo vệ hành tinh chống lại một cuộc tấn công của người ngoài hành tinh.",
+                key: ["military", "ready to defend"],
+                opts: ["force", "surface", "climate", "crater"],
+                optsVi: ["lực lượng", "bề mặt", "khí hậu", "hố thiên thạch"],
+                correct: 0,
+                exp: "Lực lượng quân sự -> military <b>force</b>."
+            },
+            {
+                q: "They will ______ the spaceship once it reaches the space station.",
+                qVi: "Họ sẽ _______ tàu vũ trụ một khi nó đến trạm vũ trụ.",
+                key: ["spaceship"],
+                opts: ["repair", "fix", "destroy", "both A & B are correct"],
+                optsVi: ["sửa chữa", "sửa chữa", "phá hủy", "cả A & B đều đúng"],
+                correct: 3,
+                exp: "'repair' và 'fix' đều mang nghĩa sửa chữa máy móc -> <b>Both A & B are correct</b>."
+            },
+            {
+                q: "In some movies, aliens ______ Earth to steal our resources.",
+                qVi: "Trong một số bộ phim, người ngoài hành tinh _______ Trái đất để đánh cắp tài nguyên của chúng ta.",
+                key: ["aliens", "Earth", "steal our resources"],
+                opts: ["attack", "repair", "return to", "land on"],
+                optsVi: ["tấn công", "sửa chữa", "trở về", "hạ cánh"],
+                correct: 0,
+                exp: "Tấn công Trái đất để lấy tài nguyên -> <b>attack</b>."
+            },
+            {
+                q: "The ______ of a planet depends on its distance from the sun and its atmosphere.",
+                qVi: "_______ của một hành tinh phụ thuộc vào khoảng cách của nó với mặt trời và bầu khí quyển của nó.",
+                key: ["depends on its distance from the sun"],
+                opts: ["surface", "gravity", "climate", "crater"],
+                optsVi: ["bề mặt", "trọng lực", "khí hậu", "hố thiên thạch"],
+                correct: 2,
+                exp: "Khoảng cách đến mặt trời ảnh hưởng trực tiếp tới nhiệt độ/thời tiết -> <b>climate</b> (khí hậu)."
+            },
+            {
+                q: "______ is the third planet from the Sun.",
+                qVi: "_______ là hành tinh thứ ba tính từ Mặt trời.",
+                key: ["third planet from the Sun"],
+                opts: ["Mars", "Earth", "Venus", "Mercury"],
+                optsVi: ["Sao Hỏa", "Trái đất", "Sao Kim", "Sao Thủy"],
+                correct: 1,
+                exp: "Hành tinh thứ ba trong hệ mặt trời là <b>Earth</b>."
+            },
+            {
+                q: "A robot was sent to the ______ of Mars to take photos.",
+                qVi: "Một robot đã được gửi đến _______ của sao Hỏa để chụp ảnh.",
+                key: ["sent to the", "of Mars"],
+                opts: ["surface", "climate", "atmosphere", "gravity"],
+                optsVi: ["bề mặt", "khí hậu", "bầu khí quyển", "trọng lực"],
+                correct: 0,
+                exp: "Robot đáp xuống bề mặt hành tinh -> the <b>surface</b> of Mars."
+            },
+            {
+                q: "Do you ______ the existence of life on other planets?",
+                qVi: "Bạn có _______ sự tồn tại của sự sống trên các hành tinh khác không?",
+                key: ["the existence of life"],
+                opts: ["promise", "believe in", "oppose", "take over"],
+                optsVi: ["hứa", "tin vào", "phản đối", "tiếp quản"],
+                correct: 1,
+                exp: "Cấu trúc: <b>believe in</b> (tin vào điều gì đó có tồn tại)."
+            },
+            {
+                q: "I will ______ my old school next week.",
+                qVi: "Tôi sẽ _______ trường cũ của mình vào tuần tới.",
+                key: ["my old school"],
+                opts: ["return to", "land on", "take over", "break down"],
+                optsVi: ["trở về", "hạ cánh", "tiếp quản", "hỏng hóc"],
+                correct: 0,
+                exp: "Quay trở lại một địa điểm -> <b>return to</b>."
+            },
+            {
+                q: "In the story, the alien ______ the human's body to live on Earth.",
+                qVi: "Trong câu chuyện, người ngoài hành tinh đã _______ cơ thể con người để sống trên Trái đất.",
+                key: ["the human's body"],
+                opts: ["took over", "repaired", "opposed", "landed on"],
+                optsVi: ["chiếm đoạt/tiếp quản", "sửa chữa", "phản đối", "hạ cánh"],
+                correct: 0,
+                exp: "Ký sinh, kiểm soát, chiếm đoạt thân xác -> <b>took over</b>."
+            },
+            {
+                q: "The sun is at the center of our ______ .",
+                qVi: "Mặt trời nằm ở trung tâm của _______ của chúng ta.",
+                key: ["center of our"],
+                opts: ["solar system", "galaxy", "Milky Way", "all are correct"],
+                optsVi: ["hệ mặt trời", "thiên hà", "dải Ngân hà", "tất cả đều đúng"],
+                correct: 0,
+                exp: "Mặt trời là trung tâm của hệ mặt trời -> <b>solar system</b>."
+            },
+            {
+                q: "We can't live on Mars yet because the ______ is not suitable for humans.",
+                qVi: "Chúng ta chưa thể sống trên sao Hỏa vì _______ không phù hợp với con người.",
+                key: ["not suitable for humans"],
+                opts: ["atmosphere", "gravity", "climate", "all are correct"],
+                optsVi: ["bầu khí quyển", "trọng lực", "khí hậu", "tất cả đều đúng"],
+                correct: 3,
+                exp: "Tất cả các yếu tố (bầu không khí, trọng lực, khí hậu) trên sao Hỏa hiện tại đều chưa phù hợp -> <b>all are correct</b>."
+            },
+            {
+                q: "Scientists ______ that they will find life soon.",
+                qVi: "Các nhà khoa học _______ rằng họ sẽ sớm tìm thấy sự sống.",
+                key: ["that they will find life"],
+                opts: ["promise", "repair", "destroy", "attack"],
+                optsVi: ["hứa/tin chắc", "sửa chữa", "phá hủy", "tấn công"],
+                correct: 0,
+                exp: "Hứa hẹn, cho thấy tiềm năng/triển vọng -> <b>promise</b>."
+            }
+        ];
+
+        let answeredSet = new Set();
+        let correctCount = 0;
+        const totalCount = quizData.length;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const nav = document.getElementById('q-nav');
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('final-total').innerText = totalCount;
+
+            quizData.forEach((item, index) => {
+                const displayIndex = index + 1; 
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+                
+                card.innerHTML = `
+                    <div class="question-text">
+                        Question ${displayIndex}. ${item.q}
+                        <div class="trans-text" id="trans-q-${index}">${item.qVi}</div>
+                    </div>
+
+                    <button class="btn-hint-toggle" onclick="toggleHint(${index})">
+                        💡 Gợi ý (Keywords)
+                    </button>
+                    <div class="hint-content" id="hint-box-${index}">
+                        <strong>Keywords:</strong> ${item.key.join('; ')}
+                    </div>
+
+                    <div class="options-list">
+                        ${item.opts.map((opt, i) => `
+                            <button class="option-btn" onclick="checkAnswer(this, ${index}, ${i})">
+                                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+                                <span class="trans-text" id="trans-opt-${index}-${i}">(${item.optsVi[i]})</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation-box" id="exp-${index}"></div>
+
+                    <button class="btn-trans-toggle" id="btn-trans-${index}" onclick="toggleTrans(${index})" disabled title="Hãy chọn đáp án trước để xem dịch nghĩa">
+                        🔒 Dịch nghĩa
+                    </button>
+                `;
+                container.appendChild(card);
+
+                const qNum = document.createElement('div');
+                qNum.className = 'q-num';
+                qNum.id = `nav-${index}`;
+                qNum.innerText = displayIndex;
+                qNum.onclick = () => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) toggleSidebar();
+                };
+                nav.appendChild(qNum);
+            });
+        }
+
+        // --- Mobile Sidebar Toggle ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleHint(index) {
+            document.getElementById(`hint-box-${index}`).classList.toggle('show');
+        }
+
+        function toggleTrans(index) {
+            const qTrans = document.getElementById(`trans-q-${index}`);
+            const btn = document.getElementById(`btn-trans-${index}`);
+            
+            qTrans.classList.toggle('show');
+            
+            const card = document.getElementById(`q-card-${index}`);
+            const transElements = card.querySelectorAll('.options-list .trans-text');
+            transElements.forEach(el => el.classList.toggle('show'));
+
+            if (qTrans.classList.contains('show')) {
+                btn.innerHTML = '🌐 Ẩn dịch nghĩa';
+                btn.style.backgroundColor = '#e8f0fe';
+                btn.style.color = '#1a73e8';
+            } else {
+                btn.innerHTML = '🌐 Dịch nghĩa';
+                btn.style.backgroundColor = '#f1f3f4';
+                btn.style.color = '#555';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-correct').innerText = correctCount;
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            document.getElementById('stat-score').innerText = score;
+        }
+
+        function checkAnswer(btn, qIndex, optIndex) {
+            if (answeredSet.has(qIndex)) return;
+            answeredSet.add(qIndex);
+
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            const correctIndex = quizData[qIndex].correct;
+            const expBox = document.getElementById(`exp-${qIndex}`);
+            const transBtn = document.getElementById(`btn-trans-${qIndex}`);
+            const navNum = document.getElementById(`nav-${qIndex}`);
+
+            // Enable Translate button
+            if (transBtn.hasAttribute('disabled')) {
+                transBtn.removeAttribute('disabled');
+                transBtn.innerHTML = '🌐 Dịch nghĩa';
+            }
+
+            if (optIndex === correctIndex) {
+                btn.classList.add('correct');
+                navNum.classList.add('done-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                navNum.classList.add('done-wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            updateStats();
+            buttons.forEach(b => b.classList.add('disabled'));
+
+            const percent = (answeredSet.size / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            expBox.innerHTML = `<strong>Giải thích chi tiết:</strong> ${quizData[qIndex].exp}`;
+            expBox.style.display = 'block';
+        }
+
+        function submitQuiz() {
+            if (window.innerWidth <= 768) toggleSidebar();
+            
+            if (answeredSet.size < totalCount) {
+                const confirmSubmit = confirm(`Bạn mới làm ${answeredSet.size}/${totalCount} câu. Bạn có chắc muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            const score = (correctCount / totalCount * 10).toFixed(1);
+            let rank = "";
+            if(score >= 9) rank = "Xuất sắc (Excellent)";
+            else if(score >= 8) rank = "Giỏi (Good)";
+            else if(score >= 6.5) rank = "Khá (Fair)";
+            else if(score >= 5) rank = "Trung bình (Average)";
+            else rank = "Cần cố gắng thêm (Poor)";
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+            document.getElementById('final-rank').innerText = rank;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
