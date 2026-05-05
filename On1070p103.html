@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bài tập Tiếng Anh: Tổng hợp (60 Câu)</title>
+    <title>Bài tập Tiếng Anh: Tổng hợp (48 Câu)</title>
     <style>
         :root {
             --primary-blue: #e8f0fe;
@@ -342,7 +342,7 @@
     <div class="header">
         <div class="header-top">
             <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-            <h2 class="header-title">Bài tập Tiếng Anh: Tổng hợp (60 Câu)</h2>
+            <h2 class="header-title">Bài tập Tiếng Anh: Tổng hợp (48 Câu)</h2>
         </div>
         <div class="progress-container">
             <div id="progress-bar"></div>
@@ -361,7 +361,7 @@
             <div class="stats-box">
                 <div class="stat-item">
                     <span>Số câu đúng:</span>
-                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">60</span></span>
+                    <span class="stat-value"><span id="stat-correct">0</span>/<span id="stat-total">48</span></span>
                 </div>
                 <div class="stat-item">
                     <span>Điểm số:</span>
@@ -387,7 +387,7 @@
             <div class="modal-score" id="final-score">0.0</div>
             
             <div class="modal-details">
-                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">60</span></p>
+                <p>Số câu đúng: <b id="final-correct">0</b> / <span id="final-total">48</span></p>
                 <p>Xếp loại: <b id="final-rank" style="color: #e65100">---</b></p>
             </div>
             
@@ -397,545 +397,444 @@
 
     <script>
         const quizData = [
+            // Block 1
             {
-                q: "Do you mind if I ______ in here? ",
-                qVi: "Bạn có phiền nếu tôi ______ ở đây không?",
-                key: ["Do you mind if I"],
-                opts: ["smoking", "to smoke", "smoke", "smoked"],
-                optsVi: ["hút thuốc (V-ing)", "để hút thuốc", "hút thuốc", "hút thuốc (V-ed)"],
+                q: "The city is now a big _____ site with many half-finished buildings. ",
+                qVi: "Thành phố hiện là một khu _____ lớn với nhiều tòa nhà xây dựng dang dở.",
+                key: ["site", "half-finished buildings"],
+                opts: ["tourist", "shopping", "construction", "waste"],
+                optsVi: ["khách du lịch", "mua sắm", "xây dựng", "chất thải"],
                 correct: 2,
-                exp: "Cấu trúc xin phép: Do you mind if I + <b>V(nguyên mẫu)</b>? (Nếu dùng 'Would you mind if I' thì động từ mới lùi về V-ed/V2)."
+                exp: "Công trường xây dựng -> <b>construction</b> site ."
             },
             {
-                q: "I suggest ______ at home tonight as it is really cold outside. ",
-                qVi: "Tôi đề nghị ______ ở nhà tối nay vì ngoài trời rất lạnh.",
-                key: ["suggest"],
-                opts: ["stay", "to stay", "staying", "stayed"],
-                optsVi: ["ở lại (V)", "để ở lại", "ở lại (V-ing)", "đã ở lại"],
-                correct: 2,
-                exp: "Cấu trúc: suggest + <b>V-ing</b> (gợi ý/đề xuất làm việc gì)."
-            },
-            {
-                q: "The book ______ I like is on the table. ",
-                qVi: "Cuốn sách ______ tôi thích đang ở trên bàn.",
-                key: ["The book"],
-                opts: ["who", "whom", "which", "where"],
-                optsVi: ["người mà (S)", "người mà (O)", "cái mà", "nơi mà"],
-                correct: 2,
-                exp: "Đại từ quan hệ thay thế cho danh từ chỉ vật (The book) là <b>which</b>."
-            },
-            {
-                q: "She asked the children ______ listening to her. ",
-                qVi: "Cô ấy hỏi bọn trẻ xem chúng ______ lắng nghe cô ấy không.",
-                key: ["asked", "Reported speech"],
-                opts: ["if were they", "where they are", "if they were", "whether we were"],
-                optsVi: ["sai trật tự từ", "họ đang ở đâu (sai thì)", "liệu chúng có đang", "liệu chúng tôi có đang"],
-                correct: 2,
-                exp: "Câu tường thuật dạng Yes/No question: S + asked + O + if/whether + <b>S + V(lùi thì)</b>. -> if they were."
-            },
-            {
-                q: "We ______ to an interesting song on the radio at 8 p.m, yesterday. ",
-                qVi: "Chúng tôi ______ một bài hát thú vị trên đài vào lúc 8 giờ tối hôm qua.",
-                key: ["at 8 p.m, yesterday"],
-                opts: ["were listening", "are listening", "listened", "had listened"],
-                optsVi: ["đang nghe (QKTD)", "đang nghe (HTTD)", "đã nghe (QKĐ)", "đã nghe (QKHT)"],
+                q: "Living in a big city offers many _____ such as access to better education and healthcare. ",
+                qVi: "Sống ở một thành phố lớn mang lại nhiều _____ chẳng hạn như việc tiếp cận với nền giáo dục và chăm sóc sức khỏe tốt hơn.",
+                key: ["such as access to better education and healthcare"],
+                opts: ["benefits", "challenges", "disadvantages", "risks"],
+                optsVi: ["lợi ích", "thử thách", "bất lợi", "rủi ro"],
                 correct: 0,
-                exp: "Hành động đang xảy ra tại một thời điểm cụ thể trong quá khứ -> Dùng thì Quá khứ tiếp diễn (<b>were listening</b>)."
+                exp: "Tiếp cận với nền giáo dục và y tế tốt hơn là những điều tích cực -> <b>benefits</b> (lợi ích) ."
             },
             {
-                q: "Air pollution in big cities negatively ______ people's health. ",
-                qVi: "Ô nhiễm không khí ở các thành phố lớn ______ tiêu cực đến sức khỏe của con người.",
-                key: ["negatively", "people's health"],
-                opts: ["causes", "affects", "controls", "decreases"],
-                optsVi: ["gây ra", "ảnh hưởng/tác động", "kiểm soát", "làm giảm"],
-                correct: 1,
-                exp: "Tác động, ảnh hưởng tiêu cực tới cái gì -> <b>affects</b>."
+                q: "Ha Long Bay is one of the most famous _____ in Vietnam. ",
+                qVi: "Vịnh Hạ Long là một trong những _____ nổi tiếng nhất ở Việt Nam.",
+                key: ["Ha Long Bay"],
+                opts: ["man-made wonders", "urban areas", "natural wonders", "historic sites"],
+                optsVi: ["kỳ quan nhân tạo", "khu vực đô thị", "kỳ quan thiên nhiên", "di tích lịch sử"],
+                correct: 2,
+                exp: "Vịnh Hạ Long là một kỳ quan thiên nhiên -> <b>natural wonders</b> ."
             },
             {
-                q: "There was no football match on VTV3, so I turned to another ______ ",
-                qVi: "Không có trận bóng đá nào trên VTV3, vì vậy tôi đã chuyển sang một ______ khác.",
-                key: ["turned to another", "VTV3"],
-                opts: ["media", "television", "number", "channel"],
-                optsVi: ["phương tiện", "tivi", "số", "kênh"],
+                q: "My daughter wishes she _____ more time to finish her English homework. ",
+                qVi: "Con gái tôi ước cô ấy _____ nhiều thời gian hơn để hoàn thành bài tập tiếng Anh.",
+                key: ["wishes", "present unreal"],
+                opts: ["had", "will have", "is having", "has"],
+                optsVi: ["đã có (QKĐ)", "sẽ có", "đang có", "có"],
+                correct: 0,
+                exp: "Câu điều ước ở hiện tại, động từ lùi về Quá khứ đơn -> <b>had</b> ."
+            },
+            {
+                q: "Some students prefer to learn information _____ , memorizing it word for word without fully understanding the concepts. ",
+                qVi: "Một số học sinh thích học thông tin theo kiểu _____, ghi nhớ từng từ một mà không hiểu đầy đủ các khái niệm.",
+                key: ["memorizing it word for word", "without fully understanding"],
+                opts: ["by care", "by chance", "by memory", "by rote"],
+                optsVi: ["cẩn thận", "tình cờ", "bằng trí nhớ", "học vẹt"],
                 correct: 3,
-                exp: "VTV3 là một kênh truyền hình -> chuyển sang kênh khác (another <b>channel</b>)."
+                exp: "Học thuộc lòng từng từ mà không hiểu bản chất gọi là học vẹt -> learn <b>by rote</b> ."
             },
             {
-                q: "______ is a small device on which you can store and read texts taken from the Internet. ",
-                qVi: "______ là một thiết bị nhỏ mà bạn có thể lưu trữ và đọc văn bản lấy từ Internet trên đó.",
-                key: ["store and read texts"],
-                opts: ["E-reader", "3D printer", "Portable music player", "Vacuum cleaner"],
-                optsVi: ["Máy đọc sách điện tử", "Máy in 3D", "Máy nghe nhạc cầm tay", "Máy hút bụi"],
+                q: "The manager decided to _____ the meeting because the key speaker couldn't come. ",
+                qVi: "Người quản lý đã quyết định _____ cuộc họp vì diễn giả chính không thể đến.",
+                key: ["key speaker couldn't come"],
+                opts: ["put off", "put on", "put away", "put out"],
+                optsVi: ["trì hoãn", "mặc vào", "cất đi", "dập tắt"],
                 correct: 0,
-                exp: "Thiết bị chuyên dùng để lưu trữ và đọc sách điện tử -> <b>E-reader</b>."
+                exp: "Người nói chính vắng mặt nên phải trì hoãn cuộc họp -> <b>put off</b> (= postpone) ."
             },
             {
-                q: "The plane didn't take ______ due to the fog. ",
-                qVi: "Máy bay đã không ______ do sương mù.",
-                key: ["plane didn't take"],
-                opts: ["away", "down", "up", "off"],
-                optsVi: ["mang đi", "hạ xuống", "chiếm/bắt đầu", "cất cánh"],
-                correct: 3,
-                exp: "Cụm động từ (Phrasal verb): take <b>off</b> (máy bay cất cánh)."
-            },
-            {
-                q: "The narrower the streets are, ______ the traffic jam gets. ",
-                qVi: "Đường phố càng hẹp, tình trạng kẹt xe càng ______.",
-                key: ["The narrower", "Double comparative"],
-                opts: ["the heavily", "the heavy", "the more heavily", "the heavier"],
-                optsVi: ["...", "...", "một cách nặng nề hơn", "nặng nề/trầm trọng hơn"],
-                correct: 3,
-                exp: "So sánh kép: The + so sánh hơn, <b>the + so sánh hơn</b>. 'Traffic jam' cần một tính từ miêu tả mức độ nghiêm trọng -> <b>the heavier</b>."
-            },
-            {
-                q: "The house had been well maintained and was in excellent ______ ",
-                qVi: "Ngôi nhà đã được bảo trì tốt và ở trong ______ tuyệt vời.",
-                key: ["in excellent"],
-                opts: ["stylish", "condition", "character", "size"],
-                optsVi: ["phong cách", "tình trạng/điều kiện", "nhân vật/tính cách", "kích thước"],
+                q: "Biological _____ is the special feature of Cuc Phuong National Park. ",
+                qVi: "_____ sinh học là nét đặc biệt của Vườn Quốc gia Cúc Phương.",
+                key: ["Biological"],
+                opts: ["deforestation", "diversity", "admiration", "discovery"],
+                optsVi: ["phá rừng", "sự đa dạng", "sự ngưỡng mộ", "khám phá"],
                 correct: 1,
-                exp: "Cụm từ cố định: in excellent/good <b>condition</b> (trong tình trạng rất tốt/hoàn hảo)."
+                exp: "Cụm từ: Biological <b>diversity</b> (Đa dạng sinh học) ."
             },
             {
-                q: "John has ______ his biology exam so he must take it again. ",
-                qVi: "John đã ______ kỳ thi sinh học của mình nên anh ấy phải thi lại.",
-                key: ["must take it again"],
-                opts: ["passed", "revised", "failed", "gone"],
-                optsVi: ["đậu/vượt qua", "ôn tập", "trượt/rớt", "đi"],
+                q: "When we visit a city, we usually _____ its downtown. ",
+                qVi: "Khi chúng tôi đến thăm một thành phố, chúng tôi thường _____ khu vực trung tâm của nó.",
+                key: ["visit a city"],
+                opts: ["look after", "find out", "pass down", "look around"],
+                optsVi: ["chăm sóc", "tìm hiểu", "truyền lại", "đi dạo/tham quan"],
+                correct: 3,
+                exp: "Đi vòng quanh để tham quan ngắm cảnh -> <b>look around</b> ."
+            },
+            {
+                q: "I recommend _____ more fruits and vegetables everyday. ",
+                qVi: "Tôi khuyên bạn nên ______ nhiều trái cây và rau củ hơn mỗi ngày.",
+                key: ["recommend"],
+                opts: ["eat", "to eat", "eating", "to eating"],
+                optsVi: ["ăn", "để ăn", "ăn (V-ing)", "để ăn (sai ngữ pháp)"],
                 correct: 2,
-                exp: "Phải thi lại vì đã thi trượt -> <b>failed</b> his exam."
+                exp: "Cấu trúc: recommend + <b>V-ing</b> (gợi ý/khuyên làm gì) ."
             },
             {
-                q: "Lan suggested ______ the lanterns together for the Mid-Autumn Festival. ",
-                qVi: "Lan đề nghị ______ những chiếc đèn lồng cùng nhau cho dịp Tết Trung thu.",
-                key: ["suggested"],
-                opts: ["making", "to make", "makes", "made"],
-                optsVi: ["làm (V-ing)", "để làm", "làm", "đã làm"],
-                correct: 0,
-                exp: "Cấu trúc: suggest + <b>V-ing</b> (đề xuất cùng làm gì)."
-            },
-            {
-                q: "Students learn that English has many ______ varieties spoken around the world. ",
-                qVi: "Học sinh được học rằng tiếng Anh có nhiều biến thể ______ được nói trên khắp thế giới.",
-                key: ["many", "varieties"],
-                opts: ["nation", "national", "nationally", "nationality"],
-                optsVi: ["quốc gia (n)", "thuộc về quốc gia (adj)", "ở cấp quốc gia (adv)", "quốc tịch (n)"],
-                correct: 1,
-                exp: "Trước danh từ 'varieties' cần một tính từ bổ nghĩa -> <b>national</b>."
-            },
-            {
-                q: "My class ______ the science project yet. ",
-                qVi: "Lớp tôi vẫn chưa ______ dự án khoa học.",
-                key: ["yet", "Present Perfect"],
-                opts: ["didn't complete", "won't complete", "doesn't complete", "hasn't completed"],
-                optsVi: ["đã không hoàn thành", "sẽ không hoàn thành", "không hoàn thành", "chưa hoàn thành (HTHT)"],
+                q: "We like the food in Hoi An because it is delicious and _____ . ",
+                qVi: "Chúng tôi thích đồ ăn ở Hội An vì nó ngon và _____.",
+                key: ["delicious and"],
+                opts: ["expensive", "exciting", "fashionable", "affordable"],
+                optsVi: ["đắt đỏ", "thú vị", "hợp thời trang", "giá cả phải chăng"],
                 correct: 3,
-                exp: "Dấu hiệu 'yet' (vẫn chưa) thường dùng trong thì Hiện tại hoàn thành phủ định -> <b>hasn't completed</b>."
+                exp: "Khen đồ ăn ngon và rẻ/phù hợp túi tiền -> <b>affordable</b> ."
             },
             {
-                q: "Hoa ______ join the English club this semester, but she hasn't decided yet. ",
-                qVi: "Hoa ______ tham gia câu lạc bộ tiếng Anh học kỳ này, nhưng cô ấy vẫn chưa quyết định.",
-                key: ["hasn't decided yet"],
-                opts: ["mustn't", "may", "ought to", "can't"],
-                optsVi: ["không được", "có thể (khả năng)", "nên", "không thể"],
-                correct: 1,
-                exp: "Vì 'chưa quyết định' nên sự việc chỉ là một khả năng có thể xảy ra trong tương lai -> <b>may</b> (có lẽ/có thể)."
-            },
-            {
-                q: "Students are encouraged to ______ community projects to help protect the environment. ",
-                qVi: "Học sinh được khuyến khích ______ các dự án cộng đồng để giúp bảo vệ môi trường.",
-                key: ["community projects"],
-                opts: ["take part in", "get rid of", "put up with", "look down on"],
-                optsVi: ["tham gia", "loại bỏ", "chịu đựng", "khinh thường"],
+                q: "They played _____ such as hide-and-seek, tug of war, skipping, etc.... ",
+                qVi: "Họ đã chơi các _____ như trốn tìm, kéo co, nhảy dây, v.v...",
+                key: ["hide-and-seek, tug of war"],
+                opts: ["traditional games", "mobile phones", "Ipads", "surfing the Internet"],
+                optsVi: ["trò chơi truyền thống", "điện thoại di động", "Ipad", "lướt Internet"],
                 correct: 0,
-                exp: "Tham gia vào các dự án/hoạt động -> <b>take part in</b> (= participate in)."
+                exp: "Kéo co, trốn tìm, nhảy dây là các trò chơi truyền thống -> <b>traditional games</b> ."
             },
             {
-                q: "There are only ______ seats left, so we must book soon. ",
-                qVi: "Chỉ còn lại ______ chỗ ngồi, vì vậy chúng ta phải đặt sớm.",
-                key: ["seats left", "only"],
-                opts: ["few", "a few", "a little", "little"],
-                optsVi: ["rất ít", "một vài", "một chút (không đếm được)", "rất ít (không đếm được)"],
-                correct: 1,
-                exp: "'seats' là danh từ đếm được số nhiều. Nhấn mạnh vẫn còn một số chỗ đủ để đặt (ý nghĩa khẳng định) -> <b>a few</b>."
-            },
-            {
-                q: "The villagers decorate the pottery products ______ traditional patterns before selling them. ",
-                qVi: "Dân làng trang trí các sản phẩm gốm sứ ______ các họa tiết truyền thống trước khi bán chúng.",
-                key: ["decorate", "traditional patterns"],
-                opts: ["with", "under", "over", "off"],
-                optsVi: ["với/bằng", "dưới", "trên", "tắt"],
-                correct: 0,
-                exp: "Cấu trúc: decorate something <b>with</b> something (trang trí cái gì bằng cái gì)."
-            },
-            {
-                q: "That's the girl ______ won the \"Green Action\" contest last year. ",
-                qVi: "Đó là cô gái ______ đã chiến thắng cuộc thi \"Hành động xanh\" năm ngoái.",
-                key: ["the girl", "won"],
-                opts: ["whose", "whom", "who", "which"],
-                optsVi: ["của người mà", "người mà (O)", "người mà (S)", "cái mà"],
+                q: "You should check your _____ details before sending the form. ",
+                qVi: "Bạn nên kiểm tra các thông tin _____ của mình trước khi gửi biểu mẫu.",
+                key: ["details", "adjective needed"],
+                opts: ["person", "personally", "personal", "personalize"],
+                optsVi: ["người (n)", "đích thân/về mặt cá nhân (adv)", "cá nhân (adj)", "cá nhân hóa (v)"],
                 correct: 2,
-                exp: "Đại từ quan hệ thay thế cho danh từ chỉ người 'the girl' và làm chủ ngữ cho động từ 'won' -> <b>who</b>."
+                exp: "Trước danh từ 'details' cần một tính từ -> <b>personal</b> details (thông tin cá nhân) ."
+            },
+
+            // Block 2
+            {
+                q: "There is a dusty and noisy _____ near our house. ",
+                qVi: "Có một _____ đầy bụi bặm và ồn ào gần nhà chúng tôi.",
+                key: ["dusty and noisy"],
+                opts: ["building", "concrete jungle", "neighbourhood", "construction site"],
+                optsVi: ["tòa nhà", "rừng bê tông", "khu phố", "công trường xây dựng"],
+                correct: 3,
+                exp: "Khu vực thường có nhiều khói bụi và tiếng ồn -> <b>construction site</b> (công trường xây dựng) ."
             },
             {
-                q: "During the trip, our GPS stopped working, and we quickly ______ signal in the mountain area. ",
-                qVi: "Trong suốt chuyến đi, GPS của chúng tôi đã ngừng hoạt động và chúng tôi nhanh chóng ______ tín hiệu ở khu vực đồi núi.",
-                key: ["signal"],
-                opts: ["lost", "made", "ran", "took"],
-                optsVi: ["đánh mất", "làm", "chạy", "lấy"],
+                q: "Can you decide _____ to invite to the party? ",
+                qVi: "Bạn có thể quyết định _____ để mời đến bữa tiệc không?",
+                key: ["invite to the party"],
+                opts: ["who", "what", "where", "when"],
+                optsVi: ["ai", "cái gì", "ở đâu", "khi nào"],
                 correct: 0,
-                exp: "Mất tín hiệu kết nối mạng/GPS -> <b>lost</b> signal."
+                exp: "Mời người tham dự -> decide <b>who</b> to invite ."
             },
             {
-                q: "During a flood, local volunteers quickly set up temporary shelters to offer ______ support to affected families. ",
-                qVi: "Trong một trận lũ, các tình nguyện viên địa phương đã nhanh chóng thiết lập các nơi trú ẩn tạm thời để cung cấp hỗ trợ ______ cho các gia đình bị ảnh hưởng.",
-                key: ["flood", "support to affected families"],
-                opts: ["traditional", "electrical", "emergency", "common"],
-                optsVi: ["truyền thống", "thuộc về điện", "khẩn cấp", "phổ biến"],
+                q: "I live in a _____ street which is full of people and vehicles moving around all day. ",
+                qVi: "Tôi sống trên một con phố _____ đông đúc người và xe cộ qua lại cả ngày.",
+                key: ["full of people and vehicles"],
+                opts: ["empty", "calm", "bustling", "quite"],
+                optsVi: ["trống rỗng", "bình tĩnh/yên lặng", "nhộn nhịp", "yên tĩnh (viết sai chính tả của quiet)"],
                 correct: 2,
-                exp: "Trong lúc thiên tai lũ lụt, cần cung cấp sự hỗ trợ y tế/chỗ ở khẩn cấp -> <b>emergency</b> support."
+                exp: "Đường phố đông đúc người và xe cộ -> <b>bustling</b> (nhộn nhịp/sầm uất) ."
             },
             {
-                q: "The more green spaces a city has, the more ______ it becomes. ",
-                qVi: "Một thành phố càng có nhiều không gian xanh, nó càng trở nên ______.",
-                key: ["green spaces"],
-                opts: ["polluted", "attractive", "crowded", "difficult"],
-                optsVi: ["ô nhiễm", "thu hút/hấp dẫn", "đông đúc", "khó khăn"],
+                q: "One of the main _____ of city life is the easy access to amenities like museums, cinemas, and diverse restaurants, which are often limited in rural areas. ",
+                qVi: "Một trong những _____ chính của cuộc sống thành phố là khả năng tiếp cận dễ dàng với các tiện ích như bảo tàng, rạp chiếu phim và các nhà hàng đa dạng, những thứ thường bị hạn chế ở khu vực nông thôn.",
+                key: ["easy access to amenities"],
+                opts: ["attractions", "problems", "drawbacks", "conflicts"],
+                optsVi: ["sự thu hút/điểm hấp dẫn", "vấn đề", "hạn chế", "xung đột"],
+                correct: 0,
+                exp: "Việc tiếp cận tiện ích dễ dàng là một điểm cộng, điều hấp dẫn của thành phố -> <b>attractions</b> ."
+            },
+            {
+                q: "The more actively you participate in community activities, _____ you will feel. ",
+                qVi: "Bạn càng tích cực tham gia vào các hoạt động cộng đồng, bạn sẽ cảm thấy _____. ",
+                key: ["The more actively", "Double comparative"],
+                opts: ["the happy", "the happier", "the happiest", "happier"],
+                optsVi: ["...", "càng hạnh phúc hơn", "...", "..."],
                 correct: 1,
-                exp: "Nhiều không gian xanh giúp thành phố trở nên hấp dẫn, đáng sống hơn -> <b>attractive</b>."
+                exp: "So sánh kép: The + so sánh hơn, <b>the + so sánh hơn</b>. -> <b>the happier</b> ."
             },
             {
-                q: "My family is planning a ______ this summer because everything-from the hotel to the meals-is included in one price. ",
-                qVi: "Gia đình tôi đang lên kế hoạch cho một ______ vào mùa hè này vì mọi thứ-từ khách sạn đến các bữa ăn-đều được bao gồm trong một mức giá.",
-                key: ["included in one price"],
-                opts: ["travel insurance", "guided tour", "Hotel reservation", "package holiday"],
-                optsVi: ["bảo hiểm du lịch", "tour có hướng dẫn", "đặt phòng khách sạn", "kỳ nghỉ trọn gói"],
+                q: "We only have _____ milk left in the fridge. Can you go and buy some? ",
+                qVi: "Chúng ta chỉ còn _____ sữa trong tủ lạnh. Bạn có thể đi mua một ít được không?",
+                key: ["milk (uncountable noun)", "only"],
+                opts: ["a few", "few", "little", "a little"],
+                optsVi: ["một vài", "rất ít", "rất ít (tiêu cực)", "một chút"],
                 correct: 3,
-                exp: "Chuyến du lịch trọn gói (đã bao gồm ăn ở, đi lại trong một mức giá) -> <b>package holiday</b>."
+                exp: "'milk' là danh từ không đếm được. Cụm từ 'only a little' nghĩa là chỉ còn lại một chút xíu -> <b>a little</b> ."
             },
             {
-                q: "Minh asked me whether she ______ to visit Ha Long Bay. ",
-                qVi: "Minh hỏi tôi liệu cô ấy ______ muốn đến thăm Vịnh Hạ Long không.",
-                key: ["asked", "whether"],
-                opts: ["wanted", "want", "wants", "wanting"],
-                optsVi: ["muốn (QKĐ)", "muốn", "muốn (HTĐ)", "muốn (V-ing)"],
-                correct: 0,
-                exp: "Câu tường thuật với động từ giới thiệu ở quá khứ (asked) yêu cầu lùi thì -> <b>wanted</b> (Quá khứ đơn)."
-            },
-            {
-                q: "Our office is ______ at 7100 Bayside Street, Fremont. ",
-                qVi: "Văn phòng của chúng tôi được ______ tại 7100 phố Bayside, Fremont.",
-                key: ["is", "at (location)"],
-                opts: ["locate", "location", "located", "locating"],
-                optsVi: ["đặt vị trí", "vị trí", "đặt/nằm ở (Adj)", "đang đặt"],
-                correct: 2,
-                exp: "Cấu trúc chỉ vị trí địa lý: be <b>located</b> at/in (được đặt/nằm ở đâu)."
-            },
-            {
-                q: "To visit the museum, you need to buy an ______ ticket at the counter. ",
-                qVi: "Để tham quan bảo tàng, bạn cần mua vé ______ tại quầy.",
-                key: ["visit the museum", "ticket"],
-                opts: ["exit", "entrance", "single", "return"],
-                optsVi: ["lối ra", "cửa vào/vào cửa", "đơn/một chiều", "khứ hồi"],
+                q: "He _____ in this small town ever since he graduated from university in 2020. ",
+                qVi: "Anh ấy _____ ở thị trấn nhỏ này kể từ khi anh ấy tốt nghiệp đại học vào năm 2020.",
+                key: ["ever since"],
+                opts: ["lives", "has lived", "lived", "will live"],
+                optsVi: ["sống", "đã sống (HTHT)", "đã sống (QKĐ)", "sẽ sống"],
                 correct: 1,
-                exp: "Vé vào cửa (để tham quan) -> <b>entrance</b> ticket."
+                exp: "Dấu hiệu 'ever since' (kể từ khi) -> Dùng thì Hiện tại hoàn thành (<b>has lived</b>) ."
             },
             {
-                q: "The hotel ______, was located near the beach, offered stunning ocean views. ",
-                qVi: "Khách sạn ______, nằm gần bãi biển, mang đến tầm nhìn tuyệt đẹp ra đại dương.",
-                key: ["The hotel"],
-                opts: ["whose", "which", "who", "where"],
-                optsVi: ["của vật mà", "cái mà", "người mà", "nơi mà"],
+                q: "If you join the blood donation this Sunday, you _____ help many patients. ",
+                qVi: "Nếu bạn tham gia hiến máu vào Chủ nhật này, bạn _____ giúp đỡ nhiều bệnh nhân.",
+                key: ["If", "join (present)", "Type 1"],
+                opts: ["should", "can", "must", "might"],
+                optsVi: ["nên", "có thể", "phải", "có lẽ"],
                 correct: 1,
-                exp: "Đại từ quan hệ thay thế cho danh từ chỉ vật (The hotel) và làm chủ ngữ -> <b>which</b>."
+                exp: "Câu điều kiện loại 1 chỉ một khả năng có thể xảy ra trong tương lai -> <b>can</b> help ."
             },
             {
-                q: "When I was in France, I ______ some Frech words. ",
-                qVi: "Khi tôi ở Pháp, tôi đã ______ một số từ tiếng Pháp.",
-                key: ["Frech words"],
-                opts: ["picked up", "copied up", "held up", "got up"],
-                optsVi: ["học lỏm/tiếp thu tự nhiên", "sao chép", "trì hoãn", "thức dậy"],
-                correct: 0,
-                exp: "Học lỏm, tiếp thu một ngôn ngữ một cách tự nhiên -> <b>picked up</b>."
-            },
-            {
-                q: "I can translate the document ______ multiple languages. ",
-                qVi: "Tôi có thể dịch tài liệu này ______ nhiều ngôn ngữ.",
-                key: ["translate"],
-                opts: ["to", "into", "on", "by"],
-                optsVi: ["tới", "sang/thành", "trên", "bởi"],
-                correct: 1,
-                exp: "Cấu trúc: translate something <b>into</b> (dịch cái gì sang ngôn ngữ nào)."
-            },
-            {
-                q: "Many national parks are established to conserve the Earth's unique ______. ",
-                qVi: "Nhiều vườn quốc gia được thành lập để bảo tồn ______ độc đáo của Trái đất.",
-                key: ["national parks", "conserve"],
-                opts: ["food chain", "water bodies", "outer space", "flora and fauna"],
-                optsVi: ["chuỗi thức ăn", "thủy vực", "không gian ngoài vũ trụ", "hệ động thực vật"],
-                correct: 3,
-                exp: "Vườn quốc gia có chức năng bảo tồn hệ động và thực vật -> <b>flora and fauna</b>."
-            },
-            {
-                q: "Mickey decided to give up the bank job to become a bartender ______ the attractive salary. ",
-                qVi: "Mickey quyết định từ bỏ công việc ngân hàng để trở thành một người pha chế ______ mức lương hấp dẫn.",
-                key: ["give up the bank job", "the attractive salary"],
-                opts: ["in spite", "though", "although", "despite"],
-                optsVi: ["mặc dù (thiếu of)", "mặc dù (+ clause)", "mặc dù (+ clause)", "mặc dù (+ Noun)"],
-                correct: 3,
-                exp: "Từ bỏ công việc dù lương cao. Sau chỗ trống là cụm danh từ 'the attractive salary' -> dùng <b>despite</b> (hoặc in spite of)."
-            },
-            {
-                q: "I suggest he ______ online reviews before purchasing a new tablet to ensure you make an informed decision. ",
-                qVi: "Tôi đề nghị anh ấy ______ các đánh giá trực tuyến trước khi mua máy tính bảng mới để đảm bảo bạn đưa ra quyết định sáng suốt.",
-                key: ["suggest he"],
-                opts: ["should check", "checks", "checked", "can check"],
-                optsVi: ["nên kiểm tra", "kiểm tra", "đã kiểm tra", "có thể kiểm tra"],
-                correct: 0,
-                exp: "Cấu trúc giả định: suggest (that) S + (<b>should</b>) + <b>V(nguyên thể)</b>."
-            },
-            {
-                q: "She ______ in this city since she moved in 2000. ",
-                qVi: "Cô ấy ______ ở thành phố này kể từ khi cô ấy chuyển đến vào năm 2000.",
-                key: ["since"],
-                opts: ["lives", "has lived", "is living", "lived"],
-                optsVi: ["sống", "đã sống (HTHT)", "đang sống", "đã sống"],
-                correct: 1,
-                exp: "Dấu hiệu 'since' (từ khi) -> Dùng thì Hiện tại hoàn thành (<b>has lived</b>)."
-            },
-            {
-                q: "Henry is ______ an excellent player that all football teams want to invite him. ",
-                qVi: "Henry là một cầu thủ xuất sắc ______ tất cả các đội bóng đều muốn mời anh ấy.",
-                key: ["an excellent player that"],
-                opts: ["such", "so", "too", "enough"],
-                optsVi: ["đến nỗi", "quá", "quá", "đủ"],
-                correct: 0,
-                exp: "Cấu trúc: <b>such</b> + a/an + adj + N + that (quá... đến nỗi mà)."
-            },
-            {
-                q: "Tim wants to become a ______ because he loves fixing machines and vehicles. ",
-                qVi: "Tim muốn trở thành một ______ vì anh ấy thích sửa chữa máy móc và xe cộ.",
-                key: ["fixing machines and vehicles"],
-                opts: ["architect", "engineer", "bartender", "mechanic"],
-                optsVi: ["kiến trúc sư", "kỹ sư", "người pha chế", "thợ cơ khí/thợ sửa máy"],
-                correct: 3,
-                exp: "Người chuyên sửa chữa máy móc và xe cộ -> <b>mechanic</b>."
-            },
-            {
-                q: "When we visit other countries, we should ______ a contribution to the local culture by respecting their traditions. ",
-                qVi: "Khi chúng ta đến thăm các quốc gia khác, chúng ta nên ______ đóng góp cho văn hóa địa phương bằng cách tôn trọng truyền thống của họ.",
-                key: ["a contribution"],
-                opts: ["make", "do", "have", "take"],
-                optsVi: ["tạo ra/làm", "làm", "có", "lấy"],
-                correct: 0,
-                exp: "Cụm từ cố định: <b>make</b> a contribution to (đóng góp vào cái gì)."
-            },
-            {
-                q: "The city council is ______ a big project to improve its traffic light system. ",
-                qVi: "Hội đồng thành phố đang ______ một dự án lớn để cải thiện hệ thống đèn giao thông.",
-                key: ["a big project"],
-                opts: ["holding on", "watching out", "carrying out", "cutting down"],
-                optsVi: ["giữ máy/đợi", "coi chừng", "tiến hành/thực hiện", "cắt giảm"],
-                correct: 2,
-                exp: "Tiến hành/thực hiện một kế hoạch, dự án -> <b>carrying out</b>."
-            },
-            {
-                q: "These seats are very uncomfortable. I wish we ______ first class. ",
-                qVi: "Những chỗ ngồi này rất không thoải mái. Tôi ước chúng tôi ______ khoang hạng nhất.",
-                key: ["wish", "are very uncomfortable"],
-                opts: ["Travel", "travelled", "can travel", "will travel"],
-                optsVi: ["đi du lịch", "đã đi du lịch (QKĐ)", "có thể đi du lịch", "sẽ đi du lịch"],
-                correct: 1,
-                exp: "Câu điều ước trái ngược với hiện tại (ghế hiện tại không thoải mái), động từ lùi về Quá khứ đơn -> <b>travelled</b>."
-            },
-            {
-                q: "Can you help me? I don't know ______ to solve this mathematical problem. ",
-                qVi: "Bạn có thể giúp tôi không? Tôi không biết ______ để giải quyết bài toán này.",
+                q: "I don't know _____ to solve this complicated math problem. ",
+                qVi: "Tôi không biết _____ để giải quyết bài toán phức tạp này.",
                 key: ["to solve"],
-                opts: ["what", "when", "who", "how"],
-                optsVi: ["cái gì", "khi nào", "ai", "cách nào/làm thế nào"],
+                opts: ["what", "when", "where", "how"],
+                optsVi: ["cái gì", "khi nào", "ở đâu", "cách nào/làm thế nào"],
                 correct: 3,
-                exp: "Không biết 'cách' giải quyết -> know <b>how</b> to V."
+                exp: "Không biết 'cách' giải quyết -> know <b>how</b> to V ."
             },
             {
-                q: "______ you talk about your problems, the more you will think about them. ",
-                qVi: "Bạn ______ nói về những vấn đề của mình, bạn sẽ càng nghĩ nhiều về chúng.",
-                key: ["the more you will think"],
-                opts: ["The more", "More", "The most", "The less"],
-                optsVi: ["Càng nhiều", "Nhiều hơn", "Nhiều nhất", "Càng ít"],
-                correct: 0,
-                exp: "So sánh kép: <b>The more</b> + S + V, the more + S + V (Càng... thì càng...)."
-            },
-            {
-                q: "The custom of sending a greeting in a card had become a ______ tradition. ",
-                qVi: "Phong tục gửi lời chào trong một tấm thiệp đã trở thành một truyền thống ______.",
-                key: ["tradition"],
-                opts: ["deeply-rooted", "deeply-root", "deep-rooted", "deep-root"],
-                optsVi: ["...", "...", "lâu đời/ăn sâu bám rễ", "..."],
-                correct: 2,
-                exp: "Tính từ ghép mang nghĩa 'lâu đời, bám rễ sâu' -> <b>deep-rooted</b>."
-            },
-            {
-                q: "The boss gave Jenny ______ a difficult task that she felt stressed all the time. ",
-                qVi: "Sếp đã giao cho Jenny một nhiệm vụ khó khăn ______ mà cô ấy lúc nào cũng cảm thấy căng thẳng.",
-                key: ["a difficult task that"],
-                opts: ["so", "enough", "too", "such"],
-                optsVi: ["quá", "đủ", "quá", "đến nỗi mà"],
+                q: "Maintaining a _____ life often means making time for the things you have to do, as well as the things you want to do in a suitable way. ",
+                qVi: "Duy trì một cuộc sống _____ thường có nghĩa là dành thời gian cho những việc bạn phải làm, cũng như những việc bạn muốn làm một cách phù hợp.",
+                key: ["making time for the things you have to do, as well as the things you want to do"],
+                opts: ["educational", "mental", "social", "well-balanced"],
+                optsVi: ["thuộc giáo dục", "thuộc tinh thần", "thuộc xã hội", "cân bằng tốt"],
                 correct: 3,
-                exp: "Cấu trúc: <b>such</b> + a/an + adj + N + that (quá... đến nỗi mà)."
+                exp: "Dành thời gian hợp lý cho cả việc 'cần làm' và 'muốn làm' -> <b>well-balanced</b> life (cuộc sống cân bằng) ."
             },
             {
-                q: "To ensure your ______ could record the whole event, don't forget to buy extra memory cards. ",
-                qVi: "Để đảm bảo ______ của bạn có thể ghi lại toàn bộ sự kiện, đừng quên mua thêm thẻ nhớ.",
-                key: ["record the whole event"],
-                opts: ["music player", "camcorder", "vacuum cleaner", "smartwatch"],
-                optsVi: ["máy nghe nhạc", "máy quay phim cầm tay", "máy hút bụi", "đồng hồ thông minh"],
+                q: "Our school is raising money for a charity _____ to help street children. ",
+                qVi: "Trường chúng tôi đang gây quỹ cho một ______ từ thiện để giúp đỡ trẻ em đường phố.",
+                key: ["charity"],
+                opts: ["donate", "donation", "donating", "donated"],
+                optsVi: ["quyên góp (v)", "sự quyên góp/khoản quyên góp (n)", "quyên góp (v-ing)", "được quyên góp"],
                 correct: 1,
-                exp: "Thiết bị dùng để quay phim/ghi hình -> <b>camcorder</b>."
+                exp: "Tạo thành cụm danh từ: charity <b>donation</b> (khoản quyên góp từ thiện) ."
             },
             {
-                q: "Scientists study the ______ to understand the formation and evolution of planets. ",
-                qVi: "Các nhà khoa học nghiên cứu ______ để hiểu sự hình thành và tiến hóa của các hành tinh.",
-                key: ["evolution of planets"],
-                opts: ["natural habitat", "nature reserve", "solar system", "global warming"],
-                optsVi: ["môi trường sống tự nhiên", "khu bảo tồn thiên nhiên", "hệ mặt trời", "sự nóng lên toàn cầu"],
+                q: "The more you _____ your smoking, the healthier you get. ",
+                qVi: "Bạn càng _____ việc hút thuốc, bạn càng trở nên khỏe mạnh hơn.",
+                key: ["smoking", "the healthier"],
+                opts: ["put up with", "come down with", "cut down on", "look forward to"],
+                optsVi: ["chịu đựng", "bị ốm/mắc bệnh", "cắt giảm", "mong đợi"],
                 correct: 2,
-                exp: "Nghiên cứu về các hành tinh (planets) thì liên quan đến hệ mặt trời -> <b>solar system</b>."
+                exp: "Cắt giảm lượng hút thuốc để khỏe mạnh hơn -> <b>cut down on</b> ."
             },
+
+            // Block 3
             {
-                q: "He wishes he ______ a Lamborghini in Paris right now. ",
-                qVi: "Anh ấy ước mình ______ một chiếc Lamborghini ở Paris ngay lúc này.",
-                key: ["wishes", "right now"],
-                opts: ["drives", "drove", "driving", "to drive"],
-                optsVi: ["lái", "đã lái (QKĐ)", "đang lái", "để lái"],
-                correct: 1,
-                exp: "Câu điều ước ở hiện tại (ngay lúc này), động từ lùi về Quá khứ đơn -> <b>drove</b>."
-            },
-            {
-                q: "They were driving to Dallas ______ they caught an accident. ",
-                qVi: "Họ đang lái xe đến Dallas ______ họ gặp tai nạn.",
-                key: ["were driving", "caught"],
-                opts: ["when", "while", "before", "as soon as"],
-                optsVi: ["khi", "trong khi", "trước khi", "ngay khi"],
-                correct: 0,
-                exp: "Hành động đang xảy ra (QKTD) thì một hành động khác xen vào (QKĐ) -> dùng <b>when</b> trước hành động xen vào."
-            },
-            {
-                q: "Despite many recent ______ advances, there are parts where schools were not equipped with computers. ",
-                qVi: "Mặc dù có nhiều tiến bộ ______ gần đây, vẫn có những nơi trường học không được trang bị máy tính.",
-                key: ["advances (Noun)"],
-                opts: ["technologist", "technologically", "technological", "technology"],
-                optsVi: ["kỹ thuật gia", "về mặt công nghệ (adv)", "thuộc về công nghệ (adj)", "công nghệ (n)"],
-                correct: 2,
-                exp: "Đứng trước danh từ 'advances' cần một tính từ bổ nghĩa -> <b>technological</b>."
-            },
-            {
-                q: "______ I planned the trip carefully, we ended up staying in a really bad hotel. ",
-                qVi: "______ tôi đã lên kế hoạch cho chuyến đi một cách cẩn thận, cuối cùng chúng tôi lại ở trong một khách sạn thực sự tồi tệ.",
-                key: ["planned the trip carefully", "bad hotel"],
-                opts: ["Although", "Because", "Since", "Despite"],
-                optsVi: ["Mặc dù (+ clause)", "Bởi vì", "Vì", "Mặc dù (+ Noun)"],
-                correct: 0,
-                exp: "Hai vế mang nghĩa tương phản và sau chỗ trống là mệnh đề (S + V) -> Dùng <b>Although</b>."
-            },
-            {
-                q: "The library also offers a private learning ______ for students who buy membership. ",
-                qVi: "Thư viện cũng cung cấp một ______ học tập riêng tư cho những sinh viên mua thẻ thành viên.",
-                key: ["private learning"],
-                opts: ["field", "gap", "space", "location"],
-                optsVi: ["cánh đồng/lĩnh vực", "khoảng trống", "không gian", "vị trí"],
-                correct: 2,
-                exp: "Không gian, khu vực học tập riêng biệt -> learning <b>space</b>."
-            },
-            {
-                q: "As a hotel ______ your job isn't only to greet guests but also to make them feel welcome. ",
-                qVi: "Là một ______ khách sạn, công việc của bạn không chỉ là chào đón khách mà còn khiến họ cảm thấy được chào đón.",
-                key: ["greet guests"],
-                opts: ["housekeeper", "secretary", "chef", "receptionist"],
-                optsVi: ["người dọn phòng", "thư ký", "đầu bếp", "nhân viên lễ tân"],
-                correct: 3,
-                exp: "Công việc chào đón khách ở sảnh khách sạn là của nhân viên lễ tân -> <b>receptionist</b>."
-            },
-            {
-                q: "I really don't know ______ to manage my time effectively. Can you give me some tips? ",
-                qVi: "Tôi thực sự không biết ______ để quản lý thời gian hiệu quả. Bạn có thể cho tôi vài lời khuyên không?",
-                key: ["to manage"],
-                opts: ["when", "how", "what", "who"],
-                optsVi: ["khi nào", "làm thế nào/cách", "cái gì", "ai"],
-                correct: 1,
-                exp: "Không biết 'cách' quản lý thời gian -> know <b>how</b> to V."
-            },
-            {
-                q: "The team ______ for the presentation when the teacher walked into the classroom. ",
-                qVi: "Nhóm ______ cho bài thuyết trình khi giáo viên bước vào lớp.",
-                key: ["when the teacher walked into"],
-                opts: ["was preparing", "prepared", "prepares", "is preparing"],
-                optsVi: ["đang chuẩn bị (QKTD)", "đã chuẩn bị", "chuẩn bị", "đang chuẩn bị (HTTD)"],
-                correct: 0,
-                exp: "Hành động đang diễn ra trong quá khứ thì có hành động khác cắt ngang -> Dùng Quá khứ tiếp diễn (<b>was preparing</b>)."
-            },
-            {
-                q: "I asked my classmates when we ______ a day trip to National Park. ",
-                qVi: "Tôi đã hỏi các bạn cùng lớp khi nào chúng tôi ______ có một chuyến đi trong ngày tới Công viên Quốc gia.",
-                key: ["asked", "when we"],
-                opts: ["have", "will have", "was having", "would have"],
-                optsVi: ["có", "sẽ có", "đang có", "sẽ có (trong QK)"],
-                correct: 3,
-                exp: "Câu tường thuật với động từ giới thiệu ở quá khứ (asked) diễn tả dự định tương lai -> 'will have' lùi thì thành <b>would have</b>."
-            },
-            {
-                q: "To reduce my cholesterol, I'm trying to cut ______ fatty food. ",
-                qVi: "Để giảm lượng cholesterol của mình, tôi đang cố gắng cắt giảm ______ thức ăn nhiều chất béo.",
-                key: ["cut", "fatty food"],
-                opts: ["down on", "out of", "out on", "in on"],
-                optsVi: ["cắt giảm", "ra khỏi", "...", "..."],
-                correct: 0,
-                exp: "Cụm động từ: <b>cut down on</b> (cắt giảm lượng tiêu thụ cái gì)."
-            },
-            {
-                q: "She suggested ______ together for safety, since the area was so dangerous. ",
-                qVi: "Cô ấy đề nghị ______ cùng nhau cho an toàn, vì khu vực này rất nguy hiểm.",
+                q: "The environmental club suggested _____ plastic waste from the beach to clean it up. ",
+                qVi: "Câu lạc bộ môi trường đề nghị _____ rác thải nhựa từ bãi biển để làm sạch nó.",
                 key: ["suggested"],
-                opts: ["to travel", "travelling", "to travelling", "travel"],
-                optsVi: ["để đi", "đi lại (V-ing)", "...", "đi (V)"],
+                opts: ["to collect", "collecting", "collect", "to collecting"],
+                optsVi: ["để thu gom", "thu gom (V-ing)", "thu gom", "để thu gom"],
                 correct: 1,
-                exp: "Cấu trúc: suggest + <b>V-ing</b> (đề xuất làm việc gì)."
+                exp: "Cấu trúc: suggest + <b>V-ing</b> (gợi ý làm việc gì) ."
             },
             {
-                q: "After the party, everyone was happy to ______ the host for a wonderful evening. ",
-                qVi: "Sau bữa tiệc, mọi người đều rất vui vẻ để ______ người chủ nhà vì một buổi tối tuyệt vời.",
-                key: ["the host for a wonderful evening"],
-                opts: ["pass down", "remind", "take care of", "thank"],
-                optsVi: ["truyền lại", "nhắc nhở", "chăm sóc", "cảm ơn"],
-                correct: 3,
-                exp: "Cảm ơn ai đó vì điều gì -> <b>thank</b> somebody for something."
-            },
-            {
-                q: "Son Doong Cave is one of the most fascinating ______ that can be experienced in Southeast Asia. ",
-                qVi: "Hang Sơn Đoòng là một trong những ______ hấp dẫn nhất có thể trải nghiệm ở Đông Nam Á.",
-                key: ["Son Doong Cave"],
-                opts: ["journeys", "expeditions", "destinations", "explorations"],
-                optsVi: ["hành trình", "cuộc thám hiểm", "điểm đến", "sự khám phá"],
+                q: "The Internet has helped students study more _____ . ",
+                qVi: "Internet đã giúp học sinh học tập một cách _____ hơn.",
+                key: ["study (verb)", "more"],
+                opts: ["effect", "effective", "effectively", "effectiveness"],
+                optsVi: ["tác động (n)", "hiệu quả (adj)", "một cách hiệu quả (adv)", "tính hiệu quả (n)"],
                 correct: 2,
-                exp: "Hang Sơn Đoòng là một địa danh, một điểm đến du lịch nổi tiếng -> <b>destinations</b>."
+                exp: "Bổ nghĩa cho động từ thường 'study' cần một trạng từ -> <b>effectively</b> ."
             },
             {
-                q: "Passengers ______ flights were delayed were offered free accommodation for the night. ",
-                qVi: "Những hành khách ______ chuyến bay bị hoãn đã được cung cấp chỗ ở miễn phí cho đêm đó.",
-                key: ["Passengers", "flights"],
-                opts: ["which", "who", "whom", "whose"],
-                optsVi: ["cái mà", "người mà (S)", "người mà (O)", "của người mà"],
-                correct: 3,
-                exp: "Đại từ quan hệ chỉ sự sở hữu (chuyến bay của những hành khách đó) -> <b>whose</b>."
-            },
-            {
-                q: "A ______ classroom allows students to choose what and how they will learn. ",
-                qVi: "Một lớp học ______ cho phép học sinh chọn học cái gì và học như thế nào.",
-                key: ["allows students to choose"],
-                opts: ["simple", "democratic", "various", "natural"],
-                optsVi: ["đơn giản", "dân chủ", "đa dạng", "tự nhiên"],
+                q: "I _____ here since I graduated. ",
+                qVi: "Tôi _____ ở đây kể từ khi tôi tốt nghiệp.",
+                key: ["since"],
+                opts: ["lived", "have lived", "am living", "was living"],
+                optsVi: ["đã sống (QKĐ)", "đã sống (HTHT)", "đang sống", "đang sống (QKTD)"],
                 correct: 1,
-                exp: "Lớp học trao quyền tự quyết, bình đẳng cho học sinh -> <b>democratic</b> classroom (lớp học dân chủ)."
+                exp: "Dấu hiệu 'since' + mốc thời gian -> Dùng thì Hiện tại hoàn thành (<b>have lived</b>) ."
+            },
+            {
+                q: "If John completes his assignment on Friday, he _____ go out with his friends at the weekend. ",
+                qVi: "Nếu John hoàn thành bài tập vào thứ Sáu, anh ấy _____ đi chơi với bạn bè vào cuối tuần.",
+                key: ["If", "completes (Present)", "Type 1"],
+                opts: ["must", "may", "can", "should"],
+                optsVi: ["phải", "có thể", "có thể (được phép/khả năng)", "nên"],
+                correct: 2,
+                exp: "Câu điều kiện loại 1, nói về sự cho phép hoặc khả năng có thể làm gì -> <b>can</b> go out ."
+            },
+            {
+                q: "People need to _____ the amount of plastic they use to save the Earth. ",
+                qVi: "Mọi người cần _____ lượng nhựa họ sử dụng để cứu Trái đất.",
+                key: ["the amount of plastic"],
+                opts: ["carry out", "look after", "cut down on", "take over"],
+                optsVi: ["tiến hành", "chăm sóc", "cắt giảm", "tiếp quản"],
+                correct: 2,
+                exp: "Giảm lượng tiêu thụ nhựa -> <b>cut down on</b> ."
+            },
+            {
+                q: "We have _____ time, so we need to hurry. ",
+                qVi: "Chúng ta có _____ thời gian, vì vậy chúng ta cần phải nhanh lên.",
+                key: ["time (uncountable)", "need to hurry"],
+                opts: ["a little", "little", "many", "few"],
+                optsVi: ["một chút", "rất ít/gần như không có", "nhiều", "rất ít (dùng với N đếm được)"],
+                correct: 1,
+                exp: "'time' là danh từ không đếm được. Do cần phải nhanh lên nên thời gian còn lại là cực kỳ ít/hầu như không còn -> <b>little</b> ."
+            },
+            {
+                q: "I'm crazy _____ exploring the wonders of nature. ",
+                qVi: "Tôi phát cuồng _____ việc khám phá những kỳ quan của thiên nhiên.",
+                key: ["crazy"],
+                opts: ["on", "of", "in", "about"],
+                optsVi: ["...", "...", "...", "về"],
+                correct: 3,
+                exp: "Cấu trúc: be crazy <b>about</b> doing something (phát cuồng/vô cùng thích thú với việc gì) ."
+            },
+            {
+                q: "This is the brochure _____ provides the informarion you need for your visit to Tokyo. ",
+                qVi: "Đây là cuốn sách nhỏ _____ cung cấp thông tin bạn cần cho chuyến thăm Tokyo của bạn.",
+                key: ["brochure", "Relative Pronoun"],
+                opts: ["which", "whom", "who", "whose"],
+                optsVi: ["cái mà", "người mà (O)", "người mà (S)", "của người mà"],
+                correct: 0,
+                exp: "Đại từ quan hệ thay thế cho danh từ chỉ vật (brochure) và làm chủ ngữ -> <b>which</b> ."
+            },
+            {
+                q: "They suggested that Andy _____ up his mind immediately. ",
+                qVi: "Họ đề nghị Andy hãy _____ quyết định ngay lập tức.",
+                key: ["up his mind"],
+                opts: ["take", "get", "make", "have"],
+                optsVi: ["lấy", "nhận", "tạo ra", "có"],
+                correct: 2,
+                exp: "Thành ngữ: <b>make</b> up one's mind (đưa ra quyết định) ."
+            },
+            {
+                q: "The city is often called a _____ due to its many tall buildings and busy streets. ",
+                qVi: "Thành phố thường được gọi là một _____ do có nhiều tòa nhà cao tầng và đường phố nhộn nhịp.",
+                key: ["many tall buildings and busy streets"],
+                opts: ["concrete jungle", "public transport", "green space", "noise pollution"],
+                optsVi: ["rừng bê tông", "giao thông công cộng", "không gian xanh", "ô nhiễm tiếng ồn"],
+                correct: 0,
+                exp: "Khu vực chi chít các tòa nhà cao tầng được ví như 'rừng bê tông' -> <b>concrete jungle</b> ."
+            },
+            {
+                q: "In the past, girls and women had little _____ to pursue their interests. ",
+                qVi: "Trong quá khứ, trẻ em gái và phụ nữ có rất ít _____ để theo đuổi sở thích của họ.",
+                key: ["little", "to pursue"],
+                opts: ["right", "benefit", "opportunity", "condition"],
+                optsVi: ["quyền lợi", "lợi ích", "cơ hội", "điều kiện"],
+                correct: 2,
+                exp: "Ít có cơ hội làm gì đó -> little <b>opportunity</b> ."
+            },
+            {
+                q: "The traditions in our country are _____ with cultural practices passed down through generations. ",
+                qVi: "Những truyền thống ở nước ta thì _____ với các tập tục văn hóa được truyền qua nhiều thế hệ.",
+                key: ["passed down through generations"],
+                opts: ["world-famous", "deep-rooted", "family-oriented", "well-balanced"],
+                optsVi: ["nổi tiếng thế giới", "ăn sâu bám rễ/lâu đời", "hướng về gia đình", "cân bằng tốt"],
+                correct: 1,
+                exp: "Truyền thống được truyền từ đời này qua đời khác mang tính lâu đời, ăn sâu vào văn hóa -> <b>deep-rooted</b> ."
+            },
+
+            // Block 4
+            {
+                q: "This event will take place _____ a professional training center. ",
+                qVi: "Sự kiện này sẽ diễn ra _____ một trung tâm đào tạo chuyên nghiệp.",
+                key: ["a professional training center"],
+                opts: ["in", "on", "at", "for"],
+                optsVi: ["trong", "trên", "tại", "cho"],
+                correct: 2,
+                exp: "Chỉ một địa điểm/cơ sở cụ thể -> dùng giới từ <b>at</b> ."
+            },
+            {
+                q: "The manual _____ that users _____ the software regularly. ",
+                qVi: "Hướng dẫn sử dụng _____ rằng người dùng _____ phần mềm thường xuyên.",
+                key: ["that users", "Subjunctive mood"],
+                opts: ["advises/update", "suggests/updating", "recommends / to update", "suggests/will update"],
+                optsVi: ["khuyên/cập nhật", "đề nghị/cập nhật", "khuyên/để cập nhật", "đề nghị/sẽ cập nhật"],
+                correct: 0,
+                exp: "Cấu trúc giả định: advise/suggest/recommend that S + (should) + <b>V(nguyên thể)</b>. Chỉ có đáp án A phù hợp ngữ pháp ."
+            },
+            {
+                q: "At this time last week, we _____ a party in a luxurious restaurant. ",
+                qVi: "Vào thời điểm này tuần trước, chúng tôi _____ một bữa tiệc trong một nhà hàng sang trọng.",
+                key: ["At this time last week", "Past Continuous"],
+                opts: ["will be having", "had had", "were having", "had"],
+                optsVi: ["sẽ đang có", "đã có (QKHT)", "đang có (QKTD)", "đã có (QKĐ)"],
+                correct: 2,
+                exp: "Hành động đang diễn ra tại một thời điểm xác định trong quá khứ -> Dùng Quá khứ tiếp diễn (<b>were having</b>) ."
+            },
+            {
+                q: "Many smart devices offer great _____ for people with busy lifestyles. ",
+                qVi: "Nhiều thiết bị thông minh mang lại sự _____ lớn cho những người có lối sống bận rộn.",
+                key: ["great + Noun"],
+                opts: ["convenient", "convenience", "conveniently", "inconvenienced"],
+                optsVi: ["tiện lợi (adj)", "sự tiện lợi (n)", "một cách tiện lợi (adv)", "bị bất tiện (adj)"],
+                correct: 1,
+                exp: "Sau tính từ 'great' cần một danh từ -> <b>convenience</b> ."
+            },
+            {
+                q: "The curriculum at the public school is as good _____ school. ",
+                qVi: "Chương trình học tại trường công lập thì tốt bằng hoặc tốt hơn chương trình ở bất kỳ trường tư thục nào.",
+                key: ["as good", "curriculum"],
+                opts: ["or better than", "as or better than", "as or better than those", "as or better than that"],
+                optsVi: ["hoặc tốt hơn", "bằng hoặc tốt hơn", "bằng hoặc tốt hơn những cái đó", "bằng hoặc tốt hơn cái đó"],
+                correct: 3,
+                exp: "Cấu trúc kết hợp: 'as good as' + 'better than'. Đại từ thay thế cho 'the curriculum' (số ít) là 'that' -> <b>as or better than that</b> ."
+            },
+            {
+                q: "_____ the movie received mixed reviews, we decided to watch it because the trailer looked interesting. ",
+                qVi: "_____ bộ phim nhận được nhiều đánh giá trái chiều, chúng tôi đã quyết định xem nó vì đoạn giới thiệu trông rất thú vị.",
+                key: ["mixed reviews", "decided to watch"],
+                opts: ["Even though", "Despite", "Because", "Because of"],
+                optsVi: ["Mặc dù (+ clause)", "Mặc dù (+ Noun/V-ing)", "Bởi vì (+ clause)", "Bởi vì (+ Noun)"],
+                correct: 0,
+                exp: "Sau khoảng trống là một mệnh đề (S + V) và hai vế mang ý nghĩa tương phản -> Dùng <b>Even though</b> ."
+            },
+            {
+                q: "After finishing their homework, many teenagers like to _____ their friends at the cafe. ",
+                qVi: "Sau khi làm xong bài tập về nhà, nhiều thanh thiếu niên thích _____ bạn bè của họ tại quán cà phê.",
+                key: ["their friends at the cafe"],
+                opts: ["cut down on", "get on with", "look down on", "hang out with"],
+                optsVi: ["cắt giảm", "hòa thuận với", "khinh thường", "tụ tập/đi chơi với"],
+                correct: 3,
+                exp: "Tụ tập, la cà cùng bạn bè -> <b>hang out with</b> ."
+            },
+            {
+                q: "Henry is _____ an excellent player _____ all football teams want to invite him. ",
+                qVi: "Henry là một cầu thủ xuất sắc _____ tất cả các đội bóng đều muốn mời anh ấy.",
+                key: ["an excellent player"],
+                opts: ["enough - that", "too - that", "such - that", "so - that"],
+                optsVi: ["đủ", "quá", "đến nỗi", "quá"],
+                correct: 2,
+                exp: "Cấu trúc: <b>such</b> + a/an + adj + N + <b>that</b> (quá/thật sự... đến nỗi mà) ."
+            },
+            {
+                q: "The local government has built a new nature reserve _____ preserve endangered animals in the area. ",
+                qVi: "Chính quyền địa phương đã xây dựng một khu bảo tồn thiên nhiên mới _____ bảo tồn các loài động vật có nguy cơ tuyệt chủng trong khu vực.",
+                key: ["preserve (verb)"],
+                opts: ["so that", "although", "so as", "in order to"],
+                optsVi: ["để mà (+ clause)", "mặc dù (+ clause)", "để mà (thiếu to)", "để (+ V)"],
+                correct: 3,
+                exp: "Chỉ mục đích, phía sau là động từ nguyên mẫu 'preserve' -> <b>in order to</b> ."
+            },
+            {
+                q: "Scientists are trying to find _____ of life on other planets. ",
+                qVi: "Các nhà khoa học đang cố gắng tìm _____ của sự sống trên các hành tinh khác.",
+                key: ["of life on other planets"],
+                opts: ["information", "evidence", "imagination", "reason"],
+                optsVi: ["thông tin", "bằng chứng", "sự tưởng tượng", "lý do"],
+                correct: 1,
+                exp: "Tìm kiếm bằng chứng về sự sống -> find <b>evidence</b> of life ."
+            },
+            {
+                q: "He tried to _____ by teaching French in Harvard College. ",
+                qVi: "Anh ấy đã cố gắng _____ bằng cách dạy tiếng Pháp tại trường Cao đẳng Harvard.",
+                key: ["by teaching French"],
+                opts: ["earn a living", "find a way", "do a job", "make a progress"],
+                optsVi: ["kiếm sống", "tìm cách", "làm một công việc", "tạo ra một sự tiến bộ (sai ngữ pháp: progress không có 'a')"],
+                correct: 0,
+                exp: "Dạy học để kiếm tiền mưu sinh -> <b>earn a living</b> ."
+            },
+            {
+                q: "Did you see the _____ envelope? ",
+                qVi: "Bạn có thấy cái phong bì _____ không?",
+                key: ["Order of Adjectives (OSASCOMP)"],
+                opts: ["nice manila small square brown", "nice small square brown manila", "nice small square manila brown", "nice small manila square brown"],
+                optsVi: ["...", "...", "...", "..."],
+                correct: 1,
+                exp: "Trật tự tính từ OSASCOMP: Opinion (nice) - Size (small) - Shape (square) - Color (brown) - Material (manila) -> <b>nice small square brown manila</b> ."
             }
         ];
 
@@ -1047,7 +946,7 @@
             const transBtn = document.getElementById(`btn-trans-${qIndex}`);
             const navNum = document.getElementById(`nav-${qIndex}`);
 
-            // Bật nút Dịch Nghĩa
+            // Enable Translate button
             if (transBtn.hasAttribute('disabled')) {
                 transBtn.removeAttribute('disabled');
                 transBtn.innerHTML = '🌐 Dịch nghĩa';
