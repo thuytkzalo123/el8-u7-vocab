@@ -9,13 +9,13 @@
         body { background: #1a1a2e; color: #fff; display: flex; flex-direction: row; height: 100vh; overflow: hidden; position: relative; }
         
         /* CẤU HÌNH KHU VỰC CÀI ĐẶT */
-        .setup-container { width: 35%; min-width: 320px; padding: 30px; background: #162447; display: flex; flex-direction: column; gap: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.3); z-index: 10; transition: transform 0.3s ease; }
+        .setup-container { width: 35%; min-width: 320px; padding: 25px; background: #162447; display: flex; flex-direction: column; gap: 15px; box-shadow: 5px 0 15px rgba(0,0,0,0.3); z-index: 10; transition: transform 0.3s ease; }
         .setup-container.hidden { transform: translateX(-100%); position: absolute; left: 0; top: 0; width: 0; min-width: 0; padding: 0; overflow: hidden; }
-        h2 { color: #e43f5a; font-size: 24px; margin-bottom: 10px; }
+        h2 { color: #e43f5a; font-size: 24px; margin-bottom: 5px; }
         label { font-weight: bold; font-size: 14px; color: #cbd5e1; }
-        textarea { width: 100%; height: 200px; padding: 12px; border-radius: 8px; border: none; background: #1f4068; color: #fff; font-size: 16px; resize: none; }
+        textarea { width: 100%; height: 180px; padding: 12px; border-radius: 8px; border: none; background: #1f4068; color: #fff; font-size: 16px; resize: none; }
         input, select { width: 100%; padding: 10px; border-radius: 8px; border: none; background: #1f4068; color: #fff; font-size: 16px; }
-        button { width: 100%; padding: 15px; border-radius: 8px; border: none; background: #e43f5a; color: #fff; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button { width: 100%; padding: 14px; border-radius: 8px; border: none; background: #e43f5a; color: #fff; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         button:hover { background: #ff4a68; transform: translateY(-2px); }
         .share-section { margin-top: auto; padding-top: 15px; border-top: 1px solid #1f4068; }
         
@@ -68,12 +68,22 @@ Teacher / /ˈtiːtʃə(r)/ / Giáo viên
 Student / /ˈstjuːdnt/ / Học sinh</textarea>
         </div>
         <div>
-            <label>2. Thời gian mỗi từ (giây):</label>
+            <label>2. Thời gian giãn cách giữa các lần (giây):</label>
             <input type="number" id="durationInput" value="3" min="1">
         </div>
         <div>
             <label>3. Chọn Giọng Đọc Tiếng Anh:</label>
             <select id="voiceSelect"><option value="">Đang tải giọng đọc...</option></select>
+        </div>
+        <div>
+            <label>4. Chọn số lần đọc mỗi từ:</label>
+            <select id="repeatSelect">
+                <option value="1">Đọc 1 lần</option>
+                <option value="2" selected>Đọc 2 lần</option>
+                <option value="3">Đọc 3 lần</option>
+                <option value="4">Đọc 4 lần</option>
+                <option value="5">Đọc 5 lần</option>
+            </select>
         </div>
         <button onclick="startPresentation()">Bắt Đầu Trình Chiếu</button>
 
@@ -100,6 +110,7 @@ Student / /ˈstjuːdnt/ / Học sinh</textarea>
         let voices = [];
         let vocabList = [];
         let currentIndex = 0;
+        let repeatCount = 0; 
         let slideInterval = null;
         let isPaused = false;
 
@@ -124,12 +135,14 @@ Student / /ˈstjuːdnt/ / Học sinh</textarea>
             let urlParams = new URLSearchParams(window.location.search);
             let data = urlParams.get('data');
             let time = urlParams.get('time');
+            let repeat = urlParams.get('repeat');
             
             if (data) {
                 try {
                     let decodedData = decodeURIComponent(atob(data));
                     document.getElementById('vocabInput').value = decodedData;
                     if (time) document.getElementById('durationInput').value = time;
+                    if (repeat) document.getElementById('repeatSelect').value = repeat;
                     setTimeout(() => { startPresentation(); }, 500);
                 } catch(e) {
                     document.getElementById('slideShowArea').innerHTML = `<div style="color: #e43f5a; text-align:center;">Link cấu trúc lỗi! Không thể giải mã dữ liệu.</div>`;
@@ -157,6 +170,7 @@ Student / /ˈstjuːdnt/ / Học sinh</textarea>
             });
 
             currentIndex = 0;
+            repeatCount = 0; 
             isPaused = false;
             document.getElementById('setupForm').classList.add('hidden');
             document.getElementById('exitBtn').style.display = 'block';
@@ -185,21 +199,30 @@ Student / /ˈstjuːdnt/ / Học sinh</textarea>
             let item = vocabList[currentIndex];
             let selectedVoiceName = document.getElementById('voiceSelect').value;
             let duration = parseInt(document.getElementById('durationInput').value) * 1000;
+            // Lấy cấu hình số lần lặp từ giao diện người dùng
+            let maxRepeat = parseInt(document.getElementById('repeatSelect').value);
 
             let utterance = new SpeechSynthesisUtterance(item.word);
             let selectedVoice = voices.find(v => v.name === selectedVoiceName);
             if (selectedVoice) utterance.voice = selectedVoice;
             
             synth.speak(utterance);
+            repeatCount++; 
 
             slideInterval = setTimeout(() => {
-                if (currentIndex < vocabList.length - 1) {
-                    currentIndex++;
-                    renderSlide();
+                // Kiểm tra dựa trên giá trị cấu hình động thay vì con số cố định
+                if (repeatCount < maxRepeat) {
                     playCurrentCycle();
                 } else {
-                    alert("Đã hoàn thành bài học!");
-                    stopPresentation();
+                    repeatCount = 0;
+                    if (currentIndex < vocabList.length - 1) {
+                        currentIndex++;
+                        renderSlide();
+                        playCurrentCycle();
+                    } else {
+                        alert("Đã hoàn thành bài học!");
+                        stopPresentation();
+                    }
                 }
             }, duration);
         }
@@ -207,11 +230,13 @@ Student / /ˈstjuːdnt/ / Học sinh</textarea>
         function generateShareLink() {
             let text = document.getElementById('vocabInput').value.trim();
             let time = document.getElementById('durationInput').value;
+            let repeat = document.getElementById('repeatSelect').value;
             if(!text) return alert("Hãy nhập từ vựng trước khi tạo link!");
             
             let encodedData = btoa(encodeURIComponent(text));
             let baseUrl = window.location.href.split('?')[0];
-            let shareUrl = `${baseUrl}?data=${encodedData}&time=${time}`;
+            // Lưu thêm cấu hình số lần lặp vào trong đường link gửi cho học sinh
+            let shareUrl = `${baseUrl}?data=${encodedData}&time=${time}&repeat=${repeat}`;
             
             navigator.clipboard.writeText(shareUrl);
             alert("Đã copy đường link bài học! Hãy gửi link này cho học sinh.");
@@ -226,19 +251,20 @@ Student / /ˈstjuːdnt/ / Học sinh</textarea>
 
         function nextSlide() {
             if (currentIndex < vocabList.length - 1) {
-                currentIndex++; clearTimeout(slideInterval); synth.cancel(); renderSlide(); playCurrentCycle();
+                currentIndex++; repeatCount = 0; clearTimeout(slideInterval); synth.cancel(); renderSlide(); playCurrentCycle();
             }
         }
 
         function prevSlide() {
             if (currentIndex > 0) {
-                currentIndex--; clearTimeout(slideInterval); synth.cancel(); renderSlide(); playCurrentCycle();
+                currentIndex--; repeatCount = 0; clearTimeout(slideInterval); synth.cancel(); renderSlide(); playCurrentCycle();
             }
         }
 
         function stopPresentation() {
             clearTimeout(slideInterval);
             synth.cancel();
+            repeatCount = 0;
             document.getElementById('setupForm').classList.remove('hidden');
             document.getElementById('exitBtn').style.display = 'none';
             document.getElementById('playerControls').style.display = 'none';
