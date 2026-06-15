@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>English Vocabulary</title>
+    <title>Trình Tạo Slide Từ Vựng Tiếng Anh Tự Động</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
@@ -45,7 +45,7 @@
         .ctrl-btn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; padding: 5px 10px; }
         .ctrl-btn:hover { color: #e43f5a; }
         
-        /* Cấu hình nút thoát nhỏ hơn, mờ hơn và nằm cùng hàng bên phải */
+        /* Nút thoát mờ và nhỏ hơn nằm cùng thanh điều khiển */
         .exit-btn { background: rgba(228, 63, 90, 0.3); color: rgba(255, 255, 255, 0.7); padding: 6px 14px; border-radius: 15px; border: 1px solid rgba(228, 63, 90, 0.4); font-size: 13px; font-weight: 500; cursor: pointer; display: none; transition: all 0.2s; font-family: 'Segoe UI', sans-serif; margin-left: 10px; }
         .exit-btn:hover { background: rgba(228, 63, 90, 0.8); color: #fff; opacity: 1; }
 
@@ -175,6 +175,7 @@ state-of-the-art	/ˌsteɪt əv ði ˈɑːt/	Hiện đại nhất</textarea>
             let data = urlParams.get('data');
             let time = urlParams.get('time');
             let repeat = urlParams.get('repeat');
+            let voiceParam = urlParams.get('voice');
             
             if (data) {
                 try {
@@ -182,7 +183,16 @@ state-of-the-art	/ˌsteɪt əv ði ˈɑːt/	Hiện đại nhất</textarea>
                     document.getElementById('vocabInput').value = decodedData;
                     if (time) document.getElementById('durationInput').value = time;
                     if (repeat) document.getElementById('repeatSelect').value = repeat;
-                    setTimeout(() => { startPresentation(); }, 500);
+                    
+                    if (voiceParam) {
+                        let decodedVoice = decodeURIComponent(voiceParam);
+                        setTimeout(() => {
+                            let select = document.getElementById('voiceSelect');
+                            if(select) select.value = decodedVoice;
+                        }, 300);
+                    }
+                    
+                    setTimeout(() => { startPresentation(); }, 600);
                 } catch(e) {
                     document.getElementById('slideShowArea').innerHTML = `<div style="color: #e43f5a; text-align:center;">Link cấu trúc lỗi! Không thể giải mã dữ liệu.</div>`;
                 }
@@ -299,14 +309,15 @@ state-of-the-art	/ˌsteɪt əv ði ˈɑːt/	Hiện đại nhất</textarea>
             let text = document.getElementById('vocabInput').value.trim();
             let time = document.getElementById('durationInput').value;
             let repeat = document.getElementById('repeatSelect').value;
+            let voice = document.getElementById('voiceSelect').value;
             if(!text) return alert("Hãy nhập từ vựng trước khi tạo link!");
             
             let encodedData = btoa(encodeURIComponent(text));
             let baseUrl = window.location.href.split('?')[0];
-            let shareUrl = `${baseUrl}?data=${encodedData}&time=${time}&repeat=${repeat}`;
+            let shareUrl = `${baseUrl}?data=${encodedData}&time=${time}&repeat=${repeat}&voice=${encodeURIComponent(voice)}`;
             
             navigator.clipboard.writeText(shareUrl);
-            alert("Đã copy đường link bài học! Hãy gửi link này cho học sinh.");
+            alert("Đã copy đường link bài học! Link này sẽ giữ nguyên Từ vựng, Tốc độ nghỉ, Số lần đọc và Giọng đọc bạn đã chọn.");
         }
 
         function togglePause() {
